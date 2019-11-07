@@ -1,0 +1,22 @@
+1. BUG #1 : extraction is dropping/ignoring each 2nd line of data in the table
+
+2. push extracted data into pandas dataframe
+
+3. mongodb (or AWS equiv)
+
+4. 1st 300 seconds timeframe of data is where all the large % moves happen
+    1. 1st 60 seconds new price is set (no trades possible)
+    2. compare to previous days close
+    3. compare to 2nd 60 second window 
+    4. compare to 3rd 60 second window
+    5. comapre to 4th 60 second window
+    6. inferr (quickly) 300 second window trend (up/down/flat)
+    7. make inferrence on 5th 60 second window
+
+5. Small cap stocks ($1B Mkt cap & below) are not shown soon after open
+    1. as some medium/large cap stocks are slow to open & build momentum
+    2. their momentum eventually pushes small cap stocks off the ticker data stream
+       - mostly due to Yahoo Finance own display logic
+    3. even though small cap stock will have a much greate %change & hence trade oppotunity
+
+
