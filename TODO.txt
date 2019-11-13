@@ -13,10 +13,10 @@
     6. inferr (quickly) 300 second window trend (up/down/flat)
     7. make inferrence on 5th 60 second window
 
-5. Small cap stocks ($1B Mkt cap & below) are not shown soon after open
+5. Micro/Small cap stocks ($1B Mkt cap & below) are not shown soon after open
     1. as some medium/large cap stocks are slow to open & build momentum
     2. their momentum eventually pushes small cap stocks off the ticker data stream
        - mostly due to Yahoo Finance own display logic
     3. even though small cap stock will have a much greate %change & hence trade oppotunity
 
-
+6. command line args
