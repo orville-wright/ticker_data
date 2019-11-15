@@ -33,11 +33,11 @@ all_tag_tr1 = soup.find_all(attrs={"class": "simpTblRow"})
 #all_tag_tr2 = soup.find_all( "tr", class_="simpTblRow Bgc($extraLightBlue):h BdB Bdbc($finLightGrayAlt) Bdbc($tableBorderBlue):h H(32px) Bgc($altRowColor" ) 
 
 # create an empty pandas DataFrame with specific column names pre-defined
-allfixtures.ds_df0 = pd.DataFrame(columns=[ 'Time', 'Hid', 'Home', 'Away', 'Aid', 'RankD', 'GDd', \
-                                             GFd', 'GAd', 'Hwin', 'Awin', 'HomeA', 'HGA', 'Weight', 'PlayME'] )
+
+top_gainers = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change'] )
 
 
-x = 1
+x = 0
 
 for datarow in all_tag_tr1:
 
@@ -63,23 +63,25 @@ for datarow in all_tag_tr1:
     pct = next(extr_strings)
 
     # print( x, ":", datarow.a['title'], ":", datarow.a.get_text() )
-
-    print ( x, ":", co_sym, co_name, price, change, pct )
-    print ( "===============================================================" )
+    # print ( x, ":", co_sym, co_name, price, change, pct )
+    # print ( "===============================================================" )
     x+=1
 
-"""
-    c = 1
-    for string in datarow.stripped_strings:
-        print ( string, " - ", end="" )
-        c+=1
-    print ( )
-    print ( "ENTRIRE list: ", list(string_test) )
-    #print ( "1st NEXT: ", next(string) )
-"""
+    # note: Pandas DataFrame = top_gainers - allready pre-initalized as EMPYT on __init__
+    ds_data0 = [[ \
+               x, \
+               co_sym, \
+               co_name, \
+               price, \
+               change, \
+               pct ]]
 
+    #top_gainers.ds_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change'] )
 
-print ( "====================== TAG 1 ========================" )
-# print ( all_tag_tr1 )
-print ( "====================== TAG 2 ========================" )
-#print ( all_tag_tr2 )
+    df_temp0 = pd.DataFrame(ds_data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change' ], index=[x] )
+    top_gainers = top_gainers.append(df_temp0)    # append this ROW of data into the DataFrame
+
+print ( " " )
+print ( "======================================== Pandas output ============================================" )
+print ( top_gainers.sort_values(by='Row', ascending=True) )    # only do after fixtures datascience dataframe has been built
+
