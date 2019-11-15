@@ -49,19 +49,22 @@ for datarow in big_table:
 
     print ( "A TEXT: ", co_name )
 
-    print ( "DATAROW: ", x, datarow )
+    # print ( "DATAROW: ", x, datarow )
 
     x+=1
     print ( "============================ ", x, " ===================================" )
 
+#datarow = big_table
+#ticker = datarow.a.get_text()
+#co_name = datarow.a['title']
 
-print ( "TAG_NAME: ", tag_1.name )
+print ( "TAG_NAME_0: ", tag_1.name )
 print ( "TAG_ATTR_1: ", tag_1.attrs )
 print ( "TAG_ATTR_2: ", tag_2 )
 print ( "TAG_ATTR_3: ", tag_3 )
 print ( "TAG_ATTR_4: ", list(tag_4) )
 
-for string in tag_4.stripped_strings:
+for string in tag_4:
     print ( string )
     print ( "========================" )
 
