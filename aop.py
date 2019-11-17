@@ -5,6 +5,7 @@ import urllib.request
 from bs4 import BeautifulSoup
 import pandas as pd
 import numpy as np
+#from tabulate import tabulate 
 
 with urllib.request.urlopen("https://finance.yahoo.com/gainers/") as url:
     s = url.read()
