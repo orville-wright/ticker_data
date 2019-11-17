@@ -4,7 +4,7 @@ import urllib
 import urllib.request
 from bs4 import BeautifulSoup
 import pandas as pd
-from tabulate import tabulate 
+import numpy as np
 
 with urllib.request.urlopen("https://finance.yahoo.com/gainers/") as url:
     s = url.read()
@@ -57,11 +57,14 @@ for datarow in all_tag_tr:
     change = next(extr_strings)
     pct = next(extr_strings)
 
+    co_sym_lj = np.char.ljust(co_sym, 6)       # hack to left justify column TXT in pandas DF
+    co_name_lj = np.char.ljust(co_name, 20)    # hack to left justify column TXT in pandas DF
+
     # note: Pandas DataFrame : top_gainers pre-initalized as EMPYT on __init__
     ds_data0 = [[ \
                x, \
-               co_sym, \
-               co_name, \
+               co_sym_lj, \
+               co_name_lj, \
                price, \
                change, \
                pct ]]
