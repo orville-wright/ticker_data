@@ -65,15 +65,16 @@ for datarow in all_tag_tr:
     # note: Pandas DataFrame : top_gainers pre-initalized as EMPYT on __init__
     # Data treatment:
     # Data is extracted as raw strings, so needs wrangeling...
-    #    price - cast as true decimal via numpy
-    #    change - stripped of chars '+' and '%' and cast as true decimal via numpy 
+    #    price - stip out any thousand "," seperators and cast as true decimal via numpy
+    #    change - stripped of chars '+' and ',' and cast as true decimal via numpy 
     #    pct is stripped of chars '+ and %' and cast as true decimal via numpy
     ds_data0 = [[ \
                x, \
                co_sym_lj, \
                co_name_lj, \
-               np.float(price), \
-               np.float(re.sub('[\+]', '', change)), \
+               np.float(re.sub('\,', '', price)), \
+               np.float(re.sub('[\+,]', '', change)), \
+               #re.sub('\+', '#', change), \
                np.float(re.sub('[\+%]', '', pct)) ]]
 
     df_temp0 = pd.DataFrame(ds_data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change' ], index=[x] )
