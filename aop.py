@@ -5,6 +5,7 @@ import urllib.request
 from bs4 import BeautifulSoup
 import pandas as pd
 import numpy as np
+import re
 #from tabulate import tabulate 
 
 with urllib.request.urlopen("https://finance.yahoo.com/gainers/") as url:
@@ -58,19 +59,25 @@ for datarow in all_tag_tr:
     change = next(extr_strings)
     pct = next(extr_strings)
 
-    co_sym_lj = np.char.ljust(co_sym, 6)       # hack to left justify column TXT in pandas DF
-    co_name_lj = np.char.ljust(co_name, 20)    # hack to left justify column TXT in pandas DF
+    co_sym_lj = np.char.ljust(co_sym, 6)       # use numpy to left justify TXT in pandas DF
+    co_name_lj = np.char.ljust(co_name, 20)    # use numpy to left justify TXT in pandas DF
 
     # note: Pandas DataFrame : top_gainers pre-initalized as EMPYT on __init__
+    # Data treatment:
+    # Data is extracted as raw strings, so needs wrangeling...
+    #    price - cast as true decimal via numpy
+    #    change - stripped of chars '+' and '%' and cast as true decimal via numpy 
+    #    pct is stripped of chars '+ and %' and cast as true decimal via numpy
     ds_data0 = [[ \
                x, \
                co_sym_lj, \
                co_name_lj, \
-               price, \
-               change, \
-               pct ]]
+               np.float(price), \
+               np.float(re.sub('[\+]', '', change)), \
+               np.float(re.sub('[\+%]', '', pct)) ]]
 
     df_temp0 = pd.DataFrame(ds_data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change' ], index=[x] )
+
     top_gainers = top_gainers.append(df_temp0)    # append this ROW of data into the DataFrame
 
     x+=1
@@ -78,6 +85,6 @@ for datarow in all_tag_tr:
 pd.set_option('display.max_rows', None)
 pd.set_option('max_colwidth', 30)
 
-print ( top_gainers.sort_values(by='Row', ascending=True ) )    # only do after fixtures datascience dataframe has been built
+print ( top_gainers.sort_values(by='Pct_change', ascending=False ) )    # only do after fixtures datascience dataframe has been built
 #print ( tabulate(top_gainers, showindex=False, headers=top_gainers.columns ) )    # only do after fixtures datascience dataframe has been built
 
