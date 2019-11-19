@@ -116,6 +116,15 @@ class y_topgainers:
         print ( y_topgainers.tg_df0.sort_values(by='Pct_change', ascending=False ) )    # only do after fixtures datascience dataframe has been built
         return
 
+# method #5
+    def topg_top10(self):
+        """Print the top 10 gainers only"""
+        logging.info('y_topgainers::topg_top10() - In' )
+        pd.set_option('display.max_rows', None)
+        pd.set_option('max_colwidth', 30)
+        print ( y_topgainers.tg_df0.sort_values(by='Pct_change', ascending=False ).head(10) )    # only do after fixtures datascience dataframe has been built
+        return
+
 # methods to add...
 # List top 10
 # list by biggest $ change
@@ -147,6 +156,8 @@ def main():
     x = stock_topgainers.build_tg_df0()
     print ( "Extracted", x, "- rows of data from finaince.yahoo.com" )
     stock_topgainers.topg_listall()
+    print ( " ")
+    stock_topgainers.topg_top10()
 
     print ( "####### done #####")
 
