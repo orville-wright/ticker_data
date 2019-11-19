@@ -32,7 +32,6 @@ def get_topgainers():
     top_gainers = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change'] )
 
     x = 1    # row counter Also leveraged for unique dataframe key
-    m = 20
     for datarow in all_tag_tr:
         # 1st <td> cell : ticker symbol info & has comment of company name
         # 2nd <td> cell : company name
@@ -95,11 +94,12 @@ def main():
     if args['bool_verbose'] is True:
         print ( "Enabeling verbose info logging..." )
         logging.disable(0)     # Log level = NOTSET
-        print ( "All command line args..." )
-        print ( parser.parse_args() )
-        print ( " " )
     else:
         logging.disable(20)    # Log lvel = INFO
+
+    print ( "Command line args..." )
+    print ( parser.parse_args() )
+    print ( " " )
 
     stock_topgainers = get_topgainers()
     pd.set_option('display.max_rows', None)
