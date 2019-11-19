@@ -153,12 +153,12 @@ def main():
 
     stock_topgainers = y_topgainers()       # instantiate class
     stock_topgainers.get_topg_data()        # extract data from finance.Yahoo.com
-    x = stock_topgainers.build_tg_df0()
+    x = stock_topgainers.build_tg_df0()     # build full dataframe
     print ( "Extracted", x, "- rows of data from finaince.yahoo.com" )
-    stock_topgainers.topg_listall()
+    stock_topgainers.topg_listall()         # show full list
     print ( " ")
-    stock_topgainers.topg_top10()
-
+    stock_topgainers.topg_top10()           # show top 10
+    print ( " ")
     print ( "####### done #####")
 
 if __name__ == '__main__':
