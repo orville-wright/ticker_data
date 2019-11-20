@@ -157,7 +157,7 @@ class y_topgainers:
         logging.info('y_topgainers::do_nice_wait() - in' )
         for x in range(1, 6):
             print ( "Cycle: ", x, "...", end="" )
-            stock_topgainers.build_tentensixty()
+            y_topgainers.build_tentensixty()
             time.sleep(5)
 
         y_topgainers.wait_trigger.set()
