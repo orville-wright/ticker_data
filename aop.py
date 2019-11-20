@@ -202,7 +202,7 @@ def main():
     print ( " ")
 
     # Threaded wait code...
-    thread = threading.Thread(target=stock_topgainers.do_nice_wait)
+    thread = threading.Thread(target=y_topgainers.do_nice_wait)
     thread.start()
     # wait here for the trigger to be available before continuing
     stock_topgainers.wait_trigger.wait()
