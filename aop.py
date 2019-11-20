@@ -201,7 +201,8 @@ def main():
     print ( stock_topgainers.tg_df1.sort_values(by='Pct_change', ascending=False ).head(10) )
     print ( " ")
 
-    thread = threading.Thread(target=y_topgainers.do_nice_wait)
+    # Threaded wait code...
+    thread = threading.Thread(target=stock_topgainers.do_nice_wait)
     thread.start()
     # wait here for the trigger to be available before continuing
     stock_topgainers.wait_trigger.wait()
