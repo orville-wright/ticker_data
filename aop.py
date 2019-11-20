@@ -8,7 +8,8 @@ import numpy as np
 import re
 import logging
 import argparse
-
+import time
+import threading
 
 # logging setup
 logging.basicConfig(level=logging.INFO)
@@ -17,13 +18,18 @@ class y_topgainers:
     """Class to extract Top Gainer data set from finance.yahoo.com"""
 
     # global accessors
-    tg_df0 = ""          # global class DataFrame
+    tg_df0 = ""          # DataFrame - Full list of top gainers
+    tg_df1 = ""          # DataFrame - Ephemerial list of top 10 gainers. Allways overwritten
+    tg_df2 = ""          # DataFrame - Top 10 ever 10 secs for 60 secs
     all_tag_tr = ""      # BS4 handle of the <tr> extracted data
+    wait_trigger = threading.Event()
 
     def __init__(self):
         logging.info('y_topgainers:: - init top_gainers instance' )
         # init empty DataFrame with present colum names
         y_topgainers.tg_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change'] )
+        y_topgainers.tg_df1 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change'] )
+        y_topgainers.tg_df2 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change'] )
         return
 
 # method #1
@@ -117,13 +123,46 @@ class y_topgainers:
         return
 
 # method #5
-    def topg_top10(self):
-        """Print the top 10 gainers only"""
-        logging.info('y_topgainers::topg_top10() - In' )
+    def build_top10(self):
+        """Print the top 10 gainers only and store table in Ephemerial DataFrame"""
+        """The Ephemerial DF is allway overwritten every time this method runs"""
+        logging.info('y_topgainers::build_top10() - In' )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
-        print ( y_topgainers.tg_df0.sort_values(by='Pct_change', ascending=False ).head(10) )    # only do after fixtures datascience dataframe has been built
+        logging.info('y_topgainers::build_top10() - Copy top 10 -> Ephemerial DF' )
+        y_topgainers.tg_df1 = y_topgainers.tg_df0.sort_values(by='Pct_change', ascending=False ).head(10).copy(deep=True)    # create new DF via copy
+        y_topgainers.tg_df1.rename(columns = {'Row':'ERank'}, inplace = True)    # Rank is more accurate for this Ephemerial DF
+        y_topgainers.tg_df1.reset_index(inplace=True, drop=True)
+        # print ( y_topgainers.tg_df1.sort_values(by='Pct_change', ascending=False ).head(10) )
         return
+
+# mthos #6
+    def build_tentensixty(self):
+        """Build the top 10x10x060 Ephemerial rankig gainers DataFrame"""
+        """10x10x60 analysi is top 10 gaines every 10 seconds for 60 seconds"""
+
+        logging.info('y_topgainers::build_tentensixty() - In' )
+        x = 1    # row counter Also leveraged for unique dataframe key
+        # temp_df0 = y_topgainers.build_top10()
+        # temp_df0 = pd.DataFrame(data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change' ], index=[x] )
+        y_topgainers.tg_df2 = y_topgainers.tg_df2.append(y_topgainers.tg_df1, ignore_index=False)    # merge top 10 into
+        y_topgainers.tg_df2.reset_index(inplace=True, drop=True)
+        x+=1
+        logging.info('y_topgainers::build_tentensixty() - Done' )
+        return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
+
+# mthod #7
+    def do_nice_wait(self):
+        # do some work in a loop 6 times for 60 seconds (i.e. waiting every 10 seconds)
+        logging.info('y_topgainers::do_nice_wait() - in' )
+        for x in range(1, 6):
+            print ( "Cycle: ", x, "...", end="" )
+            stock_topgainers.build_tentensixty()
+            time.sleep(5)
+
+        y_topgainers.wait_trigger.set()
+        logging.info('y_topgainers::do_nice_wait() - emitting thread exit trigger' )
+        return      # dont know if this this requireed or good semantics?
 
 # methods to add...
 # List top 10
@@ -134,6 +173,7 @@ class y_topgainers:
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-v','--verbose', help='verbose error logging', action='store_true', dest='bool_verbose', required=False, default=False)
+    parser.add_argument('-s','--sixty', help='Ephemerial top 10 every 10 secs for 60 secs', action='store_true', dest='bool_tentensixty', required=False, default=False)
 
     args = vars(parser.parse_args())
     print ( " " )
@@ -157,8 +197,21 @@ def main():
     print ( "Extracted", x, "- rows of data from finaince.yahoo.com" )
     stock_topgainers.topg_listall()         # show full list
     print ( " ")
-    stock_topgainers.topg_top10()           # show top 10
+    stock_topgainers.build_top10()           # show top 10
+    print ( stock_topgainers.tg_df1.sort_values(by='Pct_change', ascending=False ).head(10) )
     print ( " ")
+
+    thread = threading.Thread(target=y_topgainers.do_nice_wait)
+    thread.start()
+    # wait here for the trigger to be available before continuing
+    stock_topgainers.wait_trigger.wait()
+
+    #stock_topgainers.build_tentensixty()
+    #time.sleep(5)
+    #stock_topgainers.build_tentensixty()
+    #time.sleep(5)
+    #stock_topgainers.build_tentensixty()
+    print ( stock_topgainers.tg_df2 )
     print ( "####### done #####")
 
 if __name__ == '__main__':
