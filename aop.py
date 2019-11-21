@@ -56,7 +56,7 @@ class y_topgainers:
         #all_tag_tr1 = soup.select( "tr.simpTblRow.Bgc" )
         return
 
-# method #1
+# method #2
     def build_tg_df0(self):
         """Build-out a fully populated Pandas DataFrame containg all the"""
         """extracted/scraped fields from the html/markup table data"""
@@ -158,9 +158,11 @@ def do_nice_wait(topg_inst):
     logging.info('y_topgainers::do_nice_wait() - In' )
     
     for x in range(1, 6):    # loop 6 x, wait 10 sec, for a total of 60 seconds
-        print ( "Build 10x10x60 cycle: ", x )
+        print ( "Build 10x10x60 -> cycle: ", x )
+        topg_inst.build_tg_df0(self)
+        topg_inst.build_top10(self)
         topg_inst.build_tenten60()
-        time.sleep(5)    # testing wait time = 5 secs
+        time.sleep(10)    # testing wait time = 5 secs
 
     logging.info('y_topgainers::do_nice_wait() - emitting thread exit trigger' )
     wait_trigger.set()
