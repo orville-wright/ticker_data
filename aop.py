@@ -141,12 +141,10 @@ class y_topgainers:
 # method #6
     def build_tenten60(self):
         """Build the top 10x10x060 Ephemerial rankig gainers DataFrame"""
-        """10x10x60 analysi is top 10 gaines every 10 seconds for 60 seconds"""
+        """10x10x60 analysis is top 10 gaines every 10 seconds for 60 seconds"""
 
         logging.info('y_topgainers::build_tenten60() - In' )
         x = 1    # row counter Also leveraged for unique dataframe key
-        # temp_df0 = y_topgainers.build_top10()
-        # temp_df0 = pd.DataFrame(data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change' ], index=[x] )
         y_topgainers.tg_df2 = y_topgainers.tg_df2.append(y_topgainers.tg_df1, ignore_index=False)    # merge top 10 into
         y_topgainers.tg_df2.reset_index(inplace=True, drop=True)
         x+=1
@@ -155,14 +153,14 @@ class y_topgainers:
 
 # Global function #1
 #
-def do_nice_wait(self):
+def do_nice_wait(topg_inst):
     """Nice threaded wait that does some work to build out the 10x10x60 DataFrame"""
-    logging.info('y_topgainers::do_nice_wait() - in' )
-
+    logging.info('y_topgainers::do_nice_wait() - In' )
+    
     for x in range(1, 6):    # loop 6 x, wait 10 sec, for a total of 60 seconds
-        print ( "Cycle: ", x, "...", end="" )
-        self.topg_inst.build_tenten60()
-        time.sleep(5)
+        print ( "Build 10x10x60 cycle: ", x )
+        topg_inst.build_tenten60()
+        time.sleep(5)    # testing wait time = 5 secs
 
     logging.info('y_topgainers::do_nice_wait() - emitting thread exit trigger' )
     wait_trigger.set()
@@ -207,16 +205,11 @@ def main():
     print ( " ")
 
     # Threaded wait looper...
-    thread = threading.Thread(target=do_nice_wait)
+    thread = threading.Thread(target=do_nice_wait(stock_topgainers) )
     thread.start()
     # wait here for the trigger to be available before continuing
     wait_trigger.wait()
 
-    #stock_topgainers.build_tenten60()
-    #time.sleep(5)
-    #stock_topgainers.build_tenten60()
-    #time.sleep(5)
-    #stock_topgainers.build_tenten60()
     print ( stock_topgainers.tg_df2 )
     print ( "####### done #####")
 
