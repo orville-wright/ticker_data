@@ -159,8 +159,8 @@ def do_nice_wait(topg_inst):
 
     for x in range(1, 6):    # loop 6 x, wait 10 sec, for a total of 60 seconds
         print ( "Build 10x10x60 -> cycle: ", x )
-        topg_inst.build_tg_df0(self)
-        topg_inst.build_top10(self)
+        topg_inst.build_tg_df0()
+        topg_inst.build_top10()
         topg_inst.build_tenten60()
         time.sleep(10)    # testing wait time = 5 secs
 
@@ -211,7 +211,7 @@ def main():
     thread.start()         # initialize thread
     wait_trigger.wait()    # wait here for the trigger to be available before continuing
 
-    print ( stock_topgainers.tg_df2 )
+    print ( stock_topgainers.tg_df2.sort_values(by='Pct_change', ascending=False ) )
     print ( "####### done #####")
 
 if __name__ == '__main__':
