@@ -151,6 +151,7 @@ class y_topgainers:
         logging.info('y_topgainers::build_tenten60() - Done' )
         return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
 
+#######################################################################
 # Global function #1
 #
 def do_nice_wait(topg_inst):
@@ -207,12 +208,29 @@ def main():
     print ( stock_topgainers.tg_df1.sort_values(by='Pct_change', ascending=False ).head(10) )
     print ( " ")
 
-    # Threaded wait looper...
-    thread = threading.Thread(target=do_nice_wait(stock_topgainers) )    # thread target passes class instance
-    thread.start()         # initialize thread
-    wait_trigger.wait()    # wait here for the trigger to be available before continuing
 
-    print ( stock_topgainers.tg_df2.sort_values(by='Pct_change', ascending=False ) )
+    if args['bool_tenten60'] is True:       # do 10x10x60 build-out
+        # Threaded wait looper...
+        thread = threading.Thread(target=do_nice_wait(stock_topgainers) )    # thread target passes class instance
+        thread.start()         # initialize thread
+        wait_trigger.wait()    # wait here for the trigger to be available before continuing
+        print ( stock_topgainers.tg_df2.sort_values(by='Pct_change', ascending=False ) )
+    else:
+        print ( "No 10x10x60 run!" )
+
+
+# 2nd full run to test extraction theory
+    print ( " " )
+    stg2 = y_topgainers()                   # instantiate 2nd unique class
+    stg2.get_topg_data()                    # extract data from finance.Yahoo.com
+    x2 = stg2.build_tg_df0()                # build full dataframe
+    print ( "Extracted", x2, "- rows of data from finaince.yahoo.com" )
+    stg2.topg_listall()                     # show full list
+    print ( " ")
+    stg2.build_top10()                      # show top 10
+    print ( stg2.tg_df1.sort_values(by='Pct_change', ascending=False ).head(10) )
+    print ( " ")
+
     print ( "####### done #####")
 
 if __name__ == '__main__':
