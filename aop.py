@@ -14,6 +14,9 @@ import threading
 # logging setup
 logging.basicConfig(level=logging.INFO)
 
+# Threading globals
+wait_trigger = threading.Event()
+
 class y_topgainers:
     """Class to extract Top Gainer data set from finance.yahoo.com"""
 
@@ -22,7 +25,6 @@ class y_topgainers:
     tg_df1 = ""          # DataFrame - Ephemerial list of top 10 gainers. Allways overwritten
     tg_df2 = ""          # DataFrame - Top 10 ever 10 secs for 60 secs
     all_tag_tr = ""      # BS4 handle of the <tr> extracted data
-    wait_trigger = threading.Event()
 
     def __init__(self):
         logging.info('y_topgainers:: - init top_gainers instance' )
@@ -136,33 +138,35 @@ class y_topgainers:
         # print ( y_topgainers.tg_df1.sort_values(by='Pct_change', ascending=False ).head(10) )
         return
 
-# mthos #6
-    def build_tentensixty(self):
+# method #6
+    def build_tenten60(self):
         """Build the top 10x10x060 Ephemerial rankig gainers DataFrame"""
         """10x10x60 analysi is top 10 gaines every 10 seconds for 60 seconds"""
 
-        logging.info('y_topgainers::build_tentensixty() - In' )
+        logging.info('y_topgainers::build_tenten60() - In' )
         x = 1    # row counter Also leveraged for unique dataframe key
         # temp_df0 = y_topgainers.build_top10()
         # temp_df0 = pd.DataFrame(data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change' ], index=[x] )
         y_topgainers.tg_df2 = y_topgainers.tg_df2.append(y_topgainers.tg_df1, ignore_index=False)    # merge top 10 into
         y_topgainers.tg_df2.reset_index(inplace=True, drop=True)
         x+=1
-        logging.info('y_topgainers::build_tentensixty() - Done' )
+        logging.info('y_topgainers::build_tenten60() - Done' )
         return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
 
-# mthod #7
-    def do_nice_wait(self):
-        # do some work in a loop 6 times for 60 seconds (i.e. waiting every 10 seconds)
-        logging.info('y_topgainers::do_nice_wait() - in' )
-        for x in range(1, 6):
-            print ( "Cycle: ", x, "...", end="" )
-            y_topgainers.build_tentensixty()
-            time.sleep(5)
+# Global function #1
+#
+def do_nice_wait(self, topg_inst):
+    """Nice threaded wait that does some work to build out the 10x10x60 DataFrame"""
+    logging.info('y_topgainers::do_nice_wait() - in' )
+    for x in range(1, 6):    # loop 6 x, wait 10 sec, for a total of 60 seconds
+        print ( "Cycle: ", x, "...", end="" )
+        topg_inst.build_tenten60()
+        time.sleep(5)
 
-        y_topgainers.wait_trigger.set()
-        logging.info('y_topgainers::do_nice_wait() - emitting thread exit trigger' )
-        return      # dont know if this this requireed or good semantics?
+    logging.info('y_topgainers::do_nice_wait() - emitting thread exit trigger' )
+    wait_trigger.set()
+    logging.info('y_topgainers::do_nice_wait() - Thread exit' )
+    return      # dont know if this this requireed or good semantics?
 
 # methods to add...
 # List top 10
@@ -173,7 +177,7 @@ class y_topgainers:
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-v','--verbose', help='verbose error logging', action='store_true', dest='bool_verbose', required=False, default=False)
-    parser.add_argument('-s','--sixty', help='Ephemerial top 10 every 10 secs for 60 secs', action='store_true', dest='bool_tentensixty', required=False, default=False)
+    parser.add_argument('-s','--sixty', help='Ephemerial top 10 every 10 secs for 60 secs', action='store_true', dest='bool_tenten60', required=False, default=False)
 
     args = vars(parser.parse_args())
     print ( " " )
@@ -201,17 +205,17 @@ def main():
     print ( stock_topgainers.tg_df1.sort_values(by='Pct_change', ascending=False ).head(10) )
     print ( " ")
 
-    # Threaded wait code...
-    thread = threading.Thread(target=y_topgainers.do_nice_wait)
-    thread.start()
+    # Threaded wait looper...
+    thread = threading.Thread(target=do_nice_wait)
+    thread.start(stock_topgainers)
     # wait here for the trigger to be available before continuing
-    stock_topgainers.wait_trigger.wait()
+    wait_trigger.wait()
 
-    #stock_topgainers.build_tentensixty()
+    #stock_topgainers.build_tenten60()
     #time.sleep(5)
-    #stock_topgainers.build_tentensixty()
+    #stock_topgainers.build_tenten60()
     #time.sleep(5)
-    #stock_topgainers.build_tentensixty()
+    #stock_topgainers.build_tenten60()
     print ( stock_topgainers.tg_df2 )
     print ( "####### done #####")
 
