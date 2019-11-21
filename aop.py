@@ -154,9 +154,9 @@ class y_topgainers:
 # Global function #1
 #
 def do_nice_wait(topg_inst):
-    """Nice threaded wait that does some work to build out the 10x10x60 DataFrame"""
+    """Threaded wait that does work to build out the 10x10x60 DataFrame"""
     logging.info('y_topgainers::do_nice_wait() - In' )
-    
+
     for x in range(1, 6):    # loop 6 x, wait 10 sec, for a total of 60 seconds
         print ( "Build 10x10x60 -> cycle: ", x )
         topg_inst.build_tg_df0(self)
@@ -169,12 +169,12 @@ def do_nice_wait(topg_inst):
     logging.info('y_topgainers::do_nice_wait() - Thread exit' )
     return      # dont know if this this requireed or good semantics?
 
-# methods to add...
-# List top 10
-# list by biggest $ change
+#######################################################################
+# TODO: methods/Functions to add...
+#       see README and TODO.txt
 
-
-# main() now...
+############################# main() ##################################
+#
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-v','--verbose', help='verbose error logging', action='store_true', dest='bool_verbose', required=False, default=False)
@@ -207,10 +207,9 @@ def main():
     print ( " ")
 
     # Threaded wait looper...
-    thread = threading.Thread(target=do_nice_wait(stock_topgainers) )
-    thread.start()
-    # wait here for the trigger to be available before continuing
-    wait_trigger.wait()
+    thread = threading.Thread(target=do_nice_wait(stock_topgainers) )    # thread target passes class instance
+    thread.start()         # initialize thread
+    wait_trigger.wait()    # wait here for the trigger to be available before continuing
 
     print ( stock_topgainers.tg_df2 )
     print ( "####### done #####")
