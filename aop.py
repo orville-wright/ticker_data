@@ -176,6 +176,7 @@ def do_nice_wait(topg_inst):
 ############################# main() ##################################
 #
 def main():
+    # setup valid cmdline args
     parser = argparse.ArgumentParser()
     parser.add_argument('-v','--verbose', help='verbose error logging', action='store_true', dest='bool_verbose', required=False, default=False)
     parser.add_argument('-s','--sixty', help='Ephemerial top 10 every 10 secs for 60 secs', action='store_true', dest='bool_tenten60', required=False, default=False)
@@ -185,12 +186,12 @@ def main():
     print ( "########## Initalizing ##########" )
     print ( " " )
 
-    # ARGS[] pre-processing - set-ip logging before anything else
-    if args['bool_verbose'] is True:
+    # ARGS[] cmdline pre-processing
+    if args['bool_verbose'] is True:        # Logging level
         print ( "Enabeling verbose info logging..." )
-        logging.disable(0)     # Log level = NOTSET
+        logging.disable(0)                  # Log level = OFF
     else:
-        logging.disable(20)    # Log lvel = INFO
+        logging.disable(20)                 # Log lvel = INFO
 
     print ( "Command line args..." )
     print ( parser.parse_args() )
