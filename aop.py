@@ -155,12 +155,13 @@ class y_topgainers:
 
 # Global function #1
 #
-def do_nice_wait(self, topg_inst):
+def do_nice_wait(self):
     """Nice threaded wait that does some work to build out the 10x10x60 DataFrame"""
     logging.info('y_topgainers::do_nice_wait() - in' )
+
     for x in range(1, 6):    # loop 6 x, wait 10 sec, for a total of 60 seconds
         print ( "Cycle: ", x, "...", end="" )
-        topg_inst.build_tenten60()
+        self.topg_inst.build_tenten60()
         time.sleep(5)
 
     logging.info('y_topgainers::do_nice_wait() - emitting thread exit trigger' )
@@ -207,7 +208,7 @@ def main():
 
     # Threaded wait looper...
     thread = threading.Thread(target=do_nice_wait)
-    thread.start(stock_topgainers)
+    thread.start()
     # wait here for the trigger to be available before continuing
     wait_trigger.wait()
 
