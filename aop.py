@@ -208,15 +208,16 @@ def main():
     print ( stock_topgainers.tg_df1.sort_values(by='Pct_change', ascending=False ).head(10) )
     print ( " ")
 
-
-    if args['bool_tenten60'] is True:       # do 10x10x60 build-out
-        # Threaded wait looper...
-        thread = threading.Thread(target=do_nice_wait(stock_topgainers) )    # thread target passes class instance
+    # do 10x10x60 build-out cycle
+    # this will fail to produce a fresh/unique data set as stock_topgainers is loaded via y_topgainers once.
+    if args['bool_tenten60'] is True:
+        stg3 = y_topgainers()
+        thread = threading.Thread(target=do_nice_wait(stg3) )    # thread target passes class instance
         thread.start()         # initialize thread
         wait_trigger.wait()    # wait here for the trigger to be available before continuing
-        print ( stock_topgainers.tg_df2.sort_values(by='Pct_change', ascending=False ) )
+        print ( stg3.tg_df2.sort_values(by='Pct_change', ascending=False ) )
     else:
-        print ( "No 10x10x60 run!" )
+        print ( "##### Not doing 10x10x60 run! #####" )
 
 
 # 2nd full run to test extraction theory
