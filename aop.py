@@ -56,7 +56,7 @@ class y_topgainers:
         #all_tag_tr1 = soup.select( "tr.simpTblRow.Bgc" )
         return
 
-# method #1
+# method #2
     def build_tg_df0(self):
         """Build-out a fully populated Pandas DataFrame containg all the"""
         """extracted/scraped fields from the html/markup table data"""
@@ -151,6 +151,7 @@ class y_topgainers:
         logging.info('y_topgainers::build_tenten60() - Done' )
         return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
 
+#######################################################################
 # Global function #1
 #
 def do_nice_wait(topg_inst):
@@ -158,9 +159,11 @@ def do_nice_wait(topg_inst):
     logging.info('y_topgainers::do_nice_wait() - In' )
 
     for x in range(1, 6):    # loop 6 x, wait 10 sec, for a total of 60 seconds
-        print ( "Build 10x10x60 cycle: ", x )
+        print ( "Build 10x10x60 -> cycle: ", x )
+        topg_inst.build_tg_df0()
+        topg_inst.build_top10()
         topg_inst.build_tenten60()
-        time.sleep(5)    # testing wait time = 5 secs
+        time.sleep(10)    # testing wait time = 5 secs
 
     logging.info('y_topgainers::do_nice_wait() - emitting thread exit trigger' )
     wait_trigger.set()
@@ -205,12 +208,29 @@ def main():
     print ( stock_topgainers.tg_df1.sort_values(by='Pct_change', ascending=False ).head(10) )
     print ( " ")
 
-    # Threaded wait looper...
-    thread = threading.Thread(target=do_nice_wait(stock_topgainers) )    # thread target passes class instance
-    thread.start()         # initialize thread
-    wait_trigger.wait()    # wait here for the trigger to be available before continuing
 
-    print ( stock_topgainers.tg_df2 )
+    if args['bool_tenten60'] is True:       # do 10x10x60 build-out
+        # Threaded wait looper...
+        thread = threading.Thread(target=do_nice_wait(stock_topgainers) )    # thread target passes class instance
+        thread.start()         # initialize thread
+        wait_trigger.wait()    # wait here for the trigger to be available before continuing
+        print ( stock_topgainers.tg_df2.sort_values(by='Pct_change', ascending=False ) )
+    else:
+        print ( "No 10x10x60 run!" )
+
+
+# 2nd full run to test extraction theory
+    print ( " " )
+    stg2 = y_topgainers()                   # instantiate 2nd unique class
+    stg2.get_topg_data()                    # extract data from finance.Yahoo.com
+    x2 = stg2.build_tg_df0()                # build full dataframe
+    print ( "Extracted", x2, "- rows of data from finaince.yahoo.com" )
+    stg2.topg_listall()                     # show full list
+    print ( " ")
+    stg2.build_top10()                      # show top 10
+    print ( stg2.tg_df1.sort_values(by='Pct_change', ascending=False ).head(10) )
+    print ( " ")
+
     print ( "####### done #####")
 
 if __name__ == '__main__':
