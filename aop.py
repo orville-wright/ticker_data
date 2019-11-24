@@ -220,13 +220,13 @@ def main():
 
 
 # 2nd full run to test extraction theory
-    print ( " " )
+    print ( "##### Test 2nd run price differnce #####" )
     stg2 = y_topgainers()                   # instantiate 2nd unique class
     stg2.get_topg_data()                    # extract data from finance.Yahoo.com
     x2 = stg2.build_tg_df0()                # build full dataframe
-    print ( "Extracted", x2, "- rows of data from finaince.yahoo.com" )
-    stg2.topg_listall()                     # show full list
-    print ( " ")
+    print ( "2nd run - Extracted", x2, "- rows of data from finaince.yahoo.com" )
+    # stg2.topg_listall()                     # show full list
+    # print ( " ")
     stg2.build_top10()                      # show top 10
     print ( stg2.tg_df1.sort_values(by='Pct_change', ascending=False ).head(10) )
     print ( " ")
