@@ -16,6 +16,7 @@ logging.basicConfig(level=logging.INFO)
 
 # Threading globals
 wait_trigger = threading.Event()
+yti = 1
 
 class y_topgainers:
     """Class to extract Top Gainer data set from finance.yahoo.com"""
@@ -25,13 +26,15 @@ class y_topgainers:
     tg_df1 = ""          # DataFrame - Ephemerial list of top 10 gainers. Allways overwritten
     tg_df2 = ""          # DataFrame - Top 10 ever 10 secs for 60 secs
     all_tag_tr = ""      # BS4 handle of the <tr> extracted data
+    yti = 0
 
-    def __init__(self):
+    def __init__(self, yti):
         logging.info('y_topgainers:: - init top_gainers instance: %s' % self )
         # init empty DataFrame with present colum names
         self.tg_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change'] )
         self.tg_df1 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change'] )
         self.tg_df2 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change'] )
+        self.yti = yti
         return
 
 # method #1
@@ -39,15 +42,15 @@ class y_topgainers:
         """Connect to finance.yahoo.com and extract (scrape) the raw sring data out of"""
         """the Stock:Top Gainers html data table. Returns a BS4 handle."""
 
-        logging.info('y_topgainers::get_topg_data() - In' )
+        logging.info('y_topgainers::get_topg_data() - In %s' % self.yti )
         with urllib.request.urlopen("https://finance.yahoo.com/gainers/") as url:
             s = url.read()
-            logging.info('y_topgainers::get_topg_data() - read html markup stream' )
-            soup = BeautifulSoup(s, "html.parser")
+            logging.info('y_topgainers::get_topg_data() - read html markup stream %s' % self.yti )
+            self.soup = BeautifulSoup(s, "html.parser")
         # ATTR style search. Results -> Dict
         # <tr tag in target merkup line has a very complex 'class=' but the attributes are unique. e.g. 'simpTblRow' is just one unique attribute
-        logging.info('y_topgainers::get_topg_data() - save extracted data -> global attr' )
-        self.all_tag_tr = soup.find_all(attrs={"class": "simpTblRow"})
+        logging.info('y_topgainers::get_topg_data() - save extracted data -> global attr %s' % self.yti )
+        self.all_tag_tr = self.soup.find_all(attrs={"class": "simpTblRow"})
 
         # target markup line I am scanning looks like this...
         # soup.find_all( "tr", class_="simpTblRow Bgc($extraLightBlue):h BdB Bdbc($finLightGrayAlt) Bdbc($tableBorderBlue):h H(32px) Bgc($extraLightBlue)" )
@@ -61,7 +64,7 @@ class y_topgainers:
         """Build-out a fully populated Pandas DataFrame containg all the"""
         """extracted/scraped fields from the html/markup table data"""
         """Wrangle, clean/convert/format the data correctly."""
-        logging.info('y_topgainers::build_tg_df0() - In' )
+        logging.info('y_topgainers::build_tg_df0() - In %s' % self.yti )
         x = 1    # row counter Also leveraged for unique dataframe key
         for datarow in self.all_tag_tr:
             # 1st <td> cell : ticker symbol info & has comment of company name
@@ -88,7 +91,7 @@ class y_topgainers:
             #    price - stip out any thousand "," seperators and cast as true decimal via numpy
             #    change - strip out chars '+' and ',' and cast as true decimal via numpy
             #    pct - strip out chars '+ and %' and cast as true decimal via numpy
-            data0 = [[ \
+            self.data0 = [[ \
                        x, \
                        co_sym_lj, \
                        co_name_lj, \
@@ -96,10 +99,10 @@ class y_topgainers:
                        np.float(re.sub('[\+,]', '', change)), \
                        np.float(re.sub('[\+%]', '', pct)) ]]
 
-            df0 = pd.DataFrame(data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change' ], index=[x] )
-            self.tg_df0 = self.tg_df0.append(df0)    # append this ROW of data into the REAL DataFrame
+            self.df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change' ], index=[x] )
+            self.tg_df0 = self.tg_df0.append(self.df0)    # append this ROW of data into the REAL DataFrame
             x+=1
-        logging.info('y_topgainers::build_tg_df0() - Done' )
+        logging.info('y_topgainers::build_tg_df0() - Done %s' % self.yti )
         return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
                         # sucess = lobal class accessor (y_topgainers.tg_df0) populated & updated
 
@@ -118,7 +121,7 @@ class y_topgainers:
         """Print the full DataFrame table list of Yahoo Finance Top Gainers"""
         """Sorted by % Change"""
         # stock_topgainers = get_topgainers()
-        logging.info('y_topgainers::topg_listall() - In' )
+        logging.info('y_topgainers::topg_listall() - In %s' % self.yti )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
         print ( self.tg_df0.sort_values(by='Pct_change', ascending=False ) )    # only do after fixtures datascience dataframe has been built
@@ -129,16 +132,19 @@ class y_topgainers:
         """Print the top 10 gainers only and store table in Ephemerial DataFrame"""
         """The Ephemerial DF is allway overwritten every time this method runs"""
         logging.info('y_topgainers::build_top10() - In %s' % self )
-        pd.set_option('display.max_rows', None)
-        pd.set_option('max_colwidth', 30)
-        logging.info('y_topgainers::build_top10() - Copy top 10 -> Ephemerial DF' )
-        #y_topgainers.tg_df1 = y_topgainers.tg_df0.sort_values(by='Pct_change', ascending=False ).head(10).copy(deep=True)    # create new DF via copy
-        #y_topgainers.tg_df1.rename(columns = {'Row':'ERank'}, inplace = True)    # Rank is more accurate for this Ephemerial DF
-        #y_topgainers.tg_df1.reset_index(inplace=True, drop=True)
+        logging.info('y_topgainers::build_top10() - Copy top 10 -> Ephemerial DF %s' % self.yti )
         self.tg_df1 = self.tg_df0.sort_values(by='Pct_change', ascending=False ).head(10).copy(deep=True)    # create new DF via copy
         self.tg_df1.rename(columns = {'Row':'ERank'}, inplace = True)    # Rank is more accurate for this Ephemerial DF
         self.tg_df1.reset_index(inplace=True, drop=True)
-        # print ( y_topgainers.tg_df1.sort_values(by='Pct_change', ascending=False ).head(10) )
+        return
+
+# method #7
+    def print_top10(self):
+        """Prints the Top 10 Dataframe"""
+        logging.info('y_topgainers::print_top10() - In %s' % self.yti )
+        pd.set_option('display.max_rows', None)
+        pd.set_option('max_colwidth', 30)
+        print ( self.tg_df1.sort_values(by='Pct_change', ascending=False ).head(10) )
         return
 
 # method #6
@@ -146,12 +152,12 @@ class y_topgainers:
         """Build the top 10x10x060 Ephemerial rankig gainers DataFrame"""
         """10x10x60 analysis is top 10 gaines every 10 seconds for 60 seconds"""
 
-        logging.info('y_topgainers::build_tenten60() - In' )
+        logging.info('y_topgainers::build_tenten60() - In %s' % self.yti )
         x = 1    # row counter Also leveraged for unique dataframe key
         self.tg_df2 = self.tg_df2.append(self.tg_df1, ignore_index=False)    # merge top 10 into
         self.tg_df2.reset_index(inplace=True, drop=True)
         x+=1
-        logging.info('y_topgainers::build_tenten60() - Done' )
+        logging.info('y_topgainers::build_tenten60() - Done %s' % self.yti )
         return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
 
 #######################################################################
@@ -159,7 +165,8 @@ class y_topgainers:
 #
 def do_nice_wait(topg_inst):
     """Threaded wait that does work to build out the 10x10x60 DataFrame"""
-    logging.info('y_topgainers::do_nice_wait() - In' )
+    logging.info('y_topgainers::do_nice_wait() - In %s' % topg_inst )
+    logging.info('y_topgainers::do_nice_wait() - In %s' % topg_inst.yti )
 
     for x in range(1, 6):    # loop 6 x, wait 10 sec, for a total of 60 seconds
         print ( "Build 10x10x60 -> cycle: ", x )
@@ -169,9 +176,9 @@ def do_nice_wait(topg_inst):
         topg_inst.build_tenten60()
         time.sleep(10)    # testing wait time = 5 secs
 
-    logging.info('y_topgainers::do_nice_wait() - emitting thread exit trigger' )
+    logging.info('y_topgainers::do_nice_wait() - emitting thread exit trigger %s' % topg_inst.yti )
     wait_trigger.set()
-    logging.info('y_topgainers::do_nice_wait() - Thread exit' )
+    logging.info('y_topgainers::do_nice_wait() - Thread exit %s' % topg_inst.yti )
     return      # dont know if this this requireed or good semantics?
 
 #######################################################################
@@ -203,20 +210,21 @@ def main():
     print ( " " )
 
 # 1st run through
-    stock_topgainers = y_topgainers()       # instantiate class
-    stock_topgainers.get_topg_data()        # extract data from finance.Yahoo.com
-    x = stock_topgainers.build_tg_df0()     # build full dataframe
+    stg1 = y_topgainers(1)       # instantiate class
+    stg1.get_topg_data()        # extract data from finance.Yahoo.com
+    x = stg1.build_tg_df0()     # build full dataframe
     print ( "1st run - Extracted", x, "- rows of data from finaince.yahoo.com" )
     #stock_topgainers.topg_listall()         # show full list
     print ( " ")
-    stock_topgainers.build_top10()           # show top 10
-    print ( stock_topgainers.tg_df1.sort_values(by='Pct_change', ascending=False ).head(10) )
+    #stock_topgainers.build_top10()           # show top 10
+    #stock_topgainers.print_top10()           # print it
+    stg1.topg_listall()
     print ( " ")
 
     # do 10x10x60 build-out cycle
     # this will fail to produce a fresh/unique data set as stock_topgainers is loaded via y_topgainers once.
     if args['bool_tenten60'] is True:
-        stg3 = y_topgainers()
+        stg3 = y_topgainers(2)
         thread = threading.Thread(target=do_nice_wait(stg3) )    # thread target passes class instance
         thread.start()         # initialize thread
         wait_trigger.wait()    # wait here for the trigger to be available before continuing
@@ -227,14 +235,15 @@ def main():
 
 # 2nd full run to test extraction theory
     print ( "##### Test 2nd run price differnce #####" )
-    stg2 = y_topgainers()                   # instantiate 2nd unique class
+    stg2 = y_topgainers(3)                   # instantiate 2nd unique class
     stg2.get_topg_data()                    # extract data from finance.Yahoo.com
     x2 = stg2.build_tg_df0()                # build full dataframe
     print ( "2nd run - Extracted", x2, "- rows of data from finaince.yahoo.com" )
     # stg2.topg_listall()                     # show full list
     # print ( " ")
-    stg2.build_top10()                      # show top 10
-    print ( stg2.tg_df1.sort_values(by='Pct_change', ascending=False ).head(10) )
+    #stg2.build_top10()                      # show top 10
+    #stg2.print_top10()           # print it
+    stg2.topg_listall()
     print ( " ")
 
     print ( "####### done #####")
