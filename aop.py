@@ -214,11 +214,9 @@ def main():
     stg1.get_topg_data()        # extract data from finance.Yahoo.com
     x = stg1.build_tg_df0()     # build full dataframe
     print ( "1st run - Extracted", x, "- rows of data from finaince.yahoo.com" )
-    #stock_topgainers.topg_listall()         # show full list
     print ( " ")
-    #stock_topgainers.build_top10()           # show top 10
-    #stock_topgainers.print_top10()           # print it
-    stg1.topg_listall()
+    stg1.build_top10()           # show top 10
+    stg1.print_top10()           # print it
     print ( " ")
 
     # do 10x10x60 build-out cycle
@@ -240,10 +238,8 @@ def main():
     x2 = stg2.build_tg_df0()                # build full dataframe
     print ( "2nd run - Extracted", x2, "- rows of data from finaince.yahoo.com" )
     # stg2.topg_listall()                     # show full list
-    # print ( " ")
-    #stg2.build_top10()                      # show top 10
-    #stg2.print_top10()           # print it
-    stg2.topg_listall()
+    stg2.build_top10()                      # show top 10
+    stg2.print_top10()           # print it
     print ( " ")
 
     print ( "####### done #####")
