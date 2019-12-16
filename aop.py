@@ -45,14 +45,14 @@ class y_topgainers:
         """Connect to finance.yahoo.com and extract (scrape) the raw sring data out of"""
         """the embedded webpage [Stock:Top Gainers] html data table. Returns a BS4 handle."""
 
-        logging.info('get_topg_data() - Inst #: %s' % self.yti )
+        logging.info('ins.#%s.get_topg_data() - IN' % self.yti )
         with urllib.request.urlopen("https://finance.yahoo.com/gainers/" ) as url:
             s = url.read()
-            logging.info('get_topg_data() - read html stream #: %s' % self.yti )
+            logging.info('ins.#%s.get_topg_data() - read html stream' % self.yti )
             self.soup = BeautifulSoup(s, "html.parser")
         # ATTR style search. Results -> Dict
         # <tr tag in target merkup line has a very complex 'class=' but the attributes are unique. e.g. 'simpTblRow' is just one unique attribute
-        logging.info('get_topg_data() - save data handle -> inst #: %s' % self.yti )
+        logging.info('ins.#%s.get_topg_data() - save data handle' % self.yti )
         self.all_tag_tr = self.soup.find_all(attrs={"class": "simpTblRow"})
 
         # target markup line I am scanning looks like this...
@@ -60,7 +60,7 @@ class y_topgainers:
 
         # Example CSS Selector
         #all_tag_tr1 = soup.select( "tr.simpTblRow.Bgc" )
-        logging.info('get_topg_data() - close url handle inst #: %s' % self.yti )
+        logging.info('ins.#%s.get_topg_data() - close url handle' % self.yti )
         url.close()
         return
 
@@ -69,9 +69,9 @@ class y_topgainers:
         """Build-out a fully populated Pandas DataFrame containg all the"""
         """extracted/scraped fields from the html/markup table data"""
         """Wrangle, clean/convert/format the data correctly."""
-        logging.info('build_tg_df0() - Inst #: %s' % self.yti )
+        logging.info('ins.#%s.build_tg_df0() - IN' % self.yti )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
-        logging.info('build_tg_df0() - Drop all rows from DF0 inst#: %s' % self.yti )
+        logging.info('ins.#%s.build_tg_df0() - Drop all rows from DF0' % self.yti )
         self.tg_df0.drop(self.tg_df0.index, inplace=True)
         x = 1    # row counter Also leveraged for unique dataframe key
         for datarow in self.all_tag_tr:
@@ -111,7 +111,7 @@ class y_topgainers:
             self.df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Time' ], index=[x] )
             self.tg_df0 = self.tg_df0.append(self.df0)    # append this ROW of data into the REAL DataFrame
             x+=1
-        logging.info('build_tg_df0() - Done inst #: %s' % self.yti )
+        logging.info('ins.#%s.build_tg_df0() - populated new DF0 dataset' % self.yti )
         return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
                         # sucess = lobal class accessor (y_topgainers.tg_df0) populated & updated
 
@@ -130,7 +130,7 @@ class y_topgainers:
         """Print the full DataFrame table list of Yahoo Finance Top Gainers"""
         """Sorted by % Change"""
         # stock_topgainers = get_topgainers()
-        logging.info('y_topgainers::topg_listall() - In %s' % self.yti )
+        logging.info('ins.#%s.topg_listall() - IN' % self.yti )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
         print ( self.tg_df0.sort_values(by='Pct_change', ascending=False ) )    # only do after fixtures datascience dataframe has been built
@@ -141,10 +141,10 @@ class y_topgainers:
         """Get top 10 gainers from main DF (df0) -> temp DF (df1)"""
         """df1 is ephemerial. Is allways overwritten on each run"""
 
-        logging.info('build_top10() - Inst #: %s' % self.yti )
-        logging.info('build_top10() - Drop all rows from DF1 inst#: %s' % self.yti )
+        logging.info('ins.#%s.build_top10() - IN' % self.yti )
+        logging.info('ins.#%s.build_top10() - Drop all rows from DF1' % self.yti )
         self.tg_df1.drop(self.tg_df1.index, inplace=True)
-        logging.info('build_top10() - Copy DF0 -> ephemerial DF1 inst#: %s' % self.yti )
+        logging.info('ins.#%s.build_top10() - Copy DF0 -> ephemerial DF1' % self.yti )
         self.tg_df1 = self.tg_df0.sort_values(by='Pct_change', ascending=False ).head(10).copy(deep=True)    # create new DF via copy of top 10 entries
         self.tg_df1.rename(columns = {'Row':'ERank'}, inplace = True)    # Rank is more accurate for this Ephemerial DF
         self.tg_df1.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
@@ -154,7 +154,7 @@ class y_topgainers:
     def print_top10(self):
         """Prints the Top 10 Dataframe"""
 
-        logging.info('print_top10() - In %s' % self.yti )
+        logging.info('ins.#%s.print_top10() - IN' % self.yti )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
         print ( self.tg_df1.sort_values(by='Pct_change', ascending=False ).head(10) )
@@ -165,7 +165,7 @@ class y_topgainers:
         """Build-up 10x10x060 historical DataFrame (df2) from source df1"""
         """Generally called on some kind of cycle"""
 
-        logging.info('build_tenten60() - Inst #: %s' % self.yti )
+        logging.info('ins.#%s.build_tenten60() - IN' % self.yti )
         self.tg_df2 = self.tg_df2.append(self.tg_df1, ignore_index=False)    # merge top 10 into
         self.tg_df2.reset_index(inplace=True, drop=True)    # ensure index is allways unique + sequential
         return
@@ -202,19 +202,19 @@ def do_nice_wait(topg_inst):
 def bkgrnd_worker():
     """Threaded wait that does work to build out the 10x10x60 DataFrame"""
     global work_inst
-    logging.info('bkgrnd_worker:: IN Thread - bkgrnd_worker()' )
-    logging.info('bkgrnd_worker:: Ref -> inst #: %s' % work_inst.yti )
+    logging.info('bkgrnd_worker() IN Thread - bkgrnd_worker()' )
+    logging.info('bkgrnd_worker() Ref -> inst #: %s' % work_inst.yti )
     for r in range(6):
-        logging.info('bkgrnd_worker:: cycle: %s' % r )
+        logging.info('bkgrnd_worker():: Loop: %s' % r )
         time.sleep(10)    # wait immediatley to let remote update
         work_inst.get_topg_data()        # extract data from finance.Yahoo.com
         work_inst.build_tg_df0()
         work_inst.build_top10()
         work_inst.build_tenten60(r)
 
-    logging.info('bkgrnd_worker:: EMIT exit trigger' )
+    logging.info('bkgrnd_worker() EMIT exit trigger' )
     extract_done.set()
-    logging.info('bkgrnd_worker:: EXIT thread inst #: %s' % work_inst.yti )
+    logging.info('bkgrnd_worker() EXIT thread inst #: %s' % work_inst.yti )
     return      # dont know if this this requireed or good semantics?
 
 #######################################################################
