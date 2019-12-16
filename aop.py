@@ -15,7 +15,7 @@ import threading
 logging.basicConfig(level=logging.INFO)
 
 # Threading globals
-wait_trigger = threading.Event()
+extract_done = threading.Event()
 yti = 1
 
 class y_topgainers:
@@ -27,6 +27,7 @@ class y_topgainers:
     tg_df2 = ""          # DataFrame - Top 10 ever 10 secs for 60 secs
     all_tag_tr = ""      # BS4 handle of the <tr> extracted data
     yti = 0
+    cycle = 0           # class thread loop counter
 
     def __init__(self, yti):
         logging.info('y_topgainers:: - init top_gainers instance: %s' % self )
@@ -129,18 +130,20 @@ class y_topgainers:
 
 # method #5
     def build_top10(self):
-        """Print the top 10 gainers only and store table in Ephemerial DataFrame"""
-        """The Ephemerial DF is allway overwritten every time this method runs"""
+        """Get top 10 gainers from main DF (df0) -> temp DF (df1)"""
+        """df1 is ephemerial. Is allways overwritten on each run"""
+
         logging.info('y_topgainers::build_top10() - In %s' % self )
         logging.info('y_topgainers::build_top10() - Copy top 10 -> Ephemerial DF %s' % self.yti )
-        self.tg_df1 = self.tg_df0.sort_values(by='Pct_change', ascending=False ).head(10).copy(deep=True)    # create new DF via copy
+        self.tg_df1 = self.tg_df0.sort_values(by='Pct_change', ascending=False ).head(10).copy(deep=True)    # create new DF via copy of top 10 entries
         self.tg_df1.rename(columns = {'Row':'ERank'}, inplace = True)    # Rank is more accurate for this Ephemerial DF
-        self.tg_df1.reset_index(inplace=True, drop=True)
+        self.tg_df1.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
         return
 
 # method #7
     def print_top10(self):
         """Prints the Top 10 Dataframe"""
+
         logging.info('y_topgainers::print_top10() - In %s' % self.yti )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
@@ -149,16 +152,14 @@ class y_topgainers:
 
 # method #6
     def build_tenten60(self):
-        """Build the top 10x10x060 Ephemerial rankig gainers DataFrame"""
-        """10x10x60 analysis is top 10 gaines every 10 seconds for 60 seconds"""
+        """Build the top 10x10x060 historical gainers DataFrame (df2)"""
+        """Generally called on some kind of cycle"""
 
         logging.info('y_topgainers::build_tenten60() - In %s' % self.yti )
-        x = 1    # row counter Also leveraged for unique dataframe key
         self.tg_df2 = self.tg_df2.append(self.tg_df1, ignore_index=False)    # merge top 10 into
         self.tg_df2.reset_index(inplace=True, drop=True)
-        x+=1
         logging.info('y_topgainers::build_tenten60() - Done %s' % self.yti )
-        return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
+        return
 
 #######################################################################
 # Global function #1
@@ -166,21 +167,25 @@ class y_topgainers:
 
 def do_nice_wait(topg_inst):
     """Threaded wait that does work to build out the 10x10x60 DataFrame"""
-    """Only called indirectly as target of thread.start() from main()"""
-    logging.info('y_topgainers::do_nice_wait() - In %s' % topg_inst )
-    logging.info('y_topgainers::do_nice_wait() - In %s' % topg_inst.yti )
-
-    for x in range(1, 6):    # loop 6 x, wait 10 sec, for a total of 60 seconds
-        print ( "Build 10x10x60 -> cycle: ", x )
+    logging.info('y_topgainers:: IN Thread - do_nice_wait()' )
+    logging.info('y_topgainers::do_nice_wait() -> inst: %s' % topg_inst.yti )
+    for r in range(6):
+        logging.info('y_topgainers::do_nice_wait() cycle: %s' % topg_inst.cycle )
+        time.sleep(5)    # wait immediatley to let remote update
         topg_inst.get_topg_data()        # extract data from finance.Yahoo.com
         topg_inst.build_tg_df0()
         topg_inst.build_top10()
         topg_inst.build_tenten60()
-        time.sleep(60)    # testing wait time = 5 secs
+        print ( ".", end="", flush=True )
+        topg_inst.cycle += 1    # adv loop cycle
 
-    logging.info('y_topgainers::do_nice_wait() - emitt thread exit trigger %s' % topg_inst.yti )
-    wait_trigger.set()
-    logging.info('y_topgainers::do_nice_wait() - Thread exit %s' % topg_inst.yti )
+        if topg_inst.cycle == 6:
+            logging.info('y_topgainers::do_nice_wait() - EMIT thread exit trigger' )
+            extract_done.set()
+
+    logging.info('y_topgainers::do_nice_wait() - Thread cycle: %s' % topg_inst.cycle )
+    logging.info('y_topgainers::do_nice_wait() - EXIT thread for inst %s' % topg_inst.yti )
+
     return      # dont know if this this requireed or good semantics?
 
 #######################################################################
@@ -221,14 +226,23 @@ def main():
     stg1.print_top10()           # print it
     print ( " ")
 
-# 60 second extract loop, 5 times for 5 mins...
-# 10x10x60 cycle
+# **THREAD** waiter
+    # do 10x10x60 build-out cycle
+    # this will fail to produce a fresh/unique data set as stock_topgainers is loaded via y_topgainers once.
     if args['bool_tenten60'] is True:
+        logging.info('y_topgainers:: INIT 10x10x60 main thread cycle' )
         stg3 = y_topgainers(2)
-        thread = threading.Thread(target=do_nice_wait(stg3) )    # wait target func -> passes class instance
-        thread.start()         # initlz thread
-        wait_trigger.wait()    # wait for trigger before continuing
-        # we have exited thread...
+        logging.info('y_topgainers:: START thread -> cycle: %s' % stg3.cycle)
+        print ( "Doing 10 sec data extract 6 times: ", end="" )
+        thread = threading.Thread(target=do_nice_wait(stg3) )    # thread target passes class instance
+        # # WARNING: thread.start() auto called in above setup function...
+        # # WARNING: start() exeutes the thread...
+
+        # logging.info('y_topgainers:: START 6x cycler... %s' % stg3.cycle )
+        # while not extract_done.wait(timeout=2):     # wait on thread completd trigger
+        #    print ( ".", end="", flush=True )
+
+        print ( " " )
         print ( stg3.tg_df2.sort_values(by='Pct_change', ascending=False ) )
     else:
         print ( "##### Not doing 10x10x60 run! #####" )
