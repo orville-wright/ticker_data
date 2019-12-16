@@ -13,6 +13,7 @@ import threading
 
 # logging setup
 logging.basicConfig(level=logging.INFO)
+work_inst = 0
 
 # Threading globals
 extract_done = threading.Event()
@@ -162,8 +163,7 @@ class y_topgainers:
         return
 
 #######################################################################
-# Global function #1
-#
+# Global thread function #1
 
 def do_nice_wait(topg_inst):
     """Threaded wait that does work to build out the 10x10x60 DataFrame"""
@@ -180,12 +180,32 @@ def do_nice_wait(topg_inst):
         topg_inst.cycle += 1    # adv loop cycle
 
         if topg_inst.cycle == 6:
-            logging.info('y_topgainers::do_nice_wait() - EMIT thread exit trigger' )
+            logging.info('y_topgainers::do_nice_wait() - EMIT exit trigger' )
             extract_done.set()
 
-    logging.info('y_topgainers::do_nice_wait() - Thread cycle: %s' % topg_inst.cycle )
-    logging.info('y_topgainers::do_nice_wait() - EXIT thread for inst %s' % topg_inst.yti )
+    logging.info('y_topgainers::do_nice_wait() - Cycle: %s' % topg_inst.cycle )
+    logging.info('y_topgainers::do_nice_wait() - EXIT thread inst: %s' % topg_inst.yti )
 
+    return      # dont know if this this requireed or good semantics?
+
+############# Test
+
+def bkgrnd_worker():
+    """Threaded wait that does work to build out the 10x10x60 DataFrame"""
+    global work_inst
+    logging.info('y_topgainers:: IN Thread - bkgrnd_worker()' )
+    logging.info('y_topgainers::bkgrnd_worker() -> inst: %s' % work_inst.yti )
+    for r in range(6):
+        logging.info('y_topgainers::do_nice_wait() cycle: %s' % r )
+        time.sleep(10)    # wait immediatley to let remote update
+        work_inst.get_topg_data()        # extract data from finance.Yahoo.com
+        work_inst.build_tg_df0()
+        work_inst.build_top10()
+        work_inst.build_tenten60()
+
+    logging.info('y_topgainers::do_nice_wait() - EMIT exit trigger' )
+    extract_done.set()
+    logging.info('y_topgainers::do_nice_wait() - EXIT thread inst: %s' % work_inst.yti )
     return      # dont know if this this requireed or good semantics?
 
 #######################################################################
@@ -226,24 +246,32 @@ def main():
     stg1.print_top10()           # print it
     print ( " ")
 
+########### ################
 # **THREAD** waiter
     # do 10x10x60 build-out cycle
-    # this will fail to produce a fresh/unique data set as stock_topgainers is loaded via y_topgainers once.
+    # currently fails to produce a unique data set each threat cycle. Don't know why
     if args['bool_tenten60'] is True:
         logging.info('y_topgainers:: INIT 10x10x60 main thread cycle' )
-        stg3 = y_topgainers(2)
-        logging.info('y_topgainers:: START thread -> cycle: %s' % stg3.cycle)
+        #stg3 = y_topgainers(2)
+        global work_inst
+        work_inst = y_topgainers(2)
+        #logging.info('y_topgainers:: START thread -> cycle: %s' % work_inst.cycle)
         print ( "Doing 10 sec data extract 6 times: ", end="" )
-        thread = threading.Thread(target=do_nice_wait(stg3) )    # thread target passes class instance
+        # setup thread
+        #thread = threading.Thread(target=do_nice_wait(stg3) )    # thread target passes class instance
+        #global work_inst = y_topgainers(2)
+        thread = threading.Thread(target=bkgrnd_worker)    # thread target passes class instance
+        thread.start()
         # # WARNING: thread.start() auto called in above setup function...
         # # WARNING: start() exeutes the thread...
 
+        print ( ".", end="", flush=True )
         # logging.info('y_topgainers:: START 6x cycler... %s' % stg3.cycle )
-        # while not extract_done.wait(timeout=2):     # wait on thread completd trigger
-        #    print ( ".", end="", flush=True )
+        while not extract_done.wait(timeout=5):     # wait on thread completd trigger
+            print ( ".", end="", flush=True )
 
         print ( " " )
-        print ( stg3.tg_df2.sort_values(by='Pct_change', ascending=False ) )
+        print ( work_inst.tg_df2.sort_values(by='Pct_change', ascending=False ) )
     else:
         print ( "##### Not doing 10x10x60 run! #####" )
 
