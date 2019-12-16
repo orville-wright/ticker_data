@@ -43,10 +43,10 @@ class y_topgainers:
 # method #1
     def get_topg_data(self):
         """Connect to finance.yahoo.com and extract (scrape) the raw sring data out of"""
-        """the Stock:Top Gainers html data table. Returns a BS4 handle."""
+        """the embedded webpage [Stock:Top Gainers] html data table. Returns a BS4 handle."""
 
         logging.info('get_topg_data() - Inst #: %s' % self.yti )
-        with urllib.request.urlopen("https://finance.yahoo.com/gainers/") as url:
+        with urllib.request.urlopen("https://finance.yahoo.com/gainers/" ) as url:
             s = url.read()
             logging.info('get_topg_data() - read html stream #: %s' % self.yti )
             self.soup = BeautifulSoup(s, "html.parser")
@@ -167,28 +167,12 @@ class y_topgainers:
 
         logging.info('build_tenten60() - Inst #: %s' % self.yti )
         self.tg_df2 = self.tg_df2.append(self.tg_df1, ignore_index=False)    # merge top 10 into
-        #self.tg_df2 = self.tg_df2.append(self.tg_df1, ignore_index=False).insert(loc=2, column="Time", value=time_now)    # merge top 10 into
-        # add new colums per run
-        # time
-        # run num
-        # code exmaples of COLUMN INSERT
-        # l_3.assign(Topmvr=l_3.index+1).sort_values(by='Rank', ascending=True) )    # add new column for TOP mover & resort back to RANK # lx2
-        # ds_hm_df5.insert(loc=0, value=ds_hm_data3, column=got_him )        # inset COLUMN
-        # ds_hm_df5 = ds_hm_df5.assign( TOTAL=new_col )    # add new ROW into existing DataFrame
-        # COLUMN total logic
-        #ds_hm_data3 = (pd.Series(ds_hm_data0, index=opp_team_name) )       # setup a series as data for COLUMN insertion
-        #ds_hm_df5.insert(loc=0, value=ds_hm_data3, column=got_him )        # inset COLUMN
-                #time_series = (pd.Series(self.tg_df1, index=ERank) )
-        # self.tg_df2 = self.tg_df2.assign(TIME=time_now, sort=True )
-        #self.tg_df2 = self.tg_df2.insert(now, sort=True )
-        self.tg_df2.reset_index(inplace=True, drop=True)
-        print ( "#### DEBUG ####" )
-        print ( self.tg_df2 )
-        logging.info('build_tenten60() - DF2 append done @: %s' % time_now )
+        self.tg_df2.reset_index(inplace=True, drop=True)    # ensure index is allways unique + sequential
         return
 
 #######################################################################
 # Global thread function #1
+# DEPRECATED
 
 def do_nice_wait(topg_inst):
     """Threaded wait that does work to build out the 10x10x60 DataFrame"""
@@ -291,6 +275,7 @@ def main():
         print ( "##### Not doing 10x10x60 run! #####" )
 
 # 3nd full run to test extraction theory
+    print ( " " )
     print ( "##### Test 2nd run price differnce #####" )
     stg2 = y_topgainers(3)                   # instantiate 2nd unique class
     stg2.get_topg_data()                    # extract data from finance.Yahoo.com
