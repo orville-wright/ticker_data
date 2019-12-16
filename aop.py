@@ -31,7 +31,8 @@ class y_topgainers:
     cycle = 0           # class thread loop counter
 
     def __init__(self, yti):
-        logging.info('y_topgainers:: - init top_gainers instance: %s' % self )
+        logging.info('y_topgainers:: INIT inst: %s' % self )
+        logging.info('y_topgainers:: Inst #: %s' % yti )    # catches 1st instantiate 0|1
         # init empty DataFrame with present colum names
         self.tg_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change'] )
         self.tg_df1 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change'] )
@@ -44,14 +45,14 @@ class y_topgainers:
         """Connect to finance.yahoo.com and extract (scrape) the raw sring data out of"""
         """the Stock:Top Gainers html data table. Returns a BS4 handle."""
 
-        logging.info('y_topgainers::get_topg_data() - In %s' % self.yti )
+        logging.info('y_topgainers::get_topg_data() - Inst #: %s' % self.yti )
         with urllib.request.urlopen("https://finance.yahoo.com/gainers/") as url:
             s = url.read()
-            logging.info('y_topgainers::get_topg_data() - read html markup stream %s' % self.yti )
+            logging.info('y_topgainers::get_topg_data() - read html stream #: %s' % self.yti )
             self.soup = BeautifulSoup(s, "html.parser")
         # ATTR style search. Results -> Dict
         # <tr tag in target merkup line has a very complex 'class=' but the attributes are unique. e.g. 'simpTblRow' is just one unique attribute
-        logging.info('y_topgainers::get_topg_data() - save extracted data -> global attr %s' % self.yti )
+        logging.info('y_topgainers::get_topg_data() - save data handle -> inst #: %s' % self.yti )
         self.all_tag_tr = self.soup.find_all(attrs={"class": "simpTblRow"})
 
         # target markup line I am scanning looks like this...
@@ -66,7 +67,7 @@ class y_topgainers:
         """Build-out a fully populated Pandas DataFrame containg all the"""
         """extracted/scraped fields from the html/markup table data"""
         """Wrangle, clean/convert/format the data correctly."""
-        logging.info('y_topgainers::build_tg_df0() - In %s' % self.yti )
+        logging.info('y_topgainers::build_tg_df0() - Inst #: %s' % self.yti )
         x = 1    # row counter Also leveraged for unique dataframe key
         for datarow in self.all_tag_tr:
             # 1st <td> cell : ticker symbol info & has comment of company name
@@ -104,7 +105,7 @@ class y_topgainers:
             self.df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change' ], index=[x] )
             self.tg_df0 = self.tg_df0.append(self.df0)    # append this ROW of data into the REAL DataFrame
             x+=1
-        logging.info('y_topgainers::build_tg_df0() - Done %s' % self.yti )
+        logging.info('y_topgainers::build_tg_df0() - Done inst #: %s' % self.yti )
         return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
                         # sucess = lobal class accessor (y_topgainers.tg_df0) populated & updated
 
@@ -134,8 +135,8 @@ class y_topgainers:
         """Get top 10 gainers from main DF (df0) -> temp DF (df1)"""
         """df1 is ephemerial. Is allways overwritten on each run"""
 
-        logging.info('y_topgainers::build_top10() - In %s' % self )
-        logging.info('y_topgainers::build_top10() - Copy top 10 -> Ephemerial DF %s' % self.yti )
+        logging.info('y_topgainers::build_top10() - Inst #: %s' % self.yti )
+        logging.info('y_topgainers::build_top10() - Copy DF0 -> Ephemerial DF1 in inst#: %s' % self.yti )
         self.tg_df1 = self.tg_df0.sort_values(by='Pct_change', ascending=False ).head(10).copy(deep=True)    # create new DF via copy of top 10 entries
         self.tg_df1.rename(columns = {'Row':'ERank'}, inplace = True)    # Rank is more accurate for this Ephemerial DF
         self.tg_df1.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
@@ -152,14 +153,31 @@ class y_topgainers:
         return
 
 # method #6
-    def build_tenten60(self):
-        """Build the top 10x10x060 historical gainers DataFrame (df2)"""
+    def build_tenten60(self, cycle):
+        """Build 10x10x060 historical gainers DataFrame (df2) from source df1"""
         """Generally called on some kind of cycle"""
 
-        logging.info('y_topgainers::build_tenten60() - In %s' % self.yti )
+        logging.info('y_topgainers::build_tenten60() - Inst #: %s' % self.yti )
+        time_now = time.strftime("%H:%M:%S", time.localtime() )
         self.tg_df2 = self.tg_df2.append(self.tg_df1, ignore_index=False)    # merge top 10 into
+        #self.tg_df2 = self.tg_df2.append(self.tg_df1, ignore_index=False).insert(loc=2, column="Time", value=time_now)    # merge top 10 into
+        # add new colums per run
+        # time
+        # run num
+        # code exmaples of COLUMN INSERT
+        # l_3.assign(Topmvr=l_3.index+1).sort_values(by='Rank', ascending=True) )    # add new column for TOP mover & resort back to RANK # lx2
+        # ds_hm_df5.insert(loc=0, value=ds_hm_data3, column=got_him )        # inset COLUMN
+        # ds_hm_df5 = ds_hm_df5.assign( TOTAL=new_col )    # add new ROW into existing DataFrame
+        # COLUMN total logic
+        #ds_hm_data3 = (pd.Series(ds_hm_data0, index=opp_team_name) )       # setup a series as data for COLUMN insertion
+        #ds_hm_df5.insert(loc=0, value=ds_hm_data3, column=got_him )        # inset COLUMN
+                #time_series = (pd.Series(self.tg_df1, index=ERank) )
+        # self.tg_df2 = self.tg_df2.assign(TIME=time_now, sort=True )
+        #self.tg_df2 = self.tg_df2.insert(now, sort=True )
+        print ( "#### DEBUG ####" )
+        print ( self.tg_df2 )
         self.tg_df2.reset_index(inplace=True, drop=True)
-        logging.info('y_topgainers::build_tenten60() - Done %s' % self.yti )
+        logging.info('y_topgainers::build_tenten60() - DF2 append done @: %s' % time_now )
         return
 
 #######################################################################
@@ -175,7 +193,7 @@ def do_nice_wait(topg_inst):
         topg_inst.get_topg_data()        # extract data from finance.Yahoo.com
         topg_inst.build_tg_df0()
         topg_inst.build_top10()
-        topg_inst.build_tenten60()
+        topg_inst.build_tenten60(r)     # pass along current cycle
         print ( ".", end="", flush=True )
         topg_inst.cycle += 1    # adv loop cycle
 
@@ -193,19 +211,19 @@ def do_nice_wait(topg_inst):
 def bkgrnd_worker():
     """Threaded wait that does work to build out the 10x10x60 DataFrame"""
     global work_inst
-    logging.info('y_topgainers:: IN Thread - bkgrnd_worker()' )
-    logging.info('y_topgainers::bkgrnd_worker() -> inst: %s' % work_inst.yti )
+    logging.info('bkgrnd_worker:: IN Thread - bkgrnd_worker()' )
+    logging.info('bkgrnd_worker:: Ref -> inst #: %s' % work_inst.yti )
     for r in range(6):
-        logging.info('y_topgainers::do_nice_wait() cycle: %s' % r )
+        logging.info('bkgrnd_worker:: cycle: %s' % r )
         time.sleep(10)    # wait immediatley to let remote update
         work_inst.get_topg_data()        # extract data from finance.Yahoo.com
         work_inst.build_tg_df0()
         work_inst.build_top10()
-        work_inst.build_tenten60()
+        work_inst.build_tenten60(r)
 
-    logging.info('y_topgainers::do_nice_wait() - EMIT exit trigger' )
+    logging.info('bkgrnd_worker:: EMIT exit trigger' )
     extract_done.set()
-    logging.info('y_topgainers::do_nice_wait() - EXIT thread inst: %s' % work_inst.yti )
+    logging.info('bkgrnd_worker:: EXIT thread inst #: %s' % work_inst.yti )
     return      # dont know if this this requireed or good semantics?
 
 #######################################################################
@@ -252,21 +270,11 @@ def main():
     # currently fails to produce a unique data set each threat cycle. Don't know why
     if args['bool_tenten60'] is True:
         logging.info('y_topgainers:: INIT 10x10x60 main thread cycle' )
-        #stg3 = y_topgainers(2)
         global work_inst
         work_inst = y_topgainers(2)
-        #logging.info('y_topgainers:: START thread -> cycle: %s' % work_inst.cycle)
         print ( "Doing 10 sec data extract 6 times: ", end="" )
-        # setup thread
-        #thread = threading.Thread(target=do_nice_wait(stg3) )    # thread target passes class instance
-        #global work_inst = y_topgainers(2)
         thread = threading.Thread(target=bkgrnd_worker)    # thread target passes class instance
         thread.start()
-        # # WARNING: thread.start() auto called in above setup function...
-        # # WARNING: start() exeutes the thread...
-
-        print ( ".", end="", flush=True )
-        # logging.info('y_topgainers:: START 6x cycler... %s' % stg3.cycle )
         while not extract_done.wait(timeout=5):     # wait on thread completd trigger
             print ( ".", end="", flush=True )
 
