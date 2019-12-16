@@ -163,8 +163,10 @@ class y_topgainers:
 #######################################################################
 # Global function #1
 #
+
 def do_nice_wait(topg_inst):
     """Threaded wait that does work to build out the 10x10x60 DataFrame"""
+    """Only called indirectly as target of thread.start() from main()"""
     logging.info('y_topgainers::do_nice_wait() - In %s' % topg_inst )
     logging.info('y_topgainers::do_nice_wait() - In %s' % topg_inst.yti )
 
@@ -174,9 +176,9 @@ def do_nice_wait(topg_inst):
         topg_inst.build_tg_df0()
         topg_inst.build_top10()
         topg_inst.build_tenten60()
-        time.sleep(10)    # testing wait time = 5 secs
+        time.sleep(60)    # testing wait time = 5 secs
 
-    logging.info('y_topgainers::do_nice_wait() - emitting thread exit trigger %s' % topg_inst.yti )
+    logging.info('y_topgainers::do_nice_wait() - emitt thread exit trigger %s' % topg_inst.yti )
     wait_trigger.set()
     logging.info('y_topgainers::do_nice_wait() - Thread exit %s' % topg_inst.yti )
     return      # dont know if this this requireed or good semantics?
@@ -219,19 +221,19 @@ def main():
     stg1.print_top10()           # print it
     print ( " ")
 
-    # do 10x10x60 build-out cycle
-    # this will fail to produce a fresh/unique data set as stock_topgainers is loaded via y_topgainers once.
+# 60 second extract loop, 5 times for 5 mins...
+# 10x10x60 cycle
     if args['bool_tenten60'] is True:
         stg3 = y_topgainers(2)
-        thread = threading.Thread(target=do_nice_wait(stg3) )    # thread target passes class instance
-        thread.start()         # initialize thread
-        wait_trigger.wait()    # wait here for the trigger to be available before continuing
+        thread = threading.Thread(target=do_nice_wait(stg3) )    # wait target func -> passes class instance
+        thread.start()         # initlz thread
+        wait_trigger.wait()    # wait for trigger before continuing
+        # we have exited thread...
         print ( stg3.tg_df2.sort_values(by='Pct_change', ascending=False ) )
     else:
         print ( "##### Not doing 10x10x60 run! #####" )
 
-
-# 2nd full run to test extraction theory
+# 3nd full run to test extraction theory
     print ( "##### Test 2nd run price differnce #####" )
     stg2 = y_topgainers(3)                   # instantiate 2nd unique class
     stg2.get_topg_data()                    # extract data from finance.Yahoo.com
