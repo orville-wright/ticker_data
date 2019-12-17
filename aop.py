@@ -274,7 +274,7 @@ def main():
 
         print ( " " )
         # print ( work_inst.tg_df2.sort_values(by=['Symbol','Time'], ascending=True ) )
-        print ( work_inst.tg_df2.sort_values(by='Symbol') )
+        print ( work_inst.tg_df2.sort_values(by=['ERank','Time'] ) )
 
     else:
         print ( "##### Not doing 10x10x60 run! #####" )
