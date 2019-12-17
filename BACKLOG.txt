@@ -1,0 +1,5 @@
+1. Trend Top10 symbols
+    - Cumulative ranked list of Top 10 ticker symbols per minute
+    - shows which symbols are up & coming & which are trailing off
+
+2. 
