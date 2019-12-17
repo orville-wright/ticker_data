@@ -245,6 +245,7 @@ def main():
     print ( parser.parse_args() )
     print ( " " )
 
+########### 1 ################
 # 1st run through
     stg1 = y_topgainers(1)       # instantiate class
     stg1.get_topg_data()        # extract data from finance.Yahoo.com
@@ -255,36 +256,26 @@ def main():
     stg1.print_top10()           # print it
     print ( " ")
 
-########### ################
+########### 2 ################
 # **THREAD** waiter
     # do 10x10x60 build-out cycle
     # currently fails to produce a unique data set each threat cycle. Don't know why
     if args['bool_tenten60'] is True:
-        logging.info('y_topgainers:: INIT 10x10x60 main thread cycle' )
+        print ( "Doing 10x10x60 cycle" )
+        logging.info('main() - Doing 10x10x60 thread cycle' )
         global work_inst
         work_inst = y_topgainers(2)
-        print ( "Doing 10 sec data extract 6 times: ", end="" )
         thread = threading.Thread(target=bkgrnd_worker)    # thread target passes class instance
+        logging.info('main() - START thread #1 > 10x10x60 cycler' )
+        print ( "Thread loop cycle: ", end="" )
         thread.start()
         while not extract_done.wait(timeout=5):     # wait on thread completd trigger
             print ( ".", end="", flush=True )
 
         print ( " " )
-        print ( work_inst.tg_df2.sort_values(by=['Pct_change','Time'], ascending=False ) )
+        print ( work_inst.tg_df2.sort_values(by=['ERank','Time'], ascending=True ) )
     else:
         print ( "##### Not doing 10x10x60 run! #####" )
-
-# 3nd full run to test extraction theory
-    print ( " " )
-    print ( "##### Test 2nd run price differnce #####" )
-    stg2 = y_topgainers(3)                   # instantiate 2nd unique class
-    stg2.get_topg_data()                    # extract data from finance.Yahoo.com
-    x2 = stg2.build_tg_df0()                # build full dataframe
-    print ( "2nd run - Extracted", x2, "- rows of data from finaince.yahoo.com" )
-    # stg2.topg_listall()                     # show full list
-    stg2.build_top10()                      # show top 10
-    stg2.print_top10()           # print it
-    print ( " ")
 
     print ( "####### done #####")
 
