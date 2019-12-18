@@ -1,5 +1,18 @@
+The focus is on the Top10 list
+    - because this tracks the hottest movers
+
 1. Trend Top10 symbols
-    - Cumulative ranked list of Top 10 ticker symbols per minute
+    - Cumulative ranked list (of the day)
+    - of Top 10 ticker symbols per minute
     - shows which symbols are up & coming & which are trailing off
 
-2. 
+2. Top10 Cold drop-offs
+    - referencing #1 -> call-out symbols that drop-off the Top10
+        - call-out...
+        - 2.1 slow drop-offs
+        - 2.2 Fast drop-offs
+
+3. Top10 Hot upstarts
+    - referencing #1 -> call-out symbols that appear on Top10
+    - all of a sudden, out of nowhere
+    - based on the previous Top10 list over the past X mins (def=10mins)
