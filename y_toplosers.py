@@ -42,7 +42,7 @@ class y_toplosers:
         """the embedded webpage [Stock:Top loserers] html data table. Returns a BS4 handle."""
 
         logging.info('ins.#%s.get_topg_data() - IN' % self.yti )
-        with urllib.request.urlopen("https://finance.yahoo.com/loserers/" ) as url:
+        with urllib.request.urlopen("https://finance.yahoo.com/losers/" ) as url:
             s = url.read()
             logging.info('ins.#%s.get_topg_data() - read html stream' % self.yti )
             self.soup = BeautifulSoup(s, "html.parser")
@@ -141,9 +141,10 @@ class y_toplosers:
         logging.info('ins.#%s.build_top10() - Drop all rows from DF1' % self.yti )
         self.tg_df1.drop(self.tg_df1.index, inplace=True)
         logging.info('ins.#%s.build_top10() - Copy DF0 -> ephemerial DF1' % self.yti )
-        self.tg_df1 = self.tg_df0.sort_values(by='Pct_change', ascending=False ).head(10).copy(deep=True)    # create new DF via copy of top 10 entries
-        self.tg_df1.rename(columns = {'Row':'ERank'}, inplace = True)    # Rank is more accurate for this Ephemerial DF
+        self.tg_df1 = self.tg_df0.sort_values(by='Pct_change', ascending=True ).head(10).copy(deep=True)    # create new DF via copy of top 10 entries
+        self.tg_df1.rename(columns = {'Row':'ERank'}, inplace = True)   # Rank is more accurate for this Ephemerial DF
         self.tg_df1.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
+        self.tg_df1 = self.tg_df1.sort_values(by='ERank', ascending=True )
         return
 
 # method #7

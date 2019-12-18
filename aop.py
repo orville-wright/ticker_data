@@ -16,6 +16,7 @@ logging.basicConfig(level=logging.INFO)
 
 # my private classes & methods
 from y_topgainers import y_topgainers
+from y_toplosers import y_toplosers
 
 # Globals
 work_inst = 0
@@ -106,7 +107,7 @@ def main():
     stg1 = y_topgainers(1)       # instantiate class
     stg1.get_topg_data()        # extract data from finance.Yahoo.com
     x = stg1.build_tg_df0()     # build full dataframe
-    print ( "1st run - Extracted", x, "- rows of data from finaince.yahoo.com" )
+    print ( "1st run - Top Gainers - Extracted", x, "- rows of data from finaince.yahoo.com" )
     print ( " ")
     stg1.build_top10()           # show top 10
     stg1.print_top10()           # print it
@@ -134,6 +135,18 @@ def main():
 
     else:
         print ( "##### Not doing 10x10x60 run! #####" )
+
+########### 3 - TOP LOSERS ################
+# 1st run through
+    stg3 = y_toplosers(1)       # instantiate class
+    stg3.get_topg_data()        # extract data from finance.Yahoo.com
+    x = stg3.build_tg_df0()     # build full dataframe
+    print ( "3rd run - Top Losers - Extracted", x, "- rows of data from finaince.yahoo.com" )
+    print ( " ")
+    stg3.build_top10()           # show top 10
+    stg3.print_top10()           # print it
+    print ( " ")
+
 
     print ( "####### done #####")
 
