@@ -16,3 +16,5 @@ The focus is on the Top10 list
     - referencing #1 -> call-out symbols that appear on Top10
     - all of a sudden, out of nowhere
     - based on the previous Top10 list over the past X mins (def=10mins)
+
+4.  Top10 Losers
