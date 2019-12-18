@@ -144,7 +144,7 @@ class y_toplosers:
         self.tg_df1 = self.tg_df0.sort_values(by='Pct_change', ascending=True ).head(10).copy(deep=True)    # create new DF via copy of top 10 entries
         self.tg_df1.rename(columns = {'Row':'ERank'}, inplace = True)   # Rank is more accurate for this Ephemerial DF
         self.tg_df1.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
-        self.tg_df1 = self.tg_df1.sort_values(by='ERank', ascending=True )
+        self.tg_df1 = self.tg_df1.sort_values(by='Pct_change', ascending=True)
         return
 
 # method #7
