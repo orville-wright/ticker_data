@@ -58,19 +58,19 @@ def do_nice_wait(topg_inst):
 def bkgrnd_worker():
     """Threaded wait that does work to build out the 10x10x60 DataFrame"""
     global work_inst
-    logging.info('bkgrnd_worker() IN Thread - bkgrnd_worker()' )
-    logging.info('bkgrnd_worker() Ref -> inst #: %s' % work_inst.yti )
+    logging.info('main::bkgrnd_worker() IN Thread - bkgrnd_worker()' )
+    logging.info('main::bkgrnd_worker() Ref -> inst #: %s' % work_inst.yti )
     for r in range(6):
-        logging.info('bkgrnd_worker():: Loop: %s' % r )
+        logging.info('main::bkgrnd_worker():: Loop: %s' % r )
         time.sleep(10)    # wait immediatley to let remote update
         work_inst.get_topg_data()        # extract data from finance.Yahoo.com
         work_inst.build_tg_df0()
         work_inst.build_top10()
         work_inst.build_tenten60(r)
 
-    logging.info('bkgrnd_worker() EMIT exit trigger' )
+    logging.info('main::bkgrnd_worker() EMIT exit trigger' )
     extract_done.set()
-    logging.info('bkgrnd_worker() EXIT thread inst #: %s' % work_inst.yti )
+    logging.info('main::bkgrnd_worker() EXIT thread inst #: %s' % work_inst.yti )
     return      # dont know if this this requireed or good semantics?
 
 #######################################################################
