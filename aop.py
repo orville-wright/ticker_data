@@ -61,9 +61,9 @@ def bkgrnd_worker():
     global work_inst
     logging.info('main::bkgrnd_worker() IN Thread - bkgrnd_worker()' )
     logging.info('main::bkgrnd_worker() Ref -> inst #: %s' % work_inst.yti )
-    for r in range(6):
+    for r in range(4):
         logging.info('main::bkgrnd_worker():: Loop: %s' % r )
-        time.sleep(10)    # wait immediatley to let remote update
+        time.sleep(30)    # wait immediatley to let remote update
         work_inst.get_topg_data()        # extract data from finance.Yahoo.com
         work_inst.build_tg_df0()
         work_inst.build_top10()
