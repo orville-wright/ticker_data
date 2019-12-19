@@ -107,8 +107,6 @@ def main():
     stg1 = y_topgainers(1)       # instantiate class
     stg1.get_topg_data()        # extract data from finance.Yahoo.com
     x = stg1.build_tg_df0()     # build full dataframe
-    print ( "1st run - Top Gainers - Extracted", x, "- rows of data from finaince.yahoo.com" )
-    print ( " ")
     stg1.build_top10()           # show top 10
     stg1.print_top10()           # print it
     print ( " ")
@@ -118,7 +116,7 @@ def main():
     # do 10x10x60 build-out cycle
     # currently fails to produce a unique data set each threat cycle. Don't know why
     if args['bool_tenten60'] is True:
-        print ( "Doing 10x10x60 cycle" )
+        print ( "Doing 10x10x60 loop cycle" )
         logging.info('main() - Doing 10x10x60 thread cycle' )
         global work_inst
         work_inst = y_topgainers(2)
@@ -134,14 +132,13 @@ def main():
         print ( work_inst.tg_df2.sort_values(by=['ERank','Time'] ) )
 
     else:
-        print ( "##### Not doing 10x10x60 run! #####" )
+        print ( " " )
 
 ########### 3 - TOP LOSERS ################
 # 1st run through
     stg3 = y_toplosers(1)       # instantiate class
     stg3.get_topg_data()        # extract data from finance.Yahoo.com
     x = stg3.build_tg_df0()     # build full dataframe
-    print ( "3rd run - Top Losers - Extracted", x, "- rows of data from finaince.yahoo.com" )
     print ( " ")
     stg3.build_top10()           # show top 10
     stg3.print_top10()           # print it
