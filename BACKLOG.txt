@@ -12,9 +12,26 @@ The focus is on the Top10 list
         - 2.1 slow drop-offs
         - 2.2 Fast drop-offs
 
-3. Top10 Hot upstarts
+3. Top10 Hot new upstarts
     - referencing #1 -> call-out symbols that appear on Top10
     - all of a sudden, out of nowhere
     - based on the previous Top10 list over the past X mins (def=10mins)
+        - Fast jumpers (symbol quickly appears in high ranked pos, not 10th )
+        - Slow crawlers (symbol creeps in at 10th & moves up, 9th, 8th, 7th...)
 
 4.  Top10 Losers
+
+5.  Fast Migrations
+    - Symbol moves Top10 Gainers -> Top10 Losers in same day
+        - Sign of major problem with stock
+    - Symbol moves from Top10 Losers -> Top10 Gainers in same day
+        - Sign of hot stock
+
+6.  Big swingers
+    - Symbol has rapid big high/low swings in very short periods
+
+7.  How to use Filters on finance.yahoo.com URL
+    - for alt data extraction criteria, especially...
+        - Market cap (smaller MCcap's have greater intraday volatility)
+        - Intraday volume
+        - sorted by % gain, then Cur_price with range filtering ($10-$50)
