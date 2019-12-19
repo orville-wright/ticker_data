@@ -102,8 +102,9 @@ def main():
     print ( parser.parse_args() )
     print ( " " )
 
-########### 1 ################
+########### 1 - TOP GAINERS ################
 # 1st run through
+    print ( "========== Top 10 Gainers ==========" )
     stg1 = y_topgainers(1)       # instantiate class
     stg1.get_topg_data()        # extract data from finance.Yahoo.com
     x = stg1.build_tg_df0()     # build full dataframe
@@ -111,12 +112,22 @@ def main():
     stg1.print_top10()           # print it
     print ( " ")
 
-########### 2 ################
+########### 2 - TOP LOSERS ################
+# 1st run through
+    print ( "========== Top 10 Losers ==========" )
+    stg3 = y_toplosers(1)       # instantiate class
+    stg3.get_topg_data()        # extract data from finance.Yahoo.com
+    x = stg3.build_tg_df0()     # build full dataframe
+    stg3.build_top10()           # show top 10
+    stg3.print_top10()           # print it
+    print ( " ")
+
+########### 3 10x10x60 ################
 # **THREAD** waiter
     # do 10x10x60 build-out cycle
     # currently fails to produce a unique data set each threat cycle. Don't know why
     if args['bool_tenten60'] is True:
-        print ( "Doing 10x10x60 loop cycle" )
+        print ( "Doing 10x10x60 Gainers loop cycle" )
         logging.info('main() - Doing 10x10x60 thread cycle' )
         global work_inst
         work_inst = y_topgainers(2)
@@ -133,17 +144,6 @@ def main():
 
     else:
         print ( " " )
-
-########### 3 - TOP LOSERS ################
-# 1st run through
-    stg3 = y_toplosers(1)       # instantiate class
-    stg3.get_topg_data()        # extract data from finance.Yahoo.com
-    x = stg3.build_tg_df0()     # build full dataframe
-    print ( " ")
-    stg3.build_top10()           # show top 10
-    stg3.print_top10()           # print it
-    print ( " ")
-
 
     print ( "####### done #####")
 
