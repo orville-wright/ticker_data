@@ -9,6 +9,8 @@ import logging
 import argparse
 import time
 import threading
+import types
+import inspect
 
 # logging setup
 logging.basicConfig(level=logging.INFO)
@@ -27,8 +29,9 @@ class y_toplosers:
     cycle = 0           # class thread loop counter
 
     def __init__(self, yti):
-        logging.info('y_toplosers:: INIT inst: %s' % self )
-        logging.info('y_toplosers:: Inst #: %s' % yti )    # catches 1st instantiate 0|1
+        cmi_debug = __name__+"::"+self.__init__.__name__
+        logging.info('%s - INSTANTIATE' % cmi_debug )
+        #logging.info('y_toplosers:: Inst #: %s' % yti )    # catches 1st instantiate 0|1
         # init empty DataFrame with present colum names
         self.tg_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Time'] )
         self.tg_df1 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Time'] )
@@ -41,14 +44,15 @@ class y_toplosers:
         """Connect to finance.yahoo.com and extract (scrape) the raw sring data out of"""
         """the embedded webpage [Stock:Top loserers] html data table. Returns a BS4 handle."""
 
-        logging.info('ins.#%s.get_topg_data() - IN' % self.yti )
+        cmi_debug = __name__+"::"+self.get_topg_data.__name__+".#"+str(self.yti)
+        logging.info('%s - IN' % cmi_debug )
         with urllib.request.urlopen("https://finance.yahoo.com/losers/" ) as url:
             s = url.read()
-            logging.info('ins.#%s.get_topg_data() - read html stream' % self.yti )
+            logging.info('%s - read html stream' % cmi_debug )
             self.soup = BeautifulSoup(s, "html.parser")
         # ATTR style search. Results -> Dict
         # <tr tag in target merkup line has a very complex 'class=' but the attributes are unique. e.g. 'simpTblRow' is just one unique attribute
-        logging.info('ins.#%s.get_topg_data() - save data handle' % self.yti )
+        logging.info('%s - save data handle' % cmi_debug )
         self.all_tag_tr = self.soup.find_all(attrs={"class": "simpTblRow"})
 
         # target markup line I am scanning looks like this...
@@ -56,7 +60,7 @@ class y_toplosers:
 
         # Example CSS Selector
         #all_tag_tr1 = soup.select( "tr.simpTblRow.Bgc" )
-        logging.info('ins.#%s.get_topg_data() - close url handle' % self.yti )
+        logging.info('%s - close url handle' % cmi_debug )
         url.close()
         return
 
@@ -65,9 +69,11 @@ class y_toplosers:
         """Build-out a fully populated Pandas DataFrame containg all the"""
         """extracted/scraped fields from the html/markup table data"""
         """Wrangle, clean/convert/format the data correctly."""
-        logging.info('ins.#%s.build_tg_df0() - IN' % self.yti )
+
+        cmi_debug = __name__+"::"+self.build_tg_df0.__name__+".#"+str(self.yti)
+        logging.info('%s - IN' % cmi_debug )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
-        logging.info('ins.#%s.build_tg_df0() - Drop all rows from DF0' % self.yti )
+        logging.info('%s - Drop all rows from DF0' % cmi_debug )
         self.tg_df0.drop(self.tg_df0.index, inplace=True)
         x = 1    # row counter Also leveraged for unique dataframe key
         for datarow in self.all_tag_tr:
@@ -107,7 +113,7 @@ class y_toplosers:
             self.df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Time' ], index=[x] )
             self.tg_df0 = self.tg_df0.append(self.df0)    # append this ROW of data into the REAL DataFrame
             x+=1
-        logging.info('ins.#%s.build_tg_df0() - populated new DF0 dataset' % self.yti )
+        logging.info('%s - populated new DF0 dataset' % cmi_debug )
         return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
                         # sucess = lobal class accessor (y_toplosers.tg_df0) populated & updated
 
@@ -125,8 +131,9 @@ class y_toplosers:
     def topg_listall(self):
         """Print the full DataFrame table list of Yahoo Finance Top loserers"""
         """Sorted by % Change"""
-        # stock_toploserers = get_toploserers()
-        logging.info('ins.#%s.topg_listall() - IN' % self.yti )
+
+        cmi_debug = __name__+"::"+self.topg_listall.__name__+".#"+str(self.yti)
+        logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
         print ( self.tg_df0.sort_values(by='Pct_change', ascending=False ) )    # only do after fixtures datascience dataframe has been built
@@ -137,24 +144,25 @@ class y_toplosers:
         """Get top 10 loserers from main DF (df0) -> temp DF (df1)"""
         """df1 is ephemerial. Is allways overwritten on each run"""
 
-        logging.info('ins.#%s.build_top10() - IN' % self.yti )
-        logging.info('ins.#%s.build_top10() - Drop all rows from DF1' % self.yti )
+        cmi_debug = __name__+"::"+self.build_top10.__name__+".#"+str(self.yti)
+        logging.info('%s - IN' % cmi_debug )
+        logging.info('%s - Drop all rows from DF1' % cmi_debug )
         self.tg_df1.drop(self.tg_df1.index, inplace=True)
-        logging.info('ins.#%s.build_top10() - Copy DF0 -> ephemerial DF1' % self.yti )
+        logging.info('%s - Copy DF0 -> ephemerial DF1' % cmi_debug )
         self.tg_df1 = self.tg_df0.sort_values(by='Pct_change', ascending=True ).head(10).copy(deep=True)    # create new DF via copy of top 10 entries
         self.tg_df1.rename(columns = {'Row':'ERank'}, inplace = True)   # Rank is more accurate for this Ephemerial DF
         self.tg_df1.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
-        self.tg_df1 = self.tg_df1.sort_values(by='Pct_change', ascending=True)
         return
 
 # method #7
     def print_top10(self):
         """Prints the Top 10 Dataframe"""
 
-        logging.info('ins.#%s.print_top10() - IN' % self.yti )
+        cmi_debug = __name__+"::"+self.print_top10.__name__+".#"+str(self.yti)
+        logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
-        print ( self.tg_df1.sort_values(by='Pct_change', ascending=False ).head(10) )
+        print ( self.tg_df1.sort_values(by='Pct_change', ascending=True ).head(10) )
         return
 
 # method #6
@@ -162,7 +170,8 @@ class y_toplosers:
         """Build-up 10x10x060 historical DataFrame (df2) from source df1"""
         """Generally called on some kind of cycle"""
 
-        logging.info('ins.#%s.build_tenten60() - IN' % self.yti )
+        cmi_debug = __name__+"::"+self.build_tenten60.__name__+".#"+str(self.yti)
+        logging.info('%s - IN' % cmi_debug )
         self.tg_df2 = self.tg_df2.append(self.tg_df1, ignore_index=False)    # merge top 10 into
         self.tg_df2.reset_index(inplace=True, drop=True)    # ensure index is allways unique + sequential
         return
