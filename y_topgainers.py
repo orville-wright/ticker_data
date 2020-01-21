@@ -109,7 +109,7 @@ class y_topgainers:
                        np.float(re.sub('\,', '', price)), \
                        np.float(re.sub('[\+,]', '', change)), \
                        np.float(re.sub('[\+%]', '', pct)), \
-                       np.float(re.sub('[BM]', '', mktcap)), \
+                       np.float(re.sub('[BMN\/A]', '', mktcap)), \
                        time_now ]]
 
             self.df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'Time' ], index=[x] )
