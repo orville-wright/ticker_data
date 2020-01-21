@@ -33,9 +33,9 @@ class y_toplosers:
         logging.info('%s - INSTANTIATE' % cmi_debug )
         #logging.info('y_toplosers:: Inst #: %s' % yti )    # catches 1st instantiate 0|1
         # init empty DataFrame with present colum names
-        self.tg_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Time'] )
-        self.tg_df1 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Time'] )
-        self.tg_df2 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Time'] )
+        self.tg_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'Time'] )
+        self.tg_df1 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change' 'Mkt_cap', 'Time'] )
+        self.tg_df2 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change' 'Mkt_cap', 'Time'] )
         self.yti = yti
         return
 
@@ -91,6 +91,9 @@ class y_toplosers:
             price = next(extr_strings)
             change = next(extr_strings)
             pct = next(extr_strings)
+            vol = next(extr_strings)
+            avg_vol = next(extr_strings)
+            mktcap = next(extr_strings)
 
             co_sym_lj = np.char.ljust(co_sym, 6)       # use numpy to left justify TXT in pandas DF
             co_name_lj = np.char.ljust(co_name, 20)    # use numpy to left justify TXT in pandas DF
@@ -101,6 +104,7 @@ class y_toplosers:
             #    price - stip out any thousand "," seperators and cast as true decimal via numpy
             #    change - strip out chars '+' and ',' and cast as true decimal via numpy
             #    pct - strip out chars '+ and %' and cast as true decimal via numpy
+            #    mktcap - strio out 'B' Billions & 'M' Millions
             self.data0 = [[ \
                        x, \
                        co_sym_lj, \
@@ -108,9 +112,10 @@ class y_toplosers:
                        np.float(re.sub('\,', '', price)), \
                        np.float(re.sub('[\+,]', '', change)), \
                        np.float(re.sub('[\+%]', '', pct)), \
+                       np.float(re.sub('[BM]', '', mktcap)), \
                        time_now ]]
 
-            self.df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Time' ], index=[x] )
+            self.df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'Time' ], index=[x] )
             self.tg_df0 = self.tg_df0.append(self.df0)    # append this ROW of data into the REAL DataFrame
             x+=1
         logging.info('%s - populated new DF0 dataset' % cmi_debug )

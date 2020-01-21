@@ -30,9 +30,9 @@ class y_topgainers:
         logging.info('y_topgainers:: INIT inst: %s' % self )
         logging.info('y_topgainers:: Inst #: %s' % yti )    # catches 1st instantiate 0|1
         # init empty DataFrame with present colum names
-        self.tg_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Time'] )
-        self.tg_df1 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Time'] )
-        self.tg_df2 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Time'] )
+        self.tg_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'Time'] )
+        self.tg_df1 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'Time'] )
+        self.tg_df2 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'Time'] )
         self.yti = yti
         return
 
@@ -71,12 +71,15 @@ class y_topgainers:
         self.tg_df0.drop(self.tg_df0.index, inplace=True)
         x = 1    # row counter Also leveraged for unique dataframe key
         for datarow in self.all_tag_tr:
-            # 1st <td> cell : ticker symbol info & has comment of company name
-            # 2nd <td> cell : company name
-            # 3rd <td> cell : price
-            # 4th <td> cell : $ change
-            # 5th <td> cell : % change
-            # more cells in <tr> data row...but I'm not interested in them at moment.
+            # 1st <td> : ticker symbol info & has comment of company name
+            # 2nd <td> : company name
+            # 3rd <td> : price
+            # 4th <td> : $ change
+            # 5th <td> : % change
+            # 6th <td> : volume
+            # 6th <td> : Avg. vol over 3 months)
+            # 7th <td> : Market cap
+            # 8th <td> : PE ratio
 
             # BS4 generator object comes from "extracted strings" BS4 operation (nice)
             extr_strings = datarow.stripped_strings
@@ -85,6 +88,9 @@ class y_topgainers:
             price = next(extr_strings)
             change = next(extr_strings)
             pct = next(extr_strings)
+            vol = next(extr_strings)
+            avg_vol = next(extr_strings)
+            mktcap = next(extr_strings)
 
             co_sym_lj = np.char.ljust(co_sym, 6)       # use numpy to left justify TXT in pandas DF
             co_name_lj = np.char.ljust(co_name, 20)    # use numpy to left justify TXT in pandas DF
@@ -95,6 +101,7 @@ class y_topgainers:
             #    price - stip out any thousand "," seperators and cast as true decimal via numpy
             #    change - strip out chars '+' and ',' and cast as true decimal via numpy
             #    pct - strip out chars '+ and %' and cast as true decimal via numpy
+            #    mktcap - strio out 'B' Billions & 'M' Millions
             self.data0 = [[ \
                        x, \
                        co_sym_lj, \
@@ -102,9 +109,10 @@ class y_topgainers:
                        np.float(re.sub('\,', '', price)), \
                        np.float(re.sub('[\+,]', '', change)), \
                        np.float(re.sub('[\+%]', '', pct)), \
+                       np.float(re.sub('[BM]', '', mktcap)), \
                        time_now ]]
 
-            self.df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Time' ], index=[x] )
+            self.df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'Time' ], index=[x] )
             self.tg_df0 = self.tg_df0.append(self.df0)    # append this ROW of data into the REAL DataFrame
             x+=1
         logging.info('ins.#%s.build_tg_df0() - populated new DF0 dataset' % self.yti )
