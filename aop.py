@@ -148,7 +148,7 @@ def main():
 
 ########### SCREENER 1 ################
 # 1st run through
-    print ( "========== Screener: Day Gainers > 5% & > $750M Mkt-cap ==========" )
+    print ( "========== Screener: SMALL CAP Day Gainers : +5% & > $750M Mkt-cap ==========" )
     scrn1 = screener_dg1(1)       # instantiate class
     scrn1.get_data()        # extract data from finance.Yahoo.com
     x = scrn1.build_df0()     # build full dataframe

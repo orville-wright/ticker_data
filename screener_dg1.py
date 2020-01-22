@@ -206,6 +206,7 @@ class screener_dg1:
         """ 2. exclude any company with Market Cap < $750M """
         """ 3. manage company's with Market cap in BILLION's (requires special handeling) """
         """ 3. exclude any comany with %gain less than 5% """
+        """ 4. SMALL CAP stocks only - Excludes Medium. Large, Mega cap companies!!"""
 
         cmi_debug = __name__+"::"+self.screen_logic.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
