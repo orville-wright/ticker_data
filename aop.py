@@ -17,6 +17,7 @@ logging.basicConfig(level=logging.INFO)
 # my private classes & methods
 from y_topgainers import y_topgainers
 from y_toplosers import y_toplosers
+from screener_dg1 import screener_dg1
 
 # Globals
 work_inst = 0
@@ -144,6 +145,18 @@ def main():
 
     else:
         print ( " " )
+
+########### SCREENER 1 ################
+# 1st run through
+    print ( "========== Screener: Day Gainers  ==========" )
+    scrn1 = screener_dg1(1)       # instantiate class
+    scrn1.get_data()        # extract data from finance.Yahoo.com
+    x = scrn1.build_df0()     # build full dataframe
+    # scrn1.build_top10()           # show top 10
+    # scrn1.print_top10()           # print it
+    scrn1.screen_logic()
+    print ( " ")
+
 
     print ( "####### done #####")
 

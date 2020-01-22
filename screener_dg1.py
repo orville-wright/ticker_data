@@ -43,18 +43,18 @@ class screener_dg1:
         return
 
 # method #1
-    def get_dg1_data(self):
+    def get_data(self):
         """Connect to finance.yahoo.com and extract (scrape) the raw sring data out of"""
         """the embedded/precanned webpage screener html data table. Returns a BS4 handle."""
 
-        logging.info('ins.#%s.get_dg1_data() - IN' % self.yti )
-        with urllib.request.urlopen("https://finance.yahoo.com/screener/predefined/day_gainers" ) as url:
+        logging.info('ins.#%s.get_data() - IN' % self.yti )
+        with urllib.request.urlopen("https://finance.yahoo.com/screener/predefined/small_cap_gainers" ) as url:
             s = url.read()
-            logging.info('ins.#%s.get_dg1_data() - read html stream' % self.yti )
+            logging.info('ins.#%s.get_data() - read html stream' % self.yti )
             self.soup = BeautifulSoup(s, "html.parser")
         # ATTR style search. Results -> Dict
         # <tr tag in target merkup line has a very complex 'class=' but the attributes are unique. e.g. 'simpTblRow' is just one unique attribute
-        logging.info('ins.#%s.get_dg1_data() - save data handle' % self.yti )
+        logging.info('ins.#%s.get_data() - save data handle' % self.yti )
         self.all_tag_tr = self.soup.find_all(attrs={"class": "simpTblRow"})
 
         # target markup line I am scanning looks like this...
@@ -62,17 +62,17 @@ class screener_dg1:
 
         # Example CSS Selector
         #all_tag_tr1 = soup.select( "tr.simpTblRow.Bgc" )
-        logging.info('ins.#%s.get_dg1_data() - close url handle' % self.yti )
+        logging.info('ins.#%s.get_data() - close url handle' % self.yti )
         url.close()
         return
 
 # method #2
-    def build_dg1_df0(self):
+    def build_df0(self):
         """Build-out a fully populated Pandas DataFrame containg all the"""
         """extracted/scraped fields from the html/markup table data"""
         """Wrangle, clean/convert/format the data correctly."""
 
-        cmi_debug = __name__+"::"+self.build_dg1_df0.__name__+".#"+str(self.yti)
+        cmi_debug = __name__+"::"+self.build_df0.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         logging.info('%s - Drop all rows from DF0' % cmi_debug )
@@ -117,7 +117,7 @@ class screener_dg1:
                        np.float(re.sub('\,', '', price)), \
                        np.float(re.sub('[\+,]', '', change)), \
                        np.float(re.sub('[\+%]', '', pct)), \
-                       np.float(re.sub('[BMN\/A]', '', mktcap)), \
+                       np.float(re.sub('[BMN\/A]', '0', mktcap)), \
                        time_now ]]
 
             self.df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'Time' ], index=[x] )
@@ -138,23 +138,24 @@ class screener_dg1:
         return
 
 # method #4
-    def dg1_top_listall(self):
+    def listall(self):
         """Print the full DataFrame table list of precanned screener: DAY GAINERS"""
         """Sorted by % Change"""
         # stock_topgainers = get_topgainers()
-        cmi_debug = __name__+"::"+self.dg1_top_listall.__name__+".#"+str(self.yti)
+        cmi_debug = __name__+"::"+self.listall.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
-        print ( self.dg1_df0.sort_values(by='Pct_change', ascending=False ) )    # only do after fixtures datascience dataframe has been built
+        #print ( self.dg1_df0.sort_values(by='Pct_change', ascending=False ) )
+        print ( self.dg1_df0.sort_values(by='Row', ascending=True ) )
         return
 
 # method #5
-    def dg1_build_top10(self):
+    def build_top10(self):
         """Get top 10 enteries from main DF (df0) -> temp DF (df1)"""
         """df1 is ephemerial. Is allways overwritten on each run"""
 
-        cmi_debug = __name__+"::"+self.dg1_build_top10.__name__+".#"+str(self.yti)
+        cmi_debug = __name__+"::"+self.build_top10.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         logging.info('%s - Drop all rows from DF1' % cmi_debug )
         self.dg1_df1.drop(self.dg1_df1.index, inplace=True)
@@ -165,10 +166,10 @@ class screener_dg1:
         return
 
 # method #7
-    def dg1_print_top10(self):
+    def print_top10(self):
         """Prints the Top 10 Dataframe"""
 
-        cmi_debug = __name__+"::"+self.dg1_print_top10.__name__+".#"+str(self.yti)
+        cmi_debug = __name__+"::"+self.print_top10.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
@@ -176,12 +177,27 @@ class screener_dg1:
         return
 
 # method #6
-    def dg1_build_10ten60(self, cycle):
+    def build_10ten60(self, cycle):
         """Build-up 10x10x060 historical DataFrame (df2) from source df1"""
         """Generally called on some kind of cycle"""
 
-        cmi_debug = __name__+"::"+self.dg1_build_10ten60.__name__+".#"+str(self.yti)
+        cmi_debug = __name__+"::"+self.build_10ten60.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         self.dg1_df2 = self.dg1_df2.append(self.dg1_df1, ignore_index=False)    # merge top 10 into
         self.dg1_df2.reset_index(inplace=True, drop=True)    # ensure index is allways unique + sequential
+        return
+
+# method #8
+    def screen_logic(self):
+        """Exectracts a list based on my personla screening logic"""
+        """ 1. Sort by Cur_price """
+        """ 2. exclude any company with Market Cap < $750M """
+        """ 3. exclude any comany with %gain less than 5% """
+
+        cmi_debug = __name__+"::"+self.screen_logic.__name__+".#"+str(self.yti)
+        logging.info('%s - IN' % cmi_debug )
+        pd.set_option('display.max_rows', None)
+        pd.set_option('max_colwidth', 30)
+        # print ( self.dg1_df0.sort_values(by=['Cur_price', 'Pct_change'], ascending=False ) )
+        self.dg1_df0.query('Symbol == True', inplace=True )
         return
