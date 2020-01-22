@@ -199,5 +199,6 @@ class screener_dg1:
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
         # print ( self.dg1_df0.sort_values(by=['Cur_price', 'Pct_change'], ascending=False ) )
-        self.dg1_df0.query('Symbol == True', inplace=True )
+        self.dg1_df0.query('Mkt_cap > 750.000', inplace=True )
+        
         return
