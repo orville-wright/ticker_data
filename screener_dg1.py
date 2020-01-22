@@ -107,11 +107,11 @@ class screener_dg1:
             BILLIONS = re.search('B', mktcap)
             MILLIONS = re.search('M', mktcap)
             if BILLIONS:
-                np.float(re.sub('B', '', mktcap))
+                mktcap_clean = np.float(re.sub('B', '', mktcap))
                 mb = "B"
 
             if MILLIONS:
-                np.float(re.sub('M', '', mktcap))
+                mktcap_clean = np.float(re.sub('M', '', mktcap))
                 mb = "M"
 
             # note: Pandas DataFrame : top_gainers pre-initalized as EMPYT
@@ -128,7 +128,7 @@ class screener_dg1:
                        np.float(re.sub('\,', '', price)), \
                        np.float(re.sub('[\+,]', '', change)), \
                        np.float(re.sub('[\+%]', '', pct)), \
-                       mktcap, \
+                       mktcap_clean, \
                        mb, \
                        time_now ]]
 
@@ -204,13 +204,16 @@ class screener_dg1:
         """Exectracts a list based on my personla screening logic"""
         """ 1. Sort by Cur_price """
         """ 2. exclude any company with Market Cap < $750M """
+        """ 3. manage company's with Market cap in BILLION's (requires special handeling) """
         """ 3. exclude any comany with %gain less than 5% """
 
         cmi_debug = __name__+"::"+self.screen_logic.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
-        self.dg1_df0.query('Mkt_cap > 750', inplace=True )
-        print ( self.dg1_df0.sort_values(by=['Cur_price'], ascending=False ) )
-
+        self.dg1_df1 = self.dg1_df0.query('Mkt_cap > 750.000' ).copy(deep=True)       # capture MILLIONS 1st
+        self.dg1_df1 =  pd.concat([self.dg1_df1, self.dg1_df0.query('M_B == "B"')] )  # now capture BILLIONS & concat both results
+        self.dg1_df1 = self.dg1_df1.sort_values(by=['Cur_price'], ascending=False )
+        self.dg1_df1.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
+        print ( self.dg1_df1 )
         return
