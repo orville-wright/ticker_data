@@ -61,3 +61,12 @@ The focus is on the Top10 list
             1. Market Cap > 750M
             2. Avg closing price > $5.0
             3. % gain > 4%
+
+10. NEWS AI
+	- Scan a bunch of key RSS Feeds for news on specific tickers that we carre interested in.
+		- Exctract into usable data
+		- Build a data set that can be input into SVM to classify the sentiment of news for a stock
+			- Positive, Neutral, Negative via Naive Bayes classifier & shallow semantic parsing.
+			
+	- Try working with this:  https://news.google.com/rss/search?q=<your-text-here>
+	
