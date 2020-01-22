@@ -148,7 +148,7 @@ def main():
 
 ########### SCREENER 1 ################
 # 1st run through
-    print ( "========== Screener: Day Gainers  ==========" )
+    print ( "========== Screener: Day Gainers > 5% & > $750M Mkt-cap ==========" )
     scrn1 = screener_dg1(1)       # instantiate class
     scrn1.get_data()        # extract data from finance.Yahoo.com
     x = scrn1.build_df0()     # build full dataframe
@@ -156,7 +156,6 @@ def main():
     # scrn1.print_top10()           # print it
     scrn1.screen_logic()
     print ( " ")
-
 
     print ( "####### done #####")
 
