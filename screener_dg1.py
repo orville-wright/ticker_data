@@ -198,7 +198,7 @@ class screener_dg1:
         logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
-        # print ( self.dg1_df0.sort_values(by=['Cur_price', 'Pct_change'], ascending=False ) )
         self.dg1_df0.query('Mkt_cap > 750.000', inplace=True )
+        print ( self.dg1_df0.sort_values(by=['Cur_price'], ascending=False ) )
         
         return
