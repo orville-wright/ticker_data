@@ -35,3 +35,25 @@ The focus is on the Top10 list
         - Market cap (smaller MCcap's have greater intraday volatility)
         - Intraday volume
         - sorted by % gain, then Cur_price with range filtering ($10-$50)
+
+8.  Find the Slow Crawl Starter that ends up being a full day linear run-up
+	- A: look at 1 min ticks over a 5 mins slice
+		- (as early in the day as possible. Preferably starting @ 09:30)
+	- B: look at 1 min - 5 min slice
+		- Compute total 5 min gain
+		- then look at commulative gains between each detail slice
+			- 1m - 2m = B1
+			- 2m - 3m = B2
+			- 3m - 4m = B3
+			- 4m - 5m = B4
+			- Nm - N+1m = BN
+		- Assertain...
+			- is B1 the greatest gain (i.e. a straight-up spike? across B1, B2, B3, B4)
+			- are the remaining slice gains(B2, B3, B4) flat? i.e. >= B1 (i.e. small) 
+			or...
+			- is B1 similar_to B2, B3, B4.... (i.e. a steady % gain up, or linear, for <linear )
+			or...
+			look at a bigger slice, and figgure out if A slow-start pattern happens somewhere else
+			 in the slice window.
+
+
