@@ -36,9 +36,9 @@ class screener_dg1:
         cmi_debug = __name__+"::"+self.__init__.__name__
         logging.info('%s - INSTANTIATE' % cmi_debug )
         # init empty DataFrame with present colum names
-        self.dg1_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'Time'] )
-        self.dg1_df1 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'Time'] )
-        self.dg1_df2 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'Time'] )
+        self.dg1_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time'] )
+        self.dg1_df1 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time'] )
+        self.dg1_df2 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time'] )
         self.yti = yti
         return
 
@@ -102,6 +102,17 @@ class screener_dg1:
 
             co_sym_lj = np.char.ljust(co_sym, 6)       # use numpy to left justify TXT in pandas DF
             co_name_lj = np.char.ljust(co_name, 20)    # use numpy to left justify TXT in pandas DF
+            mktcap = (re.sub('[N\/A]', '0', mktcap))   # handle N/A
+
+            BILLIONS = re.search('B', mktcap)
+            MILLIONS = re.search('M', mktcap)
+            if BILLIONS:
+                np.float(re.sub('B', '', mktcap))
+                mb = "B"
+
+            if MILLIONS:
+                np.float(re.sub('M', '', mktcap))
+                mb = "M"
 
             # note: Pandas DataFrame : top_gainers pre-initalized as EMPYT
             # Data treatment:
@@ -117,10 +128,11 @@ class screener_dg1:
                        np.float(re.sub('\,', '', price)), \
                        np.float(re.sub('[\+,]', '', change)), \
                        np.float(re.sub('[\+%]', '', pct)), \
-                       np.float(re.sub('[BMN\/A]', '0', mktcap)), \
+                       mktcap, \
+                       mb, \
                        time_now ]]
 
-            self.df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'Time' ], index=[x] )
+            self.df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time' ], index=[x] )
             self.dg1_df0 = self.dg1_df0.append(self.df0)    # append this ROW of data into the REAL DataFrame
             x+=1
         logging.info('%s - populated new DF0 dataset' % cmi_debug )
@@ -198,7 +210,7 @@ class screener_dg1:
         logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
-        self.dg1_df0.query('Mkt_cap > 750.000', inplace=True )
+        self.dg1_df0.query('Mkt_cap > 750', inplace=True )
         print ( self.dg1_df0.sort_values(by=['Cur_price'], ascending=False ) )
-        
+
         return
