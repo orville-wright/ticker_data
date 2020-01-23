@@ -67,6 +67,14 @@ The focus is on the Top10 list
 		- Exctract into usable data
 		- Build a data set that can be input into SVM to classify the sentiment of news for a stock
 			- Positive, Neutral, Negative via Naive Bayes classifier & shallow semantic parsing.
+	- Possible RSS feeds to leverge...
+		1. GOOGLE news: https://news.google.com/rss/search?q=<your-text-here>
+		2. NASDAQ RSS feeds - https://www.nasdaq.com/nasdaq-RSS-Feeds
+			3. Market: https://www.nasdaq.com/feed/rssoutbound?category=Markets
+			4. Stocks: https://www.nasdaq.com/feed/rssoutbound?category=Stocks
+			5. An individual stock: https://www.nasdaq.com/feed/rssoutbound?symbol=lyft
+			6. EARNINGS: https://www.nasdaq.com/feed/rssoutbound?category=Earnings
+			7. MARKET specific: https://www.nasdaq.com/feed/rssoutbound?category=FinTech
 			
-	- Try working with this:  https://news.google.com/rss/search?q=<your-text-here>
-	
+			
+		
