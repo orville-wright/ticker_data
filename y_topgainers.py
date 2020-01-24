@@ -94,6 +94,17 @@ class y_topgainers:
 
             co_sym_lj = np.char.ljust(co_sym, 6)       # use numpy to left justify TXT in pandas DF
             co_name_lj = np.char.ljust(co_name, 20)    # use numpy to left justify TXT in pandas DF
+            mktcap = (re.sub('[N\/A]', '0', mktcap))   # handle N/A
+
+            BILLIONS = re.search('B', mktcap)
+            MILLIONS = re.search('M', mktcap)
+            if BILLIONS:
+                mktcap_clean = np.float(re.sub('B', '', mktcap))
+                mb = "B"
+
+            if MILLIONS:
+                mktcap_clean = np.float(re.sub('M', '', mktcap))
+                mb = "M"
 
             # note: Pandas DataFrame : top_gainers pre-initalized as EMPYT
             # Data treatment:
@@ -108,8 +119,8 @@ class y_topgainers:
                        co_name_lj, \
                        np.float(re.sub('\,', '', price)), \
                        np.float(re.sub('[\+,]', '', change)), \
-                       np.float(re.sub('[\+%]', '', pct)), \
-                       np.float(re.sub('[BMN\/A]', '', mktcap)), \
+                       np.float(re.sub('[\+,%]', '', pct)), \
+                       mktcap_clean, \
                        time_now ]]
 
             self.df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'Time' ], index=[x] )
