@@ -77,4 +77,11 @@ The focus is on the Top10 list
 			7. MARKET specific: https://www.nasdaq.com/feed/rssoutbound?category=FinTech
 			
 			
-		
+11. Screener #2
+	1. Unusual volume UP/DOWN
+		Look at: 
+		https://old.nasdaq.com/markets/unusual-volume.aspx
+		looks like it might be hackable
+	
+		This is an important dataset that is missing.
+
