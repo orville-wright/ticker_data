@@ -18,6 +18,7 @@ logging.basicConfig(level=logging.INFO)
 from y_topgainers import y_topgainers
 from y_toplosers import y_toplosers
 from screener_dg1 import screener_dg1
+from unusual_vol import unusual_vol
 
 # Globals
 work_inst = 0
@@ -158,6 +159,15 @@ def main():
     print ( " ")
 
     print ( "####### done #####")
+
+
+########### 1 - HACKING on unusual_vol ################
+# 1st run through
+    print ( "========== Unusual VOlume ==========" )
+    upvol = unusual_vol(1)       # instantiate class
+    upvol.get_up_unvol_data()        # extract data from finance.Yahoo.com
+    x = upvol.build_df0()     # build full dataframe
+    print ( " ")
 
 if __name__ == '__main__':
     main()

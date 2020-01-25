@@ -1,82 +1,124 @@
 #!/usr/bin/python3
-
 import urllib
 import urllib.request
 from bs4 import BeautifulSoup
+import pandas as pd
+import numpy as np
+import re
+import logging
+import argparse
+import time
+import threading
 
+# logging setup
+logging.basicConfig(level=logging.INFO)
 
-with urllib.request.urlopen("https://old.nasdaq.com/markets/unusual-volume.aspx") as url:
-    s = url.read()
+#####################################################
 
-soup = BeautifulSoup(s, "html.parser")
+class unusual_vol:
+    """Class to discover and extract unusual volume data from NASDAQ.com data source"""
 
-#print (soup.get_text())
-#all_tag_a = soup.find_all("td", limit=10)
+    # global accessors
+    df0 = ""                # DataFrame - Full list of top gainers
+    df1 = ""                # DataFrame - Ephemerial list of top 10 gainers. Allways overwritten
+    df2 = ""                # DataFrame - Top 10 ever 10 secs for 60 secs
+    up_table_data = ""      # BS4 handle of the <table> with UP vol data
+    down_table_data = ""    # BS4 handle of the <table> with UP vol data
+    yti = 0                 # Unique instance identifier
+    cycle = 0               # class thread loop counter
 
-# Multi-valued attribute
-#all_tag_td = soup.find_all( "td", class_="Va(m) Ta(end) Pstart(20px) Fw(600) Fz(s)" )
+    def __init__(self, yti):
+        cmi_debug = __name__+"::"+self.__init__.__name__
+        logging.info('%s - INSTANTIATE' % cmi_debug )
+        #logging.info('y_toplosers:: Inst #: %s' % yti )    # catches 1st instantiate 0|1
+        # init empty DataFrame with present colum names
+        self.tg_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time'] )
+        self.tg_df1 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change' "Vol", 'Vol_pct', 'Time'] )
+        self.tg_df2 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change' "Vol", 'Vol_pct', 'Time'] )
+        self.yti = yti
+        return
 
-# extract the entire row
-#all_tag_tr = soup.find_all( "tr", class_="simpTblRow Bgc($extraLightBlue):h BdB Bdbc($finLightGrayAlt) Bdbc($tableBorderBlue):h H(32px) Bgc(white)" )
+# method #1
+    def get_up_unvol_data(self):
+        """Connect to old.nasdaq.com and extract (scrape) the raw HTML string data from"""
+        """the embedded html data table [UP_on_unusual_vol ]. Returns a BS4 handle."""
 
-#all_tag_tr = soup.find_all( "tr", class_="simpTblRow Bgc($extraLightBlue):h BdB Bdbc($finLightGrayAlt) Bdbc($tableBorderBlue):h H(32px) Bgc($extraLightBlue)" )
-#all_tag_tr = soup.find_all( "tr", class_="simpTblRow Bgc($extraLightBlue):h BdB Bdbc($finLightGrayAlt) Bdbc($tableBorderBlue):h H(32px) Bgc($extraLightBlue) " )
+        cmi_debug = __name__+"::"+self.get_up_unvol_data.__name__+".#"+str(self.yti)
+        logging.info('%s - IN' % cmi_debug )
+        with urllib.request.urlopen("https://old.nasdaq.com/markets/unusual-volume.aspx") as url:
+            s = url.read()
+            logging.info('%s - read html stream' % cmi_debug )
+            self.soup = BeautifulSoup(s, "html.parser")
+        # ATTR style search. Results -> Dict
+        # <tr tag in target merkup line has a very complex 'class=' but the attributes are unique. e.g. 'simpTblRow' is just one unique attribute
+        logging.info('%s - save data handle' % cmi_debug )
+        self.all_tagid_up = self.soup.find( id="_up" )           # locate the section ID'd: '_up'
+        self.up_table_data = self.all_tagid_up.table       # move into the <table> section
 
-#big_table = soup.find_all( "tr" )
-#big_table = soup.table
-#big_table = soup.find_all( "tbody" )
-big_table = soup.find_all( "table" )    # html encapsulated in an iterable array [ ]
+        logging.info('%s - close url handle' % cmi_debug )
+        url.close()
+        return
 
-#<td class="Va(m) Ta(start) Pstart(6px) Pend(10px) Miw(90px) Start(0) Pend(10px) simpTblRow:h_Bgc($extraLightBlue)  Pos(st) Bgc(white)  Bgc($extraLightBlue)  Ta(start)! Fz(s)" aria-label="Symbol"><label class="Ta(c) Pos(r) Va(tb) Pend(5px) D(n)--print"><input type="checkbox" class="Pos(a) V(h)" value="on"><svg class="Va(m)! H(16px) W(16px) Stk($c-fuji-blue-1-b)! Fill($c-fuji-blue-1-b)! Cur(p)" width="16" height="16" viewBox="0 0 24 24" data-icon="checkbox-checked" style="fill: rgb(0, 0, 0); stroke: rgb(0, 0, 0); stroke-width: 0; vertical-align: bottom;"><path d="M21 3H3v18h18V3zm1 20H2c-.553 0-1-.448-1-1V2c0-.552.447-1 1-1h20c.55 0 1 .448 1 1v20c0 .552-.45 1-1 1zM17.22 7.317L9.74 14.87l-2.96-2.99c-.34-.34-.93-.34-1.27 0-.17.173-.262.403-.262.647 0 .24.094.467.263.637l3.6 3.636c.182.167.41.26.64.26.234 0 .455-.094.623-.265l8.11-8.196c.17-.173.264-.4.264-.64 0-.243-.094-.47-.264-.643-.17-.17-.4-.257-.633-.257-.232 0-.464.086-.634.257z"></path></svg></label><a href="/quote/AMRN?p=AMRN" title="Amarin Corporation plc" class="Fw(600)">AMRN</a><div class="W(3px) Pos(a) Start(100%) T(0) H(100%) Bg($pfColumnFakeShadowGradient) Pe(n) Pend(5px)"></div></td><td class="Va(m) Ta(start) Px(10px) Fz(s)" aria-label="Name"><!-- react-text: 467 -->Amarin Corporation plc<!-- /react-text --></td><td class="Va(m) Ta(end) Pstart(20px) Fw(600) Fz(s)" aria-label="Price (Intraday)"><span class="Trsdu(0.3s) ">20.45</span></td><td class="Va(m) Ta(end) Pstart(20px) Fw(600) Fz(s)" aria-label="Change"><span class="Trsdu(0.3s) Fw(600) C($dataGreen)">+3.54</span></td><td class="Va(m) Ta(end) Pstart(20px) Fw(600) Fz(s)" aria-label="% Change"><span class="Trsdu(0.3s) Fw(600) C($dataGreen)">+20.93%</span></td><td class="Va(m) Ta(end) Pstart(20px) Fz(s)" aria-label="Volume"><span class="Trsdu(0.3s) ">36.106M</span></td><td class="Va(m) Ta(end) Pstart(20px) Fz(s)" aria-label="Avg Vol (3 month)"><!-- react-text: 477 -->6.239M<!-- /react-text --></td><td class="Va(m) Ta(end) Pstart(20px) Pend(10px) W(120px) Fz(s)" aria-label="Market Cap"><span class="Trsdu(0.3s) ">7.361B</span></td><td class="Va(m) Ta(end) Pstart(20px) Fz(s)" aria-label="PE Ratio (TTM)"><span>N/A</span></td><td class="Va(m) Ta(end) Pstart(20px) Pend(6px) Fz(s)" aria-label="52 Week Range"><canvas style="width: 140px; height: 23px;" width="140" height="23"></canvas></td></tr>
+# method #2
+    def build_df0(self):
+        """Build-out a fully populated Pandas DataFrame containg all the"""
+        """extracted/scraped fields from the html/markup table data"""
+        """Wrangle, clean/convert/format the data correctly."""
 
+        cmi_debug = __name__+"::"+self.build_df0.__name__+".#"+str(self.yti)
+        logging.info('%s - IN' % cmi_debug )
+        time_now = time.strftime("%H:%M:%S", time.localtime() )
+        logging.info('%s - Drop all rows from DF0' % cmi_debug )
+        #self.build_df0.drop(self.build_df0.index, inplace=True)
 
-#sel_tr_1 = big_table.find_all( "tr", class_="simpTblRow Bgc($extraLightBlue):h BdB Bdbc($finLightGrayAlt) Bdbc($tableBorderBlue):h H(32px) Bgc(white)" )
-#sel_tr_1 = BeautifulSoup(big_table, "lxml-xml" )
-tag_1 = soup.table      # raw html output
-tag_1a = soup.find_all( "div", id="_up" )
-tag_1b = soup.find( id="_up" )
-tag_1c = tag_1b.table
+        x = 1    # row counter Also leveraged for unique dataframe key
+        for datarow in self.up_table_data.find_all( "tr" )[1:]:    # skip the first <tr> = column names
+            extr_strings = datarow.stripped_strings
+            # this is sloppy. It doesn't precisely examine the 7 <td> cells with each <tr>
+            # it just grabs all the TEXT tstring it can find
+            co_sym = next(extr_strings)
+            co_name = next(extr_strings)
+            price = next(extr_strings)
+            change_blob = next(extr_strings)
+            vol_abs = next(extr_strings)
+            vol_pct = next(extr_strings)
 
-#tag_1 = big_table.find_all( "tr" )
-tag_2 = tag_1c.tbody
-tag_3 = tag_1c.tr.get_text()
-tag_4 = tag_1c.tr.descendants
+            co_sym_lj = np.char.ljust(co_sym, 6)       # use numpy to left justify TXT in pandas DF
+            co_name_lj = np.char.ljust(co_name, 20)    # use numpy to left justify TXT in pandas DF
 
-x = 0
+            price_cl = (re.sub('$', '', price))
+            vol_abs_cl = (re.sub('[\+,]', '', vol_abs))
+            vol_pct_cl = (re.sub('[\+,%]', '', vol_pct))
+            change_blob_cl = (re.sub('▲', '', change_blob))  # remove special char symbol &#x00e2;&#x0096;&#x00b2;
+            # note: Pandas DataFrame : top_loserers pre-initalized as EMPYT
+            # Data treatment:
+            # Data is extracted as raw strings, so needs wrangeling...
+            #    price - stip out any thousand "," seperators and cast as true decimal via numpy
+            #    change - strip out chars '+' and ',' and cast as true decimal via numpy
+            #    pct - strip out chars '+ and %' and cast as true decimal via numpy
+            #    mktcap - strio out 'B' Billions & 'M' Millions
+            """
+            self.data0 = [[ \
+                       x, \
+                       co_sym_lj, \
+                       co_name_lj, \
+                       np.float(re.sub('\,$', '', price)), \
+                       np.float(re.sub('[\+,]', '', change)), \
+                       np.float(re.sub('[\+,%]', '', pct)), \
+                       mktcap_clean, \
+                       time_now ]]
 
-#print ( "**** TAG_1 ***" )
-#print ( tag_1c )
-#print ( "===================================================================================" )
-#print ( "**** big_table ***" )
-#print ( big_table )
+            self.df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'Time' ], index=[x] )
+            self.tg_df0 = self.tg_df0.append(self.df0)    # append this ROW of data into the REAL DataFrame
+            """
+            x+=1
+            print ( co_sym, " ", co_name, " ", price_cl, " ", change_blob_cl, " ", vol_abs_cl, " ", vol_pct_cl )
 
+        logging.info('%s - populated new DF0 dataset' % cmi_debug )
+        return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
+                        # sucess = lobal class accessor (y_toplosers.tg_df0) populated & updated
 
-print ( "==================== UNUSUAL volume up ====================" )
-for datarow in tag_1c.find_all( "tr" )[1:]:    # skips the first <tr> which is table column names
-
-    # 1st <td> cell : ticker symbol info & has comment of company name
-    # 2nd <td> cell : company name
-    # 3rd <td> cell : price
-    # 4th <td> cell : $ change
-    # 5th <td> cell : % change
-    # more cells follow...but I'm not interested in them at moment.
-
-    extr_strings = datarow.stripped_strings
-    co_sym = next(extr_strings)
-    co_name = next(extr_strings)
-    price = next(extr_strings)
-    change = next(extr_strings)
-    pct = next(extr_strings)
-    vol = next(extr_strings)
-
-    #rowtxt = datarow.get_text()
-    #print (rowtxt)
-
-    print ( co_sym, " ", co_name, " ", price, " ", change, " ", pct, " ", vol )
-
-    x+=1
-    print ( "============================ ", x, " ===================================" )
-
+"""
 print ( " " )
 print ( "==================== UNUSUAL volume down ====================" )
 tag_1b = soup.find( id="_down" )
@@ -92,12 +134,8 @@ for datarow in tag_1c.find_all( "tr" )[1:]:    # skips the first <tr> which is t
     pct = next(extr_strings)
     vol = next(extr_strings)
 
-    #rowtxt = datarow.get_text()
-    #print (rowtxt)
-
     print ( co_sym, " ", co_name, " ", price, " ", change, " ", pct, " ", vol )
 
     x+=1
     print ( "============================ ", x, " ===================================" )
-
-
+"""
