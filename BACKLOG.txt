@@ -62,7 +62,7 @@ The focus is on the Top10 list
             2. Avg closing price > $5.0
             3. % gain > 4%
 
-10. NEWS AI
+10. News AI
 	- Scan a bunch of key RSS Feeds for news on specific tickers that we carre interested in.
 		- Exctract into usable data
 		- Build a data set that can be input into SVM to classify the sentiment of news for a stock
@@ -75,13 +75,15 @@ The focus is on the Top10 list
 			5. An individual stock: https://www.nasdaq.com/feed/rssoutbound?symbol=lyft
 			6. EARNINGS: https://www.nasdaq.com/feed/rssoutbound?category=Earnings
 			7. MARKET specific: https://www.nasdaq.com/feed/rssoutbound?category=FinTech
-			
-			
+
+
 11. Screener #2
 	1. Unusual volume UP/DOWN
-		Look at: 
+		Look at:
 		https://old.nasdaq.com/markets/unusual-volume.aspx
 		looks like it might be hackable
-	
-		This is an important dataset that is missing.
 
+		This is an important dataset that is missing.
+    - Initial template of this is done.
+
+  
