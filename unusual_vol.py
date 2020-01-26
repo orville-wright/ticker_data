@@ -28,17 +28,17 @@ parser.add_argument('-x','--xray', help='dump detailed debug data structures', a
 #####################################################
 
 class unusual_vol:
-    """Class to discover and extract unusual volume data from NASDAQ.com data source"""
+    """Class to discover unusual volume data from NASDAQ.com data source"""
 
     # global accessors
-    df0 = ""                # DataFrame - Full list of top gainers
-    df1 = ""                # DataFrame - Ephemerial list of top 10 gainers. Allways overwritten
-    df2 = ""                # DataFrame - Top 10 ever 10 secs for 60 secs
-    up_table_data = ""      # BS4 handle of the <table> with UP vol data
-    down_table_data = ""    # BS4 handle of the <table> with UP vol data
+    df0 = ""                # DataFrame - Full list of Unusual UP volume
+    df1 = ""                # DataFrame - Full list of Unusual DOWN volume
+    df2 = ""                # DataFrame - List of Top 10 (both UP & DOWN
+    up_table_data = ""      # BS4 constructor object of HTML <table> sub-doc > UP vol data
+    down_table_data = ""    # BS4 constructor object of HTML <table> sub-doc > DOWN vol data
     yti = 0                 # Unique instance identifier
     cycle = 0               # class thread loop counter
-    soup = ""               # BS4 shared handle between UP & DOWN (1 URL, 2 embeded data sets in HTML page)
+    soup = ""               # BS4 shared handle between UP & DOWN (1 URL, 2 embeded data sets in HTML doc)
 
     def __init__(self, yti):
         cmi_debug = __name__+"::"+self.__init__.__name__
@@ -65,7 +65,7 @@ class unusual_vol:
         logging.info('%s - save BS4 class data object' % cmi_debug )
         self.all_tagid_up = self.soup.find( id="_up" )           # locate the section with ID = '_up' > output RAW htnml
         self.up_table_data = self.all_tagid_up.table             # move into the <table> section > ouput RAW HTML
-        self.up_table_rows1 = ( tr_row for tr_row in ( self.up_table_data.find_all( 'tr' ) ) )      # build a generattor of <tr> objects
+        self.up_table_rows = ( tr_row for tr_row in ( self.up_table_data.find_all( 'tr' ) ) )      # build a generattor of <tr> objects
 
         # other HTML accessor methods - good for reference
         #self.up_table_rows = self.up_table_data.find_all( "tr")
@@ -121,9 +121,9 @@ class unusual_vol:
         self.df0.drop(self.df0.index, inplace=True)
 
         x = 1    # row counter Also leveraged for unique dataframe key
-        col_headers = next(self.up_table_rows1)     # ignore the 1st TR row object, which is column header titles
+        col_headers = next(self.up_table_rows)     # ignore the 1st TR row object, which is column header titles
 
-        for tr_data in self.up_table_rows1:     # genrator object
+        for tr_data in self.up_table_rows:     # genrator object
             extr_strings = tr_data.stripped_strings
             co_sym = next(extr_strings)
             co_name = next(extr_strings)
