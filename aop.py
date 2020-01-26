@@ -22,6 +22,8 @@ from unusual_vol import unusual_vol
 
 # Globals
 work_inst = 0
+args = {}
+parser = []
 
 # Threading globals
 extract_done = threading.Event()
@@ -82,12 +84,15 @@ def bkgrnd_worker():
 
 ############################# main() ##################################
 #
+
 def main():
     # setup valid cmdline args
+    global args
+    global parser
     parser = argparse.ArgumentParser()
     parser.add_argument('-v','--verbose', help='verbose error logging', action='store_true', dest='bool_verbose', required=False, default=False)
     parser.add_argument('-c','--cycle', help='Ephemerial top 10 every 10 secs for 60 secs', action='store_true', dest='bool_tenten60', required=False, default=False)
-    parser.add_argument('-t','--tops', help='show top ganers/losers', action='store_true', dest='bool_gl', required=False, default=False)
+    parser.add_argument('-t','--tops', help='show top ganers/losers', action='store_true', dest='bool_tops', required=False, default=False)
     parser.add_argument('-s','--screen', help='screener logic parser', action='store_true', dest='bool_scr', required=False, default=False)
     parser.add_argument('-u','--unusual', help='unusual up & down volume', action='store_true', dest='bool_uvol', required=False, default=False)
 
@@ -96,6 +101,7 @@ def main():
     print ( "########## Initalizing ##########" )
     print ( " " )
 
+    print ( "CMDLine args:", parser.parse_args() )
     # ARGS[] cmdline pre-processing
     if args['bool_verbose'] is True:        # Logging level
         print ( "Enabeling verbose info logging..." )
@@ -103,13 +109,12 @@ def main():
     else:
         logging.disable(20)                 # Log lvel = INFO
 
-    print ( "Command line args..." )
-    print ( parser.parse_args() )
+    #print ( args )
     print ( " " )
 
 ########### 1 - TOP GAINERS ################
 # 1st run through
-    if args['bool_gl'] is True:
+    if args['bool_tops'] is True:
         print ( "========== Top 10 Gainers ==========" )
         stg1 = y_topgainers(1)       # instantiate class
         stg1.get_topg_data()        # extract data from finance.Yahoo.com
@@ -120,7 +125,7 @@ def main():
 
 ########### 2 - TOP LOSERS ################
 # 1st run through
-    if args['bool_gl'] is True:
+    if args['bool_tops'] is True:
         print ( "========== Top 10 Losers ==========" )
         stg3 = y_toplosers(1)       # instantiate class
         stg3.get_topg_data()        # extract data from finance.Yahoo.com
@@ -165,10 +170,13 @@ def main():
 
 ########### 1 - HACKING on unusual_vol ################
     if args['bool_uvol'] is True:
-        print ( "========== Unusual VOlume ==========" )
+        print ( "========== Unusual UP/DOWN Volumes ==========" )
+        #global args
+        #global parser
         upvol = unusual_vol(1)       # instantiate class
         upvol.get_up_unvol_data()        # extract data from finance.Yahoo.com
         x = upvol.build_df0()     # build full dataframe
+        upvol.up_unvol_listall()
         print ( " ")
 
     print ( "####### done #####")
