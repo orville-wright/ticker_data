@@ -95,6 +95,7 @@ def main():
     parser.add_argument('-t','--tops', help='show top ganers/losers', action='store_true', dest='bool_tops', required=False, default=False)
     parser.add_argument('-s','--screen', help='screener logic parser', action='store_true', dest='bool_scr', required=False, default=False)
     parser.add_argument('-u','--unusual', help='unusual up & down volume', action='store_true', dest='bool_uvol', required=False, default=False)
+    parser.add_argument('-x','--xray', help='dump detailed debug data structures', action='store_true', dest='bool_xray', required=False, default=False)
 
     args = vars(parser.parse_args())
     print ( " " )
@@ -168,10 +169,14 @@ def main():
 ########### unusual_vol ################
     if args['bool_uvol'] is True:
         print ( "========== Unusual UP/DOWN Volumes =====================================================" )
-        upvol = unusual_vol(1)       # instantiate class
-        upvol.get_up_unvol_data()        # extract data from finance.Yahoo.com
-        x = upvol.build_df0()     # build full dataframe
-        upvol.up_unvol_listall()
+        vols = unusual_vol(1)       # instantiate class
+        vols.get_up_unvol_data()        # extract data from finance.Yahoo.com
+        x = vols.build_df0()     # build full dataframe
+        vols.up_unvol_listall()
+        print ( " ")
+        vols.get_down_unvol_data()
+        y = vols.build_df1()     # build full dataframe
+        vols.down_unvol_listall()
         print ( " ")
 
     print ( "####### done #####")
