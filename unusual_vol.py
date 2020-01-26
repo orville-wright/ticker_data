@@ -86,10 +86,10 @@ class unusual_vol:
             co_sym_lj = np.char.ljust(co_sym, 6)       # use numpy to left justify TXT in pandas DF
             co_name_lj = np.char.ljust(co_name, 20)    # use numpy to left justify TXT in pandas DF
 
-            price_cl = (re.sub('$', '', price))
-            vol_abs_cl = (re.sub('[\+,]', '', vol_abs))
-            vol_pct_cl = (re.sub('[\+,%]', '', vol_pct))
-            change_blob_cl = (re.sub('▲', '', change_blob))  # remove special char symbol &#x00e2;&#x0096;&#x00b2;
+            price_cl = (re.sub('[ $]', '', price))
+            vol_abs_cl = (re.sub('[\+ ,]', '', vol_abs))
+            vol_pct_cl = (re.sub('[\+,% ]', '', vol_pct))
+            change_blob_cl = (re.sub('[▲]', '', change_blob))  # remove special char symbol &#x00e2;&#x0096;&#x00b2;
             # note: Pandas DataFrame : top_loserers pre-initalized as EMPYT
             # Data treatment:
             # Data is extracted as raw strings, so needs wrangeling...

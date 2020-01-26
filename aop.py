@@ -86,7 +86,10 @@ def main():
     # setup valid cmdline args
     parser = argparse.ArgumentParser()
     parser.add_argument('-v','--verbose', help='verbose error logging', action='store_true', dest='bool_verbose', required=False, default=False)
-    parser.add_argument('-s','--sixty', help='Ephemerial top 10 every 10 secs for 60 secs', action='store_true', dest='bool_tenten60', required=False, default=False)
+    parser.add_argument('-c','--cycle', help='Ephemerial top 10 every 10 secs for 60 secs', action='store_true', dest='bool_tenten60', required=False, default=False)
+    parser.add_argument('-t','--tops', help='show top ganers/losers', action='store_true', dest='bool_gl', required=False, default=False)
+    parser.add_argument('-s','--screen', help='screener logic parser', action='store_true', dest='bool_scr', required=False, default=False)
+    parser.add_argument('-u','--unusual', help='unusual up & down volume', action='store_true', dest='bool_uvol', required=False, default=False)
 
     args = vars(parser.parse_args())
     print ( " " )
@@ -106,23 +109,25 @@ def main():
 
 ########### 1 - TOP GAINERS ################
 # 1st run through
-    print ( "========== Top 10 Gainers ==========" )
-    stg1 = y_topgainers(1)       # instantiate class
-    stg1.get_topg_data()        # extract data from finance.Yahoo.com
-    x = stg1.build_tg_df0()     # build full dataframe
-    stg1.build_top10()           # show top 10
-    stg1.print_top10()           # print it
-    print ( " ")
+    if args['bool_gl'] is True:
+        print ( "========== Top 10 Gainers ==========" )
+        stg1 = y_topgainers(1)       # instantiate class
+        stg1.get_topg_data()        # extract data from finance.Yahoo.com
+        x = stg1.build_tg_df0()     # build full dataframe
+        stg1.build_top10()           # show top 10
+        stg1.print_top10()           # print it
+        print ( " ")
 
 ########### 2 - TOP LOSERS ################
 # 1st run through
-    print ( "========== Top 10 Losers ==========" )
-    stg3 = y_toplosers(1)       # instantiate class
-    stg3.get_topg_data()        # extract data from finance.Yahoo.com
-    x = stg3.build_tg_df0()     # build full dataframe
-    stg3.build_top10()           # show top 10
-    stg3.print_top10()           # print it
-    print ( " ")
+    if args['bool_gl'] is True:
+        print ( "========== Top 10 Losers ==========" )
+        stg3 = y_toplosers(1)       # instantiate class
+        stg3.get_topg_data()        # extract data from finance.Yahoo.com
+        x = stg3.build_tg_df0()     # build full dataframe
+        stg3.build_top10()           # show top 10
+        stg3.print_top10()           # print it
+        print ( " ")
 
 ########### 3 10x10x60 ################
 # **THREAD** waiter
@@ -148,25 +153,25 @@ def main():
         print ( " " )
 
 ########### SCREENER 1 ################
-# 1st run through
-    print ( "========== Screener: SMALL CAP Day Gainers : +5% & > $750M Mkt-cap ==========" )
-    scrn1 = screener_dg1(1)       # instantiate class
-    scrn1.get_data()        # extract data from finance.Yahoo.com
-    x = scrn1.build_df0()     # build full dataframe
-    # scrn1.build_top10()           # show top 10
-    # scrn1.print_top10()           # print it
-    scrn1.screen_logic()
-    print ( " ")
-
-    print ( "####### done #####")
+    if args['bool_scr'] is True:
+        print ( "========== Screener: SMALL CAP Day Gainers : +5% & > $750M Mkt-cap ==========" )
+        scrn1 = screener_dg1(1)       # instantiate class
+        scrn1.get_data()        # extract data from finance.Yahoo.com
+        x = scrn1.build_df0()     # build full dataframe
+        # scrn1.build_top10()           # show top 10
+        # scrn1.print_top10()           # print it
+        scrn1.screen_logic()
+        print ( " ")
 
 ########### 1 - HACKING on unusual_vol ################
-# 1st run through
-    print ( "========== Unusual VOlume ==========" )
-    upvol = unusual_vol(1)       # instantiate class
-    upvol.get_up_unvol_data()        # extract data from finance.Yahoo.com
-    x = upvol.build_df0()     # build full dataframe
-    print ( " ")
+    if args['bool_uvol'] is True:
+        print ( "========== Unusual VOlume ==========" )
+        upvol = unusual_vol(1)       # instantiate class
+        upvol.get_up_unvol_data()        # extract data from finance.Yahoo.com
+        x = upvol.build_df0()     # build full dataframe
+        print ( " ")
+
+    print ( "####### done #####")
 
 if __name__ == '__main__':
     main()
