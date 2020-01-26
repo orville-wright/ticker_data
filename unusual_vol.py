@@ -13,6 +13,17 @@ import threading
 # logging setup
 logging.basicConfig(level=logging.INFO)
 
+# GLOBALS within a CLASS are super confsuing!!
+# I'm not sure this is pythionicly correct since this code is outside the class ?
+global args
+global parser
+parser = argparse.ArgumentParser()
+parser.add_argument('-v','--verbose', help='verbose error logging', action='store_true', dest='bool_verbose', required=False, default=False)
+parser.add_argument('-c','--cycle', help='Ephemerial top 10 every 10 secs for 60 secs', action='store_true', dest='bool_tenten60', required=False, default=False)
+parser.add_argument('-t','--tops', help='show top ganers/losers', action='store_true', dest='bool_tops', required=False, default=False)
+parser.add_argument('-s','--screen', help='screener logic parser', action='store_true', dest='bool_scr', required=False, default=False)
+parser.add_argument('-u','--unusual', help='unusual up & down volume', action='store_true', dest='bool_uvol', required=False, default=False)
+
 #####################################################
 
 class unusual_vol:
@@ -30,11 +41,10 @@ class unusual_vol:
     def __init__(self, yti):
         cmi_debug = __name__+"::"+self.__init__.__name__
         logging.info('%s - INSTANTIATE' % cmi_debug )
-        #logging.info('y_toplosers:: Inst #: %s' % yti )    # catches 1st instantiate 0|1
-        # init empty DataFrame with present colum names
-        self.tg_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time'] )
-        self.tg_df1 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change' "Vol", 'Vol_pct', 'Time'] )
-        self.tg_df2 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change' "Vol", 'Vol_pct', 'Time'] )
+        # init empty DataFrame with preset colum names
+        self.df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time'] )
+        self.df1 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change' "Vol", 'Vol_pct', 'Time'] )
+        self.df2 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change' "Vol", 'Vol_pct', 'Time'] )
         self.yti = yti
         return
 
@@ -52,11 +62,13 @@ class unusual_vol:
         # ATTR style search. Results -> Dict
         # <tr tag in target merkup line has a very complex 'class=' but the attributes are unique. e.g. 'simpTblRow' is just one unique attribute
         logging.info('%s - save data handle' % cmi_debug )
-        self.all_tagid_up = self.soup.find( id="_up" )           # locate the section ID'd: '_up' - output RAW htnml
-        self.up_table_data = self.all_tagid_up.table             # move into the <table> section : ouput RAW HTML
+        self.all_tagid_up = self.soup.find( id="_up" )           # locate the section with ID = '_up' > output RAW htnml
+        self.up_table_data = self.all_tagid_up.table             # move into the <table> section > ouput RAW HTML
+        self.up_table_rows1 = ( tr_row for tr_row in ( self.up_table_data.find_all( 'tr' ) ) )      # build a generattor of <tr> objects
+
         #self.up_table_rows = self.up_table_data.find_all( "tr")
-        self.up_table_rows = self.up_table_data.tr
-        self.up_row_data = self.up_table_rows.find_all( "td" )
+        #self.up_table_rows = self.up_table_data.tr
+        #self.up_table_rows2 = self.up_table_data.td
 
         logging.info('%s - close url handle' % cmi_debug )
         url.close()
@@ -68,82 +80,65 @@ class unusual_vol:
         """extracted/scraped fields from the html/markup table data"""
         """Wrangle, clean/convert/format the data correctly."""
 
+        args = vars(parser.parse_args())    # ensure CMDLine args are accessible within this class:method
         cmi_debug = __name__+"::"+self.build_df0.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         logging.info('%s - Drop all rows from DF0' % cmi_debug )
-        #self.build_df0.drop(self.build_df0.index, inplace=True)
+        self.df0.drop(self.df0.index, inplace=True)
 
         x = 1    # row counter Also leveraged for unique dataframe key
-        #for datarow in self.up_table_data.find_all( "tr" )[1:]:    # skip the first <tr> = column names
-        for datarow in self.up_row_data:    # skip the first <tr> = column names
-            """
-            extr_strings = datarow.stripped_strings
-            # this is sloppy. It doesn't precisely examine the 7 <td> cells with each <tr>
-            # it just grabs all the TEXT tstring it can find
+        col_headers = next(self.up_table_rows1)     # ignore the 1st TR row object, which is column header titles
+
+        for tr_data in self.up_table_rows1:     # genrator object
+            #global args
+            extr_strings = tr_data.stripped_strings
             co_sym = next(extr_strings)
             co_name = next(extr_strings)
             price = next(extr_strings)
-            change_blob = next(extr_strings)
+            price_net = next(extr_strings)
+            arrow_updown = next(extr_strings)
+            price_pct = next(extr_strings)
             vol_abs = next(extr_strings)
             vol_pct = next(extr_strings)
 
+            # wrangle & clean the data
             co_sym_lj = np.char.ljust(co_sym, 6)       # use numpy to left justify TXT in pandas DF
             co_name_lj = np.char.ljust(co_name, 20)    # use numpy to left justify TXT in pandas DF
-
             price_cl = (re.sub('[ $]', '', price))
-            #vol_abs_cl = (re.sub('[,]', 'XXX', vol_abs))
-            #vol_pct_cl = (re.sub('[%]', 'ZZZ', vol_pct))
-            change_blob_cl = (re.sub('[ ▲]', '', change_blob))  # remove special char symbol &#x00e2;&#x0096;&#x00b2;
-            # note: Pandas DataFrame : top_loserers pre-initalized as EMPYT
-            # Data treatment:
-            # Data is extracted as raw strings, so needs wrangeling...
-            #    price - stip out any thousand "," seperators and cast as true decimal via numpy
-            #    change - strip out chars '+' and ',' and cast as true decimal via numpy
-            #    pct - strip out chars '+ and %' and cast as true decimal via numpy
-            #    mktcap - strio out 'B' Billions & 'M' Millions
-            """
+            price_pct_cl = (re.sub('[%]', '', price_pct))
+            vol_abs_cl = (re.sub('[,]', '', vol_abs))
+            vol_pct_cl = (re.sub('[%]', '', vol_pct))
 
-            """
             self.data0 = [[ \
                        x, \
                        co_sym_lj, \
                        co_name_lj, \
-                       np.float(re.sub('\,$', '', price)), \
-                       np.float(re.sub('[\+,]', '', change)), \
-                       np.float(re.sub('[\+,%]', '', pct)), \
-                       mktcap_clean, \
+                       np.float(price_cl), \
+                       np.float(price_net), \
+                       np.float(price_pct_cl), \
+                       np.float(vol_abs_cl), \
+                       np.float(vol_pct_cl), \
                        time_now ]]
 
-            self.df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'Time' ], index=[x] )
-            self.tg_df0 = self.tg_df0.append(self.df0)    # append this ROW of data into the REAL DataFrame
-            """
-            x+=1
-            #print ( co_sym, " ", co_name, " ", price_cl, " ", change_blob_cl, " ", vol_abs, " ", vol_pct )
-            print ( datarow )
-            print ( "================================", x, "=================================")
+            self.temp_df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ], index=[x] )
+            self.df0 = self.df0.append(self.temp_df0)    # append this ROW of data into the REAL DataFrame
+            # DEBUG
+            if args['bool_verbose'] is True:        # DEBUG
+                print ( "================================", x, "======================================")
+                print ( co_sym, co_name, price_cl, price_net, price_pct_cl, vol_abs_cl, vol_pct_cl )
+
+            x += 1
         logging.info('%s - populated new DF0 dataset' % cmi_debug )
         return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
-                        # sucess = lobal class accessor (y_toplosers.tg_df0) populated & updated
+                        # sucess = lobal class accessor (y_toplosers.df0) populated & updated
 
-"""
-print ( " " )
-print ( "==================== UNUSUAL volume down ====================" )
-tag_1b = soup.find( id="_down" )
-tag_1c = tag_1b.table
-x = 0
-for datarow in tag_1c.find_all( "tr" )[1:]:    # skips the first <tr> which is table column names
-
-    extr_strings = datarow.stripped_strings
-    co_sym = next(extr_strings)
-    co_name = next(extr_strings)
-    price = next(extr_strings)
-    change = next(extr_strings)
-    pct = next(extr_strings)
-    vol = next(extr_strings)
-
-    print ( co_sym, " ", co_name, " ", price, " ", change, " ", pct, " ", vol )
-
-    x+=1
-    print ( "============================ ", x, " ===================================" )
-"""
+# method #4
+    def up_unvol_listall(self):
+        """Print the full DataFrame table list of NASDAQ unusual UP volumes"""
+        """Sorted by % Change"""
+        logging.info('ins.#%s.up_unvol_listall() - IN' % self.yti )
+        pd.set_option('display.max_rows', None)
+        pd.set_option('max_colwidth', 30)
+        print ( self.df0.sort_values(by='Pct_change', ascending=False ) )    # only do after fixtures datascience dataframe has been built
+        return
