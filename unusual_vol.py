@@ -59,13 +59,13 @@ class unusual_vol:
             s = url.read()
             logging.info('%s - read html stream' % cmi_debug )
             self.soup = BeautifulSoup(s, "html.parser")
-        # ATTR style search. Results -> Dict
-        # <tr tag in target merkup line has a very complex 'class=' but the attributes are unique. e.g. 'simpTblRow' is just one unique attribute
+
         logging.info('%s - save data handle' % cmi_debug )
         self.all_tagid_up = self.soup.find( id="_up" )           # locate the section with ID = '_up' > output RAW htnml
         self.up_table_data = self.all_tagid_up.table             # move into the <table> section > ouput RAW HTML
         self.up_table_rows1 = ( tr_row for tr_row in ( self.up_table_data.find_all( 'tr' ) ) )      # build a generattor of <tr> objects
 
+        # other HTML accessor methods - good for reference
         #self.up_table_rows = self.up_table_data.find_all( "tr")
         #self.up_table_rows = self.up_table_data.tr
         #self.up_table_rows2 = self.up_table_data.td

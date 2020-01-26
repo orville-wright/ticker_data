@@ -167,7 +167,7 @@ def main():
 
 ########### unusual_vol ################
     if args['bool_uvol'] is True:
-        print ( "========== Unusual UP/DOWN Volumes ==========" )
+        print ( "========== Unusual UP/DOWN Volumes =====================================================" )
         upvol = unusual_vol(1)       # instantiate class
         upvol.get_up_unvol_data()        # extract data from finance.Yahoo.com
         x = upvol.build_df0()     # build full dataframe
