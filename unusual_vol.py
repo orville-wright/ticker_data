@@ -52,8 +52,11 @@ class unusual_vol:
         # ATTR style search. Results -> Dict
         # <tr tag in target merkup line has a very complex 'class=' but the attributes are unique. e.g. 'simpTblRow' is just one unique attribute
         logging.info('%s - save data handle' % cmi_debug )
-        self.all_tagid_up = self.soup.find( id="_up" )           # locate the section ID'd: '_up'
-        self.up_table_data = self.all_tagid_up.table       # move into the <table> section
+        self.all_tagid_up = self.soup.find( id="_up" )           # locate the section ID'd: '_up' - output RAW htnml
+        self.up_table_data = self.all_tagid_up.table             # move into the <table> section : ouput RAW HTML
+        #self.up_table_rows = self.up_table_data.find_all( "tr")
+        self.up_table_rows = self.up_table_data.tr
+        self.up_row_data = self.up_table_rows.find_all( "td" )
 
         logging.info('%s - close url handle' % cmi_debug )
         url.close()
@@ -72,7 +75,9 @@ class unusual_vol:
         #self.build_df0.drop(self.build_df0.index, inplace=True)
 
         x = 1    # row counter Also leveraged for unique dataframe key
-        for datarow in self.up_table_data.find_all( "tr" )[1:]:    # skip the first <tr> = column names
+        #for datarow in self.up_table_data.find_all( "tr" )[1:]:    # skip the first <tr> = column names
+        for datarow in self.up_row_data:    # skip the first <tr> = column names
+            """
             extr_strings = datarow.stripped_strings
             # this is sloppy. It doesn't precisely examine the 7 <td> cells with each <tr>
             # it just grabs all the TEXT tstring it can find
@@ -87,9 +92,9 @@ class unusual_vol:
             co_name_lj = np.char.ljust(co_name, 20)    # use numpy to left justify TXT in pandas DF
 
             price_cl = (re.sub('[ $]', '', price))
-            vol_abs_cl = (re.sub('[\+ ,]', '', vol_abs))
-            vol_pct_cl = (re.sub('[\+,% ]', '', vol_pct))
-            change_blob_cl = (re.sub('[▲]', '', change_blob))  # remove special char symbol &#x00e2;&#x0096;&#x00b2;
+            #vol_abs_cl = (re.sub('[,]', 'XXX', vol_abs))
+            #vol_pct_cl = (re.sub('[%]', 'ZZZ', vol_pct))
+            change_blob_cl = (re.sub('[ ▲]', '', change_blob))  # remove special char symbol &#x00e2;&#x0096;&#x00b2;
             # note: Pandas DataFrame : top_loserers pre-initalized as EMPYT
             # Data treatment:
             # Data is extracted as raw strings, so needs wrangeling...
@@ -97,6 +102,8 @@ class unusual_vol:
             #    change - strip out chars '+' and ',' and cast as true decimal via numpy
             #    pct - strip out chars '+ and %' and cast as true decimal via numpy
             #    mktcap - strio out 'B' Billions & 'M' Millions
+            """
+
             """
             self.data0 = [[ \
                        x, \
@@ -112,8 +119,9 @@ class unusual_vol:
             self.tg_df0 = self.tg_df0.append(self.df0)    # append this ROW of data into the REAL DataFrame
             """
             x+=1
-            print ( co_sym, " ", co_name, " ", price_cl, " ", change_blob_cl, " ", vol_abs_cl, " ", vol_pct_cl )
-
+            #print ( co_sym, " ", co_name, " ", price_cl, " ", change_blob_cl, " ", vol_abs, " ", vol_pct )
+            print ( datarow )
+            print ( "================================", x, "=================================")
         logging.info('%s - populated new DF0 dataset' % cmi_debug )
         return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
                         # sucess = lobal class accessor (y_toplosers.tg_df0) populated & updated
