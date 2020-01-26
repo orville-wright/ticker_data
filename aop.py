@@ -109,11 +109,9 @@ def main():
     else:
         logging.disable(20)                 # Log lvel = INFO
 
-    #print ( args )
     print ( " " )
 
 ########### 1 - TOP GAINERS ################
-# 1st run through
     if args['bool_tops'] is True:
         print ( "========== Top 10 Gainers ==========" )
         stg1 = y_topgainers(1)       # instantiate class
@@ -124,7 +122,6 @@ def main():
         print ( " ")
 
 ########### 2 - TOP LOSERS ################
-# 1st run through
     if args['bool_tops'] is True:
         print ( "========== Top 10 Losers ==========" )
         stg3 = y_toplosers(1)       # instantiate class
@@ -168,11 +165,9 @@ def main():
         scrn1.screen_logic()
         print ( " ")
 
-########### 1 - HACKING on unusual_vol ################
+########### unusual_vol ################
     if args['bool_uvol'] is True:
         print ( "========== Unusual UP/DOWN Volumes ==========" )
-        #global args
-        #global parser
         upvol = unusual_vol(1)       # instantiate class
         upvol.get_up_unvol_data()        # extract data from finance.Yahoo.com
         x = upvol.build_df0()     # build full dataframe
