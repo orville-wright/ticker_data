@@ -252,6 +252,7 @@ class unusual_vol:
         """Build-out a fully populated Pandas DataFrame containg all the"""
         """extracted/scraped fields from the html/markup table data"""
         """Wrangle, clean/convert/format the data correctly."""
+        """calling arg: ud  (up_volume = 0 / down_volume = 1)"""
 
         this_df = ""
         cmi_debug = __name__+"::"+self.build_df.__name__+".#"+str(self.yti)
@@ -266,7 +267,7 @@ class unusual_vol:
             this_df = self.df1
             table_section = self.down_table_rows
         else:
-            logging.info('%s - Error: invalid dataframe provided. EXITING' % cmi_debug )
+            logging.info('%s - Error: invalid dataframe. EXITING' % cmi_debug )
             return 0
 
         args = vars(parser.parse_args())    # ensure CMDLine args are accessible within this class:method
