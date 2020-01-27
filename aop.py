@@ -171,11 +171,13 @@ def main():
         print ( "========== Unusual UP/DOWN Volumes =====================================================" )
         vols = unusual_vol(1)       # instantiate class
         vols.get_up_unvol_data()        # extract data from finance.Yahoo.com
-        x = vols.build_df0()     # build full dataframe
+        #x = vols.build_df0()     # build full dataframe
+        x = vols.build_df(0)     # build full dataframe
         vols.up_unvol_listall()
         print ( " ")
         vols.get_down_unvol_data()
-        y = vols.build_df1()     # build full dataframe
+        #y = vols.build_df1()     # build full dataframe
+        y = vols.build_df(1)     # build full dataframe
         vols.down_unvol_listall()
         print ( " ")
 
