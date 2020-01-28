@@ -248,33 +248,35 @@ class unusual_vol:
 # method 6
 
 # method #3
-    def build_df(self, ud_df):
+    def build_df(self, ud):
         """Build-out a fully populated Pandas DataFrame containg all the"""
         """extracted/scraped fields from the html/markup table data"""
         """Wrangle, clean/convert/format the data correctly."""
+        """calling arg: ud  (up_volume = 0 / down_volume = 1)"""
 
+        this_df = ""
         cmi_debug = __name__+"::"+self.build_df.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
-        if ud_df == 0:
+
+        if ud == 0:
             logging.info('%s - UP volume analysis' % cmi_debug )
-            ud_df = self.df0
+            this_df = self.df0
             table_section = self.up_table_rows
-        elif ud_df == 1:
+        elif ud == 1:
             logging.info('%s - DOWN volume analysis' % cmi_debug )
-            ud_df = self.df1
+            this_df = self.df1
             table_section = self.down_table_rows
         else:
-            logging.info('%s - Error: invalid dataframe provided. EXITING' % cmi_debug )
+            logging.info('%s - Error: invalid dataframe. EXITING' % cmi_debug )
             return 0
 
         args = vars(parser.parse_args())    # ensure CMDLine args are accessible within this class:method
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         logging.info('%s - Drop all rows from DataFrame' % cmi_debug )
-        ud_df.drop(ud_df.index, inplace=True)
+        this_df.drop(this_df.index, inplace=True)
 
         x = 1    # row counter Also leveraged for unique dataframe key
         col_headers = next(table_section)     # ignore the 1st TR row object, which is column header titles
-
         for tr_data in table_section:     # genrator object
             extr_strings = tr_data.stripped_strings
             co_sym = next(extr_strings)
@@ -305,8 +307,15 @@ class unusual_vol:
                        np.float(vol_pct_cl), \
                        time_now ]]
 
-            self.temp_df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ], index=[x] )
-            ud_df = ud_df.append(self.temp_df0, sort=False)    # append this ROW of data into the REAL DataFrame
+            if ud == 0:
+                logging.info('%s - append UP Volume data into DataFrame' % cmi_debug )
+                self.temp_df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ], index=[x] )
+                self.df0 = self.df0.append(self.temp_df0, sort=False)    # append this ROW of data into the REAL DataFrame
+            else:
+                logging.info('%s - append DOWN Volume data into DataFrame' % cmi_debug )
+                self.temp_df1 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ], index=[x] )
+                self.df1 = self.df1.append(self.temp_df1, sort=False)    # append this ROW of data into the REAL DataFrame
+
             # DEBUG
             if args['bool_xray'] is True:        # DEBUG
                 print ( "================================", x, "======================================")
