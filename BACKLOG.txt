@@ -98,6 +98,11 @@ The focus is on the Top10 list
 	3. Identify the ahnomoly's in this pattern
 
 13. Inference's across multiple DataFrames
-
     1. Is a stock appearing in the Top_10 + Screener + Unusual_vol
         - call it out
+
+14. Craft a True Top % gainers chart
+	. This requires combining all dataframes from extracted market cap % ganers tables (small/med/large/mega)
+	   into 1 true gainer chart, since finaince.yahoo.com doesn't do this. They only have precanned charts that
+	   cant be manipulated & customized quickly on-the-fly...unless you're loigged in & save a chart layout. - yuk!
+	- but I already extract the data individually from each of their pre-canned charts...so I can create this chart.
