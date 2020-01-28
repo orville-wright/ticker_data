@@ -308,11 +308,11 @@ class unusual_vol:
                        time_now ]]
 
             if ud == 0:
-                logging.info('%s - Build DF0 UP Volume DataFrame' % cmi_debug )
+                logging.info('%s - append UP Volume data into DataFrame' % cmi_debug )
                 self.temp_df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ], index=[x] )
                 self.df0 = self.df0.append(self.temp_df0, sort=False)    # append this ROW of data into the REAL DataFrame
             else:
-                logging.info('%s - Build DF1 DOWN Volume DataFrame' % cmi_debug )
+                logging.info('%s - append DOWN Volume data into DataFrame' % cmi_debug )
                 self.temp_df1 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ], index=[x] )
                 self.df1 = self.df1.append(self.temp_df1, sort=False)    # append this ROW of data into the REAL DataFrame
 
