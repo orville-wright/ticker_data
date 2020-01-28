@@ -88,12 +88,16 @@ The focus is on the Top10 list
 
 12. Individual stock logic
 	1. first: need to find a data source
-	
+
 	2. How many days OPEN-DOWN & OPEN-UP
 		- on these days...
 			2.a was the end of day close, UP/FLAT/DOWN
 			2.b what was the HIGHEST-HIGH for the day, and whats that as a % GAIN
 			2.c what was the LOWEST-LOW for the day, and whats that as a % LOSS
-		
+
 	3. Identify the ahnomoly's in this pattern
-  
+
+13. Inference's across multiple DataFrames
+
+    1. Is a stock appearing in the Top_10 + Screener + Unusual_vol
+        - call it out
