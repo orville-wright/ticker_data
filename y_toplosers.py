@@ -99,13 +99,21 @@ class y_toplosers:
 
             BILLIONS = re.search('B', mktcap)
             MILLIONS = re.search('M', mktcap)
+
             if BILLIONS:
                 mktcap_clean = np.float(re.sub('B', '', mktcap))
                 mb = "B"
+                logging.info('ins.#%s.build_tg_df0() - found BILLIONS. set B' % self.yti )
 
             if MILLIONS:
                 mktcap_clean = np.float(re.sub('M', '', mktcap))
                 mb = "M"
+                logging.info('ins.#%s.build_tg_df0() - found MILLIONS. set M' % self.yti )
+
+            if not BILLIONS and not MILLIONS:
+                mktcap_clean = 0    # error condition - possible bad data
+                logging.info('ins.#%s.build_tg_df0() - bad mktcap html data. set 0' % self.yti )
+                # handle bad data in mktcap html page field
 
             # note: Pandas DataFrame : top_loserers pre-initalized as EMPYT
             # Data treatment:
