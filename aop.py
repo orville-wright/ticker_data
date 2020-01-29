@@ -89,13 +89,14 @@ def main():
     # setup valid cmdline args
     global args
     global parser
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description="Entropy apperture engine")
     parser.add_argument('-v','--verbose', help='verbose error logging', action='store_true', dest='bool_verbose', required=False, default=False)
     parser.add_argument('-c','--cycle', help='Ephemerial top 10 every 10 secs for 60 secs', action='store_true', dest='bool_tenten60', required=False, default=False)
     parser.add_argument('-t','--tops', help='show top ganers/losers', action='store_true', dest='bool_tops', required=False, default=False)
     parser.add_argument('-s','--screen', help='screener logic parser', action='store_true', dest='bool_scr', required=False, default=False)
     parser.add_argument('-u','--unusual', help='unusual up & down volume', action='store_true', dest='bool_uvol', required=False, default=False)
     parser.add_argument('-x','--xray', help='dump detailed debug data structures', action='store_true', dest='bool_xray', required=False, default=False)
+    #parser.set_defaults(bool_tops=True, bool_scr=True, bool_uvol=True)
 
     args = vars(parser.parse_args())
     print ( " " )
@@ -163,7 +164,7 @@ def main():
         x = scrn1.build_df0()     # build full dataframe
         # scrn1.build_top10()           # show top 10
         # scrn1.print_top10()           # print it
-        scrn1.screen_logic()
+        scrn1.screener_logic()
         print ( " ")
 
 ########### unusual_vol ################
