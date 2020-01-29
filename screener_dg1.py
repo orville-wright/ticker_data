@@ -47,14 +47,15 @@ class screener_dg1:
         """Connect to finance.yahoo.com and extract (scrape) the raw sring data out of"""
         """the embedded/precanned webpage screener html data table. Returns a BS4 handle."""
 
-        logging.info('ins.#%s.get_data() - IN' % self.yti )
+        cmi_debug = __name__+"::"+self.get_data.__name__+".#"+str(self.yti)
+        logging.info('%s - IN' % cmi_debug )
         with urllib.request.urlopen("https://finance.yahoo.com/screener/predefined/small_cap_gainers" ) as url:
             s = url.read()
-            logging.info('ins.#%s.get_data() - read html stream' % self.yti )
+            logging.info('%s read html stream' % cmi_debug )
             self.soup = BeautifulSoup(s, "html.parser")
         # ATTR style search. Results -> Dict
         # <tr tag in target merkup line has a very complex 'class=' but the attributes are unique. e.g. 'simpTblRow' is just one unique attribute
-        logging.info('ins.#%s.get_data() - save data handle' % self.yti )
+        logging.info('%s store url data handle' % cmi_debug )
         self.all_tag_tr = self.soup.find_all(attrs={"class": "simpTblRow"})
 
         # target markup line I am scanning looks like this...
@@ -62,7 +63,7 @@ class screener_dg1:
 
         # Example CSS Selector
         #all_tag_tr1 = soup.select( "tr.simpTblRow.Bgc" )
-        logging.info('ins.#%s.get_data() - close url handle' % self.yti )
+        logging.info('%s close url handle' % cmi_debug )
         url.close()
         return
 
@@ -200,7 +201,7 @@ class screener_dg1:
         return
 
 # method #8
-    def screen_logic(self):
+    def screener_logic(self):
         """Exectracts a list based on my personla screening logic"""
         """ 1. Sort by Cur_price """
         """ 2. exclude any company with Market Cap < $750M """
@@ -208,7 +209,7 @@ class screener_dg1:
         """ 3. exclude any comany with %gain less than 5% """
         """ 4. SMALL CAP stocks only - Excludes Medium. Large, Mega cap companies!!"""
 
-        cmi_debug = __name__+"::"+self.screen_logic.__name__+".#"+str(self.yti)
+        cmi_debug = __name__+"::"+self.screener_logic.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
@@ -217,7 +218,7 @@ class screener_dg1:
         #self.dg1_df1 = self.dg1_df0.query('Mkt_cap > 749' ).copy(deep=True)       # capture MILLIONS 1st
         self.dg1_df1 = self.dg1_df0[self.dg1_df0.Mkt_cap > 500 ]       # capture MILLIONS
         self.dg1_df1 =  pd.concat( [ self.dg1_df1, self.dg1_df0[self.dg1_df0.M_B == "B"] ] )  # now capture BILLIONS & concat both results
-        self.dg1_df1 = self.dg1_df1.sort_values(by=['Cur_price'], ascending=False )
+        self.dg1_df1 = self.dg1_df1.sort_values(by=['Pct_change'], ascending=False )
         self.dg1_df1.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
         print ( self.dg1_df1 )
         return
