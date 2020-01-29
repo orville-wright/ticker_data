@@ -98,6 +98,45 @@ The focus is on the Top10 list
 	3. Identify the ahnomoly's in this pattern
 
 13. Inference's across multiple DataFrames
-
     1. Is a stock appearing in the Top_10 + Screener + Unusual_vol
         - call it out
+
+14. Craft a 'True Top % gainers' chart
+	- This requires combining all dataframes from extracted market cap % ganers (small/med/large/mega)
+	  into 1 true chart, since finaince.yahoo.com doesn't do this. They only have precanned charts that
+	  seperate/isolate the data feeds from small_cap comapnies and medium/large/mega cap companies.
+	- I already extract the data individually from each seperate html pre-canned chart page...so it wont be too
+	  difficult to create a rue top gainers chart across all market cap ranges.
+	- Logic thoughts:
+		- merge all 3 Top 10 % giner lists A=(top 10 for medium/large/mega) + B=(top 10 for small) + C=(top 25 for unusual vol)
+		- if a company appears multiple times across all dataframes...apply some logic to build a meaningful list
+			- figure out which is it logical home A, B or C ?
+			- include it only once in the final merged dataframe
+			- the compensate for it being in multiple areas, pull another company from it's home
+			  list (for fairness & completness).
+			a. Logic #1
+				- If home == small_cap
+				- & it appears N times in total (in all lists)
+				- Show it only once in the combo merged list
+				- but pull in N-1 extra symbols from small_cap
+			b. Logic #2
+				- if it only appears in Unusual_vol but not in A or B
+				- figurre out what its home is
+				- add it to combo  merged lit
+				- and pull in 1 extra symbol from it's home A or B
+			c. Logic #3
+				- if home =- large_cap
+				- & it appears N times in total (i.e. in all lists)
+				- hit is only once in the combo list
+				- but pull in N-1 extra symbols from large_cap
+			D. Logic #4
+				- for any symbol that recies this special treatment
+				- tag it in the final merged list as an outlier
+				
+15. Add a new CMDLine option
+	- option is -f [flag symbol or an arbitrary list of symbols]
+		- user enters a symbol ticker (e.g GOOG, INTC, SNAP etc)
+		- and all dataframes will highlight (flag) that symbol in all outputs
+	- as the number of dataframe tables increases, it's becomming more difficult to parse the output
+	  with human eyes and find stuff in the tables.
+				
