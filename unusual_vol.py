@@ -13,18 +13,6 @@ import threading
 # logging setup
 logging.basicConfig(level=logging.INFO)
 
-# GLOBALS within a CLASS are super confsuing!!
-# I'm not sure this is pythionicly correct since this code is outside the class ?
-global args
-global parser
-parser = argparse.ArgumentParser()
-parser.add_argument('-v','--verbose', help='verbose error logging', action='store_true', dest='bool_verbose', required=False, default=False)
-parser.add_argument('-c','--cycle', help='Ephemerial top 10 every 10 secs for 60 secs', action='store_true', dest='bool_tenten60', required=False, default=False)
-parser.add_argument('-t','--tops', help='show top ganers/losers', action='store_true', dest='bool_tops', required=False, default=False)
-parser.add_argument('-s','--screen', help='screener logic parser', action='store_true', dest='bool_scr', required=False, default=False)
-parser.add_argument('-u','--unusual', help='unusual up & down volume', action='store_true', dest='bool_uvol', required=False, default=False)
-parser.add_argument('-x','--xray', help='dump detailed debug data structures', action='store_true', dest='bool_xray', required=False, default=False)
-
 #####################################################
 
 class unusual_vol:
@@ -39,10 +27,12 @@ class unusual_vol:
     yti = 0                 # Unique instance identifier
     cycle = 0               # class thread loop counter
     soup = ""               # BS4 shared handle between UP & DOWN (1 URL, 2 embeded data sets in HTML doc)
+    args = []               # class dict to hold global args being passed in from main() methods
 
-    def __init__(self, yti):
+    def __init__(self, yti, global_args):
         cmi_debug = __name__+"::"+self.__init__.__name__
         logging.info('%s - INSTANTIATE' % cmi_debug )
+        self.args = global_args
         # init empty DataFrame with preset colum names
         self.df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Vol', 'Vol_pct', 'Time'] )
         self.df1 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Vol', 'Vol_pct', 'Time'] )
@@ -113,7 +103,6 @@ class unusual_vol:
         """extracted/scraped fields from the html/markup table data"""
         """Wrangle, clean/convert/format the data correctly."""
 
-        args = vars(parser.parse_args())    # ensure CMDLine args are accessible within this class:method
         cmi_debug = __name__+"::"+self.build_df0.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
@@ -156,7 +145,7 @@ class unusual_vol:
             self.temp_df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ], index=[x] )
             self.df0 = self.df0.append(self.temp_df0, sort=False)    # append this ROW of data into the REAL DataFrame
             # DEBUG
-            if args['bool_xray'] is True:        # DEBUG
+            if self.args['bool_xray'] is True:        # DEBUG
                 print ( "================================", x, "======================================")
                 print ( co_sym, co_name, price_cl, price_net, price_pct_cl, vol_abs_cl, vol_pct_cl )
 
@@ -182,7 +171,6 @@ class unusual_vol:
         """extracted/scraped fields from the html/markup table data"""
         """Wrangle, clean/convert/format the data correctly."""
 
-        args = vars(parser.parse_args())    # ensure CMDLine args are accessible within this class:method
         cmi_debug = __name__+"::"+self.build_df1.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
@@ -225,7 +213,7 @@ class unusual_vol:
             self.temp_df1 = pd.DataFrame(self.data1, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ], index=[x] )
             self.df1 = self.df1.append(self.temp_df1, sort=False)    # append this ROW of data into the REAL DataFrame
             # DEBUG
-            if args['bool_xray'] is True:        # DEBUG
+            if self.args['bool_xray'] is True:        # DEBUG
                 print ( "================================", x, "======================================")
                 print ( co_sym, co_name, price_cl, price_net, price_pct_cl, vol_abs_cl, vol_pct_cl )
 
@@ -270,7 +258,6 @@ class unusual_vol:
             logging.info('%s - Error: invalid dataframe. EXITING' % cmi_debug )
             return 0
 
-        args = vars(parser.parse_args())    # ensure CMDLine args are accessible within this class:method
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         logging.info('%s - Drop all rows from DataFrame' % cmi_debug )
         this_df.drop(this_df.index, inplace=True)
@@ -317,7 +304,7 @@ class unusual_vol:
                 self.df1 = self.df1.append(self.temp_df1, sort=False)    # append this ROW of data into the REAL DataFrame
 
             # DEBUG
-            if args['bool_xray'] is True:        # DEBUG
+            if self.args['bool_xray'] is True:        # DEBUG
                 print ( "================================", x, "======================================")
                 print ( co_sym, co_name, price_cl, price_net, price_pct_cl, vol_abs_cl, vol_pct_cl )
 

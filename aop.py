@@ -22,8 +22,16 @@ from unusual_vol import unusual_vol
 
 # Globals
 work_inst = 0
+global args
 args = {}
-parser = []
+global parser
+parser = argparse.ArgumentParser(description="Entropy apperture engine")
+parser.add_argument('-v','--verbose', help='verbose error logging', action='store_true', dest='bool_verbose', required=False, default=False)
+parser.add_argument('-c','--cycle', help='Ephemerial top 10 every 10 secs for 60 secs', action='store_true', dest='bool_tenten60', required=False, default=False)
+parser.add_argument('-t','--tops', help='show top ganers/losers', action='store_true', dest='bool_tops', required=False, default=False)
+parser.add_argument('-s','--screen', help='screener logic parser', action='store_true', dest='bool_scr', required=False, default=False)
+parser.add_argument('-u','--unusual', help='unusual up & down volume', action='store_true', dest='bool_uvol', required=False, default=False)
+parser.add_argument('-x','--xray', help='dump detailed debug data structures', action='store_true', dest='bool_xray', required=False, default=False)
 
 # Threading globals
 extract_done = threading.Event()
@@ -57,9 +65,6 @@ def do_nice_wait(topg_inst):
 
     return      # dont know if this this requireed or good semantics?
 
-# Global method for __main__
-# thread function #2
-
 def bkgrnd_worker():
     """Threaded wait that does work to build out the 10x10x60 DataFrame"""
     global work_inst
@@ -88,17 +93,8 @@ def bkgrnd_worker():
 def main():
     # setup valid cmdline args
     global args
-    global parser
-    parser = argparse.ArgumentParser(description="Entropy apperture engine")
-    parser.add_argument('-v','--verbose', help='verbose error logging', action='store_true', dest='bool_verbose', required=False, default=False)
-    parser.add_argument('-c','--cycle', help='Ephemerial top 10 every 10 secs for 60 secs', action='store_true', dest='bool_tenten60', required=False, default=False)
-    parser.add_argument('-t','--tops', help='show top ganers/losers', action='store_true', dest='bool_tops', required=False, default=False)
-    parser.add_argument('-s','--screen', help='screener logic parser', action='store_true', dest='bool_scr', required=False, default=False)
-    parser.add_argument('-u','--unusual', help='unusual up & down volume', action='store_true', dest='bool_uvol', required=False, default=False)
-    parser.add_argument('-x','--xray', help='dump detailed debug data structures', action='store_true', dest='bool_xray', required=False, default=False)
-    #parser.set_defaults(bool_tops=True, bool_scr=True, bool_uvol=True)
+    args = vars(parser.parse_args())        # args as a dict []
 
-    args = vars(parser.parse_args())
     print ( " " )
     print ( "########## Initalizing ##########" )
     print ( " " )
@@ -170,7 +166,7 @@ def main():
 ########### unusual_vol ################
     if args['bool_uvol'] is True:
         print ( "========== Unusual UP/DOWN Volumes =====================================================" )
-        vols = unusual_vol(1)       # instantiate class
+        vols = unusual_vol(1, args)       # instantiate class, args = global var
         vols.get_up_unvol_data()        # extract data from finance.Yahoo.com
         x = vols.build_df(0)     # build full dataframe
         vols.up_unvol_listall()
