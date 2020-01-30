@@ -71,26 +71,17 @@ class y_topgainers:
         self.tg_df0.drop(self.tg_df0.index, inplace=True)
         x = 1    # row counter Also leveraged for unique dataframe key
         for datarow in self.all_tag_tr:
-            # 1st <td> : ticker symbol info & has comment of company name
-            # 2nd <td> : company name
-            # 3rd <td> : price
-            # 4th <td> : $ change
-            # 5th <td> : % change
-            # 6th <td> : volume
-            # 6th <td> : Avg. vol over 3 months)
-            # 7th <td> : Market cap
-            # 8th <td> : PE ratio
-
-            # BS4 generator object comes from "extracted strings" BS4 operation (nice)
+            # BS4 generator object from "extracted strings" BS4 operation (nice)
             extr_strings = datarow.stripped_strings
-            co_sym = next(extr_strings)
-            co_name = next(extr_strings)
-            price = next(extr_strings)
-            change = next(extr_strings)
-            pct = next(extr_strings)
-            vol = next(extr_strings)
-            avg_vol = next(extr_strings)
-            mktcap = next(extr_strings)
+            co_sym = next(extr_strings)         # 1st <td> : ticker symbol info & has comment of company name
+            co_name = next(extr_strings)        # 2nd <td> : company name
+            price = next(extr_strings)          # 3rd <td> : price
+            change = next(extr_strings)         # 4th <td> : $ change
+            pct = next(extr_strings)            # 5th <td> : % change
+            vol = next(extr_strings)            # 6th <td> : volume
+            avg_vol = next(extr_strings)        # 6th <td> : Avg. vol over 3 months)
+            mktcap = next(extr_strings)         # 7th <td> : Market cap
+            # 8th <td> : PE ratio (I dont care aboutt this. so ignore/disgard it)
 
             co_sym_lj = np.char.ljust(co_sym, 6)       # use numpy to left justify TXT in pandas DF
             co_name_lj = np.char.ljust(co_name, 20)    # use numpy to left justify TXT in pandas DF
