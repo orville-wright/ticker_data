@@ -126,7 +126,8 @@ class unusual_vol:
             # wrangle & clean the data
             co_sym_lj = np.char.ljust(co_sym, 6)       # use numpy to left justify TXT in pandas DF
             co_name_lj = np.char.ljust(co_name, 20)    # use numpy to left justify TXT in pandas DF
-            price_cl = (re.sub('[ $]', '', price))
+            print ( "PRICE: ", price_cl )
+            price_cl = (re.sub('[ $,]', '', price))
             price_pct_cl = (re.sub('[%]', '', price_pct))
             vol_abs_cl = (re.sub('[,]', '', vol_abs))
             vol_pct_cl = (re.sub('[%]', '', vol_pct))
@@ -194,7 +195,7 @@ class unusual_vol:
             # wrangle & clean the data
             co_sym_lj = np.char.ljust(co_sym, 6)       # use numpy to left justify TXT in pandas DF
             co_name_lj = np.char.ljust(co_name, 20)    # use numpy to left justify TXT in pandas DF
-            price_cl = (re.sub('[ $]', '', price))
+            price_cl = (re.sub('[ $,]', '', price))
             price_pct_cl = (re.sub('[%]', '', price_pct))
             vol_abs_cl = (re.sub('[,]', '', vol_abs))
             vol_pct_cl = (re.sub('[%]', '', vol_pct))
@@ -278,7 +279,7 @@ class unusual_vol:
             # wrangle & clean the data
             co_sym_lj = np.char.ljust(co_sym, 6)       # use numpy to left justify TXT in pandas DF
             co_name_lj = np.char.ljust(co_name, 20)    # use numpy to left justify TXT in pandas DF
-            price_cl = (re.sub('[ $]', '', price))
+            price_cl = (re.sub('[ $,]', '', price))
             price_pct_cl = (re.sub('[%]', '', price_pct))
             vol_abs_cl = (re.sub('[,]', '', vol_abs))
             vol_pct_cl = (re.sub('[%]', '', vol_pct))
