@@ -32,6 +32,8 @@ class screener_dg1:
     yti = 0
     cycle = 0           # class thread loop counter
 
+    # TODO: top 10 loosers - no methods coded yet
+
     def __init__(self, yti):
         cmi_debug = __name__+"::"+self.__init__.__name__
         logging.info('%s - INSTANTIATE' % cmi_debug )
@@ -80,26 +82,17 @@ class screener_dg1:
         self.dg1_df0.drop(self.dg1_df0.index, inplace=True)
         x = 1    # row counter Also leveraged for unique dataframe key
         for datarow in self.all_tag_tr:
-            # 1st <td> : ticker symbol info & has comment of company name
-            # 2nd <td> : company name
-            # 3rd <td> : price
-            # 4th <td> : $ change
-            # 5th <td> : % change
-            # 6th <td> : volume
-            # 6th <td> : Avg. vol over 3 months)
-            # 7th <td> : Market cap
-            # 8th <td> : PE ratio
-
             # BS4 generator object comes from "extracted strings" BS4 operation (nice)
             extr_strings = datarow.stripped_strings
-            co_sym = next(extr_strings)
-            co_name = next(extr_strings)
-            price = next(extr_strings)
-            change = next(extr_strings)
-            pct = next(extr_strings)
-            vol = next(extr_strings)
-            avg_vol = next(extr_strings)
-            mktcap = next(extr_strings)
+            co_sym = next(extr_strings)     # 1st <td> : ticker symbol info & has comment of company name
+            co_name = next(extr_strings)    # 2nd <td> : company name
+            price = next(extr_strings)      # 3rd <td> : price
+            change = next(extr_strings)     # 4th <td> : $ change
+            pct = next(extr_strings)        # 5th <td> : % change
+            vol = next(extr_strings)        # 6th <td> : volume
+            avg_vol = next(extr_strings)    # 6th <td> : Avg. vol over 3 months)
+            mktcap = next(extr_strings)     # 7th <td> : Market cap
+            # 8th <td> : PE ratio - **IGNORED & NOT extracted**
 
             co_sym_lj = np.char.ljust(co_sym, 6)       # use numpy to left justify TXT in pandas DF
             co_name_lj = np.char.ljust(co_name, 20)    # use numpy to left justify TXT in pandas DF
@@ -115,8 +108,13 @@ class screener_dg1:
                 mktcap_clean = np.float(re.sub('M', '', mktcap))
                 mb = "M"
 
+            if not BILLIONS and not MILLIONS:
+                mktcap_clean = 0    # error condition - possible bad data
+                logging.info('%s - bad mktcap html data. set to 0' % self.yti )
+                # handle bad data in mktcap html page field
+
+
             # note: Pandas DataFrame : top_gainers pre-initalized as EMPYT
-            # Data treatment:
             # Data is extracted as raw strings, so needs wrangeling...
             #    price - stip out any thousand "," seperators and cast as true decimal via numpy
             #    change - strip out chars '+' and ',' and cast as true decimal via numpy
@@ -202,7 +200,7 @@ class screener_dg1:
 
 # method #8
     def screener_logic(self):
-        """Exectracts a list based on my personla screening logic"""
+        """Exectract a list of small cap **GAINERS ONLY** logic"""
         """ 1. Sort by Cur_price """
         """ 2. exclude any company with Market Cap < $750M """
         """ 3. manage company's with Market cap in BILLION's (requires special handeling) """
@@ -216,7 +214,7 @@ class screener_dg1:
 
         # This method is more gracefull, but it fails on Winodws/Python
         #self.dg1_df1 = self.dg1_df0.query('Mkt_cap > 749' ).copy(deep=True)       # capture MILLIONS 1st
-        self.dg1_df1 = self.dg1_df0[self.dg1_df0.Mkt_cap > 500 ]       # capture MILLIONS
+        self.dg1_df1 = self.dg1_df0[self.dg1_df0.Mkt_cap > 500 ]       # capture MILLIONS only becasue Billions = num/1000
         self.dg1_df1 =  pd.concat( [ self.dg1_df1, self.dg1_df0[self.dg1_df0.M_B == "B"] ] )  # now capture BILLIONS & concat both results
         self.dg1_df1 = self.dg1_df1.sort_values(by=['Pct_change'], ascending=False )
         self.dg1_df1.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
