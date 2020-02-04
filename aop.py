@@ -184,7 +184,7 @@ def main():
         deep_1 = med_large_mega_gainers.tg_df1.drop(columns=[ 'ERank', 'Time' ]).sort_values(by='Pct_change', ascending=False )
         deep_2 = small_cap_dataset.dg1_df1.drop(columns=[ 'Row', 'Time' ] )
         deep_3 = large_volume_movers.df0.drop(columns=[ 'Row', 'Time', 'Vol', 'Vol_pct']).sort_values(by='Pct_change', ascending=False )
-        deep_4 = pd.concat( [ deep_1, deep_2, deep_3], sort=False, ignore_index=True ).sort_values(by=['M_B', 'Mkt_cap'], ascending=False)
+        deep_4 = pd.concat( [ deep_1, deep_2, deep_3], sort=False, ignore_index=True ).sort_values(by=['Pct_change', 'M_B', 'Mkt_cap'], ascending=False, na_position='last')
         deep_4.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
         # now scan unusual volume stocks for stock existing in the new combo DataFrame & tage them in a new column
         print ( "========== DEEP combo data output =====================================================" )
@@ -192,7 +192,17 @@ def main():
         print ( deep_4 )
         print ( "========== DEEP combo data output : duplicates =====================================================" )
         #print ( pd.DataFrame( deep_4, columns=['Symbol']) )
-        print ( deep_4.sort_values(by=['M_B', 'Mkt_cap'], ascending=False )[deep_4.duplicated(['Symbol'])] )
+        print ( deep_4.sort_values(by=['Pct_change'], ascending=False )[deep_4.duplicated(['Symbol'])] )
+
+        #criteria = {'Mkt_cap': . isna(), 'ids2': ['a', 'c'], 'vals': [1, 3]}
+        #deep_4.isna( select criteria)
+        deep_4.query[( deep_4.Mkt_cap.isna() & deep_4.M_B.isna() ) ]
+        nan_rows = df[df['name column'].isnull()]
+        nan_rows = testdf2[testdf2['Yearly'].isnull()]
+        index = list(nan_rows.index)
+        for i in index:
+        testdf2['Yearly'][i] = testdf2['Monthly'][i] * testdf2['Tenure'][i]
+        
 
         # .sort_values(by='Pct_change', ascending=False) )
         #print ( deep_1 )
