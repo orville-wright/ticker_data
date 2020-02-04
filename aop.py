@@ -32,6 +32,8 @@ parser.add_argument('-t','--tops', help='show top ganers/losers', action='store_
 parser.add_argument('-s','--screen', help='screener logic parser', action='store_true', dest='bool_scr', required=False, default=False)
 parser.add_argument('-u','--unusual', help='unusual up & down volume', action='store_true', dest='bool_uvol', required=False, default=False)
 parser.add_argument('-x','--xray', help='dump detailed debug data structures', action='store_true', dest='bool_xray', required=False, default=False)
+parser.add_argument('-d','--deep', help='Deep converged multi data list', action='store_true', dest='bool_deep', required=False, default=False)
+
 
 # Threading globals
 extract_done = threading.Event()
@@ -112,21 +114,21 @@ def main():
 ########### 1 - TOP GAINERS ################
     if args['bool_tops'] is True:
         print ( "========== Top 10 Gainers ==========" )
-        stg1 = y_topgainers(1)       # instantiate class
-        stg1.get_topg_data()        # extract data from finance.Yahoo.com
-        x = stg1.build_tg_df0()     # build full dataframe
-        stg1.build_top10()           # show top 10
-        stg1.print_top10()           # print it
+        med_large_mega_gainers = y_topgainers(1)       # instantiate class
+        med_large_mega_gainers.get_topg_data()        # extract data from finance.Yahoo.com
+        x = med_large_mega_gainers.build_tg_df0()     # build full dataframe
+        med_large_mega_gainers.build_top10()           # show top 10
+        med_large_mega_gainers.print_top10()           # print it
         print ( " ")
 
 ########### 2 - TOP LOSERS ################
     if args['bool_tops'] is True:
         print ( "========== Top 10 Losers ==========" )
-        stg3 = y_toplosers(1)       # instantiate class
-        stg3.get_topg_data()        # extract data from finance.Yahoo.com
-        x = stg3.build_tg_df0()     # build full dataframe
-        stg3.build_top10()           # show top 10
-        stg3.print_top10()           # print it
+        med_large_mega_loosers = y_toplosers(1)       # instantiate class
+        med_large_mega_loosers.get_topg_data()        # extract data from finance.Yahoo.com
+        x = med_large_mega_loosers.build_tg_df0()     # build full dataframe
+        med_large_mega_loosers.build_top10()           # show top 10
+        med_large_mega_loosers.print_top10()           # print it
         print ( " ")
 
 ########### 3 10x10x60 ################
@@ -155,29 +157,39 @@ def main():
 ########### SCREENER 1 ################
     if args['bool_scr'] is True:
         print ( "========== Screener: SMALL CAP Day Gainers : +5% & > $750M Mkt-cap ==========" )
-        scrn1 = screener_dg1(1)       # instantiate class
-        scrn1.get_data()        # extract data from finance.Yahoo.com
-        x = scrn1.build_df0()     # build full dataframe
+        small_cap_dataset = screener_dg1(1)       # instantiate class
+        small_cap_dataset.get_data()        # extract data from finance.Yahoo.com
+        x = small_cap_dataset.build_df0()     # build full dataframe
         # scrn1.build_top10()           # show top 10
         # scrn1.print_top10()           # print it
-        scrn1.screener_logic()
+        small_cap_dataset.screener_logic()
         print ( " ")
 
 ########### unusual_vol ################
     if args['bool_uvol'] is True:
         print ( "========== Unusual UP/DOWN Volumes =====================================================" )
-        vols = unusual_vol(1, args)       # instantiate class, args = global var
-        vols.get_up_unvol_data()        # extract data from finance.Yahoo.com
-        x = vols.build_df(0)     # build full dataframe
-        vols.up_unvol_listall()
+        large_volume_movers = unusual_vol(1, args)       # instantiate class, args = global var
+        large_volume_movers.get_up_unvol_data()        # extract data from finance.Yahoo.com
+        x = large_volume_movers.build_df(0)     # build full dataframe
+        large_volume_movers.up_unvol_listall()
         print ( " ")
-        vols.get_down_unvol_data()
-        y = vols.build_df(1)     # build full dataframe
-        vols.down_unvol_listall()
+        large_volume_movers.get_down_unvol_data()
+        y = large_volume_movers.build_df(1)     # build full dataframe
+        large_volume_movers.down_unvol_listall()
         print ( " ")
 
-########### multi dataframe query build-out ################
-
+########### multi COMBO dataframe query build-out ################
+    if args['bool_deep'] is True and args['bool_scr'] is True and args['bool_uvol'] is True:
+        # first combine Small_cap + med + large + mega
+        deep_1 = med_large_mega_gainers.tg_df1.drop(columns=[ 'ERank', 'Time' ]).sort_values(by='Pct_change', ascending=False )
+        deep_2 = small_cap_dataset.dg1_df1.drop(columns=[ 'Row', 'Time' ] )
+        deep_3 = large_volume_movers.df0.drop(columns=[ 'Row', 'Time', 'Vol', 'Vol_pct']).sort_values(by='Pct_change', ascending=False )
+        # now scan unusual volume stocks for stock existing in the new combo DataFrame & tage them in a new column
+        print ( "========== DEEP combo data output =====================================================" )
+        #print ( deep_1.drop(columns=[ 'ERank', 'Time' ]) )
+        print ( pd.concat( [ deep_1, deep_2, deep_3], sort=False ).sort_values(by='Pct_change', ascending=False) )
+        #print ( deep_1 )
+        #print ( deep_2 )
 
 
     print ( "####### done #####")
