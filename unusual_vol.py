@@ -98,6 +98,7 @@ class unusual_vol:
         return
 
 # method #3
+# DEPRECATED : DELETE
     def build_df0(self):
         """Build-out a fully populated Pandas DataFrame containg all the"""
         """extracted/scraped fields from the html/markup table data"""
@@ -124,8 +125,8 @@ class unusual_vol:
             vol_pct = next(extr_strings)
 
             # wrangle & clean the data
-            co_sym_lj = np.char.ljust(co_sym, 6)       # use numpy to left justify TXT in pandas DF
-            co_name_lj = np.char.ljust(co_name, 20)    # use numpy to left justify TXT in pandas DF
+            co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )      # left justify TXT in DF & convert to raw string
+            co_name_lj = np.array2string(np.char.ljust(co_name, 20) )   # left justify TXT in DF & convert to raw string
             print ( "PRICE: ", price_cl )
             price_cl = (re.sub('[ $,]', '', price))
             price_pct_cl = (re.sub('[%]', '', price_pct))
@@ -134,8 +135,8 @@ class unusual_vol:
 
             self.data0 = [[ \
                        x, \
-                       co_sym_lj, \
-                       co_name_lj, \
+                       re.sub('\'', '', co_sym_lj), \
+                       re.sub('\'', '', co_name_lj), \
                        np.float(price_cl), \
                        np.float(price_net), \
                        np.float(price_pct_cl), \
@@ -167,6 +168,7 @@ class unusual_vol:
         return
 
 # method #5
+# DEPRECATED : DELETE
     def build_df1(self):
         """Build-out a fully populated Pandas DataFrame containg all the"""
         """extracted/scraped fields from the html/markup table data"""
@@ -193,8 +195,8 @@ class unusual_vol:
             vol_pct = next(extr_strings)
 
             # wrangle & clean the data
-            co_sym_lj = np.char.ljust(co_sym, 6)       # use numpy to left justify TXT in pandas DF
-            co_name_lj = np.char.ljust(co_name, 20)    # use numpy to left justify TXT in pandas DF
+            co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )      # left justify TXT in DF & convert to raw string
+            co_name_lj = np.array2string(np.char.ljust(co_name, 20) )   # left justify TXT in DF & convert to raw string
             price_cl = (re.sub('[ $,]', '', price))
             price_pct_cl = (re.sub('[%]', '', price_pct))
             vol_abs_cl = (re.sub('[,]', '', vol_abs))
@@ -202,8 +204,8 @@ class unusual_vol:
 
             self.data1 = [[ \
                        x, \
-                       co_sym_lj, \
-                       co_name_lj, \
+                       re.sub('\'', '', co_sym_lj), \
+                       re.sub('\'', '', co_name_lj), \
                        np.float(price_cl), \
                        np.float(price_net), \
                        np.float(price_pct_cl), \
@@ -277,8 +279,8 @@ class unusual_vol:
             vol_pct = next(extr_strings)
 
             # wrangle & clean the data
-            co_sym_lj = np.char.ljust(co_sym, 6)       # use numpy to left justify TXT in pandas DF
-            co_name_lj = np.char.ljust(co_name, 20)    # use numpy to left justify TXT in pandas DF
+            co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )      # left justify TXT in DF & convert to raw string
+            co_name_lj = np.array2string(np.char.ljust(co_name, 20) )   # left justify TXT in DF & convert to raw string
             price_cl = (re.sub('[ $,]', '', price))
             price_pct_cl = (re.sub('[%]', '', price_pct))
             vol_abs_cl = (re.sub('[,]', '', vol_abs))
@@ -286,8 +288,8 @@ class unusual_vol:
 
             self.data0 = [[ \
                        x, \
-                       co_sym_lj, \
-                       co_name_lj, \
+                       re.sub('\'', '', co_sym_lj), \
+                       re.sub('\'', '', co_name_lj), \
                        np.float(price_cl), \
                        np.float(price_net), \
                        np.float(price_pct_cl), \

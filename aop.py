@@ -184,10 +184,17 @@ def main():
         deep_1 = med_large_mega_gainers.tg_df1.drop(columns=[ 'ERank', 'Time' ]).sort_values(by='Pct_change', ascending=False )
         deep_2 = small_cap_dataset.dg1_df1.drop(columns=[ 'Row', 'Time' ] )
         deep_3 = large_volume_movers.df0.drop(columns=[ 'Row', 'Time', 'Vol', 'Vol_pct']).sort_values(by='Pct_change', ascending=False )
+        deep_4 = pd.concat( [ deep_1, deep_2, deep_3], sort=False, ignore_index=True ).sort_values(by=['M_B', 'Mkt_cap'], ascending=False)
+        deep_4.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
         # now scan unusual volume stocks for stock existing in the new combo DataFrame & tage them in a new column
         print ( "========== DEEP combo data output =====================================================" )
         #print ( deep_1.drop(columns=[ 'ERank', 'Time' ]) )
-        print ( pd.concat( [ deep_1, deep_2, deep_3], sort=False ).sort_values(by='Pct_change', ascending=False) )
+        print ( deep_4 )
+        print ( "========== DEEP combo data output : duplicates =====================================================" )
+        #print ( pd.DataFrame( deep_4, columns=['Symbol']) )
+        print ( deep_4.sort_values(by=['M_B', 'Mkt_cap'], ascending=False )[deep_4.duplicated(['Symbol'])] )
+
+        # .sort_values(by='Pct_change', ascending=False) )
         #print ( deep_1 )
         #print ( deep_2 )
 

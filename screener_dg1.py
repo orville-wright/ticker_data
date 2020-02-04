@@ -94,8 +94,10 @@ class screener_dg1:
             mktcap = next(extr_strings)     # 7th <td> : Market cap
             # 8th <td> : PE ratio - **IGNORED & NOT extracted**
 
-            co_sym_lj = np.char.ljust(co_sym, 6)       # use numpy to left justify TXT in pandas DF
-            co_name_lj = np.char.ljust(co_name, 20)    # use numpy to left justify TXT in pandas DF
+            co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )      # left justify TXT in DF & convert to raw string
+            co_name_lj = np.array2string(np.char.ljust(co_name, 20) )   # left justify TXT in DF & convert to raw string
+            #co_sym_lj = np.char.ljust(co_sym, 6)       # use numpy to left justify TXT in pandas DF
+            #co_name_lj = np.char.ljust(co_name, 20)    # use numpy to left justify TXT in pandas DF
             mktcap = (re.sub('[N\/A]', '0', mktcap))   # handle N/A
 
             BILLIONS = re.search('B', mktcap)
@@ -103,14 +105,17 @@ class screener_dg1:
             if BILLIONS:
                 mktcap_clean = np.float(re.sub('B', '', mktcap))
                 mb = "B"
+                logging.info('%s - found BILLIONS. set B' % cmi_debug )
 
             if MILLIONS:
                 mktcap_clean = np.float(re.sub('M', '', mktcap))
                 mb = "M"
+                logging.info('%s - found MILLIONS. set M' % cmi_debug )
 
             if not BILLIONS and not MILLIONS:
                 mktcap_clean = 0    # error condition - possible bad data
-                logging.info('%s - bad mktcap html data. set to 0' % self.yti )
+                mb = "X"
+                logging.info('%s - bad mktcap data. set to X/0' % cmi_debug )
                 # handle bad data in mktcap html page field
 
 
@@ -122,11 +127,11 @@ class screener_dg1:
             #    mktcap - strio out 'B' Billions & 'M' Millions & "N/A"
             self.data0 = [[ \
                        x, \
-                       co_sym_lj, \
-                       co_name_lj, \
+                       re.sub('\'', '', co_sym_lj), \
+                       re.sub('\'', '', co_name_lj), \
                        np.float(re.sub('\,', '', price)), \
                        np.float(re.sub('[\+,]', '', change)), \
-                       np.float(re.sub('[\+%]', '', pct)), \
+                       np.float(re.sub('[\+,%]', '', pct)), \
                        mktcap_clean, \
                        mb, \
                        time_now ]]

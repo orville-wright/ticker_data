@@ -30,9 +30,9 @@ class y_topgainers:
         cmi_debug = __name__+"::"+self.__init__.__name__
         logging.info('%s - INIT inst' % cmi_debug )
         # init empty DataFrame with present colum names
-        self.tg_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'Time'] )
-        self.tg_df1 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'Time'] )
-        self.tg_df2 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'Time'] )
+        self.tg_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time'] )
+        self.tg_df1 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time'] )
+        self.tg_df2 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time'] )
         self.yti = yti
         return
 
@@ -80,12 +80,20 @@ class y_topgainers:
             mktcap = next(extr_strings)         # 7th <td> : Market cap
             # 8th <td> : PE ratio (I dont care aboutt this. so ignore/disgard it)
 
-            co_sym_lj = np.char.ljust(co_sym, 6)       # use numpy to left justify TXT in pandas DF
-            co_name_lj = np.char.ljust(co_name, 20)    # use numpy to left justify TXT in pandas DF
+            co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )      # left justify TXT in DF & convert to raw string
+            co_name_lj = np.array2string(np.char.ljust(co_name, 20) )   # left justify TXT in DF & convert to raw string
+
             mktcap = (re.sub('[N\/A]', '0', mktcap))   # handle N/A
 
+            TRILLIONS = re.search('T', mktcap)
             BILLIONS = re.search('B', mktcap)
             MILLIONS = re.search('M', mktcap)
+
+            if TRILLIONS:
+                mktcap_clean = np.float(re.sub('T', '', mktcap))
+                mb = "T"
+                logging.info('%s - found TRILLIONS. set T' % cmi_debug )
+
             if BILLIONS:
                 mktcap_clean = np.float(re.sub('B', '', mktcap))
                 mb = "B"
@@ -96,9 +104,10 @@ class y_topgainers:
                 mb = "M"
                 logging.info('%s - found MILLIONS. set M' % cmi_debug )
 
-            if not BILLIONS and not MILLIONS:
+            if not TRILLIONS and not BILLIONS and not MILLIONS:
                 mktcap_clean = 0    # error condition - possible bad data
-                logging.info('%s - bad mktcap data. set to 0' % cmi_debug )
+                mb = "X"
+                logging.info('%s - bad mktcap data. set to X/0' % cmi_debug )
                 # handle bad data in mktcap html page field
 
             # note: Pandas DataFrame : top_gainers pre-initalized as EMPYT
@@ -110,15 +119,16 @@ class y_topgainers:
             #    mktcap - strio out 'B' Billions & 'M' Millions
             self.data0 = [[ \
                        x, \
-                       co_sym_lj, \
-                       co_name_lj, \
+                       re.sub('\'', '', co_sym_lj), \
+                       re.sub('\'', '', co_name_lj), \
                        np.float(re.sub('\,', '', price)), \
                        np.float(re.sub('[\+,]', '', change)), \
                        np.float(re.sub('[\+,%]', '', pct)), \
                        mktcap_clean, \
+                       mb, \
                        time_now ]]
 
-            self.df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'Time' ], index=[x] )
+            self.df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time' ], index=[x] )
             self.tg_df0 = self.tg_df0.append(self.df0)    # append this ROW of data into the REAL DataFrame
             x+=1
         logging.info('%s - populated new DF0 dataset' % cmi_debug )
