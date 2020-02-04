@@ -27,8 +27,8 @@ class y_topgainers:
     cycle = 0           # class thread loop counter
 
     def __init__(self, yti):
-        logging.info('y_topgainers:: INIT inst: %s' % self )
-        logging.info('y_topgainers:: Inst #: %s' % yti )    # catches 1st instantiate 0|1
+        cmi_debug = __name__+"::"+self.__init__.__name__
+        logging.info('%s - INIT inst' % cmi_debug )
         # init empty DataFrame with present colum names
         self.tg_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'Time'] )
         self.tg_df1 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'Time'] )
@@ -41,22 +41,17 @@ class y_topgainers:
         """Connect to finance.yahoo.com and extract (scrape) the raw sring data out of"""
         """the embedded webpage [Stock:Top Gainers] html data table. Returns a BS4 handle."""
 
-        logging.info('ins.#%s.get_topg_data() - IN' % self.yti )
+        cmi_debug = __name__+"::"+self.get_topg_data.__name__+".#"+str(self.yti)
+        logging.info('%s - IN' % cmi_debug )
         with urllib.request.urlopen("https://finance.yahoo.com/gainers/" ) as url:
             s = url.read()
-            logging.info('ins.#%s.get_topg_data() - read html stream' % self.yti )
+            logging.info('%s - read html stream' % cmi_debug )
             self.soup = BeautifulSoup(s, "html.parser")
         # ATTR style search. Results -> Dict
         # <tr tag in target merkup line has a very complex 'class=' but the attributes are unique. e.g. 'simpTblRow' is just one unique attribute
-        logging.info('ins.#%s.get_topg_data() - save data handle' % self.yti )
+        logging.info('%s - save data object handle' % cmi_debug )
         self.all_tag_tr = self.soup.find_all(attrs={"class": "simpTblRow"})
-
-        # target markup line I am scanning looks like this...
-        # soup.find_all( "tr", class_="simpTblRow Bgc($extraLightBlue):h BdB Bdbc($finLightGrayAlt) Bdbc($tableBorderBlue):h H(32px) Bgc($extraLightBlue)" )
-
-        # Example CSS Selector
-        #all_tag_tr1 = soup.select( "tr.simpTblRow.Bgc" )
-        logging.info('ins.#%s.get_topg_data() - close url handle' % self.yti )
+        logging.info('%s - close url handle' % cmi_debug )
         url.close()
         return
 
@@ -65,9 +60,11 @@ class y_topgainers:
         """Build-out a fully populated Pandas DataFrame containg all the"""
         """extracted/scraped fields from the html/markup table data"""
         """Wrangle, clean/convert/format the data correctly."""
-        logging.info('ins.#%s.build_tg_df0() - IN' % self.yti )
+
+        cmi_debug = __name__+"::"+self.build_tg_df0.__name__+".#"+str(self.yti)
+        logging.info('%s - IN' % cmi_debug )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
-        logging.info('ins.#%s.build_tg_df0() - Drop all rows from DF0' % self.yti )
+        logging.info('%s - Drop all rows from DF0' % cmi_debug )
         self.tg_df0.drop(self.tg_df0.index, inplace=True)
         x = 1    # row counter Also leveraged for unique dataframe key
         for datarow in self.all_tag_tr:
@@ -92,16 +89,16 @@ class y_topgainers:
             if BILLIONS:
                 mktcap_clean = np.float(re.sub('B', '', mktcap))
                 mb = "B"
-                logging.info('ins.#%s.build_tg_df0() - found BILLIONS. set B' % self.yti )
+                logging.info('%s - found BILLIONS. set B' % cmi_debug )
 
             if MILLIONS:
                 mktcap_clean = np.float(re.sub('M', '', mktcap))
                 mb = "M"
-                logging.info('ins.#%s.build_tg_df0() - found MILLIONS. set M' % self.yti )
+                logging.info('%s - found MILLIONS. set M' % cmi_debug )
 
             if not BILLIONS and not MILLIONS:
                 mktcap_clean = 0    # error condition - possible bad data
-                logging.info('ins.#%s.build_tg_df0() - bad mktcap html data. set 0' % self.yti )
+                logging.info('%s - bad mktcap data. set to 0' % cmi_debug )
                 # handle bad data in mktcap html page field
 
             # note: Pandas DataFrame : top_gainers pre-initalized as EMPYT
@@ -124,7 +121,7 @@ class y_topgainers:
             self.df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'Time' ], index=[x] )
             self.tg_df0 = self.tg_df0.append(self.df0)    # append this ROW of data into the REAL DataFrame
             x+=1
-        logging.info('ins.#%s.build_tg_df0() - populated new DF0 dataset' % self.yti )
+        logging.info('%s - populated new DF0 dataset' % cmi_debug )
         return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
                         # sucess = lobal class accessor (y_topgainers.tg_df0) populated & updated
 
@@ -142,8 +139,9 @@ class y_topgainers:
     def topg_listall(self):
         """Print the full DataFrame table list of Yahoo Finance Top Gainers"""
         """Sorted by % Change"""
-        # stock_topgainers = get_topgainers()
-        logging.info('ins.#%s.topg_listall() - IN' % self.yti )
+
+        cmi_debug = __name__+"::"+self.topg_listall.__name__+".#"+str(self.yti)
+        logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
         print ( self.tg_df0.sort_values(by='Pct_change', ascending=False ) )    # only do after fixtures datascience dataframe has been built
@@ -154,10 +152,12 @@ class y_topgainers:
         """Get top 10 gainers from main DF (df0) -> temp DF (df1)"""
         """df1 is ephemerial. Is allways overwritten on each run"""
 
-        logging.info('ins.#%s.build_top10() - IN' % self.yti )
-        logging.info('ins.#%s.build_top10() - Drop all rows from DF1' % self.yti )
+        cmi_debug = __name__+"::"+self.build_top10.__name__+".#"+str(self.yti)
+        logging.info('%s - IN' % cmi_debug )
+
+        logging.info('%s - Drop all rows from DF1' % cmi_debug )
         self.tg_df1.drop(self.tg_df1.index, inplace=True)
-        logging.info('ins.#%s.build_top10() - Copy DF0 -> ephemerial DF1' % self.yti )
+        logging.info('%s - Copy DF0 -> ephemerial DF1' % cmi_debug )
         self.tg_df1 = self.tg_df0.sort_values(by='Pct_change', ascending=False ).head(10).copy(deep=True)    # create new DF via copy of top 10 entries
         self.tg_df1.rename(columns = {'Row':'ERank'}, inplace = True)    # Rank is more accurate for this Ephemerial DF
         self.tg_df1.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
@@ -167,7 +167,8 @@ class y_topgainers:
     def print_top10(self):
         """Prints the Top 10 Dataframe"""
 
-        logging.info('ins.#%s.print_top10() - IN' % self.yti )
+        cmi_debug = __name__+"::"+self.print_top10.__name__+".#"+str(self.yti)
+        logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
         print ( self.tg_df1.sort_values(by='Pct_change', ascending=False ).head(10) )
@@ -178,7 +179,8 @@ class y_topgainers:
         """Build-up 10x10x060 historical DataFrame (df2) from source df1"""
         """Generally called on some kind of cycle"""
 
-        logging.info('ins.#%s.build_tenten60() - IN' % self.yti )
+        cmi_debug = __name__+"::"+self.build_tenten60.__name__+".#"+str(self.yti)
+        logging.info('%s - IN' % cmi_debug )
         self.tg_df2 = self.tg_df2.append(self.tg_df1, ignore_index=False)    # merge top 10 into
         self.tg_df2.reset_index(inplace=True, drop=True)    # ensure index is allways unique + sequential
         return
