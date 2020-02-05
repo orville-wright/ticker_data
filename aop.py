@@ -187,27 +187,37 @@ def main():
         deep_4 = pd.concat( [ deep_1, deep_2, deep_3], sort=False, ignore_index=True ).sort_values(by=['Pct_change', 'M_B', 'Mkt_cap'], ascending=False, na_position='last')
         deep_4.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
         # now scan unusual volume stocks for stock existing in the new combo DataFrame & tage them in a new column
-        print ( "========== DEEP combo data output =====================================================" )
-        #print ( deep_1.drop(columns=[ 'ERank', 'Time' ]) )
+
+        print ( "========== Full DEEP combo DataFrame =====================================================" )
         print ( deep_4 )
-        print ( "========== DEEP combo data output : duplicates =====================================================" )
-        #print ( pd.DataFrame( deep_4, columns=['Symbol']) )
-        print ( deep_4.sort_values(by=['Pct_change'], ascending=False )[deep_4.duplicated(['Symbol'])] )
+        print ( "========== DEEP combo : duplicates only =====================================================" )
+        deep_5 = deep_4.duplicated(['Symbol']).to_frame()   # initial pd.duplicated() output is pandas.SERIES
+        print ( deep_5[deep_5[0] == True] )                 # select dups - pd.to_frame() default column name = 0
 
-        #criteria = {'Mkt_cap': . isna(), 'ids2': ['a', 'c'], 'vals': [1, 3]}
-        #deep_4.isna( select criteria)
-        deep_4.query[( deep_4.Mkt_cap.isna() & deep_4.M_B.isna() ) ]
-        nan_rows = df[df['name column'].isnull()]
-        nan_rows = testdf2[testdf2['Yearly'].isnull()]
-        index = list(nan_rows.index)
+        nan_rows = (deep_4[deep_4['Mkt_cap'].isna()])
+        print ( "====================== NaN rows 1 =========================" )
+        print ( (deep_4[deep_4['Mkt_cap'].isna()]) )
+        print ( "====================== NaN rows 2 =========================" )
+        print ( (deep_4[deep_4['Mkt_cap'].isna()]).iloc[:,[0,5,6]] )
+
+        # Logic...
+        # scan Nan rows DataFrame
+        # does each item in duplicates DataFrame exists in NaN DataFrame - !!! also need symbol here
+            # YES = guaranteed to have originated from Unusual List table_section
+            # NO = bad data0 maybe?
+        # on YES...
+            # scan full deep combo DataFrame
+            # drop row identified dupe row from deep combo DataFrame
+            # search deep combo DataFrame (by symbol) of dupe item
+                # add column info == "Unusual volume by xxx%"
+                # add colum info == "Small, medium. large, mega - cap company"
+
+        """
+        index = list(nan_rows['Symbol'])
         for i in index:
-        testdf2['Yearly'][i] = testdf2['Monthly'][i] * testdf2['Tenure'][i]
-        
-
-        # .sort_values(by='Pct_change', ascending=False) )
-        #print ( deep_1 )
-        #print ( deep_2 )
-
+            #testdf2['Yearly'][i] = testdf2['Monthly'][i] * testdf2['Tenure'][i]
+            print ( "i is:", i )
+        """
 
     print ( "####### done #####")
 

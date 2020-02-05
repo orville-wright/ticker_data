@@ -10,9 +10,9 @@
     2. compare to previous days close
     3. compare to 2nd 60 second window
     4. compare to 3rd 60 second window
-    5. comapre to 4th 60 second window
-    6. inferr (quickly) 300 second window trend (up/down/flat)
-    7. make inferrence on 5th 60 second window
+    5. compare to 4th 60 second window
+    6. infer (quickly) 300 second window trend (up/down/flat)
+    7. make inference on 5th 60 second window
     8. in 1st 60 seconds of market open...
         - generate 'Hot Open' List
         - cycle every 10 seconds update list
@@ -30,6 +30,27 @@
     1. as some medium/large cap stocks are slow to open & build momentum
     2. their momentum eventually pushes small cap stocks off the ticker data stream
        - mostly due to Yahoo Finance own display logic
-    3. even though small cap stock will have a much greate %change & hence trade oppotunity
+    3. even though small cap stock will have a much greater %change & hence trade opportunity
 
 6. command line args
+
+
+=====
+
+Pandas Hacking notes
+===========================
+
+Duplicates in a DataFrame
+==========================
+#print ( pd.DataFrame( deep_4, columns=['Symbol']) )
+#print ( deep_4.sort_values(by=['Pct_change'], ascending=False )[deep_4.duplicated(['Symbol'])] )
+#print ( [deep_4.duplicated(['Symbol'])] )      # output is LIST
+#print ( deep_4.duplicated(['Symbol']).index.values )         # output is DataFrame
+# deep_4.query[( deep_4.Mkt_cap.isna() & deep_4.M_B.isna() ) ]
+
+NaN rows
+========
+# SAVE: (deep_4[deep_4['Mkt_cap'].isna()]).iloc[:,0:1]    # fina all NaN's and print index + column 1 - (output = DataFrame
+# SAVE: (deep_4[deep_4['Mkt_cap'].isna()]).index          # final all NaN's and print index only - (output = a list)
+#nan_rows = testdf2[testdf2['Yearly'].isnull()]
+#index = list(nan_rows['Symbol'])
