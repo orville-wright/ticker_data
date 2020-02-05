@@ -191,8 +191,9 @@ def main():
         print ( "========== Full DEEP combo DataFrame =====================================================" )
         print ( deep_4 )
         print ( "========== DEEP combo : duplicates only =====================================================" )
-        deep_5 = deep_4.duplicated(['Symbol']).to_frame()   # initial pd.duplicated() output is pandas.SERIES
-        print ( deep_5[deep_5[0] == True] )                 # select dups - pd.to_frame() default column name = 0
+        print ( deep_4.sort_values(by=['Pct_change'], ascending=True )[deep_4.duplicated(['Symbol'])] )
+        #deep_5 = deep_4.duplicated(['Symbol']).to_frame()   # initial pd.duplicated() output is pandas.SERIES
+        #print ( deep_5[deep_5[0] == True] )                 # select dups - pd.to_frame() default column name = 0
 
         nan_rows = (deep_4[deep_4['Mkt_cap'].isna()])
         print ( "====================== NaN rows 1 =========================" )
