@@ -96,9 +96,10 @@ class screener_dg1:
 
             co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )      # left justify TXT in DF & convert to raw string
             co_name_lj = np.array2string(np.char.ljust(co_name, 20) )   # left justify TXT in DF & convert to raw string
-            #co_sym_lj = np.char.ljust(co_sym, 6)       # use numpy to left justify TXT in pandas DF
-            #co_name_lj = np.char.ljust(co_name, 20)    # use numpy to left justify TXT in pandas DF
             mktcap = (re.sub('[N\/A]', '0', mktcap))   # handle N/A
+
+            # TODO: co_name_lj has "" removed later in data setup as some odd companies have " surround their name.
+            # But remving " leaves 1 space infront/behind name str. Fix that
 
             BILLIONS = re.search('B', mktcap)
             MILLIONS = re.search('M', mktcap)
@@ -128,7 +129,7 @@ class screener_dg1:
             self.data0 = [[ \
                        x, \
                        re.sub('\'', '', co_sym_lj), \
-                       re.sub('\'', '', co_name_lj), \
+                       re.sub('[\'"]', '', co_name_lj), \
                        np.float(re.sub('\,', '', price)), \
                        np.float(re.sub('[\+,]', '', change)), \
                        np.float(re.sub('[\+,%]', '', pct)), \
