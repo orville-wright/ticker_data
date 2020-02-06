@@ -5,6 +5,10 @@ The focus is on the Top10 list
     - Cumulative ranked list (of the day)
     - of Top 10 ticker symbols per minute
     - shows which symbols are up & coming & which are trailing off
+    - but, you need to be careful here becasue a simple .head(10) list isn't all that helathy.
+      what shuld happen is...
+      	- list the top10 gainers based on the range span of the % gain, since this %gain window is continiously
+	  increaseing over the day window.
 
 2. Top10 Cold drop-offs
     - referencing #1 -> call-out symbols that drop-off the Top10
