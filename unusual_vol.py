@@ -289,7 +289,7 @@ class unusual_vol:
             self.data0 = [[ \
                        x, \
                        re.sub('\'', '', co_sym_lj), \
-                       re.sub('\'', '', co_name_lj), \
+                       re.sub('[\"\']', '', co_name_lj), \
                        np.float(price_cl), \
                        np.float(price_net), \
                        np.float(price_pct_cl), \
