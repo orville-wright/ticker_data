@@ -129,7 +129,7 @@ class screener_dg1:
             self.data0 = [[ \
                        x, \
                        re.sub('\'', '', co_sym_lj), \
-                       re.sub('[\'"]', '', co_name_lj), \
+                       re.sub('\'', '', co_name_lj), \
                        np.float(re.sub('\,', '', price)), \
                        np.float(re.sub('[\+,]', '', change)), \
                        np.float(re.sub('[\+,%]', '', pct)), \

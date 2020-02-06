@@ -188,18 +188,55 @@ def main():
         deep_4.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
         # now scan unusual volume stocks for stock existing in the new combo DataFrame & tage them in a new column
 
-        print ( "========== Full DEEP combo DataFrame =====================================================" )
-        print ( deep_4 )
-        print ( "========== DEEP combo : duplicates only =====================================================" )
-        print ( deep_4.sort_values(by=['Pct_change'], ascending=False )[deep_4.duplicated(['Symbol'])] )
-        #deep_5 = deep_4.duplicated(['Symbol']).to_frame()   # initial pd.duplicated() output is pandas.SERIES
+        # print ( "========== Full DEEP combo DataFrame =====================================================" )
+        # print ( deep_4 )
+        # print ( "========== DEEP combo : duplicates only - style #1 =====================================================" )
+        # deep_5 = deep_4.sort_values(by=['Pct_change'], ascending=False )[deep_4.duplicated(['Symbol'])]   # this works **KEEP**
+        deep_5 = deep_4.sort_values(by=['Pct_change'], ascending=False )    # prepare a sorted df
+        # print ( deep_5[deep_5.duplicated(['Symbol'])] )                     # full dataframe table
+        # print ( deep_5[deep_5.duplicated(['Symbol'])].Symbol.values )       # just the symbols as list
+        # print ( deep_5[deep_5.duplicated(['Symbol'])].index )               # index ID's as a list
+
+        # print ( "========== DEEP combo : duplicates only - style #2 =====================================================" )
+        deep_6 = deep_5.duplicated(['Symbol']).to_frame()      # pd.duplicated outputs a SERIES
+        # print ( deep_6[deep_6[0] == True] )        # phase 2 : KEEP
+
+        #deep_5 = deep_4.duplicated(['Symbol']).to_frame()   # pd.duplicated() SERIES result -> DataFrame
         #print ( deep_5[deep_5[0] == True] )                 # select dups - pd.to_frame() default column name = 0
 
-        nan_rows = (deep_4[deep_4['Mkt_cap'].isna()])
-        print ( "====================== NaN rows 1 =========================" )
-        print ( (deep_4[deep_4['Mkt_cap'].isna()]) )
-        print ( "====================== NaN rows 2 =========================" )
-        print ( (deep_4[deep_4['Mkt_cap'].isna()]).iloc[:,[0,5,6]] )
+        # scan deep_4 and delete rows with index == deep_6
+        print ( "========== DEEP combo no dupes : outlyers described ==========================================" )
+        deep_4.drop( deep_6[deep_6[0] == True].index, inplace=True )        # permenantly on the original df
+        deep_4 = deep_4.assign(Entropy="" )
+        #print ( deep_4 )
+
+        # print ( "========== DEEP combo : Add new column =====================================================" )
+        # entropy = {}
+
+        for x in deep_5[deep_5.duplicated(['Symbol'])].Symbol.values:
+            row_idx = int(deep_4.loc[deep_4['Symbol'] == x ].index.values)
+            cap_size = deep_4.loc[deep_4['Symbol'] == x ].M_B.values
+            if cap_size == 'M':
+                cap_size = '*Small cap*'
+            else:
+                cap_size = 'Large cap'
+            deep_4.loc[row_idx,'Entropy'] = "Unusual vol "+cap_size
+
+        print ( deep_4 )
+        #entropy.update({'*un_vol*': ridx})
+        # print ( "Entropy: ", entropy )
+        #deep_4.loc[deep_4['Symbol'] == x ]['Entropy'] = "Unusual vol"
+        #deep_4['Entropy'] = entropy
+        #row = deep_4.loc[deep_4['Symbol'] == x ]
+        #print ( "Row: ", row )
+        #deep_4['Entropy'] = entropy
+        #row = deep_4.insert(rloc, 'Entropy', "Schizzle" )
+        #print ( deep_4.loc[deep_4['Symbol'] == x ] )
+
+        # print ( "====================== ALL NaN rows 1 - style 1 =========================" )
+        # print ( (deep_4[deep_4['Mkt_cap'].isna()]) )
+        # print ( "====================== ALL NaN rows 2 - style 2 =========================" )
+        # print ( (deep_4[deep_4['Mkt_cap'].isna()]).iloc[:,[0,5,6]] )    # drop all the known dupes
 
         # Logic...
         # scan Nan rows DataFrame

@@ -99,7 +99,7 @@ class unusual_vol:
 
 # method #3
 # DEPRECATED : DELETE
-    def build_df0(self):
+    def deprecated_build_df0(self):
         """Build-out a fully populated Pandas DataFrame containg all the"""
         """extracted/scraped fields from the html/markup table data"""
         """Wrangle, clean/convert/format the data correctly."""
@@ -169,7 +169,7 @@ class unusual_vol:
 
 # method #5
 # DEPRECATED : DELETE
-    def build_df1(self):
+    def deprecated_build_df1(self):
         """Build-out a fully populated Pandas DataFrame containg all the"""
         """extracted/scraped fields from the html/markup table data"""
         """Wrangle, clean/convert/format the data correctly."""
