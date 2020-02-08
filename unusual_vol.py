@@ -19,8 +19,8 @@ class unusual_vol:
     """Class to discover unusual volume data from NASDAQ.com data source"""
 
     # global accessors
-    df0 = ""                # DataFrame - Full list of Unusual UP volume
-    df1 = ""                # DataFrame - Full list of Unusual DOWN volume
+    up_df0 = ""                # DataFrame - Full list of Unusual UP volume
+    down_df1 = ""                # DataFrame - Full list of Unusual DOWN volume
     df2 = ""                # DataFrame - List of Top 10 (both UP & DOWN
     up_table_data = ""      # BS4 constructor object of HTML <table> sub-doc > UP vol data
     down_table_data = ""    # BS4 constructor object of HTML <table> sub-doc > DOWN vol data
@@ -34,8 +34,8 @@ class unusual_vol:
         logging.info('%s - INSTANTIATE' % cmi_debug )
         self.args = global_args
         # init empty DataFrame with preset colum names
-        self.df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Vol', 'Vol_pct', 'Time'] )
-        self.df1 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Vol', 'Vol_pct', 'Time'] )
+        self.up_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Vol', 'Vol_pct', 'Time'] )
+        self.down_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Vol', 'Vol_pct', 'Time'] )
         self.df2 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Vol', 'Vol_pct', 'Time'] )
         self.yti = yti
         return
@@ -98,147 +98,28 @@ class unusual_vol:
         return
 
 # method #3
-# DEPRECATED : DELETE
-    def deprecated_build_df0(self):
-        """Build-out a fully populated Pandas DataFrame containg all the"""
-        """extracted/scraped fields from the html/markup table data"""
-        """Wrangle, clean/convert/format the data correctly."""
-
-        cmi_debug = __name__+"::"+self.build_df0.__name__+".#"+str(self.yti)
-        logging.info('%s - IN' % cmi_debug )
-        time_now = time.strftime("%H:%M:%S", time.localtime() )
-        logging.info('%s - Drop all rows from DF0' % cmi_debug )
-        self.df0.drop(self.df0.index, inplace=True)
-
-        x = 1    # row counter Also leveraged for unique dataframe key
-        col_headers = next(self.up_table_rows)     # ignore the 1st TR row object, which is column header titles
-
-        for tr_data in self.up_table_rows:     # genrator object
-            extr_strings = tr_data.stripped_strings
-            co_sym = next(extr_strings)
-            co_name = next(extr_strings)
-            price = next(extr_strings)
-            price_net = next(extr_strings)
-            arrow_updown = next(extr_strings)
-            price_pct = next(extr_strings)
-            vol_abs = next(extr_strings)
-            vol_pct = next(extr_strings)
-
-            # wrangle & clean the data
-            co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )      # left justify TXT in DF & convert to raw string
-            co_name_lj = np.array2string(np.char.ljust(co_name, 20) )   # left justify TXT in DF & convert to raw string
-            print ( "PRICE: ", price_cl )
-            price_cl = (re.sub('[ $,]', '', price))
-            price_pct_cl = (re.sub('[%]', '', price_pct))
-            vol_abs_cl = (re.sub('[,]', '', vol_abs))
-            vol_pct_cl = (re.sub('[%]', '', vol_pct))
-
-            self.data0 = [[ \
-                       x, \
-                       re.sub('\'', '', co_sym_lj), \
-                       re.sub('\'', '', co_name_lj), \
-                       np.float(price_cl), \
-                       np.float(price_net), \
-                       np.float(price_pct_cl), \
-                       np.float(vol_abs_cl), \
-                       np.float(vol_pct_cl), \
-                       time_now ]]
-
-            self.temp_df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ], index=[x] )
-            self.df0 = self.df0.append(self.temp_df0, sort=False)    # append this ROW of data into the REAL DataFrame
-            # DEBUG
-            if self.args['bool_xray'] is True:        # DEBUG
-                print ( "================================", x, "======================================")
-                print ( co_sym, co_name, price_cl, price_net, price_pct_cl, vol_abs_cl, vol_pct_cl )
-
-            x += 1
-        logging.info('%s - populated new DF0 dataset' % cmi_debug )
-        return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
-                        # sucess = lobal class accessor (y_toplosers.df0) populated & updated
-
-# method #4
     def up_unvol_listall(self):
         """Print the full DataFrame table list of NASDAQ unusual UP volumes"""
         """Sorted by % Change"""
         logging.info('ins.#%s.up_unvol_listall() - IN' % self.yti )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
-        print ( self.df0.sort_values(by='Pct_change', ascending=False ) )    # only do after fixtures datascience dataframe has been built
+        print ( self.up_df0.sort_values(by='Pct_change', ascending=False ) )    # only do after fixtures datascience dataframe has been built
         logging.info('ins.#%s.up_unvol_listall() - DONE' % self.yti )
         return
 
-# method #5
-# DEPRECATED : DELETE
-    def deprecated_build_df1(self):
-        """Build-out a fully populated Pandas DataFrame containg all the"""
-        """extracted/scraped fields from the html/markup table data"""
-        """Wrangle, clean/convert/format the data correctly."""
-
-        cmi_debug = __name__+"::"+self.build_df1.__name__+".#"+str(self.yti)
-        logging.info('%s - IN' % cmi_debug )
-        time_now = time.strftime("%H:%M:%S", time.localtime() )
-        logging.info('%s - Drop all rows from DF1' % cmi_debug )
-        self.df1.drop(self.df1.index, inplace=True)
-
-        x = 1    # row counter Also leveraged for unique dataframe key
-        col_headers = next(self.down_table_rows)     # ignore the 1st TR row object, which is column header titles
-
-        for tr_data in self.down_table_rows:     # genrator object
-            extr_strings = tr_data.stripped_strings
-            co_sym = next(extr_strings)
-            co_name = next(extr_strings)
-            price = next(extr_strings)
-            price_net = next(extr_strings)
-            arrow_updown = next(extr_strings)
-            price_pct = next(extr_strings)
-            vol_abs = next(extr_strings)
-            vol_pct = next(extr_strings)
-
-            # wrangle & clean the data
-            co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )      # left justify TXT in DF & convert to raw string
-            co_name_lj = np.array2string(np.char.ljust(co_name, 20) )   # left justify TXT in DF & convert to raw string
-            price_cl = (re.sub('[ $,]', '', price))
-            price_pct_cl = (re.sub('[%]', '', price_pct))
-            vol_abs_cl = (re.sub('[,]', '', vol_abs))
-            vol_pct_cl = (re.sub('[%]', '', vol_pct))
-
-            self.data1 = [[ \
-                       x, \
-                       re.sub('\'', '', co_sym_lj), \
-                       re.sub('\'', '', co_name_lj), \
-                       np.float(price_cl), \
-                       np.float(price_net), \
-                       np.float(price_pct_cl), \
-                       np.float(vol_abs_cl), \
-                       np.float(vol_pct_cl), \
-                       time_now ]]
-
-            self.temp_df1 = pd.DataFrame(self.data1, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ], index=[x] )
-            self.df1 = self.df1.append(self.temp_df1, sort=False)    # append this ROW of data into the REAL DataFrame
-            # DEBUG
-            if self.args['bool_xray'] is True:        # DEBUG
-                print ( "================================", x, "======================================")
-                print ( co_sym, co_name, price_cl, price_net, price_pct_cl, vol_abs_cl, vol_pct_cl )
-
-            x += 1
-        logging.info('%s - populated new DF1 dataset' % cmi_debug )
-        return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
-                        # sucess = lobal class accessor (y_toplosers.df0) populated & updated
-
-# method #6
+# method #4
     def down_unvol_listall(self):
         """Print the full DataFrame table list of NASDAQ unusual DOWN volumes"""
         """Sorted by % Change"""
         logging.info('ins.#%s.down_unvol_listall() - IN' % self.yti )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
-        print ( self.df1.sort_values(by='Pct_change', ascending=True ) )    # only do after fixtures datascience dataframe has been built
+        print ( self.down_df0.sort_values(by='Pct_change', ascending=True ) )    # only do after fixtures datascience dataframe has been built
         logging.info('ins.#%s.down_unvol_listall() - DONE' % self.yti )
         return
 
-# method 6
-
-# method #3
+# method #5
     def build_df(self, ud):
         """Build-out a fully populated Pandas DataFrame containg all the"""
         """extracted/scraped fields from the html/markup table data"""
@@ -251,11 +132,11 @@ class unusual_vol:
 
         if ud == 0:
             logging.info('%s - UP volume analysis' % cmi_debug )
-            this_df = self.df0
+            this_df = self.up_df0
             table_section = self.up_table_rows
         elif ud == 1:
             logging.info('%s - DOWN volume analysis' % cmi_debug )
-            this_df = self.df1
+            this_df = self.down_df0
             table_section = self.down_table_rows
         else:
             logging.info('%s - Error: invalid dataframe. EXITING' % cmi_debug )
@@ -304,11 +185,11 @@ class unusual_vol:
             if ud == 0:
                 logging.info('%s - append UP Volume data into DataFrame' % cmi_debug )
                 self.temp_df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ], index=[x] )
-                self.df0 = self.df0.append(self.temp_df0, sort=False)    # append this ROW of data into the REAL DataFrame
+                self.up_df0 = self.up_df0.append(self.temp_df0, sort=False)    # append this ROW of data into the REAL DataFrame
             else:
                 logging.info('%s - append DOWN Volume data into DataFrame' % cmi_debug )
                 self.temp_df1 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ], index=[x] )
-                self.df1 = self.df1.append(self.temp_df1, sort=False)    # append this ROW of data into the REAL DataFrame
+                self.down_df0 = self.down_df0.append(self.temp_df1, sort=False)    # append this ROW of data into the REAL DataFrame
 
             # DEBUG
             if self.args['bool_xray'] is True:        # DEBUG

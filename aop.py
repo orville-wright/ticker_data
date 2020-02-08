@@ -168,14 +168,14 @@ def main():
 ########### unusual_vol ################
     if args['bool_uvol'] is True:
         print ( "========== Unusual UP/DOWN Volumes =====================================================" )
-        large_volume_movers = unusual_vol(1, args)       # instantiate class, args = global var
-        large_volume_movers.get_up_unvol_data()        # extract data from finance.Yahoo.com
-        x = large_volume_movers.build_df(0)     # build full dataframe
-        large_volume_movers.up_unvol_listall()
+        un_vol_activity = unusual_vol(1, args)       # instantiate class, args = global var
+        un_vol_activity.get_up_unvol_data()        # extract data from finance.Yahoo.com
+        uv_up = un_vol_activity.build_df(0)     # build full dataframe
+        un_vol_activity.up_unvol_listall()
         print ( " ")
-        large_volume_movers.get_down_unvol_data()
-        y = large_volume_movers.build_df(1)     # build full dataframe
-        large_volume_movers.down_unvol_listall()
+        un_vol_activity.get_down_unvol_data()
+        uv_down = un_vol_activity.build_df(1)     # build full dataframe
+        un_vol_activity.down_unvol_listall()
         print ( " ")
 
 ########### multi COMBO dataframe query build-out ################
@@ -183,7 +183,7 @@ def main():
         # first combine Small_cap + med + large + mega
         deep_1 = med_large_mega_gainers.tg_df1.drop(columns=[ 'ERank', 'Time' ]).sort_values(by='Pct_change', ascending=False )
         deep_2 = small_cap_dataset.dg1_df1.drop(columns=[ 'Row', 'Time' ] )
-        deep_3 = large_volume_movers.df0.drop(columns=[ 'Row', 'Time', 'Vol', 'Vol_pct']).sort_values(by='Pct_change', ascending=False )
+        deep_3 = un_vol_activity.up_df0.drop(columns=[ 'Row', 'Time', 'Vol', 'Vol_pct']).sort_values(by='Pct_change', ascending=False )
         deep_4 = pd.concat( [ deep_1, deep_2, deep_3], sort=False, ignore_index=True ).sort_values(by=['Pct_change', 'M_B', 'Mkt_cap'], ascending=False, na_position='last')
         deep_4.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
         # now scan unusual volume stocks for stock existing in the new combo DataFrame & tage them in a new column
