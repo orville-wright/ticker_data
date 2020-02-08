@@ -81,7 +81,13 @@ class y_topgainers:
             # 8th <td> : PE ratio (I dont care aboutt this. so ignore/disgard it)
 
             co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )      # left justify TXT in DF & convert to raw string
-            co_name_lj = np.array2string(np.char.ljust(co_name, 20) )   # left justify TXT in DF & convert to raw string
+
+            co_name_lj = (re.sub('[\'\"]', '', co_name) )    # remove " ' and strip leading/trailing spaces
+            co_name_lj = np.array2string(np.char.ljust(co_name_lj, 25) )   # left justify TXT in DF & convert to raw string
+            co_name_lj = (re.sub('[\']', '', co_name_lj) )    # remove " ' and strip leading/trailing spaces
+
+            #co_name_lj = np.array2string(np.char.ljust(co_name, 20) )   # left justify TXT in DF & convert to raw string
+            #co_name_lj = (re.sub('[\'\"]', '', co_name_lj))    # remove " ' 
 
             mktcap = (re.sub('[N\/A]', '0', mktcap))   # handle N/A
 
@@ -120,7 +126,7 @@ class y_topgainers:
             self.data0 = [[ \
                        x, \
                        re.sub('\'', '', co_sym_lj), \
-                       re.sub('[\"\']', '', co_name_lj), \
+                       co_name_lj, \
                        np.float(re.sub('\,', '', price)), \
                        np.float(re.sub('[\+,]', '', change)), \
                        np.float(re.sub('[\+,%]', '', pct)), \
