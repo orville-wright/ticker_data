@@ -87,7 +87,7 @@ class y_topgainers:
             co_name_lj = (re.sub('[\']', '', co_name_lj) )    # remove " ' and strip leading/trailing spaces
 
             #co_name_lj = np.array2string(np.char.ljust(co_name, 20) )   # left justify TXT in DF & convert to raw string
-            #co_name_lj = (re.sub('[\'\"]', '', co_name_lj))    # remove " ' 
+            #co_name_lj = (re.sub('[\'\"]', '', co_name_lj))    # remove " '
 
             mktcap = (re.sub('[N\/A]', '0', mktcap))   # handle N/A
 
@@ -97,23 +97,23 @@ class y_topgainers:
 
             if TRILLIONS:
                 mktcap_clean = np.float(re.sub('T', '', mktcap))
-                mb = "T"
-                logging.info('%s - found TRILLIONS. set T' % cmi_debug )
+                mb = "XT"
+                logging.info('%s - Mega Cap/TRILLIONS. set XT' % cmi_debug )
 
             if BILLIONS:
                 mktcap_clean = np.float(re.sub('B', '', mktcap))
-                mb = "B"
-                logging.info('%s - found BILLIONS. set B' % cmi_debug )
+                mb = "LB"
+                logging.info('%s - Large cap/BILLIONS. set LB' % cmi_debug )
 
             if MILLIONS:
                 mktcap_clean = np.float(re.sub('M', '', mktcap))
-                mb = "M"
-                logging.info('%s - found MILLIONS. set M' % cmi_debug )
+                mb = "LM"
+                logging.info('%s - Large cap/MILLIONS. set LM' % cmi_debug )
 
             if not TRILLIONS and not BILLIONS and not MILLIONS:
                 mktcap_clean = 0    # error condition - possible bad data
-                mb = "X"
-                logging.info('%s - bad mktcap data. set to X/0' % cmi_debug )
+                mb = "LZ"
+                logging.info('%s - bad mktcap data. set to L0' % cmi_debug )
                 # handle bad data in mktcap html page field
 
             # note: Pandas DataFrame : top_gainers pre-initalized as EMPYT

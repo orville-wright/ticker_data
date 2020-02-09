@@ -109,20 +109,19 @@ class screener_dg1:
             MILLIONS = re.search('M', mktcap)
             if BILLIONS:
                 mktcap_clean = np.float(re.sub('B', '', mktcap))
-                mb = "B"
-                logging.info('%s - found BILLIONS. set B' % cmi_debug )
+                mb = "SB"
+                logging.info('%s - Small cap/BILLIONS. set SB' % cmi_debug )
 
             if MILLIONS:
                 mktcap_clean = np.float(re.sub('M', '', mktcap))
-                mb = "M"
-                logging.info('%s - found MILLIONS. set M' % cmi_debug )
+                mb = "SM"
+                logging.info('%s - Small cap/MILLIONS. set SM' % cmi_debug )
 
             if not BILLIONS and not MILLIONS:
                 mktcap_clean = 0    # error condition - possible bad data
-                mb = "X"
-                logging.info('%s - bad mktcap data. set to X/0' % cmi_debug )
+                mb = "SZ"
+                logging.info('%s - bad mktcap data. set to S0' % cmi_debug )
                 # handle bad data in mktcap html page field
-
 
             # note: Pandas DataFrame : top_gainers pre-initalized as EMPYT
             # Data is extracted as raw strings, so needs wrangeling...

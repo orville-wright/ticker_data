@@ -198,6 +198,8 @@ def main():
         #x.prepare_combo_df()
         x.tag_dupes()
         print ( x.combo_listall() )                 # full DF with dupes
+        print ( "**** HACKING ****" )
+        #print ( x.combo_dupes_gen() )
 
     print ( "####### done #####")
 
