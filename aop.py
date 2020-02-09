@@ -168,12 +168,13 @@ def main():
 
 ########### unusual_vol ################
     if args['bool_uvol'] is True:
-        print ( "========== Unusual UP/DOWN Volumes =====================================================" )
+        print ( "========== Unusually high Volume ** UP ** =====================================================" )
         un_vol_activity = unusual_vol(1, args)       # instantiate class, args = global var
         un_vol_activity.get_up_unvol_data()        # extract data from finance.Yahoo.com
         uv_up = un_vol_activity.build_df(0)     # build full dataframe
         un_vol_activity.up_unvol_listall()
         print ( " ")
+        print ( "========== Unusually high Volume ** DOWN ** =====================================================" )
         un_vol_activity.get_down_unvol_data()
         uv_down = un_vol_activity.build_df(1)     # build full dataframe
         un_vol_activity.down_unvol_listall()
@@ -189,7 +190,14 @@ def main():
         # deep_4 = pd.concat( [ deep_1, deep_2, deep_3], sort=False, ignore_index=True ).sort_values(by=['Pct_change', 'M_B', 'Mkt_cap'], ascending=False, na_position='last')
         # deep_4.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
         x.prepare_combo_df()
-        x.combo_listall()
+        print ( "========== ** OUTLIERS ** : Unusual UP volume + Top Gainers by +5% ================================" )
+        print ( x.combo_dupes_only_listall(1) )     # nide DataFrame but nout guaranted to be correct
+        print ( "========== ** OUTLIERS ** : with Annotated reasons =======================================" )
+        #print ( x.combo_dupes_only_listall(2) )     # ID's ONLY not guaranted to be correct
+        #print ( x.combo_listall() )                 # full DF with dupes
+        #x.prepare_combo_df()
+        x.tag_dupes()
+        print ( x.combo_listall() )                 # full DF with dupes
 
     print ( "####### done #####")
 
