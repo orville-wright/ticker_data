@@ -19,6 +19,7 @@ from y_topgainers import y_topgainers
 from y_toplosers import y_toplosers
 from screener_dg1 import screener_dg1
 from unusual_vol import unusual_vol
+from shallow_logic import shallow_combo
 
 # Globals
 work_inst = 0
@@ -181,81 +182,14 @@ def main():
 ########### multi COMBO dataframe query build-out ################
     if args['bool_deep'] is True and args['bool_scr'] is True and args['bool_uvol'] is True:
         # first combine Small_cap + med + large + mega
-        deep_1 = med_large_mega_gainers.tg_df1.drop(columns=[ 'ERank', 'Time' ]).sort_values(by='Pct_change', ascending=False )
-        deep_2 = small_cap_dataset.dg1_df1.drop(columns=[ 'Row', 'Time' ] )
-        deep_3 = un_vol_activity.up_df0.drop(columns=[ 'Row', 'Time', 'Vol', 'Vol_pct']).sort_values(by='Pct_change', ascending=False )
-        deep_4 = pd.concat( [ deep_1, deep_2, deep_3], sort=False, ignore_index=True ).sort_values(by=['Pct_change', 'M_B', 'Mkt_cap'], ascending=False, na_position='last')
-        deep_4.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
-        # now scan unusual volume stocks for stock existing in the new combo DataFrame & tage them in a new column
-
-        # print ( "========== Full DEEP combo DataFrame =====================================================" )
-        # print ( deep_4 )
-        # print ( "========== DEEP combo : duplicates only - style #1 =====================================================" )
-        # deep_5 = deep_4.sort_values(by=['Pct_change'], ascending=False )[deep_4.duplicated(['Symbol'])]   # this works **KEEP**
-        deep_5 = deep_4.sort_values(by=['Pct_change'], ascending=False )    # prepare a sorted df
-        # print ( deep_5[deep_5.duplicated(['Symbol'])] )                     # full dataframe table
-        # print ( deep_5[deep_5.duplicated(['Symbol'])].Symbol.values )       # just the symbols as list
-        # print ( deep_5[deep_5.duplicated(['Symbol'])].index )               # index ID's as a list
-
-        # print ( "========== DEEP combo : duplicates only - style #2 =====================================================" )
-        deep_6 = deep_5.duplicated(['Symbol']).to_frame()      # pd.duplicated outputs a SERIES
-        # print ( deep_6[deep_6[0] == True] )        # phase 2 : KEEP
-
-        #deep_5 = deep_4.duplicated(['Symbol']).to_frame()   # pd.duplicated() SERIES result -> DataFrame
-        #print ( deep_5[deep_5[0] == True] )                 # select dups - pd.to_frame() default column name = 0
-
-        # scan deep_4 and delete rows with index == deep_6
-        print ( "========== DEEP combo no dupes : outlyers described ==========================================" )
-        deep_4.drop( deep_6[deep_6[0] == True].index, inplace=True )        # permenantly on the original df
-        deep_4 = deep_4.assign(Entropy="" )
-        #print ( deep_4 )
-
-        # print ( "========== DEEP combo : Add new column =====================================================" )
-        # entropy = {}
-
-        for x in deep_5[deep_5.duplicated(['Symbol'])].Symbol.values:
-            row_idx = int(deep_4.loc[deep_4['Symbol'] == x ].index.values)
-            cap_size = deep_4.loc[deep_4['Symbol'] == x ].M_B.values
-            if cap_size == 'M':
-                cap_size = '*Small cap*'
-            else:
-                cap_size = 'Large cap'
-            deep_4.loc[row_idx,'Entropy'] = "Unusual vol "+cap_size
-
-        print ( deep_4 )
-        #entropy.update({'*un_vol*': ridx})
-        # print ( "Entropy: ", entropy )
-        #deep_4.loc[deep_4['Symbol'] == x ]['Entropy'] = "Unusual vol"
-        #deep_4['Entropy'] = entropy
-        #row = deep_4.loc[deep_4['Symbol'] == x ]
-        #print ( "Row: ", row )
-        #deep_4['Entropy'] = entropy
-        #row = deep_4.insert(rloc, 'Entropy', "Schizzle" )
-        #print ( deep_4.loc[deep_4['Symbol'] == x ] )
-
-        # print ( "====================== ALL NaN rows 1 - style 1 =========================" )
-        # print ( (deep_4[deep_4['Mkt_cap'].isna()]) )
-        # print ( "====================== ALL NaN rows 2 - style 2 =========================" )
-        # print ( (deep_4[deep_4['Mkt_cap'].isna()]).iloc[:,[0,5,6]] )    # drop all the known dupes
-
-        # Logic...
-        # scan Nan rows DataFrame
-        # does each item in duplicates DataFrame exists in NaN DataFrame - !!! also need symbol here
-            # YES = guaranteed to have originated from Unusual List table_section
-            # NO = bad data0 maybe?
-        # on YES...
-            # scan full deep combo DataFrame
-            # drop row identified dupe row from deep combo DataFrame
-            # search deep combo DataFrame (by symbol) of dupe item
-                # add column info == "Unusual volume by xxx%"
-                # add colum info == "Small, medium. large, mega - cap company"
-
-        """
-        index = list(nan_rows['Symbol'])
-        for i in index:
-            #testdf2['Yearly'][i] = testdf2['Monthly'][i] * testdf2['Tenure'][i]
-            print ( "i is:", i )
-        """
+        x = shallow_combo(1, med_large_mega_gainers, small_cap_dataset, un_vol_activity, args )
+        # deep_1 = med_large_mega_gainers.tg_df1.drop(columns=[ 'ERank', 'Time' ]).sort_values(by='Pct_change', ascending=False )
+        # deep_2 = small_cap_dataset.dg1_df1.drop(columns=[ 'Row', 'Time' ] )
+        # deep_3 = un_vol_activity.up_df0.drop(columns=[ 'Row', 'Time', 'Vol', 'Vol_pct']).sort_values(by='Pct_change', ascending=False )
+        # deep_4 = pd.concat( [ deep_1, deep_2, deep_3], sort=False, ignore_index=True ).sort_values(by=['Pct_change', 'M_B', 'Mkt_cap'], ascending=False, na_position='last')
+        # deep_4.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
+        x.prepare_combo_df()
+        x.combo_listall()
 
     print ( "####### done #####")
 
