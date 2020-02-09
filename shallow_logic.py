@@ -69,7 +69,7 @@ class shallow_combo:
                 # add colum info == "Small, medium. large, mega - cap company"
 
     def tag_dupes(self):
-        """Tag the duplicate entries in the combo dataset."""
+        """Find & Tag the *duplicate* entries in the combo matrix dataset."""
         """This is important b/c dupes mean this company is HOT and appearing in multiple dataframes."""
 
         cmi_debug = __name__+"::"+self.tag_dupes.__name__+".#"+str(self.inst_uid)
@@ -77,55 +77,28 @@ class shallow_combo:
         #self.combo_df.drop( self.combo_dupes[self.combo_dupes[0] == True].index, inplace=True )        # permenantly on the original df
         self.combo_df = self.combo_df.assign(Insights="" )     # pre-insert a new column into this DF
 
-        #for x in self.combo_df[self.combo_df.duplicated(['Symbol'])].Symbol.values:         # list symbols that are DUPES ONLY
-        #for row_idx in self.combo_df[self.combo_df.duplicated(['Symbol'])].index.values:         # list symbols that are DUPES ONLY
-        for ds in self.combo_df[self.combo_df.duplicated(['Symbol'])].Symbol.values:
+        for ds in self.combo_df[self.combo_df.duplicated(['Symbol'])].Symbol.values:    # ONLY work on dupes in DF !!!
             for row_idx in iter( self.combo_df.loc[self.combo_df['Symbol'] == ds ].index ):
                 sym = self.combo_df.loc[row_idx].Symbol
                 cap = self.combo_df.loc[row_idx].Mkt_cap
                 scale = self.combo_df.loc[row_idx].M_B
-                #row = self.combo_df.loc[self.combo_df['Symbol'] == x ]
-                # row_idx = int(self.combo_df.loc[self.combo_df['Symbol'] == x ].index.values)
-                #cap_size = self.combo_df.loc[self.combo_df['Symbol'] == x ].M_B.values
-                print ( ".", end="" )
-                if pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == True:     # NaN = data from NASDAQ unusual vol table
-                    cr = "!DEL me!"
+                if pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == False and pd.isna(self.combo_df.loc[row_idx].M_B) == False:
+                    # Annotate in english why this stock is a ** Perosn of interest **
+                    cx = { 'LT': 'Mega cap/Un vol', \
+                        'LB': 'Large cap/Un vol', \
+                        'LM': 'Med cap/Un vol', \
+                        'LZ': 'Zero Large cap/Un vol', \
+                        'SB': 'Big Small cap/Un vol', \
+                        'SM': 'Small cap/Un vol', \
+                        'SZ': 'Zero Small cap/Un vol',
+                        }
+                    self.combo_df.loc[row_idx,'Insights'] = "**Outlier + gainer >" + cx.get(scale)
+                    #print ( "Tagging row: ", "- Symbol: ", sym, "- Mkt Cap: ", cap, "- Scale: ", scale, "- Tag: ", cx.get(scale, 'Cap ERROR!') )
+                elif pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == True and pd.isna(self.combo_df.loc[row_idx].M_B) == True:
+                    #print ( "Deleting row: ", "- Symbol: ", sym, "- Mkt Cap: ", cap, "- Scale: ", scale)
+                    self.combo_df.drop([row_idx], inplace=True)
                 else:
-                    cr = "% gain/"
-
-                if pd.isna(self.combo_df.loc[row_idx].M_B) == True:         # NaN = data from NASDAQ unusual vol table
-                    sr = "!DEL me!"
-                else:
-                    sr = "Mkt cap ???"
-
-                #lage cap logic
-                if scale == "LT":
-                    sr = "Mega cap/Un vol"
-                elif scale == "LB":
-                    sr = "Large cap/Un vol"
-                elif scale == "LM":
-                    sr = "Medium cap/Un vol"
-                elif scale == "LZ":
-                    sr = "No cap/?????"
-                else:
-                    sr = "Cap ERROR!"
-
-
-
-                #Small cap logic
-                if scale == "SB":
-                    sr = "Lrge Small cap/Un vol"
-                elif scale == "SM":
-                    sr = "Small cap/Un vol"
-                elif scale == "LZ":
-                    sr = "No cap/?????"
-                else:
-                    sr = "Cap ERROR!"
-
-            self.combo_df.loc[row_idx,'Insights'] = "+ " + cr + sr
-            if pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == True and pd.isna(self.combo_df.loc[row_idx].M_B) == True:
-                self.combo_df.drop([row_idx], inplace=True)
-
+                    Print ( "Don't know what to do !!" )
         return
 
 # method #2
@@ -158,28 +131,3 @@ class shallow_combo:
             return ( self.combo_dupes[self.combo_dupes[0] == True] )
 
         return
-
-    def combo_dupes_gen(self):
-        """Generator"""
-        """All dupes returned in a single DataFrame"""
-
-        cmi_debug = __name__+"::"+self.combo_dupes_only_listall.__name__+".#"+str(self.inst_uid)
-        logging.info('%s - IN' % cmi_debug )
-        pd.set_option('display.max_rows', None)
-        pd.set_option('max_colwidth', 30)
-
-        # for s in self.combo_df[self.combo_df.duplicated(['Symbol'])].Symbol.values:
-        #    print ( self.combo_df.loc[self.combo_df['Symbol'] == s ] )
-
-        x = ( self.combo_df.loc[self.combo_df['Symbol'] == s ] for s in self.combo_df[self.combo_df.duplicated(['Symbol'])].Symbol.values )
-        # r = self.combo_df.loc[self.combo_df['Symbol'] == s ]
-
-        # for row_idx in self.combo_df[self.combo_df.duplicated(['Symbol'])].index.values:         # list symbols that are DUPES ONLY
-        # sym = self.combo_df.loc[row_idx].Symbol
-        # cap = self.combo_df.loc[row_idx].Mkt_cap
-        # scale = self.combo_df.loc[row_idx].M_B
-        #row = self.combo_df.loc[self.combo_df['Symbol'] == x ]
-        # row_idx = int(self.combo_df.loc[self.combo_df['Symbol'] == x ].index.values)
-        #cap_size = self.combo_df.loc[self.combo_df['Symbol'] == x ].M_B.values
-        #if np.isnan(self.combo_df.loc[row_idx].Mkt_cap) is True:
-        return x
