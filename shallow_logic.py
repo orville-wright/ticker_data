@@ -87,53 +87,45 @@ class shallow_combo:
                 #row = self.combo_df.loc[self.combo_df['Symbol'] == x ]
                 # row_idx = int(self.combo_df.loc[self.combo_df['Symbol'] == x ].index.values)
                 #cap_size = self.combo_df.loc[self.combo_df['Symbol'] == x ].M_B.values
-                #if np.isnan(self.combo_df.loc[row_idx].Mkt_cap) is True:
-                if pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == True:
-                    cr = "Del me "
+                print ( ".", end="" )
+                if pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == True:     # NaN = data from NASDAQ unusual vol table
+                    cr = "!DEL me!"
                 else:
                     cr = "% gain/"
 
+                if pd.isna(self.combo_df.loc[row_idx].M_B) == True:         # NaN = data from NASDAQ unusual vol table
+                    sr = "!DEL me!"
+                else:
+                    sr = "Mkt cap ???"
+
                 #lage cap logic
-                if pd.isna(self.combo_df.loc[row_idx].M_B) == True:
-                    sr = "Del me"
-                    break
-                elif scale == "LT":
-                    sr = "Large cap/un vol"
-                    break
+                if scale == "LT":
+                    sr = "Mega cap/Un vol"
                 elif scale == "LB":
                     sr = "Large cap/Un vol"
-                    break
                 elif scale == "LM":
-                    sr = "Large cap/Un vol"
-                    break
+                    sr = "Medium cap/Un vol"
                 elif scale == "LZ":
-                    sr = "Large cap/?????"
-                    break
+                    sr = "No cap/?????"
                 else:
-                    sr = "Large cap"
+                    sr = "Cap ERROR!"
 
-                self.combo_df.loc[row_idx,'Insights'] = "+ "+cr+sr
+
 
                 #Small cap logic
-                if pd.isna(self.combo_df.loc[row_idx].M_B) == True:
-                    sr = "Del me"
-                    break
-                elif scale == "SB":
-                    sr = "Small cap/un vol"
-                    break
+                if scale == "SB":
+                    sr = "Lrge Small cap/Un vol"
                 elif scale == "SM":
                     sr = "Small cap/Un vol"
-                    break
                 elif scale == "LZ":
-                    sr = "Small cap/?????"
-                    break
+                    sr = "No cap/?????"
                 else:
-                    sr = "Small cap"
+                    sr = "Cap ERROR!"
 
-                self.combo_df.loc[row_idx,'Insights'] = "+ "+cr+sr
+            self.combo_df.loc[row_idx,'Insights'] = "+ " + cr + sr
+            if pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == True and pd.isna(self.combo_df.loc[row_idx].M_B) == True:
+                self.combo_df.drop([row_idx], inplace=True)
 
-                if pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == True and pd.isna(self.combo_df.loc[row_idx].M_B) == True:
-                    self.combo_df.drop([row_idx], inplace=True)
         return
 
 # method #2
