@@ -74,33 +74,37 @@ class shallow_combo:
 
         cmi_debug = __name__+"::"+self.tag_dupes.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
-        #self.combo_df.drop( self.combo_dupes[self.combo_dupes[0] == True].index, inplace=True )        # permenantly on the original df
         self.combo_df = self.combo_df.assign(Insights="" )     # pre-insert a new column into this DF
-
+        min_price = {}      # a dict to help find cheapest ***HOT stock
         for ds in self.combo_df[self.combo_df.duplicated(['Symbol'])].Symbol.values:    # ONLY work on dupes in DF !!!
             for row_idx in iter( self.combo_df.loc[self.combo_df['Symbol'] == ds ].index ):
                 sym = self.combo_df.loc[row_idx].Symbol
                 cap = self.combo_df.loc[row_idx].Mkt_cap
                 scale = self.combo_df.loc[row_idx].M_B
+                price = self.combo_df.loc[row_idx].Cur_price
                 if pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == False and pd.isna(self.combo_df.loc[row_idx].M_B) == False:
                     # Annotate in english why this stock is a ** Perosn of interest **
-                    cx = { 'LT': 'Mega cap/Un vol', \
-                        'LB': 'Large cap/Un vol', \
-                        'LM': 'Med cap/Un vol', \
-                        'LZ': 'Zero Large cap/Un vol', \
-                        'SB': 'Big Small cap/Un vol', \
-                        'SM': 'Small cap/Un vol', \
-                        'SZ': 'Zero Small cap/Un vol',
+                    cx = { 'LT': 'Mega cap + Unu vol', \
+                        'LB': 'Large cap + Unu vol', \
+                        'LM': 'Med cap + Unu vol', \
+                        'LZ': 'Zero Large cap + Unu vol', \
+                        'SB': 'Big Small cap + Unu vol', \
+                        'SM': 'Small cap + Unu vol', \
+                        'SZ': 'Zero Small cap + Unu vol',
                         }
-                    self.combo_df.loc[row_idx,'Insights'] = "**HOT + % gainer >" + cx.get(scale)
-                    #print ( "Tagging row: ", "- Symbol: ", sym, "- Mkt Cap: ", cap, "- Scale: ", scale, "- Tag: ", cx.get(scale, 'Cap ERROR!') )
+                    self.combo_df.loc[row_idx,'Insights'] = "**HOT % gainer + " + cx.get(scale)
+                    min_price[row_idx] = price      # save price for min_price analysis later
                 elif pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == True and pd.isna(self.combo_df.loc[row_idx].M_B) == True:
-                    #print ( "Deleting row: ", "- Symbol: ", sym, "- Mkt Cap: ", cap, "- Scale: ", scale)
                     self.combo_df.drop([row_idx], inplace=True)
                 else:
                     Print ( "Don't know what to do !!" )
-        return
 
+        mpv = min(min_price.values())
+        mpk = [k for k, v in min_price.items() if v==mpv]
+        mps = self.combo_df.iloc[mpk,0].values[0]
+        print ( "** Lowest price Hottest stock:", mps, "@", mpv, "**" )
+        print ( " " )
+        return
 
     def tag_uniques(self):
         """Find & Tag unique untagged entries in the combo matrix dataset."""
@@ -150,7 +154,7 @@ class shallow_combo:
         cmi_debug = __name__+"::"+self.combo_listall.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
-        pd.set_option('max_colwidth', 30)
+        pd.set_option('max_colwidth', 40)
         return self.combo_df
 
 # method #3
@@ -162,7 +166,7 @@ class shallow_combo:
         cmi_debug = __name__+"::"+self.combo_dupes_only_listall.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
-        pd.set_option('max_colwidth', 30)
+        pd.set_option('max_colwidth', 40)
 
         if opt == 1:
             temp_1 = self.combo_df.sort_values(by=['Pct_change'], ascending=False)
