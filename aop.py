@@ -184,20 +184,14 @@ def main():
     if args['bool_deep'] is True and args['bool_scr'] is True and args['bool_uvol'] is True:
         # first combine Small_cap + med + large + mega
         x = shallow_combo(1, med_large_mega_gainers, small_cap_dataset, un_vol_activity, args )
-        # deep_1 = med_large_mega_gainers.tg_df1.drop(columns=[ 'ERank', 'Time' ]).sort_values(by='Pct_change', ascending=False )
-        # deep_2 = small_cap_dataset.dg1_df1.drop(columns=[ 'Row', 'Time' ] )
-        # deep_3 = un_vol_activity.up_df0.drop(columns=[ 'Row', 'Time', 'Vol', 'Vol_pct']).sort_values(by='Pct_change', ascending=False )
-        # deep_4 = pd.concat( [ deep_1, deep_2, deep_3], sort=False, ignore_index=True ).sort_values(by=['Pct_change', 'M_B', 'Mkt_cap'], ascending=False, na_position='last')
-        # deep_4.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
         x.prepare_combo_df()
         print ( "========== ** OUTLIERS ** : Unusual UP volume + Top Gainers by +5% ================================" )
-        print ( x.combo_dupes_only_listall(1) )     # nide DataFrame but nout guaranted to be correct
+        print ( x.combo_dupes_only_listall(1) )
+        print ( " ")
         print ( "========== ** OUTLIERS ** : with Annotated reasons =======================================" )
-        #print ( x.combo_dupes_only_listall(2) )     # ID's ONLY not guaranted to be correct
-        #print ( x.combo_listall() )                 # full DF with dupes
-        #x.prepare_combo_df()
         x.tag_dupes()
-        print ( x.combo_listall() )                 # full DF with dupes
+        x.tag_uniques()
+        print ( x.combo_listall() )
 
     print ( "####### done #####")
 

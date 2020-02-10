@@ -92,13 +92,54 @@ class shallow_combo:
                         'SM': 'Small cap/Un vol', \
                         'SZ': 'Zero Small cap/Un vol',
                         }
-                    self.combo_df.loc[row_idx,'Insights'] = "**Outlier + gainer >" + cx.get(scale)
+                    self.combo_df.loc[row_idx,'Insights'] = "**HOT + % gainer >" + cx.get(scale)
                     #print ( "Tagging row: ", "- Symbol: ", sym, "- Mkt Cap: ", cap, "- Scale: ", scale, "- Tag: ", cx.get(scale, 'Cap ERROR!') )
                 elif pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == True and pd.isna(self.combo_df.loc[row_idx].M_B) == True:
                     #print ( "Deleting row: ", "- Symbol: ", sym, "- Mkt Cap: ", cap, "- Scale: ", scale)
                     self.combo_df.drop([row_idx], inplace=True)
                 else:
                     Print ( "Don't know what to do !!" )
+        return
+
+
+    def tag_uniques(self):
+        """Find & Tag unique untagged entries in the combo matrix dataset."""
+        """ONLY do this after the tag_dupes, because its cleaner to eliminate & tage dupes first"""
+        """When you get to this, the entire dataframe should now contain UNQIUES only"""
+
+        cmi_debug = __name__+"::"+self.tag_uniques.__name__+".#"+str(self.inst_uid)
+        logging.info('%s - IN' % cmi_debug )
+
+        #for ds in self.combo_df[self.combo_df.duplicated(['Symbol'])].Symbol.values:    # ONLY work on dupes in DF !!!
+        for row_idx in self.combo_df.loc[self.combo_df['Insights'] == "" ].index:
+            logging.info('%s - Cycle over list of symbols' % cmi_debug )
+            sym = self.combo_df.loc[row_idx].Symbol
+            cap = self.combo_df.loc[row_idx].Mkt_cap
+            scale = self.combo_df.loc[row_idx].M_B
+            #print ( "Inex:", row_idx, "Symbol:", sym, "Mkt_cap:", cap, "Scale:", scale)
+            if pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == False and pd.isna(self.combo_df.loc[row_idx].M_B) == False:
+                logging.info('%s - Apply good data inferrence logic' % cmi_debug )
+                # Annotate in english why this stock is a ** Perosn of interest **
+                ## NaN + NaN = Unusually high volume, but nothing else
+                # MKt_cap + M_B good data = Just a big day % gainer
+                cx = { 'LT': 'Mega cap % gainer only', \
+                    'LB': 'Large cap % gainer only', \
+                    'LM': 'Med cap % gainer only', \
+                    'LZ': 'Zero Large cap % gainer only', \
+                    'SB': 'Big Small  % gainer only', \
+                    'SM': 'Small cap % gainer only', \
+                    'SZ': 'Zero Small cap % gainer only',
+                    }
+                self.combo_df.loc[row_idx,'Insights'] = cx.get(scale)
+                #print ( "Tagging row: ", "- Symbol: ", sym, "- Mkt Cap: ", cap, "- Scale: ", scale, "- Tag: ", cx.get(scale, 'Cap ERROR!') )
+            elif pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == True and pd.isna(self.combo_df.loc[row_idx].M_B) == True:
+                logging.info('%s - Apply NaN/NaN inferrence logic' % cmi_debug )
+                #print ( "Deleting row: ", "- Symbol: ", sym, "- Mkt Cap: ", cap, "- Scale: ", scale)
+                self.combo_df.loc[row_idx,'Insights'] = "^ Unusual vol only"
+            else:
+                logging.info('%s - Unknown logic discovered' % cmi_debug )
+                self.combo_df.loc[row_idx,'Insights'] = "!No logic!"
+        logging.info('%s - Exit tagging cycle' % cmi_debug )
         return
 
 # method #2
