@@ -224,7 +224,7 @@ class screener_dg1:
         # This method is more gracefull, but it fails on Winodws/Python
         #self.dg1_df1 = self.dg1_df0.query('Mkt_cap > 749' ).copy(deep=True)       # capture MILLIONS 1st
         self.dg1_df1 = self.dg1_df0[self.dg1_df0.Mkt_cap > 500 ]       # capture MILLIONS only becasue Billions = num/1000
-        self.dg1_df1 =  pd.concat( [ self.dg1_df1, self.dg1_df0[self.dg1_df0.M_B == "B"] ] )  # now capture BILLIONS & concat both results
+        self.dg1_df1 =  pd.concat( [ self.dg1_df1, self.dg1_df0[self.dg1_df0.M_B == "SB"] ] )  # now capture BILLIONS & concat both results
         self.dg1_df1 = self.dg1_df1.sort_values(by=['Pct_change'], ascending=False )
         self.dg1_df1.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
         print ( self.dg1_df1 )
