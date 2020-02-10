@@ -130,7 +130,7 @@ class shallow_combo:
                     'LB': 'Large cap % gainer only', \
                     'LM': 'Med cap % gainer only', \
                     'LZ': 'Zero Large cap % gainer only', \
-                    'SB': 'Big Small  % gainer only', \
+                    'SB': 'Big Small cap % gainer only', \
                     'SM': 'Small cap % gainer only', \
                     'SZ': 'Zero Small cap % gainer only',
                     }
