@@ -74,8 +74,9 @@ class shallow_combo:
 
         cmi_debug = __name__+"::"+self.tag_dupes.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
-        self.combo_df = self.combo_df.assign(Insights="" )     # pre-insert a new column into this DF
-        min_price = {}      # a dict to help find cheapest ***HOT stock
+        self.combo_df = self.combo_df.assign(Hot="", Insights="" )     # pre-insert 2 new columns
+        min_price = {}      # a tuple to help find cheapest ***HOT stock
+        mpt = ()      # a tuple to help find cheapest ***HOT stock
         for ds in self.combo_df[self.combo_df.duplicated(['Symbol'])].Symbol.values:    # ONLY work on dupes in DF !!!
             for row_idx in iter( self.combo_df.loc[self.combo_df['Symbol'] == ds ].index ):
                 sym = self.combo_df.loc[row_idx].Symbol
@@ -84,25 +85,31 @@ class shallow_combo:
                 price = self.combo_df.loc[row_idx].Cur_price
                 if pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == False and pd.isna(self.combo_df.loc[row_idx].M_B) == False:
                     # Annotate in english why this stock is a ** Perosn of interest **
-                    cx = { 'LT': 'Mega cap + Unu vol', \
-                        'LB': 'Large cap + Unu vol', \
-                        'LM': 'Med cap + Unu vol', \
-                        'LZ': 'Zero Large cap + Unu vol', \
-                        'SB': 'Big Small cap + Unu vol', \
-                        'SM': 'Small cap + Unu vol', \
-                        'SZ': 'Zero Small cap + Unu vol',
+                    cx = { 'LT': '+ Mega cap + Unu vol', \
+                        'LB': '+ Large cap + Unu vol', \
+                        'LM': '+ Med cap + Unu vol', \
+                        'LZ': '+ Zero Large cap + Unu vol', \
+                        'SB': '+ Big Small cap + Unu vol', \
+                        'SM': '+ Small cap + Unu vol', \
+                        'SZ': '+ Zero Small cap + Unu vol',
                         }
-                    self.combo_df.loc[row_idx,'Insights'] = "**HOT % gainer + " + cx.get(scale)
-                    min_price[row_idx] = price      # save price for min_price analysis later
+                    self.combo_df.loc[row_idx,'Hot'] = "**HOT"      # Tag as a **HOT** stock
+                    self.combo_df.loc[row_idx,'Insights'] = "+ % gainer " + cx.get(scale)     # Annotate why...
+                    mpt = ( row_idx, sym, price )     # pack a tuple - for min_price analysis later
+                    min_price.update({row_idx: mpt})
                 elif pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == True and pd.isna(self.combo_df.loc[row_idx].M_B) == True:
                     self.combo_df.drop([row_idx], inplace=True)
                 else:
                     Print ( "Don't know what to do !!" )
 
-        mpv = min(min_price.values())
-        mpk = [k for k, v in min_price.items() if v==mpv]
-        mps = self.combo_df.iloc[mpk,0].values[0]
-        print ( "** Lowest price Hottest stock:", mps, "@", mpv, "**" )
+        #print ( "** Min price items: ", min_price.items() )
+        mptv = min(( td[2] for td in min_price.values() ))      # generator: list e.g. [(1, (1, 'TCO   ', 53.12)...
+        mpts = ( v[1] for v in min_price.values() if v[2] == mptv )     # genrator: list e.g. v[1] = symbol 'TCO' with explciit criter match
+        print ( "Best price **Hottest stock:", list(mpts), "price", mptv )
+        #mpv = min(min_price.values())
+        #mpk = [k for k, v in min_price.items() if v==mpv]
+        #mps = self.combo_df.iloc[mpk,0].values[0]
+        #print ( "** Lowest price Hottest stock:", mps, "@", mpv, "**" )
         print ( " " )
         return
 
@@ -145,6 +152,9 @@ class shallow_combo:
                 self.combo_df.loc[row_idx,'Insights'] = "!No logic!"
         logging.info('%s - Exit tagging cycle' % cmi_debug )
         return
+
+    def tag_best_play(self):
+        pass
 
 # method #2
     def combo_listall(self):
