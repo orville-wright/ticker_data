@@ -70,7 +70,7 @@ class shallow_combo:
 
     def tag_dupes(self):
         """Find & Tag the *duplicate* entries in the combo matrix dataset."""
-        """This is important b/c dupes mean this company is HOT and appearing in multiple dataframes."""
+        """This is important b/c dupes mean these stocks are HOT and appearing in multiple dataframes."""
 
         cmi_debug = __name__+"::"+self.tag_dupes.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
@@ -93,7 +93,7 @@ class shallow_combo:
                         'SM': '+ Small cap + Unu vol', \
                         'SZ': '+ Zero Small cap + Unu vol',
                         }
-                    self.combo_df.loc[row_idx,'Hot'] = "**HOT"      # Tag as a **HOT** stock
+                    self.combo_df.loc[row_idx,'Hot'] = "*Hot*"      # Tag as a **HOT** stock
                     self.combo_df.loc[row_idx,'Insights'] = "+ % gainer " + cx.get(scale)     # Annotate why...
                     mpt = ( row_idx, sym, price )     # pack a tuple - for min_price analysis later
                     min_price.update({row_idx: mpt})
@@ -101,15 +101,15 @@ class shallow_combo:
                     self.combo_df.drop([row_idx], inplace=True)
                 else:
                     Print ( "Don't know what to do !!" )
-
-        #print ( "** Min price items: ", min_price.items() )
-        mptv = min(( td[2] for td in min_price.values() ))      # generator: list e.g. [(1, (1, 'TCO   ', 53.12)...
-        mpts = ( v[1] for v in min_price.values() if v[2] == mptv )     # genrator: list e.g. v[1] = symbol 'TCO' with explciit criter match
-        print ( "Best price **Hottest stock:", list(mpts), "price", mptv )
-        #mpv = min(min_price.values())
-        #mpk = [k for k, v in min_price.items() if v==mpv]
-        #mps = self.combo_df.iloc[mpk,0].values[0]
-        #print ( "** Lowest price Hottest stock:", mps, "@", mpv, "**" )
+        # since we are Tagging and annotating...
+        # find and tage the lowest priced stock within the list of Hottest identified stocks
+        mptv = min(( td[2] for td in min_price.values() ))      # Output = 1 single value from a generator of tuples
+        for v in min_price.values():
+            if v[2] == mptv:
+                row_idx = int(v[0])
+                print ( "Best price **Hottest stock:", v[1].rstrip(), "price:", v[2] )
+                self.combo_df.loc[row_idx,'Hot'] = ">BEST<"      # Tag as a **HOT** stock
+                #self.combo_df.set_value(row_idx, Hot, ">>Best<<")
         print ( " " )
         return
 
