@@ -95,6 +95,9 @@ class shallow_combo:
                         }
                     self.combo_df.loc[row_idx,'Hot'] = "*Hot*"      # Tag as a **HOT** stock
                     self.combo_df.loc[row_idx,'Insights'] = "+ % gainer " + cx.get(scale)     # Annotate why...
+                    #np.array2string(np.char.ljust(cx.get(scale), 20) )
+                    #annotation = "+ % gainer " + cx.get(scale)
+                    #self.combo_df.loc[row_idx,'Insights'] = annotation.lstrip()     # Annotate why...
                     mpt = ( row_idx, sym, price )     # pack a tuple - for min_price analysis later
                     min_price.update({row_idx: mpt})
                 elif pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == True and pd.isna(self.combo_df.loc[row_idx].M_B) == True:
