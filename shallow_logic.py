@@ -68,6 +68,7 @@ class shallow_combo:
                 # add column info == "Unusual volume by xxx%"
                 # add colum info == "Small, medium. large, mega - cap company"
 
+# method #2
     def tag_dupes(self):
         """Find & Tag the *duplicate* entries in the combo matrix dataset."""
         """This is important b/c dupes mean these stocks are HOT and appearing in multiple dataframes."""
@@ -75,8 +76,8 @@ class shallow_combo:
         cmi_debug = __name__+"::"+self.tag_dupes.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
         self.combo_df = self.combo_df.assign(Hot="", Insights="" )     # pre-insert 2 new columns
-        min_price = {}      # a tuple to help find cheapest ***HOT stock
-        mpt = ()      # a tuple to help find cheapest ***HOT stock
+        min_price = {}      # Heler: DICT to help find cheapest ***HOT stock
+        mpt = ()            # Helper: Internal DICT(tuple) element to find cheapest ***HOT stock
         for ds in self.combo_df[self.combo_df.duplicated(['Symbol'])].Symbol.values:    # ONLY work on dupes in DF !!!
             for row_idx in iter( self.combo_df.loc[self.combo_df['Symbol'] == ds ].index ):
                 sym = self.combo_df.loc[row_idx].Symbol
@@ -104,18 +105,21 @@ class shallow_combo:
                     self.combo_df.drop([row_idx], inplace=True)
                 else:
                     Print ( "Don't know what to do !!" )
-        # since we are Tagging and annotating...
-        # find and tage the lowest priced stock within the list of Hottest identified stocks
-        mptv = min(( td[2] for td in min_price.values() ))      # Output = 1 single value from a generator of tuples
-        for v in min_price.values():
-            if v[2] == mptv:
-                row_idx = int(v[0])
-                print ( "Best price **Hottest stock:", v[1].rstrip(), "price:", v[2] )
-                self.combo_df.loc[row_idx,'Hot'] = ">BEST<"      # Tag as a **HOT** stock
-                #self.combo_df.set_value(row_idx, Hot, ">>Best<<")
-        print ( " " )
+
+        # since we are Tagging and annotating this DataFrame...
+        # find and tag the lowest priced stock within the list of Hottest stocks
+        if min_price is not False:     # We have some **HOT stocks to evaluate
+            mptv = min(( td[2] for td in min_price.values() ))      # Output = 1 single value from a generator of tuples
+            for v in min_price.values():    # v = tuple structured like: (0, BEAM, 28.42)
+                if v[2] == mptv:            # v[2] = 3rd element = price for this stock symbol
+                    row_idx = int(v[0])     # v[0] = 1st emelent = DataFrame index for this stock symbol
+                    print ( ">>BEST<< price *Hot* stock is:", v[1].rstrip(), "price:", v[2] )
+                    self.combo_df.loc[row_idx,'Hot'] = ">BEST<"      # Tag as a **HOT** stock in DataFrame
+            print ( " " )
+
         return
 
+# method #3
     def tag_uniques(self):
         """Find & Tag unique untagged entries in the combo matrix dataset."""
         """ONLY do this after the tag_dupes, because its cleaner to eliminate & tage dupes first"""
@@ -124,18 +128,17 @@ class shallow_combo:
         cmi_debug = __name__+"::"+self.tag_uniques.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
 
-        #for ds in self.combo_df[self.combo_df.duplicated(['Symbol'])].Symbol.values:    # ONLY work on dupes in DF !!!
         for row_idx in self.combo_df.loc[self.combo_df['Insights'] == "" ].index:
             logging.info('%s - Cycle over list of symbols' % cmi_debug )
             sym = self.combo_df.loc[row_idx].Symbol
             cap = self.combo_df.loc[row_idx].Mkt_cap
             scale = self.combo_df.loc[row_idx].M_B
-            #print ( "Inex:", row_idx, "Symbol:", sym, "Mkt_cap:", cap, "Scale:", scale)
+
             if pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == False and pd.isna(self.combo_df.loc[row_idx].M_B) == False:
                 logging.info('%s - Apply good data inferrence logic' % cmi_debug )
-                # Annotate in english why this stock is a ** Perosn of interest **
-                ## NaN + NaN = Unusually high volume, but nothing else
-                # MKt_cap + M_B good data = Just a big day % gainer
+                # Annotate in english why this stock is a ** Person of interest **
+                ## NaN & NaN = Unusually high volume, but nothing else
+                # MKt_cap & M_B good data = Just a big day % gainer
                 cx = { 'LT': 'Mega cap % gainer only', \
                     'LB': 'Large cap % gainer only', \
                     'LM': 'Med cap % gainer only', \
@@ -145,10 +148,8 @@ class shallow_combo:
                     'SZ': 'Zero Small cap % gainer only',
                     }
                 self.combo_df.loc[row_idx,'Insights'] = cx.get(scale)
-                #print ( "Tagging row: ", "- Symbol: ", sym, "- Mkt Cap: ", cap, "- Scale: ", scale, "- Tag: ", cx.get(scale, 'Cap ERROR!') )
             elif pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == True and pd.isna(self.combo_df.loc[row_idx].M_B) == True:
                 logging.info('%s - Apply NaN/NaN inferrence logic' % cmi_debug )
-                #print ( "Deleting row: ", "- Symbol: ", sym, "- Mkt Cap: ", cap, "- Scale: ", scale)
                 self.combo_df.loc[row_idx,'Insights'] = "^ Unusual vol only"
             else:
                 logging.info('%s - Unknown logic discovered' % cmi_debug )
@@ -156,10 +157,7 @@ class shallow_combo:
         logging.info('%s - Exit tagging cycle' % cmi_debug )
         return
 
-    def tag_best_play(self):
-        pass
-
-# method #2
+# method #4
     def combo_listall(self):
         """Print the full contents of the combo DataFrame with DUPES"""
         """Sorted by % Change"""
@@ -170,7 +168,7 @@ class shallow_combo:
         pd.set_option('max_colwidth', 40)
         return self.combo_df
 
-# method #3
+# method #4
     def combo_dupes_only_listall(self, opt):
         """Print the full contents of the combo DataFrame"""
         """ with the DUPES tagged & sorted by % Change"""
