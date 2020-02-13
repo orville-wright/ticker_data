@@ -106,15 +106,20 @@ class shallow_combo:
                 else:
                     Print ( "Don't know what to do !!" )
 
+        # TODO: ** This code is BUGGY & still faills at Market open when many things are empty & unpopulated...
+        if not bool(min_price):
+            print ( "No **HOT stocks to evaluate yet" )
+
         # since we are Tagging and annotating this DataFrame...
         # find and tag the lowest priced stock within the list of Hottest stocks
-        if min_price is not False:     # We have some **HOT stocks to evaluate
+        if min_price:     # We have some **HOT stocks to evaluate 
             mptv = min(( td[2] for td in min_price.values() ))      # Output = 1 single value from a generator of tuples
             for v in min_price.values():    # v = tuple structured like: (0, BEAM, 28.42)
                 if v[2] == mptv:            # v[2] = 3rd element = price for this stock symbol
                     row_idx = int(v[0])     # v[0] = 1st emelent = DataFrame index for this stock symbol
                     print ( ">>BEST<< price *Hot* stock is:", v[1].rstrip(), "price:", v[2] )
                     self.combo_df.loc[row_idx,'Hot'] = ">BEST<"      # Tag as a **HOT** stock in DataFrame
+
             print ( " " )
 
         return
