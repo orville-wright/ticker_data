@@ -192,6 +192,8 @@ def main():
         x.tag_dupes()
         x.tag_uniques()
         print ( x.combo_listall() )
+        #print ( "========== ** Hacking *** : prepare Ranking =======================================" )
+        #print ( x.rank_hot() )
 
     print ( "####### done #####")
 

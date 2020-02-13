@@ -86,16 +86,16 @@ class shallow_combo:
                 price = self.combo_df.loc[row_idx].Cur_price
                 if pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == False and pd.isna(self.combo_df.loc[row_idx].M_B) == False:
                     # Annotate in english why this stock is a ** Perosn of interest **
-                    cx = { 'LT': '+ Mega cap + Unu vol', \
-                        'LB': '+ Large cap + Unu vol', \
-                        'LM': '+ Med cap + Unu vol', \
-                        'LZ': '+ Zero Large cap + Unu vol', \
-                        'SB': '+ Big Small cap + Unu vol', \
-                        'SM': '+ Small cap + Unu vol', \
-                        'SZ': '+ Zero Small cap + Unu vol',
+                    cx = { 'LT': 'Mega cap + % gainer', \
+                        'LB': 'Large cap + % gainer', \
+                        'LM': 'Med cap + % gainer', \
+                        'LZ': 'Zero Large cap + % gainer', \
+                        'SB': 'Big Small cap + % gainer', \
+                        'SM': 'Small cap + % gainer', \
+                        'SZ': 'Zero Small cap + % gainer',
                         }
                     self.combo_df.loc[row_idx,'Hot'] = "*Hot*"      # Tag as a **HOT** stock
-                    self.combo_df.loc[row_idx,'Insights'] = "+ % gainer " + cx.get(scale)     # Annotate why...
+                    self.combo_df.loc[row_idx,'Insights'] = cx.get(scale) + " + Unu vol"     # Annotate why...
                     #np.array2string(np.char.ljust(cx.get(scale), 20) )
                     #annotation = "+ % gainer " + cx.get(scale)
                     #self.combo_df.loc[row_idx,'Insights'] = annotation.lstrip()     # Annotate why...
@@ -139,13 +139,13 @@ class shallow_combo:
                 # Annotate in english why this stock is a ** Person of interest **
                 ## NaN & NaN = Unusually high volume, but nothing else
                 # MKt_cap & M_B good data = Just a big day % gainer
-                cx = { 'LT': 'Mega cap % gainer only', \
-                    'LB': 'Large cap % gainer only', \
-                    'LM': 'Med cap % gainer only', \
-                    'LZ': 'Zero Large cap % gainer only', \
-                    'SB': 'Big Small cap % gainer only', \
-                    'SM': 'Small cap % gainer only', \
-                    'SZ': 'Zero Small cap % gainer only',
+                cx = { 'LT': 'Mega cap + % gainer only', \
+                    'LB': 'Large cap + % gainer only', \
+                    'LM': 'Med cap + % gainer only', \
+                    'LZ': 'Zero Large cap + % gainer only', \
+                    'SB': 'Big Small cap + % gainer only', \
+                    'SM': 'Small cap + % gainer only', \
+                    'SZ': 'Zero Small cap + % gainer only',
                     }
                 self.combo_df.loc[row_idx,'Insights'] = cx.get(scale)
             elif pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == True and pd.isna(self.combo_df.loc[row_idx].M_B) == True:
@@ -156,6 +156,26 @@ class shallow_combo:
                 self.combo_df.loc[row_idx,'Insights'] = "!No logic!"
         logging.info('%s - Exit tagging cycle' % cmi_debug )
         return
+
+    def rank_hot(self):
+        """isolate all *Hot* tagged stocks and rank them by price, lowest=1 to highest=n."""
+        """Since these stocks are the most active all-round, tag_rank them with 1xx (e.g., 100, 101, 102, 103)"""
+
+        cmi_debug = __name__+"::"+self.rank_hot.__name__+".#"+str(self.inst_uid)
+        logging.info('%s - IN' % cmi_debug )
+        self.combo_df = self.combo_df.assign(rank="" )     # pre-insert the new Tag_Rank column
+        rank_df = self.combo_df.loc[32:]
+        return rank_df
+
+    def rank_caps(self):
+        """isolate all non-*Hot* stocks and all non-Unusual Vol stocks, and tag_rank them  with 2xx (e.g. 200, 201, 202, 203)"""
+        pass
+
+    def rank_unvol(self):
+        """Isolate all Unusual Vol stocks only, and tag_rank them with 3xx (e.g. 300, 301, 302)"""
+        pass
+
+
 
 # method #4
     def combo_listall(self):
