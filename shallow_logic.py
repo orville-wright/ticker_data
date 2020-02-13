@@ -117,8 +117,8 @@ class shallow_combo:
             for v in min_price.values():    # v = tuple structured like: (0, BEAM, 28.42)
                 if v[2] == mptv:            # v[2] = 3rd element = price for this stock symbol
                     row_idx = int(v[0])     # v[0] = 1st emelent = DataFrame index for this stock symbol
-                    print ( ">>BEST<< price *Hot* stock is:", v[1].rstrip(), "price:", v[2] )
-                    self.combo_df.loc[row_idx,'Hot'] = ">BEST<"      # Tag as a **HOT** stock in DataFrame
+                    print ( ">>LOW<< price *Hot* stock is:", v[1].rstrip(), "price:", v[2] )
+                    self.combo_df.loc[row_idx,'Hot'] = ">LOW<"      # Tag as a **HOT** stock in DataFrame
 
             print ( " " )
 
@@ -169,8 +169,22 @@ class shallow_combo:
         cmi_debug = __name__+"::"+self.rank_hot.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
         self.combo_df = self.combo_df.assign(rank="" )     # pre-insert the new Tag_Rank column
-        rank_df = self.combo_df.loc[32:]
-        return rank_df
+        #self.combo_df['rank'] = list(range(len(self.combo_df.index) ))
+        #self.hr_df = self.combo_df[self.combo_df['Hot'] == "*Hot*"]
+        #self.hr_df['rank'] = ( list(range(len(self.combo_df[self.combo_df['Hot'] == "*Hot*"].index) )) )
+        #self.hr_df = self.combo_df[self.combo_df.loc[:, ('Hot')] == "*Hot*" ]
+
+        # self.combo_df['rank'] = self.combo_df[self.combo_df.loc[:, ('Hot')] == "*Hot*" ]
+        print ( "===== HACK #0 =====" )
+        #self.combo_df['rank'] = self.combo_df[self.combo_df.loc[:, 'Hot'] == "*Hot*" ]
+
+        print ( list(range(len(self.combo_df.loc[self.combo_df['Hot'] == "*Hot*"].index ))) )
+
+
+        print ( self.combo_df[self.combo_df.loc[:, 'Hot'] == "*Hot*" ] )
+        #print ( ( list(range(len(self.combo_df[self.combo_df.loc[:, ('Hot')] == "*Hot*" ].index )))) )
+
+        return self.combo_df
 
     def rank_caps(self):
         """isolate all non-*Hot* stocks and all non-Unusual Vol stocks, and tag_rank them  with 2xx (e.g. 200, 201, 202, 203)"""
