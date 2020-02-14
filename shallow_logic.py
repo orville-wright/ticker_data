@@ -112,7 +112,7 @@ class shallow_combo:
 
         # since we are Tagging and annotating this DataFrame...
         # find and tag the lowest priced stock within the list of Hottest stocks
-        if min_price:     # We have some **HOT stocks to evaluate 
+        if min_price:     # We have some **HOT stocks to evaluate
             mptv = min(( td[2] for td in min_price.values() ))      # Output = 1 single value from a generator of tuples
             for v in min_price.values():    # v = tuple structured like: (0, BEAM, 28.42)
                 if v[2] == mptv:            # v[2] = 3rd element = price for this stock symbol
@@ -178,10 +178,17 @@ class shallow_combo:
         print ( "===== HACK #0 =====" )
         #self.combo_df['rank'] = self.combo_df[self.combo_df.loc[:, 'Hot'] == "*Hot*" ]
 
-        print ( list(range(len(self.combo_df.loc[self.combo_df['Hot'] == "*Hot*"].index ))) )
-
-
+        x = list(range(len(self.combo_df.loc[self.combo_df['Hot'] == "*Hot*"].index )))
+        print ( x )
+        print ( "===== HACK #1 =====" )
         print ( self.combo_df[self.combo_df.loc[:, 'Hot'] == "*Hot*" ] )
+
+        for i in x:
+            print ( "rank:", i)
+            self.combo_df.iloc[i, 9] = i
+            #self.combo_df.loc['rank'][self.combo_df.loc[:, 'Hot'] == "*Hot*" ] = i
+        print ( "===== HACK #2 =====" )
+
         #print ( ( list(range(len(self.combo_df[self.combo_df.loc[:, ('Hot')] == "*Hot*" ].index )))) )
 
         return self.combo_df
