@@ -183,11 +183,15 @@ class shallow_combo:
         print ( "===== HACK #1 =====" )
         print ( self.combo_df[self.combo_df.loc[:, 'Hot'] == "*Hot*" ] )
 
+        print ( "===== HACK #2 =====" )
         for i in x:
             print ( "rank:", i)
-            self.combo_df.iloc[i, 9] = i
+            print ( self.combo_df.iloc[:,7,][:] == '*Hot*' )
+            #[self.combo_df.iloc[7] == '*Hot*']
+            #self.combo_df.iloc[i, 9] = i
+
             #self.combo_df.loc['rank'][self.combo_df.loc[:, 'Hot'] == "*Hot*" ] = i
-        print ( "===== HACK #2 =====" )
+        print ( "===== HACK #3 =====" )
 
         #print ( ( list(range(len(self.combo_df[self.combo_df.loc[:, ('Hot')] == "*Hot*" ].index )))) )
 
