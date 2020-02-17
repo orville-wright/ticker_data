@@ -191,9 +191,10 @@ def main():
         print ( "========== ** OUTLIERS ** : with Annotated reasons =======================================" )
         x.tag_dupes()
         x.tag_uniques()
+        # print ( "========== ** Hacking *** : prepare Ranking =======================================" )
+        # x.rank_hot()
+        x.rank_hot()
         print ( x.combo_listall() )
-        print ( "========== ** Hacking *** : prepare Ranking =======================================" )
-        print ( x.rank_hot() )
 
     print ( "####### done #####")
 

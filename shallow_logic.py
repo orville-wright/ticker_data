@@ -118,7 +118,7 @@ class shallow_combo:
                 if v[2] == mptv:            # v[2] = 3rd element = price for this stock symbol
                     row_idx = int(v[0])     # v[0] = 1st emelent = DataFrame index for this stock symbol
                     print ( ">>LOW<< price *Hot* stock is:", v[1].rstrip(), "price:", v[2] )
-                    self.combo_df.loc[row_idx,'Hot'] = ">LOW<"      # Tag as a **HOT** stock in DataFrame
+                    self.combo_df.loc[row_idx,'Hot'] = "*Hot*"      # Tag as a **HOT** stock in DataFrame
 
             print ( " " )
 
@@ -175,24 +175,32 @@ class shallow_combo:
         #self.hr_df = self.combo_df[self.combo_df.loc[:, ('Hot')] == "*Hot*" ]
 
         # self.combo_df['rank'] = self.combo_df[self.combo_df.loc[:, ('Hot')] == "*Hot*" ]
-        print ( "===== HACK #0 =====" )
-        #self.combo_df['rank'] = self.combo_df[self.combo_df.loc[:, 'Hot'] == "*Hot*" ]
+        # print ( "===== HACK #0 =====" )
+        #self.combo_df['rank'] = self.combo_df[self.combo_df.loc[:, 'Hot'] == "*Hot*"
+        # x = list(range(len(self.combo_df.loc[self.combo_df['Hot'] == "*Hot*"].index )))
+        # print ( x )
 
+        #print ( "===== HACK #1 =====" )
+        #print ( self.combo_df.sort_values(by=['Cur_price'], ascending=True)[self.combo_df.loc[:, 'Hot'] == "*Hot*" ] )
+
+        #print ( "===== HACK #2 =====" )
+        z = list(self.combo_df.sort_values(by=['Cur_price'], ascending=True).loc[self.combo_df['Hot'] == "*Hot*"].index)
+        #print ( "list(z):", z)
+        #print ( self.combo_df.loc[self.combo_df['Hot'] == "*Hot*"].index )
         x = list(range(len(self.combo_df.loc[self.combo_df['Hot'] == "*Hot*"].index )))
-        print ( x )
-        print ( "===== HACK #1 =====" )
-        print ( self.combo_df[self.combo_df.loc[:, 'Hot'] == "*Hot*" ] )
-
-        print ( "===== HACK #2 =====" )
-        for i in x:
-            print ( "rank:", i)
-            print ( self.combo_df.iloc[:,7,][:] == '*Hot*' )
-            #[self.combo_df.iloc[7] == '*Hot*']
-            #self.combo_df.iloc[i, 9] = i
-
-            #self.combo_df.loc['rank'][self.combo_df.loc[:, 'Hot'] == "*Hot*" ] = i
-        print ( "===== HACK #3 =====" )
-
+        y = 1
+        for i in z:
+            self.combo_df.loc[i, 'rank'] = y
+            #print ( "i: ", i, "x:", y )
+            y += 1
+            #self.combo_df.loc[i]['rank'] = i
+        #    print ( "rank:", i)
+        #    print ( self.combo_df.iloc[:,7,][:] == '*Hot*' )
+        #[self.combo_df.iloc[7] == '*Hot*']
+        #self.combo_df.iloc[i, 9] = i
+        #self.combo_df.loc['rank'][self.combo_df.loc[:, 'Hot'] == "*Hot*" ] = i
+        # print ( "===== HACK #3 =====" )
+        # print ( self.combo_df.loc[x] )
         #print ( ( list(range(len(self.combo_df[self.combo_df.loc[:, ('Hot')] == "*Hot*" ].index )))) )
 
         return self.combo_df
