@@ -169,50 +169,40 @@ class shallow_combo:
         cmi_debug = __name__+"::"+self.rank_hot.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
         self.combo_df = self.combo_df.assign(rank="" )     # pre-insert the new Tag_Rank column
-        #self.combo_df['rank'] = list(range(len(self.combo_df.index) ))
-        #self.hr_df = self.combo_df[self.combo_df['Hot'] == "*Hot*"]
-        #self.hr_df['rank'] = ( list(range(len(self.combo_df[self.combo_df['Hot'] == "*Hot*"].index) )) )
-        #self.hr_df = self.combo_df[self.combo_df.loc[:, ('Hot')] == "*Hot*" ]
 
-        # self.combo_df['rank'] = self.combo_df[self.combo_df.loc[:, ('Hot')] == "*Hot*" ]
-        # print ( "===== HACK #0 =====" )
-        #self.combo_df['rank'] = self.combo_df[self.combo_df.loc[:, 'Hot'] == "*Hot*"
-        # x = list(range(len(self.combo_df.loc[self.combo_df['Hot'] == "*Hot*"].index )))
-        # print ( x )
-
-        #print ( "===== HACK #1 =====" )
-        #print ( self.combo_df.sort_values(by=['Cur_price'], ascending=True)[self.combo_df.loc[:, 'Hot'] == "*Hot*" ] )
-
-        #print ( "===== HACK #2 =====" )
+        # get a list of rows that meet the critera and find each row's index ID's.
+        # Pack the list of index ID's into a list [] & pass it as an indexer inside a Loop
+        # use rank column to hold a tag/ranking of cheapest *Hot* stock to most expensive *Hot* stock
         z = list(self.combo_df.sort_values(by=['Cur_price'], ascending=True).loc[self.combo_df['Hot'] == "*Hot*"].index)
-        #print ( "list(z):", z)
-        #print ( self.combo_df.loc[self.combo_df['Hot'] == "*Hot*"].index )
-        x = list(range(len(self.combo_df.loc[self.combo_df['Hot'] == "*Hot*"].index )))
-        y = 1
+        y = 100
         for i in z:
             self.combo_df.loc[i, 'rank'] = y
             #print ( "i: ", i, "x:", y )
             y += 1
-            #self.combo_df.loc[i]['rank'] = i
-        #    print ( "rank:", i)
-        #    print ( self.combo_df.iloc[:,7,][:] == '*Hot*' )
-        #[self.combo_df.iloc[7] == '*Hot*']
-        #self.combo_df.iloc[i, 9] = i
-        #self.combo_df.loc['rank'][self.combo_df.loc[:, 'Hot'] == "*Hot*" ] = i
-        # print ( "===== HACK #3 =====" )
-        # print ( self.combo_df.loc[x] )
-        #print ( ( list(range(len(self.combo_df[self.combo_df.loc[:, ('Hot')] == "*Hot*" ].index )))) )
 
+        return self.combo_df
+
+    def rank_unvol(self):
+        """Isolate all Unusual Vol stocks only, and tag_rank them with 3xx (e.g. 300, 301, 302)"""
+
+        z = list(self.combo_df.sort_values(by=['Cur_price'], ascending=True).loc[self.combo_df['Insights'] == "^ Unusual vol only"].index)
+        y = 300
+        for i in z:
+            self.combo_df.loc[i, 'rank'] = y
+            #print ( "i: ", i, "x:", y )
+            y += 1
         return self.combo_df
 
     def rank_caps(self):
         """isolate all non-*Hot* stocks and all non-Unusual Vol stocks, and tag_rank them  with 2xx (e.g. 200, 201, 202, 203)"""
-        pass
-
-    def rank_unvol(self):
-        """Isolate all Unusual Vol stocks only, and tag_rank them with 3xx (e.g. 300, 301, 302)"""
-        pass
-
+        """WARN: This is a cheap way to find/select criteria. MUST call this ranking method last for this to work correctly."""
+        z = list(self.combo_df.sort_values(by=['Cur_price'], ascending=True).loc[self.combo_df['rank'] == "" ].index)
+        y = 200
+        for i in z:
+            self.combo_df.loc[i, 'rank'] = y
+            #print ( "i: ", i, "x:", y )
+            y += 1
+        return self.combo_df
 
 
 # method #4
@@ -225,6 +215,17 @@ class shallow_combo:
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 40)
         return self.combo_df
+
+    def combo_listall_ranked(self):
+        """Print the full contents of the combo DataFrame with DUPES"""
+        """Sorted by % Change"""
+
+        cmi_debug = __name__+"::"+self.combo_listall_ranked.__name__+".#"+str(self.inst_uid)
+        logging.info('%s - IN' % cmi_debug )
+        pd.set_option('display.max_rows', None)
+        pd.set_option('max_colwidth', 40)
+        print ( self.combo_df.sort_values(by=['rank'], ascending=True) )
+        return
 
 # method #4
     def combo_dupes_only_listall(self, opt):

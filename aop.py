@@ -188,13 +188,15 @@ def main():
         print ( "========== ** OUTLIERS ** : Unusual UP volume + Top Gainers by +5% ================================" )
         print ( x.combo_dupes_only_listall(1) )
         print ( " ")
-        print ( "========== ** OUTLIERS ** : with Annotated reasons =======================================" )
+        print ( "========== ** OUTLIERS ** : Ranked by oppty price + Annotated reasons =======================================" )
         x.tag_dupes()
         x.tag_uniques()
         # print ( "========== ** Hacking *** : prepare Ranking =======================================" )
         # x.rank_hot()
         x.rank_hot()
-        print ( x.combo_listall() )
+        x.rank_unvol()
+        x.rank_caps()
+        x.combo_listall_ranked()
 
     print ( "####### done #####")
 
