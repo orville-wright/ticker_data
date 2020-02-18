@@ -197,6 +197,7 @@ def main():
         x.rank_unvol()
         x.rank_caps()
         x.combo_listall_ranked()
+        x.combo_grouped()
 
     print ( "####### done #####")
 

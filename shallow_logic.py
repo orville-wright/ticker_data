@@ -227,6 +227,17 @@ class shallow_combo:
         print ( self.combo_df.sort_values(by=['rank'], ascending=True) )
         return
 
+    def combo_grouped(self):
+        """Print the full contents of the combo DataFrame with DUPES"""
+        """Sorted by % Change & grouped by Insights"""
+
+        cmi_debug = __name__+"::"+self.combo_grouped.__name__+".#"+str(self.inst_uid)
+        logging.info('%s - IN' % cmi_debug )
+        pd.set_option('display.max_rows', None)
+        pd.set_option('max_colwidth', 40)
+        print ( self.combo_df.sort_values(by=['rank'], ascending=True).groupby(['Insights'])['Pct_change'].mean() )
+        return
+
 # method #4
     def combo_dupes_only_listall(self, opt):
         """Print the full contents of the combo DataFrame"""
