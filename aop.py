@@ -20,6 +20,7 @@ from y_toplosers import y_toplosers
 from screener_dg1 import screener_dg1
 from unusual_vol import unusual_vol
 from shallow_logic import shallow_combo
+from y_newsloop import y_newsfilter
 
 # Globals
 work_inst = 0
@@ -198,6 +199,11 @@ def main():
         x.rank_caps()
         x.combo_listall_ranked()
         x.combo_grouped()
+        print ( " " )
+        print ( "========== ** HACKING ** : AI News Loop =======================================" )
+        z = y_newsfilter(1, "SDC", args )
+        z.get_news_data()
+        z.build_n_df0()
 
     print ( "####### done #####")
 
