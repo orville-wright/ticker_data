@@ -78,6 +78,9 @@ class y_newsfilter:
         full_dataset = self.all_tag_tr
         my_list = full_dataset[0].find_all(attrs={"class": "C(#959595)"} )
         for datarow in range(len(my_list)):
+            html_element = str(my_list[datarow])
+            get_soup = BeautifulSoup( html_element, features="html.parser" )
+            print ( f"Cycle: {x} Outlet: {get_soup.div.string}" )
             #for datarow in self.all_tag_tr:
             # BS4 generator object from "extracted strings" BS4 operation (nice)
             #print ( f"News data row: {x} - {datarow}" )
@@ -86,8 +89,15 @@ class y_newsfilter:
             #news_outlet = datarow.find(attrs={"class": "C(#959595)"} )         # 1st key section within this datarow
 
             #time_ago = datarow.next_element            # 2nd <td> : company name
-            got_you = soup.find_all(data-reactid=True)
-            print ( f"Cycle: {x} News outlet: {my_list[datarow]}" )
+
+            # THESE WORK ...
+            # soup.div.contents[0]
+            # soup.div.string
+
+            #got_you = get_soup.string
+            # got_you = get_soup.find(data-reactid==True)
+
+            # print ( f"Cycle: {x} Data row: {my_list[datarow]}" )
             #print ( f"Time of news: {time_ago}" )
             """
             price = next(extr_strings)          # 3rd <td> : price
