@@ -35,7 +35,7 @@ parser.add_argument('-s','--screen', help='screener logic parser', action='store
 parser.add_argument('-u','--unusual', help='unusual up & down volume', action='store_true', dest='bool_uvol', required=False, default=False)
 parser.add_argument('-x','--xray', help='dump detailed debug data structures', action='store_true', dest='bool_xray', required=False, default=False)
 parser.add_argument('-d','--deep', help='Deep converged multi data list', action='store_true', dest='bool_deep', required=False, default=False)
-
+parser.add_argument('-n','--newsai', help='News sentiment Ai', action='store_true', dest='bool_news', required=False, default=False)
 
 # Threading globals
 extract_done = threading.Event()
@@ -199,11 +199,12 @@ def main():
         print ( " " )
         x.combo_grouped()
 
-    # print ( " " )
-    # print ( "========== ** HACKING ** : AI News Loop =======================================" )
-    # z = y_newsfilter(1, "SDC", args )
-    # z.get_news_data()
-    # z.build_n_df0()
+    if args['bool_news'] is True:
+        print ( " " )
+        print ( "========== ** HACKING ** : News Sentiment Ai =======================================" )
+        z = y_newsfilter(1, "SDC", args )
+        z.get_news_data()
+        z.build_n_df0()
 
     print ( "####### done #####")
 
