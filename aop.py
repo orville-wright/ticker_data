@@ -198,11 +198,12 @@ def main():
         x.combo_listall_ranked()
         print ( " " )
         x.combo_grouped()
-        print ( " " )
-        print ( "========== ** HACKING ** : AI News Loop =======================================" )
-        z = y_newsfilter(1, "SDC", args )
-        z.get_news_data()
-        z.build_n_df0()
+
+    # print ( " " )
+    # print ( "========== ** HACKING ** : AI News Loop =======================================" )
+    # z = y_newsfilter(1, "SDC", args )
+    # z.get_news_data()
+    # z.build_n_df0()
 
     print ( "####### done #####")
 

@@ -22,7 +22,7 @@ class y_newsfilter:
     n_df0 = ""          # DataFrame - Full list of top gainers
     n_df1 = ""          # DataFrame - Ephemerial list of top 10 gainers. Allways overwritten
     n_df2 = ""          # DataFrame - Top 10 ever 10 secs for 60 secs
-    all_tag_tr = ""      # BS4 handle of the <tr> extracted data
+    tag_dataset = ""      # BS4 handle of the <tr> extracted data
     inst_uid = 0
     cycle = 0           # class thread loop counter
     symbol = ""         # Unique company symbol
@@ -56,8 +56,8 @@ class y_newsfilter:
         # ATTR style search. Results -> Dict
         # <tr tag in target merkup line has a very complex 'class=' but the attributes are unique. e.g. 'simpTblRow' is just one unique attribute
         logging.info('%s - save data object handle' % cmi_debug )
-        #self.all_tag_tr = self.soup.find_all(attrs={"class": "C(#959595)"} )        # the section in the HTML page we focus-in on
-        self.all_tag_tr = self.soup.find_all(attrs={"class": "My(0) Ov(h) P(0) Wow(bw)"} )
+        #self.tag_dataset = self.soup.find_all(attrs={"class": "C(#959595)"} )        # the section in the HTML page we focus-in on
+        self.tag_dataset = self.soup.find(attrs={"class": "My(0) Ov(h) P(0) Wow(bw)"} )
         # <div class="C(#959595) Fz(11px) D(ib) Mb(6px)">
         logging.info('%s - close url handle' % cmi_debug )
         url.close()
@@ -75,13 +75,34 @@ class y_newsfilter:
         logging.info('%s - Drop all rows from DF0' % cmi_debug )
         self.n_df0.drop(self.n_df0.index, inplace=True)
         x = 1    # row counter Also leveraged for unique dataframe key
-        full_dataset = self.all_tag_tr
-        my_list = full_dataset[0].find_all(attrs={"class": "C(#959595)"} )
-        for datarow in range(len(my_list)):
-            html_element = str(my_list[datarow])
+        # full_dataset = self.tag_dataset
+        #li_subset = self.tag_dataset[0].li.find_all(attrs={"class": "C(#959595)"})
+        # li_subset = self.tag_dataset[0].li.find_all()
+        li_subset = self.tag_dataset.find_all('li')
+        # print ( "***li TEST #1 ***" )
+        # print ( li_subset )
+        #print ( "***li TEST #2 ***" )
+        #print ( li_subset.next_element )
+
+        #li_alldataset = self.tag_dataset[0].li.find_all(attrs={"class": "C(#959595)"} )
+        #print ( "***li alldataset #3 ***" )
+        #print ( li_alldataset )
+        for datarow in range(len(li_subset)):
+            html_element = str(li_subset[datarow])
+            print ( f"================ Row: {x} ====================" )
+            #print ( f"Cycle: {x}\nRow: {html_element}" )
             get_soup = BeautifulSoup( html_element, features="html.parser" )
-            print ( f"Cycle: {x} Outlet: {get_soup.div.string}" )
-            #for datarow in self.all_tag_tr:
+            y = 1
+            div1 = get_soup.find(attrs={"class": "C(#959595)"} )
+            print ( f"=== full div1 ===\n{div1}")
+            # print ( f"Inner loop (div1): {div1.strings}" )
+            for e in get_soup.div.next_elements:
+                # print ( f"=============== Element {y} =====================" )
+                print ( f"==== Element: {y} ====" )
+                print ( e )
+                y += 1
+
+            #for datarow in self.tag_dataset:
             # BS4 generator object from "extracted strings" BS4 operation (nice)
             #print ( f"News data row: {x} - {datarow}" )
             #extr_strings = datarow.stripped_strings
