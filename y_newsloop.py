@@ -9,6 +9,7 @@ import logging
 import argparse
 import time
 import threading
+import hashlib
 
 # logging setup
 logging.basicConfig(level=logging.INFO)
@@ -41,11 +42,11 @@ class y_newsfilter:
         return
 
 # method #1
-    def get_news_data(self):
+    def get_news_list(self):
         """Connect to finance.yahoo.com and extract (scrape) the raw data out of"""
         """the complex webpage [Stock:News ] html data table. Returns a BS4 handle."""
 
-        cmi_debug = __name__+"::"+self.get_news_data.__name__+".#"+str(self.inst_uid)
+        cmi_debug = __name__+"::"+self.get_news_list.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
         news_url = "https://finance.yahoo.com/quote/" + self.symbol + "/news?p=" + self.symbol      # form the correct URL
         logging.info('%s - URL:' % (cmi_debug) )
@@ -54,8 +55,6 @@ class y_newsfilter:
             s = url.read()
             logging.info('%s - read html stream' % cmi_debug )
             self.soup = BeautifulSoup(s, "html.parser")
-        # ATTR style search. Results -> Dict
-        # <tr tag in target merkup line has a very complex 'class=' but the attributes are unique. e.g. 'simpTblRow' is just one unique attribute
         logging.info('%s - save data object handle' % cmi_debug )
         #self.ul_tag_dataset = self.soup.find_all(attrs={"class": "C(#959595)"} )        # the section in the HTML page we focus-in on
         self.ul_tag_dataset = self.soup.find(attrs={"class": "My(0) Ov(h) P(0) Wow(bw)"} )
@@ -64,13 +63,36 @@ class y_newsfilter:
         url.close()
         return
 
+    def follow_news_link(self, url):
+        """Follow a URL of a news article and extract the data for deeper processing of an individual news article"""
+        """Note: calling this recurisvely will be network expensive...but that is the plan"""
+
+        cmi_debug = __name__+"::"+self.follow_news_link.__name__+".#"+str(self.inst_uid)
+        logging.info('%s - IN' % cmi_debug )
+        deep_url = url      # pass in the url that we want to deeply analyze
+        logging.info('%s - Follow URL:' % (cmi_debug) )
+        print ( " " )
+        print ( f"***** Processing News URL: {deep_url}" )
+        with urllib.request.urlopen(deep_url) as url:
+            f = url.read()
+            logging.info('%s - read html stream' % cmi_debug )
+            soup = BeautifulSoup(f, "html.parser")
+
+        logging.info('%s - ' % cmi_debug )
+        #
+        # fnl_tag_dataset = soup.find_all('a')
+        fnl_tag_dataset = soup.div.find_all(attrs={'class': 'D(tbc)'} )
+        logging.info('%s - close url handle' % cmi_debug )
+        url.close()
+        return fnl_tag_dataset
+
 # method #2
-    def build_n_df0(self):
+    def build_news(self):
         """Build-out a fully populated Pandas DataFrame containg all the"""
         """extracted/scraped fields from the html/markup table data"""
         """Wrangle, clean/convert/format the data correctly."""
 
-        cmi_debug = __name__+"::"+self.build_n_df0.__name__+".#"+str(self.inst_uid)
+        cmi_debug = __name__+"::"+self.build_news.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         logging.info('%s - Drop all rows from DF0' % cmi_debug )
@@ -90,10 +112,21 @@ class y_newsfilter:
             """print ( f"DOT: {html_element.i.find(attrs={'class': 'Mx(4px)'}) }" )"""
             print ( f"News item URL: {html_element.a.get('href')}" )
             print ( f"News headline: {html_element.a.text}" )
-            print ( f"Brief: {html_element.p.text}" )
+            print ( "Brief: {:.400}".format(html_element.p.text) )    # truncate long New Brief headlines to max 400 chars
+
+            # generate a unuque hash for each new URL so that we can easily test for dupes
+            url_prehash = html_element.a.get('href')
+            result = hashlib.sha256(url_prehash.encode()) 
+            print ( f"Hash encoded URL: {result.hexdigest()}" ) 
             x += 1
 
-        logging.info('%s - populated new DF0 dataset' % cmi_debug )
+        fnl_deep_link = 'https://finance.yahoo.com' + url_prehash
+        a_subset = self.follow_news_link(fnl_deep_link)
+        print ( f"URL.div element: {a_subset[5]}" )
+        print ( f"URL.div [len]: {len(a_subset)}" )
+        print ( f"URL.time: {a_subset[5].time.text}" )
+
+        logging.info('%s - Extracted NEWS' % cmi_debug )
         return x        # number of rows extracted
 
 # method #3

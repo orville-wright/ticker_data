@@ -203,8 +203,8 @@ def main():
         print ( " " )
         print ( "========== ** HACKING ** : News Sentiment Ai =======================================" )
         z = y_newsfilter(1, "SDC", args )
-        z.get_news_data()
-        z.build_n_df0()
+        z.get_news_list()
+        z.build_news()
 
     print ( "####### done #####")
 
