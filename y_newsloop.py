@@ -22,7 +22,7 @@ class y_newsfilter:
     n_df0 = ""          # DataFrame - Full list of top gainers
     n_df1 = ""          # DataFrame - Ephemerial list of top 10 gainers. Allways overwritten
     n_df2 = ""          # DataFrame - Top 10 ever 10 secs for 60 secs
-    tag_dataset = ""      # BS4 handle of the <tr> extracted data
+    ul_tag_dataset = ""      # BS4 handle of the <tr> extracted data
     inst_uid = 0
     cycle = 0           # class thread loop counter
     symbol = ""         # Unique company symbol
@@ -56,8 +56,8 @@ class y_newsfilter:
         # ATTR style search. Results -> Dict
         # <tr tag in target merkup line has a very complex 'class=' but the attributes are unique. e.g. 'simpTblRow' is just one unique attribute
         logging.info('%s - save data object handle' % cmi_debug )
-        #self.tag_dataset = self.soup.find_all(attrs={"class": "C(#959595)"} )        # the section in the HTML page we focus-in on
-        self.tag_dataset = self.soup.find(attrs={"class": "My(0) Ov(h) P(0) Wow(bw)"} )
+        #self.ul_tag_dataset = self.soup.find_all(attrs={"class": "C(#959595)"} )        # the section in the HTML page we focus-in on
+        self.ul_tag_dataset = self.soup.find(attrs={"class": "My(0) Ov(h) P(0) Wow(bw)"} )
         # <div class="C(#959595) Fz(11px) D(ib) Mb(6px)">
         logging.info('%s - close url handle' % cmi_debug )
         url.close()
@@ -75,34 +75,41 @@ class y_newsfilter:
         logging.info('%s - Drop all rows from DF0' % cmi_debug )
         self.n_df0.drop(self.n_df0.index, inplace=True)
         x = 1    # row counter Also leveraged for unique dataframe key
-        # full_dataset = self.tag_dataset
-        #li_subset = self.tag_dataset[0].li.find_all(attrs={"class": "C(#959595)"})
-        # li_subset = self.tag_dataset[0].li.find_all()
-        li_subset = self.tag_dataset.find_all('li')
+        # full_dataset = self.ul_tag_dataset
+        #li_subset = self.ul_tag_dataset[0].li.find_all(attrs={"class": "C(#959595)"})
+        # li_subset = self.ul_tag_dataset[0].li.find_all()
+        li_superclass = self.ul_tag_dataset.find_all(attrs={"class": "js-stream-content Pos(r)"} )
+        li_subset = self.ul_tag_dataset.find_all('li')
+        mini_headline = self.ul_tag_dataset.div.find_all(attrs={'class': 'C(#959595)'})
+
         # print ( "***li TEST #1 ***" )
         # print ( li_subset )
         #print ( "***li TEST #2 ***" )
         #print ( li_subset.next_element )
 
-        #li_alldataset = self.tag_dataset[0].li.find_all(attrs={"class": "C(#959595)"} )
+        #li_alldataset = self.ul_tag_dataset[0].li.find_all(attrs={"class": "C(#959595)"} )
         #print ( "***li alldataset #3 ***" )
         #print ( li_alldataset )
+
         for datarow in range(len(li_subset)):
-            html_element = str(li_subset[datarow])
+            html_element = li_subset[datarow]
             print ( f"================ Row: {x} ====================" )
-            #print ( f"Cycle: {x}\nRow: {html_element}" )
-            get_soup = BeautifulSoup( html_element, features="html.parser" )
+            print ( f"News outlet: {html_element.div.find(attrs={'class': 'C(#959595)'}).string }" )
+            print ( f"News item URL: {html_element.a.get('href')}" )
+            print ( f"News headline: {html_element.a.text}" )
+            #print ( f"[list item]: {x} - {html_element}" )
+
+            """
             y = 1
-            div1 = get_soup.find(attrs={"class": "C(#959595)"} )
-            print ( f"=== full div1 ===\n{div1}")
-            # print ( f"Inner loop (div1): {div1.strings}" )
             for e in get_soup.div.next_elements:
                 # print ( f"=============== Element {y} =====================" )
                 print ( f"==== Element: {y} ====" )
-                print ( e )
-                y += 1
+                print ( f"{e}" )
+            y += 1
+            """
+            x += 1
 
-            #for datarow in self.tag_dataset:
+                    #for datarow in self.ul_tag_dataset:
             # BS4 generator object from "extracted strings" BS4 operation (nice)
             #print ( f"News data row: {x} - {datarow}" )
             #extr_strings = datarow.stripped_strings
@@ -120,74 +127,16 @@ class y_newsfilter:
 
             # print ( f"Cycle: {x} Data row: {my_list[datarow]}" )
             #print ( f"Time of news: {time_ago}" )
-            """
-            price = next(extr_strings)          # 3rd <td> : price
-            change = next(extr_strings)         # 4th <td> : $ change
-            pct = next(extr_strings)            # 5th <td> : % change
-            vol = next(extr_strings)            # 6th <td> : volume
-            avg_vol = next(extr_strings)        # 6th <td> : Avg. vol over 3 months)
-            mktcap = next(extr_strings)         # 7th <td> : Market cap
-            # 8th <td> : PE ratio (I dont care aboutt this. so ignore/disgard it)
 
+        print ( f"Mini Headline ALL: {mini_headline}" )
+        for eline in range(len(mini_headline)):
+            m = str(mini_headline[eline])
+            ms = BeautifulSoup( m, features="html.parser" )
+            print ( f"== DIV: {ms} == ")
+            print ( f"== SPAN: {ms.next_element} == ")
 
-            # co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )      # left justify TXT in DF & convert to raw string
+        print ( f"li Superclass 1 only: {li_superclass}" )
 
-            # co_name_lj = (re.sub('[\'\"]', '', co_name) )    # remove " ' and strip leading/trailing spaces
-            # co_name_lj = np.array2string(np.char.ljust(co_name_lj, 25) )   # left justify TXT in DF & convert to raw string
-            # co_name_lj = (re.sub('[\']', '', co_name_lj) )    # remove " ' and strip leading/trailing spaces
-
-            ##co_name_lj = np.array2string(np.char.ljust(co_name, 20) )   # left justify TXT in DF & convert to raw string
-            ##co_name_lj = (re.sub('[\'\"]', '', co_name_lj))    # remove " '
-
-            mktcap = (re.sub('[N\/A]', '0', mktcap))   # handle N/A
-
-            TRILLIONS = re.search('T', mktcap)
-            BILLIONS = re.search('B', mktcap)
-            MILLIONS = re.search('M', mktcap)
-
-            if TRILLIONS:
-                mktcap_clean = np.float(re.sub('T', '', mktcap))
-                mb = "XT"
-                logging.info('%s - Mega Cap/TRILLIONS. set XT' % cmi_debug )
-
-            if BILLIONS:
-                mktcap_clean = np.float(re.sub('B', '', mktcap))
-                mb = "LB"
-                logging.info('%s - Large cap/BILLIONS. set LB' % cmi_debug )
-
-            if MILLIONS:
-                mktcap_clean = np.float(re.sub('M', '', mktcap))
-                mb = "LM"
-                logging.info('%s - Large cap/MILLIONS. set LM' % cmi_debug )
-
-            if not TRILLIONS and not BILLIONS and not MILLIONS:
-                mktcap_clean = 0    # error condition - possible bad data
-                mb = "LZ"
-                logging.info('%s - bad mktcap data. set to L0' % cmi_debug )
-                # handle bad data in mktcap html page field
-
-            # note: Pandas DataFrame : top_gainers pre-initalized as EMPYT
-            # Data treatment:
-            # Data is extracted as raw strings, so needs wrangeling...
-            #    price - stip out any thousand "," seperators and cast as true decimal via numpy
-            #    change - strip out chars '+' and ',' and cast as true decimal via numpy
-            #    pct - strip out chars '+ and %' and cast as true decimal via numpy
-            #    mktcap - strio out 'B' Billions & 'M' Millions
-            self.data0 = [[ \
-                       x, \
-                       re.sub('\'', '', co_sym_lj), \
-                       co_name_lj, \
-                       np.float(re.sub('\,', '', price)), \
-                       np.float(re.sub('[\+,]', '', change)), \
-                       np.float(re.sub('[\+,%]', '', pct)), \
-                       mktcap_clean, \
-                       mb, \
-                       time_now ]]
-
-            self.df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time' ], index=[x] )
-            self.n_df0 = self.n_df0.append(self.df0)    # append this ROW of data into the REAL DataFrame
-            """
-            x+=1
         logging.info('%s - populated new DF0 dataset' % cmi_debug )
         return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
                         # sucess = lobal class accessor (y_topgainers.n_df0) populated & updated
