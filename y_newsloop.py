@@ -33,6 +33,7 @@ class y_newsfilter:
         # WARNING: There is/can-be NO checking to ensure this is a valid/real symbol
         cmi_debug = __name__+"::"+self.__init__.__name__
         logging.info('%s - INIT inst' % cmi_debug )
+        self.args = global_args
         # init empty DataFrame with present colum names
         self.n_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time'] )
         self.n_df1 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time'] )
@@ -116,15 +117,33 @@ class y_newsfilter:
 
             # generate a unuque hash for each new URL so that we can easily test for dupes
             url_prehash = html_element.a.get('href')
-            result = hashlib.sha256(url_prehash.encode()) 
-            print ( f"Hash encoded URL: {result.hexdigest()}" ) 
+            result = hashlib.sha256(url_prehash.encode())
+            print ( f"Hash encoded URL: {result.hexdigest()}" )
             x += 1
 
+        # This is somewhat complicated DATA EXTRACTION, beciase we are now getting into the
+        # dirty details & low-levl data components within specific HTML data pages
         fnl_deep_link = 'https://finance.yahoo.com' + url_prehash
         a_subset = self.follow_news_link(fnl_deep_link)
-        print ( f"URL.div element: {a_subset[5]}" )
-        print ( f"URL.div [len]: {len(a_subset)}" )
-        print ( f"URL.time: {a_subset[5].time.text}" )
+        for erow in range(len(a_subset)):       # cycyle through how-ever many sections there are in this dataset
+            print ( f"======= Follow news link deep link element: {erow} / {len(a_subset)-1} ========" )
+            print ( f"== {erow}: == URL.div element: {a_subset[erow].name}" )
+            if a_subset[erow].time:
+                print ( f"== {erow}: == TIME: {a_subset[erow].time['datetime']}" )
+                print ( f"== {erow}: == DATE: {a_subset[erow].time.text}" )        # ['itemprop']}" )
+                if a_subset[erow].div:  # True = element exists
+                    print ( f"== {erow}: == AUTHOR: {a_subset[erow].div.find(attrs={'itemprop': 'name'}).text }" )
+                # print ( f"== {erow}: == URL.div element: {a_subset[erow]}" )
+
+            # DEBUG
+            print ( f"== All tags: ", end="" )
+            if self.args['bool_xray'] is True:        # DEBUG Xray
+                for tag in a_subset[erow].find_all(True):
+                    print ( f"{tag.name}, ", end="" )
+                    #if tag a_subset[erow].time exists inside this element...
+            print ( " " )
+
+            logging.info('%s - Cycle: Follow New Link deep extratcion' % cmi_debug )
 
         logging.info('%s - Extracted NEWS' % cmi_debug )
         return x        # number of rows extracted
