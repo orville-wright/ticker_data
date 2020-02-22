@@ -8,8 +8,10 @@ import re
 import logging
 import argparse
 import time
+from datetime import datetime
 import threading
 import hashlib
+
 
 # logging setup
 logging.basicConfig(level=logging.INFO)
@@ -51,7 +53,7 @@ class y_newsfilter:
         logging.info('%s - IN' % cmi_debug )
         news_url = "https://finance.yahoo.com/quote/" + self.symbol + "/news?p=" + self.symbol      # form the correct URL
         logging.info('%s - URL:' % (cmi_debug) )
-        print ( f"News URL: {news_url}" )
+        print ( f"Extract news for: SDC @: {news_url}" )
         with urllib.request.urlopen(news_url) as url:
             s = url.read()
             logging.info('%s - read html stream' % cmi_debug )
@@ -72,8 +74,7 @@ class y_newsfilter:
         logging.info('%s - IN' % cmi_debug )
         deep_url = url      # pass in the url that we want to deeply analyze
         logging.info('%s - Follow URL:' % (cmi_debug) )
-        print ( " " )
-        print ( f"***** Processing News URL: {deep_url}" )
+        logging.info('%s - read html stream' % cmi_debug )
         with urllib.request.urlopen(deep_url) as url:
             f = url.read()
             logging.info('%s - read html stream' % cmi_debug )
@@ -107,7 +108,7 @@ class y_newsfilter:
 
         for datarow in range(len(li_subset)):
             html_element = li_subset[datarow]
-            print ( f"================ Row: {x} ====================" )
+            print ( f"====== News item: #{x} ===============" )
             print ( f"News outlet: {html_element.div.find(attrs={'class': 'C(#959595)'}).string }" )
             #print ( f"News outlet2: {datarow[0].contents}" )
             """print ( f"DOT: {html_element.i.find(attrs={'class': 'Mx(4px)'}) }" )"""
@@ -121,29 +122,38 @@ class y_newsfilter:
             print ( f"Hash encoded URL: {result.hexdigest()}" )
             x += 1
 
-        # This is somewhat complicated DATA EXTRACTION, beciase we are now getting into the
-        # dirty details & low-levl data components within specific HTML data pages
-        fnl_deep_link = 'https://finance.yahoo.com' + url_prehash
-        a_subset = self.follow_news_link(fnl_deep_link)
-        for erow in range(len(a_subset)):       # cycyle through how-ever many sections there are in this dataset
-            print ( f"======= Follow news link deep link element: {erow} / {len(a_subset)-1} ========" )
-            print ( f"== {erow}: == URL.div element: {a_subset[erow].name}" )
-            if a_subset[erow].time:
-                print ( f"== {erow}: == TIME: {a_subset[erow].time['datetime']}" )
-                print ( f"== {erow}: == DATE: {a_subset[erow].time.text}" )        # ['itemprop']}" )
-                if a_subset[erow].div:  # True = element exists
-                    print ( f"== {erow}: == AUTHOR: {a_subset[erow].div.find(attrs={'itemprop': 'name'}).text }" )
-                # print ( f"== {erow}: == URL.div element: {a_subset[erow]}" )
+            # This is somewhat complicated DATA EXTRACTION, beciase we are now getting into the
+            # dirty details & low-levl data components within specific HTML data pages
+            fnl_deep_link = 'https://finance.yahoo.com' + url_prehash
+            a_subset = self.follow_news_link(fnl_deep_link)
+            print ( f"Tag sections in news page: {len(a_subset)-1}" )
+            for erow in range(len(a_subset)):       # cycyle through how-ever many sections there are in this dataset
+                #print ( f"======= Follow news link deep link element: {erow} / {len(a_subset)-1} ========" )
+                #print ( f"== {erow}: == URL.div element: {a_subset[erow].name}" )
+                if a_subset[erow].time:     # if this element rown has a <time> tag...
+                    nztime = a_subset[erow].time['datetime']
+                    ndate = a_subset[erow].time.text
+                    dt_ISO8601 = datetime.strptime(nztime, "%Y-%m-%dT%H:%M:%S.%fz")
+                    # TODO: calculate age of this news article
+                    # TODO: parse out date component, subtract date from today, calculate num_of_days old
+                    #pzconv_date = datetime.strptime(nztime, "%Y-%m-%d")
+                    #pzconv_time = datetime.strptime(nztime, "%H:%M:S")
+                    # print ( f"News: {erow} / Time: {a_subset[erow].time['datetime']}", end="" )  # Zulu time string
+                    # print ( f" / Date: {a_subset[erow].time.text}" )         # Pretty data
+                    if a_subset[erow].div:  # if this element row has a sub <div>
+                        nauthor = a_subset[erow].div.find(attrs={'itemprop': 'name'}).text
+                        #print ( f"News: {erow} / Authour: {a_subset[erow].div.find(attrs={'itemprop': 'name'}).text }" )      # Authour
+                    # print ( f"== {erow}: == URL.div element: {a_subset[erow]}" )
 
-            # DEBUG
-            print ( f"== All tags: ", end="" )
-            if self.args['bool_xray'] is True:        # DEBUG Xray
-                for tag in a_subset[erow].find_all(True):
-                    print ( f"{tag.name}, ", end="" )
-                    #if tag a_subset[erow].time exists inside this element...
-            print ( " " )
+                # DEBUG
+                if self.args['bool_xray'] is True:        # DEBUG Xray
+                    for tag in a_subset[erow].find_all(True):
+                        print ( f"{tag.name}, ", end="" )
+                        #if tag a_subset[erow].time exists inside this element...
+                        print ( " " )
 
-            logging.info('%s - Cycle: Follow New Link deep extratcion' % cmi_debug )
+                logging.info('%s - Cycle: Follow New Link deep extratcion' % cmi_debug )
+            print ( f"Details: {ndate} / Time: {dt_ISO8601} / Author: {nauthor}" )
 
         logging.info('%s - Extracted NEWS' % cmi_debug )
         return x        # number of rows extracted
