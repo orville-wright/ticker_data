@@ -95,9 +95,10 @@ class y_newsfilter:
 
 # method #2
     def read_allnews_depth_0(self):
-        """Extract a detailed list of the KEY news data elements (i.e. articles, links, dates, author."""
-        """From the html/markup table data of an individual news page (for this stock only)."""
-        """Wrangle, clean/convert/format the data correctly."""
+        """Cycle though the MAIN top-level NEWS page and prepare a nice list of ALL of the articles."""
+        """For each article, extract some KEY high-level news elements (i.e. Headline, Brief, URL to real article."""
+        """NOTE: This is main controller logic loop because we're at the TOP high-level news page for this stock."""
+        """Wrangle, clean/convert/format the data correctly"""
 
         cmi_debug = __name__+"::"+self.read_allnews_depth_0.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
@@ -128,9 +129,10 @@ class y_newsfilter:
             print ( f"Hash encoded URL: {result.hexdigest()}" )
             x += 1
 
-            if self.args['bool_deep'] is True:        # go DEEPER and process each article
+            # BIG logic decision here...!!!
+            if self.args['bool_deep'] is True:        # go DEEP & process each news article deeply?
                 a_deep_link = 'https://finance.yahoo.com' + url_prehash
-                self.extract_article_data(a_deep_link)      # go deep into this 1 news article
+                self.extract_article_data(a_deep_link)      # deeply extract data from this 1 news article
                 logging.info('%s - Extracting NEWS from 1 article...' % cmi_debug )
             else:
                 logging.info('%s - Not deeply processing individual NEWS article' % cmi_debug )
