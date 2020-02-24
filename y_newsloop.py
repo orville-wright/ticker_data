@@ -45,11 +45,13 @@ class y_newsfilter:
         return
 
 # method #1
-    def get_news_list(self):
-        """Connect to finance.yahoo.com and extract (scrape) the raw data out of"""
-        """the complex webpage [Stock:News ] html data table. Returns a BS4 handle."""
+    def scan_news_depth_0(self):
+        """Connect to finance.yahoo.com and process the raw news HTML data tables from"""
+        """the complex MAIN (highlevel) news parent webpage for an individual stcok [Stock:News ]."""
+        """Does not extract any news atricles, items or data fields. Just sets up the element extraction zone."""
+        """Returns a BS4 onbject handle pointing to correct news section for deep element extraction."""
 
-        cmi_debug = __name__+"::"+self.get_news_list.__name__+".#"+str(self.inst_uid)
+        cmi_debug = __name__+"::"+self.scan_news_depth_0.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
         news_url = "https://finance.yahoo.com/quote/" + self.symbol + "/news?p=" + self.symbol      # form the correct URL
         logging.info('%s - URL:' % (cmi_debug) )
@@ -62,15 +64,18 @@ class y_newsfilter:
         #self.ul_tag_dataset = self.soup.find_all(attrs={"class": "C(#959595)"} )        # the section in the HTML page we focus-in on
         self.ul_tag_dataset = self.soup.find(attrs={"class": "My(0) Ov(h) P(0) Wow(bw)"} )
         # <div class="C(#959595) Fz(11px) D(ib) Mb(6px)">
-        logging.info('%s - close url handle' % cmi_debug )
+        logging.info('%s - close main news page url handle' % cmi_debug )
         url.close()
         return
 
-    def follow_news_link(self, url):
-        """Follow a URL of a news article and extract the data for deeper processing of an individual news article"""
-        """Note: calling this recurisvely will be network expensive...but that is the plan"""
+    def news_article_depth_1(self, url):
+        """Analyze 1 (ONE) individual news article taken from the list of article within the MAIN news HTNML page"""
+        """and setup the data extractor to point to the KEY element zone within that news HTML dataset so that"""
+        """critical news elements, fields & data object can be deeply extracted (from this 1 news article)."""
+        """Note: - This has to be called for each article on the main news page"""
+        """Note: - Calling this recurisvely will be network expensive...but that is the plan"""
 
-        cmi_debug = __name__+"::"+self.follow_news_link.__name__+".#"+str(self.inst_uid)
+        cmi_debug = __name__+"::"+self.news_article_depth_1.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
         deep_url = url      # pass in the url that we want to deeply analyze
         logging.info('%s - Follow URL:' % (cmi_debug) )
@@ -83,24 +88,25 @@ class y_newsfilter:
         logging.info('%s - ' % cmi_debug )
         #
         # fnl_tag_dataset = soup.find_all('a')
-        fnl_tag_dataset = soup.div.find_all(attrs={'class': 'D(tbc)'} )
-        logging.info('%s - close url handle' % cmi_debug )
+        tag_dataset = soup.div.find_all(attrs={'class': 'D(tbc)'} )
+        logging.info('%s - close news article url handle' % cmi_debug )
         url.close()
-        return fnl_tag_dataset
+        return tag_dataset
 
 # method #2
-    def build_news(self):
-        """Build-out a fully populated Pandas DataFrame containg all the"""
-        """extracted/scraped fields from the html/markup table data"""
+    def read_allnews_depth_0(self):
+        """Extract a detailed list of the KEY news data elements (i.e. articles, links, dates, author."""
+        """From the html/markup table data of an individual news page (for this stock only)."""
         """Wrangle, clean/convert/format the data correctly."""
 
-        cmi_debug = __name__+"::"+self.build_news.__name__+".#"+str(self.inst_uid)
+        cmi_debug = __name__+"::"+self.read_allnews_depth_0.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         logging.info('%s - Drop all rows from DF0' % cmi_debug )
         self.n_df0.drop(self.n_df0.index, inplace=True)
         x = 1    # row counter Also leveraged for unique dataframe key
 
+        # element zones from main dataset @ depth_0
         li_superclass = self.ul_tag_dataset.find_all(attrs={"class": "js-stream-content Pos(r)"} )
         li_subset = self.ul_tag_dataset.find_all('li')
         mini_headline = self.ul_tag_dataset.div.find_all(attrs={'class': 'C(#959595)'})
@@ -124,8 +130,11 @@ class y_newsfilter:
 
             # This is somewhat complicated DATA EXTRACTION, beciase we are now getting into the
             # dirty details & low-levl data components within specific HTML data pages
-            fnl_deep_link = 'https://finance.yahoo.com' + url_prehash
-            a_subset = self.follow_news_link(fnl_deep_link)
+            # TODO: ** args = only do this is DEEP is enabled
+            a_deep_link = 'https://finance.yahoo.com' + url_prehash
+            self.extract_article_data(a_deep_link)
+            """
+            a_subset = self.news_article_depth_1(a_deep_link)
             print ( f"Tag sections in news page: {len(a_subset)-1}" )
             for erow in range(len(a_subset)):       # cycyle through how-ever many sections there are in this dataset
                 #print ( f"======= Follow news link deep link element: {erow} / {len(a_subset)-1} ========" )
@@ -154,9 +163,36 @@ class y_newsfilter:
 
                 logging.info('%s - Cycle: Follow New Link deep extratcion' % cmi_debug )
             print ( f"Details: {ndate} / Time: {dt_ISO8601} / Author: {nauthor}" )
+            """
 
         logging.info('%s - Extracted NEWS' % cmi_debug )
         return x        # number of rows extracted
+
+# method 3
+    def extract_article_data(self, news_article_url):
+        cmi_debug = __name__+"::"+self.extract_article_data.__name__+".#"+str(self.inst_uid)
+        logging.info('%s - IN' % cmi_debug )
+        a_subset = self.news_article_depth_1(news_article_url)      # got DEEP into this 1 news HTML page & setup data extraction zones
+        print ( f"Tag sections in news page: {len(a_subset)-1}" )
+        for erow in range(len(a_subset)):       # cycyle through tag sections in this dataset (# is not predictible or consistent)
+            if a_subset[erow].time:     # if this element rown has a <time> tag...
+                nztime = a_subset[erow].time['datetime']
+                ndate = a_subset[erow].time.text
+                dt_ISO8601 = datetime.strptime(nztime, "%Y-%m-%dT%H:%M:%S.%fz")
+                # TODO: calculate age of this news article
+                # TODO: parse out date component, subtract date from today, calculate num_of_days old
+                if a_subset[erow].div:  # if this element row has a sub <div>
+                    nauthor = a_subset[erow].div.find(attrs={'itemprop': 'name'}).text
+
+            # DEBUG
+            if self.args['bool_xray'] is True:        # DEBUG Xray
+                for tag in a_subset[erow].find_all(True):
+                    print ( f"{tag.name}, ", end="" )
+                    print ( " " )
+
+            logging.info('%s - Cycle: Follow News Link deep extratcion' % cmi_debug )
+        print ( f"Details: {ndate} / Time: {dt_ISO8601} / Author: {nauthor}" )
+        return
 
 # method #3
 # Hacking function - keep me arround for a while
