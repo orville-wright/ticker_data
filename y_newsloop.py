@@ -123,10 +123,12 @@ class y_newsfilter:
             # TODO: print ( f"DOT: {html_element.i.find(attrs={'class': 'Mx(4px)'}) }" )"""
 
             # this is sloppy. Make slicker
+            rhl_url = False     # safety pre-set
             url_lor = html_element.a.get('href')
             is_lor = url_lor.split(':',1)
             if is_lor[0] == "https" or is_lor[0] == "http":    # TODO: just cut of the 's'
                 print ( f"Remote news item URL: {url_lor}" )
+                rhl_url = True
             else:
                 print ( f"Local news item URL: {html_element.a.get('href')}" )
 
@@ -145,12 +147,15 @@ class y_newsfilter:
 
             # BIG logic decision here...!!!
             if self.args['bool_deep'] is True:        # go DEEP & process each news article deeply?
-                a_deep_link = 'https://finance.yahoo.com' + url_prehash
-                self.extract_article_data(a_deep_link)      # deeply extract data from this 1 news article
-                logging.info('%s - Extracting NEWS from 1 article...' % cmi_debug )
+                if rhl_url == False:
+                    a_deep_link = 'https://finance.yahoo.com' + url_prehash
+                    self.extract_article_data(a_deep_link)      # deeply extract data from this 1 news article
+                    logging.info('%s - Extracting NEWS from 1 article...' % cmi_debug )
+                else:
+                    logging.info('%s - REMOTE Hard-lined URL - NOT Extracting NEWS from 1 article...' % cmi_debug )
             else:
-                logging.info('%s - Not deeply processing individual NEWS article' % cmi_debug )
-                print ( "NOT deeply extracting data from individual news article")
+                logging.info('%s - No DEEP processing any NEWS articles' % cmi_debug )
+                print ( "NO DEEP data extraction of individual news article")
 
         print ( " " )
         print ( "Main top level NEWS page processed")
