@@ -128,9 +128,6 @@ class y_newsfilter:
             print ( f"Hash encoded URL: {result.hexdigest()}" )
             x += 1
 
-            # This is somewhat complicated DATA EXTRACTION, beciase we are now getting into the
-            # dirty details & low-levl data components within specific HTML data pages
-            # TODO: ** args = only do this is DEEP is enabled
             if self.args['bool_deep'] is True:        # go DEEPER and process each article
                 a_deep_link = 'https://finance.yahoo.com' + url_prehash
                 self.extract_article_data(a_deep_link)      # go deep into this 1 news article
@@ -139,43 +136,26 @@ class y_newsfilter:
                 logging.info('%s - Not deeply processing individual NEWS article' % cmi_debug )
                 print ( "NOT deeply extracting data from individual news article")
 
+        print ( " " )
         print ( "Main top level NEWS page processed")
         return x        # number of rows extracted
 
     """
-    a_subset = self.news_article_depth_1(a_deep_link)
-    print ( f"Tag sections in news page: {len(a_subset)-1}" )
-    for erow in range(len(a_subset)):       # cycyle through how-ever many sections there are in this dataset
-        #print ( f"======= Follow news link deep link element: {erow} / {len(a_subset)-1} ========" )
-        #print ( f"== {erow}: == URL.div element: {a_subset[erow].name}" )
-        if a_subset[erow].time:     # if this element rown has a <time> tag...
-            nztime = a_subset[erow].time['datetime']
-            ndate = a_subset[erow].time.text
-            dt_ISO8601 = datetime.strptime(nztime, "%Y-%m-%dT%H:%M:%S.%fz")
-            # TODO: calculate age of this news article
-            # TODO: parse out date component, subtract date from today, calculate num_of_days old
-            #pzconv_date = datetime.strptime(nztime, "%Y-%m-%d")
-            #pzconv_time = datetime.strptime(nztime, "%H:%M:S")
-            # print ( f"News: {erow} / Time: {a_subset[erow].time['datetime']}", end="" )  # Zulu time string
-            # print ( f" / Date: {a_subset[erow].time.text}" )         # Pretty data
-            if a_subset[erow].div:  # if this element row has a sub <div>
-                nauthor = a_subset[erow].div.find(attrs={'itemprop': 'name'}).text
-                #print ( f"News: {erow} / Authour: {a_subset[erow].div.find(attrs={'itemprop': 'name'}).text }" )      # Authour
-            # print ( f"== {erow}: == URL.div element: {a_subset[erow]}" )
-
-        # DEBUG
-        if self.args['bool_xray'] is True:        # DEBUG Xray
-            for tag in a_subset[erow].find_all(True):
-                print ( f"{tag.name}, ", end="" )
-                #if tag a_subset[erow].time exists inside this element...
-                print ( " " )
-
-        logging.info('%s - Cycle: Follow New Link deep extratcion' % cmi_debug )
-    print ( f"Details: {ndate} / Time: {dt_ISO8601} / Author: {nauthor}" )
+    #print ( f"======= Follow news link deep link element: {erow} / {len(a_subset)-1} ========" )
+    #print ( f"== {erow}: == URL.div element: {a_subset[erow].name}" )
+    #pzconv_date = datetime.strptime(nztime, "%Y-%m-%d")
+    #pzconv_time = datetime.strptime(nztime, "%H:%M:S")
+    # print ( f"News: {erow} / Time: {a_subset[erow].time['datetime']}", end="" )  # Zulu time string
+    # print ( f" / Date: {a_subset[erow].time.text}" )         # Pretty data
+    # print ( f"== {erow}: == URL.div element: {a_subset[erow]}" )
     """
 
 # method 3
     def extract_article_data(self, news_article_url):
+        """A complex html DATA EXTRACTION. We are now getting into the dirty details"""
+        """and low-levl data components/elements within specific HTML news data page."""
+        """WARN: This is extremley specific to a single https://finance.yahoo.com news article."""
+
         cmi_debug = __name__+"::"+self.extract_article_data.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
         a_subset = self.news_article_depth_1(news_article_url)      # got DEEP into this 1 news HTML page & setup data extraction zones
@@ -196,7 +176,7 @@ class y_newsfilter:
                     print ( f"{tag.name}, ", end="" )
                     print ( " " )
 
-            logging.info('%s - Cycle: Follow News Link deep extratcion' % cmi_debug )
+            logging.info('%s - Cycle: Follow News deep URL extratcion' % cmi_debug )
         print ( f"Details: {ndate} / Time: {dt_ISO8601} / Author: {nauthor}" )
         return
 
@@ -247,15 +227,4 @@ class y_newsfilter:
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
         print ( self.n_df1.sort_values(by='Pct_change', ascending=False ).head(15) )
-        return
-
-# method #6
-    def build_tenten60(self, cycle):
-        """Build-up 10x10x060 historical DataFrame (df2) from source df1"""
-        """Generally called on some kind of cycle"""
-
-        cmi_debug = __name__+"::"+self.build_tenten60.__name__+".#"+str(self.inst_uid)
-        logging.info('%s - IN' % cmi_debug )
-        self.n_df2 = self.n_df2.append(self.n_df1, ignore_index=False)    # merge top 10 into
-        self.n_df2.reset_index(inplace=True, drop=True)    # ensure index is allways unique + sequential
         return
