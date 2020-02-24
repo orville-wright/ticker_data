@@ -120,9 +120,16 @@ class y_newsfilter:
             #print ( f"News outlet2: {datarow[0].contents}" )
             """print ( f"DOT: {html_element.i.find(attrs={'class': 'Mx(4px)'}) }" )"""
             print ( f"News item URL: {html_element.a.get('href')}" )
+            url_lor = html_element.a.get('href')
             print ( f"News headline: {html_element.a.text}" )
             print ( "Brief: {:.400}".format(html_element.p.text) )    # truncate long New Brief headlines to max 400 chars
 
+            TODO: check the news item URL. If it starts with http:// then its a hard link to an external
+                    news outlet that donesn't want Yahoo_Finance to host the article @ yahoo.com. That news outlet
+                    wants readers to go directly to its site to get to the article. 
+
+            is_lor = lor.split(str=":", 1 )
+            print ( f"Local/Remote article: {is_lor[0]}" )
             # generate a unuque hash for each new URL so that we can easily test for dupes
             url_prehash = html_element.a.get('href')
             result = hashlib.sha256(url_prehash.encode())
