@@ -130,15 +130,18 @@ class y_newsfilter:
             # TODO: this code/test is sloppy. Make slicker
             rhl_url = False     # safety pre-set
             url_lor = html_element.a.get('href')
+            url_p = urlparse(url_lor)
             is_lor = url_lor.split(':',1)
             if is_lor[0] == "https" or is_lor[0] == "http":    # TODO: just cut of the 's'
                 print ( f"Remote news item URL: {url_lor}" )
+                print ( f"URLPARSE: {url_p}" )
                 rhl_url = True
                 r_url += 1
             else:
                 print ( f"Local news item URL: {html_element.a.get('href')}" )
                 l_url += 1
 
+            print ( f"URLPARSE: {url_p}" )
             print ( f"News headline: {html_element.a.text}" )
             print ( "Brief: {:.400}".format(html_element.p.text) )    # truncate long New Brief headlines to max 400 chars
 
