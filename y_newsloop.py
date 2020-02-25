@@ -105,7 +105,7 @@ class y_newsfilter:
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         logging.info('%s - Drop all rows from DF0' % cmi_debug )
         self.n_df0.drop(self.n_df0.index, inplace=True)
-        x = 1    # row counter Also leveraged for unique dataframe key
+        x = 0    # row counter Also leveraged for unique dataframe key
 
         # element zones from main dataset @ depth_0
         li_superclass = self.ul_tag_dataset.find_all(attrs={"class": "js-stream-content Pos(r)"} )
@@ -113,8 +113,10 @@ class y_newsfilter:
         mini_headline = self.ul_tag_dataset.div.find_all(attrs={'class': 'C(#959595)'})
         #micro_headline = self.soup.find_all("i") #attrs={'class': 'Mx(4px)'})
 
+        r_url = l_url = 0
         for datarow in range(len(li_subset)):
             html_element = li_subset[datarow]
+            x += 1
             print ( f"====== News item: #{x} ===============" )
             print ( f"News outlet: {html_element.div.find(attrs={'class': 'C(#959595)'}).string }" )
             #print ( f"News outlet2: {datarow[0].contents}" )
@@ -132,8 +134,10 @@ class y_newsfilter:
             if is_lor[0] == "https" or is_lor[0] == "http":    # TODO: just cut of the 's'
                 print ( f"Remote news item URL: {url_lor}" )
                 rhl_url = True
+                r_url += 1
             else:
                 print ( f"Local news item URL: {html_element.a.get('href')}" )
+                l_url += 1
 
             print ( f"News headline: {html_element.a.text}" )
             print ( "Brief: {:.400}".format(html_element.p.text) )    # truncate long New Brief headlines to max 400 chars
@@ -142,7 +146,6 @@ class y_newsfilter:
             url_prehash = html_element.a.get('href')
             result = hashlib.sha256(url_prehash.encode())
             print ( f"Hash encoded URL: {result.hexdigest()}" )
-            x += 1
 
             # BIG logic decision here...!!!
             if self.args['bool_deep'] is True:        # go DEEP & process each news article deeply?
@@ -157,8 +160,10 @@ class y_newsfilter:
                 print ( "DEBUG: Not doing DEEP data extraction of news article !")
 
         print ( " " )
-        print ( "Main top level NEWS page processed")
-        return x        # number of rows extracted
+        print ( "Main TOP level news page processed")
+        print ( f"News articles evaluated: {x}")
+        print ( f"Local URLs: {l_url} / Remote URLs: {r_url}" )
+        return x        # number of NEWS articles discovered
 
     """
     #print ( f"======= Follow news link deep link element: {erow} / {len(a_subset)-1} ========" )
