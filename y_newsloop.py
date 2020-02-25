@@ -70,9 +70,9 @@ class y_newsfilter:
 
     def news_article_depth_1(self, url):
         """Analyze 1 (ONE) individual news article taken from the list of article within the MAIN news HTNML page"""
-        """and setup the data extractor to point to the KEY element zone within that news HTML dataset so that"""
-        """critical news elements, fields & data object can be deeply extracted (from this 1 news article)."""
-        """Note: - This has to be called for each article on the main news page"""
+        """and setup the data extractor to point into the KEY element zone within that news HTML dataset so that"""
+        """critical news elements, fields & data objects can be deeply extracted (from this 1 news article)."""
+        """Note: - This has to be called for each article showing in the MAIN news page"""
         """Note: - Calling this recurisvely will be network expensive...but that is the plan"""
 
         cmi_debug = __name__+"::"+self.news_article_depth_1.__name__+".#"+str(self.inst_uid)
@@ -122,7 +122,10 @@ class y_newsfilter:
             # FRUSTRATING element that cant be locally extracted from High-level page
             # TODO: print ( f"DOT: {html_element.i.find(attrs={'class': 'Mx(4px)'}) }" )"""
 
-            # this is sloppy. Make slicker
+            # If href starts with http:// then its a hard link to an externally news outlet that donesn't
+            # want Yahoo_Finance to host it's article @ yahoo.com. That news outlet
+            # wants readers to link-out directly to its site to get to the article data.
+            # TODO: this code/test is sloppy. Make slicker
             rhl_url = False     # safety pre-set
             url_lor = html_element.a.get('href')
             is_lor = url_lor.split(':',1)
@@ -135,10 +138,6 @@ class y_newsfilter:
             print ( f"News headline: {html_element.a.text}" )
             print ( "Brief: {:.400}".format(html_element.p.text) )    # truncate long New Brief headlines to max 400 chars
 
-            # TODO: check this news item URL. If it starts with http:// then its a hard link to an external
-            #         news outlet that donesn't want Yahoo_Finance to host the article @ yahoo.com. That news outlet
-            #         wants readers to go directly to its site to get to the article data.
-
             # generate a unuque hash for each new URL so that we can easily test for dupes
             url_prehash = html_element.a.get('href')
             result = hashlib.sha256(url_prehash.encode())
@@ -147,15 +146,15 @@ class y_newsfilter:
 
             # BIG logic decision here...!!!
             if self.args['bool_deep'] is True:        # go DEEP & process each news article deeply?
-                if rhl_url == False:
+                if rhl_url == False:                  # yahoo,com local? or remote hosted non-yahoo.com article?
                     a_deep_link = 'https://finance.yahoo.com' + url_prehash
                     self.extract_article_data(a_deep_link)      # deeply extract data from this 1 news article
                     logging.info('%s - Extracting NEWS from 1 article...' % cmi_debug )
                 else:
-                    logging.info('%s - REMOTE Hard-lined URL - NOT Extracting NEWS from 1 article...' % cmi_debug )
+                    logging.info('%s - REMOTE Hard-linked URL - NOT Extracting NEWS from article...' % cmi_debug )
             else:
-                logging.info('%s - No DEEP processing any NEWS articles' % cmi_debug )
-                print ( "NO DEEP data extraction of individual news article")
+                logging.info('%s - Not DEEP processing NEWS articles' % cmi_debug )
+                print ( "DEBUG: Not doing DEEP data extraction of news article !")
 
         print ( " " )
         print ( "Main top level NEWS page processed")
@@ -181,7 +180,7 @@ class y_newsfilter:
         logging.info('%s - IN' % cmi_debug )
         a_subset = self.news_article_depth_1(news_article_url)      # got DEEP into this 1 news HTML page & setup data extraction zones
         print ( f"Tag sections in news page: {len(a_subset)-1}" )
-        for erow in range(len(a_subset)):       # cycyle through tag sections in this dataset (# is not predictible or consistent)
+        for erow in range(len(a_subset)):       # cycyle through tag sections in this dataset (not predictible or consistent)
             if a_subset[erow].time:     # if this element rown has a <time> tag...
                 nztime = a_subset[erow].time['datetime']
                 ndate = a_subset[erow].time.text
