@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import urllib
 import urllib.request
+from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 import pandas as pd
 import numpy as np
@@ -129,21 +130,21 @@ class y_newsfilter:
             # wants readers to link-out directly to its site to get to the article data.
             # TODO: this code/test is sloppy. Make slicker
             rhl_url = False     # safety pre-set
-            url_lor = html_element.a.get('href')
-            url_p = urlparse(url_lor)
-            is_lor = url_lor.split(':',1)
-            if is_lor[0] == "https" or is_lor[0] == "http":    # TODO: just cut of the 's'
-                print ( f"Remote news item URL: {url_lor}" )
-                print ( f"URLPARSE: {url_p}" )
+            #url_lor = html_element.a.get('href')
+
+            url_p = urlparse(html_element.a.get('href'))
+            #is_lor = url_lor.split(':',1)
+            if url_p.scheme == "https" or url_p.scheme == "http":    # check URL scheme specifier
+                print ( f"Remote news URL: {url_p.netloc}  - Artcile path: {url_p.path}" )
+                #  ParseResult(scheme='https', netloc='techcrunch.com', path='/2020/02/10/what-happened-to-slack-today/', params='', query='', fragment=''
                 rhl_url = True
                 r_url += 1
             else:
-                print ( f"Local news item URL: {html_element.a.get('href')}" )
+                print ( f"Local news URL:  finance.yahoo.com  - Article path: {html_element.a.get('href')}" )
                 l_url += 1
 
-            print ( f"URLPARSE: {url_p}" )
             print ( f"News headline: {html_element.a.text}" )
-            print ( "Brief: {:.400}".format(html_element.p.text) )    # truncate long New Brief headlines to max 400 chars
+            print ( "News Short Brief: {:.400}".format(html_element.p.text) )    # truncate long New Brief headlines to max 400 chars
 
             # generate a unuque hash for each new URL so that we can easily test for dupes
             url_prehash = html_element.a.get('href')
