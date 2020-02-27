@@ -100,18 +100,19 @@ class y_newsfilter:
         logging.info('%s - IN' % cmi_debug )
         # age_tag_dataset = self.ul_tag_dataset.find(attrs={'class': 'C(#959595)'} )
         mhl_1a = self.ul_tag_dataset.div.find_all(attrs={'class': 'C(#959595)'})
+        mhl_2a = self.ul_tag_dataset.div.find_all(attrs={'class': 'Cf'})
         jsp_1a = self.ul_tag_dataset.find_all('li')
-        for i in range(len(jsp_1a)):
-            h = jsp_1a[i]
-            print ( f"====== Element: #{i} ===============" )
-            print ( f"News outlet: {h}" )
+        # for i in range(len(jsp_1a)):
+        #    h = jsp_1a[i]
+        #    print ( f"====== Element: #{i} ===============" )
+        #    print ( f"News outlet: {h}" )
         # vtaglist = []
         # for vtag in self.ul_tag_dataset.find_all(True):   # a_subset[erow].find_all(True):
         #    vtaglist.append(vtag.name)
         # print ( f"*** HACKING-0: Unique tags: {set(vtaglist)}" )
         # age_tag_dataset = self.ul_tag_dataset.find({'class': 'Ov(h)'} )
         #print ( f"*** HACKING-1: Top level Age: {age_tag_dataset}" )
-        #print ( f"*** HACKING-1: Top level Age: {jsp_1a[0]}" )
+        print ( f"*** HACKING-1: Top level Age: {mhl_2a}" )
         return
 
 # method #2
