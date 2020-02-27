@@ -99,9 +99,13 @@ class y_newsfilter:
         cmi_debug = __name__+"::"+self.news_article_depth_1.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
         # age_tag_dataset = self.ul_tag_dataset.find(attrs={'class': 'C(#959595)'} )
+        #C(#959595) Fz(11px) D(ib) Mb(6px)
+
         mhl_1a = self.ul_tag_dataset.div.find_all(attrs={'class': 'C(#959595)'})
-        mhl_2a = self.ul_tag_dataset.div.find_all(attrs={'class': 'Cf'})
+        mhl_2a = self.ul_tag_dataset.find(attrs={'class': 'C(#959595)'})
+        mhl_3a = self.ul_tag_dataset.find_all(attrs={'class': 'C(#959595)'})
         jsp_1a = self.ul_tag_dataset.find_all('li')
+        jsp_2a = self.ul_tag_dataset.find(attrs={'class': 'C(#959595) Fz(11px) D(ib) Mb(6px)'} )
         # for i in range(len(jsp_1a)):
         #    h = jsp_1a[i]
         #    print ( f"====== Element: #{i} ===============" )
@@ -112,7 +116,12 @@ class y_newsfilter:
         # print ( f"*** HACKING-0: Unique tags: {set(vtaglist)}" )
         # age_tag_dataset = self.ul_tag_dataset.find({'class': 'Ov(h)'} )
         #print ( f"*** HACKING-1: Top level Age: {age_tag_dataset}" )
-        print ( f"*** HACKING-1: Top level Age: {mhl_2a}" )
+        print ( f"*** HACKING-1: Top level: {mhl_1a}" )
+        for s in mhl_1a.next_elements:
+            print ( f"*** HACKING-2: level 0: {s}" )
+        print ( f"*** HACKING-1: level 1: {mhl_2a.next_sibling}" )
+        #print ( f"*** HACKING-1: Top level Age: {mhl_2a.next_element}" )
+        #print ( f"*** HACKING-1: Top level Age: {mhl_2a.next_element}" )
         return
 
 # method #2
