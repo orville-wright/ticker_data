@@ -100,7 +100,7 @@ class y_newsfilter:
         logging.info('%s - IN' % cmi_debug )
         # age_tag_dataset = self.ul_tag_dataset.find(attrs={'class': 'C(#959595)'} )
         mhl_1a = self.ul_tag_dataset.div.find_all(attrs={'class': 'C(#959595)'})
-        mhl_2a = self.ul_tag_dataset.div.find_all(attrs={'class': 'Cf'})
+        mhl_2a = self.ul_tag_dataset.find_all(attrs={"class": "js-stream-content Pos(r)"})
         jsp_1a = self.ul_tag_dataset.find_all('li')
         # for i in range(len(jsp_1a)):
         #    h = jsp_1a[i]
