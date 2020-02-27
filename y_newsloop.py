@@ -102,8 +102,12 @@ class y_newsfilter:
         #C(#959595) Fz(11px) D(ib) Mb(6px)
 
         mhl_1a = self.ul_tag_dataset.div.find_all(attrs={'class': 'C(#959595)'})
+<<<<<<< HEAD
         mhl_2a = self.ul_tag_dataset.find(attrs={'class': 'C(#959595)'})
         mhl_3a = self.ul_tag_dataset.find_all(attrs={'class': 'C(#959595)'})
+=======
+        mhl_2a = self.ul_tag_dataset.find_all(attrs={"class": "js-stream-content Pos(r)"})
+>>>>>>> 22277b5d3ea13f86205aeef3247cfcc550f47239
         jsp_1a = self.ul_tag_dataset.find_all('li')
         jsp_2a = self.ul_tag_dataset.find(attrs={'class': 'C(#959595) Fz(11px) D(ib) Mb(6px)'} )
         # for i in range(len(jsp_1a)):
