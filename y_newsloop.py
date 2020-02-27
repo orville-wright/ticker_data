@@ -62,9 +62,7 @@ class y_newsfilter:
             logging.info('%s - read html stream' % cmi_debug )
             self.soup = BeautifulSoup(s, "html.parser")
         logging.info('%s - save data object handle' % cmi_debug )
-        #self.ul_tag_dataset = self.soup.find_all(attrs={"class": "C(#959595)"} )        # the section in the HTML page we focus-in on
         self.ul_tag_dataset = self.soup.find(attrs={"class": "My(0) Ov(h) P(0) Wow(bw)"} )
-        # <div class="C(#959595) Fz(11px) D(ib) Mb(6px)">
         logging.info('%s - close main news page url handle' % cmi_debug )
         url.close()
         return
@@ -93,6 +91,28 @@ class y_newsfilter:
         logging.info('%s - close news article url handle' % cmi_debug )
         url.close()
         return tag_dataset
+
+    def news_article_depth_1a(self):
+        """Hacking - # OPTIMIZEd extraction """
+        """No sub article deep follow. Just try to get to the date from the TOP level"""
+
+        cmi_debug = __name__+"::"+self.news_article_depth_1.__name__+".#"+str(self.inst_uid)
+        logging.info('%s - IN' % cmi_debug )
+        # age_tag_dataset = self.ul_tag_dataset.find(attrs={'class': 'C(#959595)'} )
+        mhl_1a = self.ul_tag_dataset.div.find_all(attrs={'class': 'C(#959595)'})
+        jsp_1a = self.ul_tag_dataset.find_all('li')
+        for i in range(len(jsp_1a)):
+            h = jsp_1a[i]
+            print ( f"====== Element: #{i} ===============" )
+            print ( f"News outlet: {h}" )
+        # vtaglist = []
+        # for vtag in self.ul_tag_dataset.find_all(True):   # a_subset[erow].find_all(True):
+        #    vtaglist.append(vtag.name)
+        # print ( f"*** HACKING-0: Unique tags: {set(vtaglist)}" )
+        # age_tag_dataset = self.ul_tag_dataset.find({'class': 'Ov(h)'} )
+        #print ( f"*** HACKING-1: Top level Age: {age_tag_dataset}" )
+        #print ( f"*** HACKING-1: Top level Age: {jsp_1a[0]}" )
+        return
 
 # method #2
     def read_allnews_depth_0(self):
@@ -160,6 +180,7 @@ class y_newsfilter:
             else:
                 logging.info('%s - Not DEEP processing NEWS articles' % cmi_debug )
                 print ( "DEBUG: Not doing DEEP data extraction of news article !")
+                self.news_article_depth_1a()
 
         print ( " " )
         print ( "Main TOP level news page processed")
@@ -168,11 +189,7 @@ class y_newsfilter:
         return x        # number of NEWS articles discovered
 
     """
-    #print ( f"======= Follow news link deep link element: {erow} / {len(a_subset)-1} ========" )
     #print ( f"== {erow}: == URL.div element: {a_subset[erow].name}" )
-    #pzconv_date = datetime.strptime(nztime, "%Y-%m-%d")
-    #pzconv_time = datetime.strptime(nztime, "%H:%M:S")
-    # print ( f"News: {erow} / Time: {a_subset[erow].time['datetime']}", end="" )  # Zulu time string
     # print ( f" / Date: {a_subset[erow].time.text}" )         # Pretty data
     # print ( f"== {erow}: == URL.div element: {a_subset[erow]}" )
     """
