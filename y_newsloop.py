@@ -181,7 +181,10 @@ class y_newsfilter:
         print ( "Main TOP level news page processed")
         print ( f"News articles evaluated: {x}")
         print ( f"Local URLs: {l_url} / Remote URLs: {r_url}" )
-        print ( ml_dict )
+        print ( " " )
+        for k, v in ml_dict.items():
+            print ( f"{k}: {v}" )
+
         return x        # number of NEWS articles discovered
 
     """
