@@ -119,6 +119,7 @@ class y_newsfilter:
         #mtd_2 = self.ul_tag_dataset[2].find_all('li')
 
         r_url = l_url = 0
+        ml_dict = {}
         for datarow in range(len(mtd_0)):
             html_element = mtd_0[datarow]
             x += 1
@@ -172,13 +173,15 @@ class y_newsfilter:
                 logging.info('%s - Not DEEP processing NEWS articles' % cmi_debug )
                 print ( "DEBUG: Not doing DEEP data extraction of news article !")
 
-            # build_dataset(x, data_outlet, data_url, data_urlhash, data_path, data_headline, data_brief, deep_data[0], deep_data[3] )
-            print ( "DEBUG: ", x, data_outlet, data_url, data_urlhash, deep_data[0], deep_data[3] )
+            schizzle = [data_outlet, data_url, data_urlhash, deep_data[0], deep_data[3] ]
+            ml_dict[x] = schizzle
+            #print ( "DEBUG: ", x, data_outlet, data_url, data_urlhash, deep_data[0], deep_data[3] )
 
         print ( " " )
         print ( "Main TOP level news page processed")
         print ( f"News articles evaluated: {x}")
         print ( f"Local URLs: {l_url} / Remote URLs: {r_url}" )
+        print ( ml_dict )
         return x        # number of NEWS articles discovered
 
     """
