@@ -124,6 +124,7 @@ class y_newsfilter:
             x += 1
             print ( f"====== News item: #{x} ===============" )
             print ( f"News outlet: {html_element.div.find(attrs={'class': 'C(#959595)'}).string }" )
+            data_outlet = html_element.div.find(attrs={'class': 'C(#959595)'}).string
             #print ( f"News outlet2: {datarow[0].contents}" )
 
             # FRUSTRATING element that cant be locally extracted from High-level page
@@ -138,20 +139,26 @@ class y_newsfilter:
             url_p = urlparse(html_element.a.get('href'))
             if url_p.scheme == "https" or url_p.scheme == "http":    # check URL scheme specifier
                 print ( f"Remote news URL: {url_p.netloc}  - Artcile path: {url_p.path}" )
+                data_url = url_p.netloc
+                data_path = url_p.path
                 #  ParseResult(scheme='https', netloc='techcrunch.com', path='/2020/02/10/what-happened-to-slack-today/', params='', query='', fragment=''
                 rhl_url = True    # This URL is remote
                 r_url += 1        # count remote URLs
             else:
                 print ( f"Local news URL:  finance.yahoo.com  - Article path: {html_element.a.get('href')}" )
                 l_url += 1        # count local URLs
+                data_url = 'finance.yahoo.com'
+                data_path = html_element.a.get('href')
 
             print ( f"News headline: {html_element.a.text}" )
             print ( "News Short Brief: {:.400}".format(html_element.p.text) )    # truncate long New Brief headlines to max 400 chars
-
+            data_headline = html_element.a.text
+            data_brief = print ( "{:.400}".format(html_element.p.text) )
             # generate a unuque hash for each new URL, for easier dupe tests & comparrisons etc
             url_prehash = html_element.a.get('href')
             result = hashlib.sha256(url_prehash.encode())
             print ( f"Hash encoded URL: {result.hexdigest()}" )
+            data_urlhash = result.hexdigest()
 
             # BIG logic decision here...!!!
             if self.args['bool_deep'] is True:        # go DEEP & process each news article deeply?
@@ -164,6 +171,8 @@ class y_newsfilter:
             else:
                 logging.info('%s - Not DEEP processing NEWS articles' % cmi_debug )
                 print ( "DEBUG: Not doing DEEP data extraction of news article !")
+
+            # build_dataset(x, data_outlet, data_url, data_urlhash, data_path, data_headline, data_brief )
 
         print ( " " )
         print ( "Main TOP level news page processed")
