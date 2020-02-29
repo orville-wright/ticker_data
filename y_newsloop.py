@@ -153,7 +153,7 @@ class y_newsfilter:
             print ( f"News headline: {html_element.a.text}" )
             print ( "News Short Brief: {:.400}".format(html_element.p.text) )    # truncate long New Brief headlines to max 400 chars
             data_headline = html_element.a.text
-            data_brief = print ( "{:.400}".format(html_element.p.text) )
+
             # generate a unuque hash for each new URL, for easier dupe tests & comparrisons etc
             url_prehash = html_element.a.get('href')
             result = hashlib.sha256(url_prehash.encode())
@@ -164,7 +164,7 @@ class y_newsfilter:
             if self.args['bool_deep'] is True:        # go DEEP & process each news article deeply?
                 if rhl_url == False:                  # yahoo,com local? or remote hosted non-yahoo.com article?
                     a_deep_link = 'https://finance.yahoo.com' + url_prehash
-                    self.extract_article_data(a_deep_link)      # deeply extract data from this 1 news article
+                    deep_data = self.extract_article_data(a_deep_link)      # extract deep data from1 news article. Returned as list []
                     logging.info('%s - Extracting NEWS from 1 article...' % cmi_debug )
                 else:
                     logging.info('%s - REMOTE Hard-linked URL - NOT Extracting NEWS from article...' % cmi_debug )
@@ -172,7 +172,8 @@ class y_newsfilter:
                 logging.info('%s - Not DEEP processing NEWS articles' % cmi_debug )
                 print ( "DEBUG: Not doing DEEP data extraction of news article !")
 
-            # build_dataset(x, data_outlet, data_url, data_urlhash, data_path, data_headline, data_brief )
+            # build_dataset(x, data_outlet, data_url, data_urlhash, data_path, data_headline, data_brief, deep_data[0], deep_data[3] )
+            print ( "DEBUG: ", x, data_outlet, data_url, data_urlhash, deep_data[0], deep_data[3] )
 
         print ( " " )
         print ( "Main TOP level news page processed")
@@ -217,8 +218,10 @@ class y_newsfilter:
             logging.info('%s - Cycle: Follow News deep URL extratcion' % cmi_debug )
         print ( f"Details: {ndate} / Time: {dt_ISO8601} / Author: {nauthor}" )
         days_old = (dt_ISO8601.date() - right_now)
-        print ( f"News article age: DATE: {dt_ISO8601.date()} / TIME: {dt_ISO8601.time()} / AGE: {abs(days_old.days)}" )
-        return
+        date_posted = str(dt_ISO8601.date())
+        time_posted = str(dt_ISO8601.time())
+        print ( f"News article age: DATE: {date_posted} / TIME: {time_posted} / AGE: {abs(days_old.days)}" )
+        return ( [nauthor, date_posted, time_posted, abs(days_old.days)] )  # return a list []
 
 # method #3
 # Hacking function - keep me arround for a while
