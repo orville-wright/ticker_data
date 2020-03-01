@@ -207,6 +207,8 @@ def main():
         ml_prep = z.read_allnews_depth_0()
         for k, v in ml_prep.items():
             print ( f"{k}: {v}" )
+        # TODO : dump this dict into a Pandas DF and drop+reset the index every time. Add SYMBOL column to DF
+        # NOTE: dont iter over dict{} & renumber dict keys. Very bad python form !!
 
     print ( "####### done #####")
 

@@ -172,6 +172,7 @@ class y_newsfilter:
         print ( f"Local URLs: {l_url} / Remote URLs: {r_url}" )
         print ( " " )
         return ml_ingest        # returns a dict{} ready for ML pre-processing
+
     """
     #print ( f"== {erow}: == URL.div element: {a_subset[erow].name}" )
     # print ( f" / Date: {a_subset[erow].time.text}" )         # Pretty data
