@@ -56,7 +56,7 @@ class y_newsfilter:
         logging.info('%s - IN' % cmi_debug )
         news_url = "https://finance.yahoo.com/quote/" + self.symbol + "/news?p=" + self.symbol      # form the correct URL
         logging.info('%s - URL:' % (cmi_debug) )
-        print ( f"Extract news for: SDC @: {news_url}" )
+        print ( f"Extract news for: {news_url}" )
         with urllib.request.urlopen(news_url) as url:
             s = url.read()
             logging.info('%s - read html stream' % cmi_debug )
@@ -119,7 +119,7 @@ class y_newsfilter:
         #mtd_2 = self.ul_tag_dataset[2].find_all('li')
 
         r_url = l_url = 0
-        ml_dict = {}
+        ml_ingest = {}
         for datarow in range(len(mtd_0)):
             html_element = mtd_0[datarow]
             x += 1
@@ -140,7 +140,7 @@ class y_newsfilter:
             url_p = urlparse(html_element.a.get('href'))
             if url_p.scheme == "https" or url_p.scheme == "http":    # check URL scheme specifier
                 print ( f"Remote news URL: {url_p.netloc}  - Artcile path: {url_p.path}" )
-                data_url = url_p.netloc
+                data_outlet = url_p.netloc
                 data_path = url_p.path
                 #  ParseResult(scheme='https', netloc='techcrunch.com', path='/2020/02/10/what-happened-to-slack-today/', params='', query='', fragment=''
                 rhl_url = True    # This URL is remote
@@ -148,7 +148,7 @@ class y_newsfilter:
             else:
                 print ( f"Local news URL:  finance.yahoo.com  - Article path: {html_element.a.get('href')}" )
                 l_url += 1        # count local URLs
-                data_url = 'finance.yahoo.com'
+                data_outlet = 'finance.yahoo.com'
                 data_path = html_element.a.get('href')
 
             print ( f"News headline: {html_element.a.text}" )
@@ -166,23 +166,21 @@ class y_newsfilter:
                 if rhl_url == False:                  # yahoo,com local? or remote hosted non-yahoo.com article?
                     a_deep_link = 'https://finance.yahoo.com' + url_prehash
                     deep_data = self.extract_article_data(a_deep_link)      # extract deep data from1 news article. Returned as list []
-                    logging.info('%s - Extracting NEWS from 1 article...' % cmi_debug )
+                    ml_inlist = [data_outlet, data_outlet, url_prehash, deep_data[0], deep_data[3] ]
+                    ml_ingest[x] = ml_inlist        # add this data set to dict{}
+                    logging.info('%s - DEEP news article extratcion of 1 article...' % cmi_debug )
                 else:
                     logging.info('%s - REMOTE Hard-linked URL - NOT Extracting NEWS from article...' % cmi_debug )
             else:
                 logging.info('%s - Not DEEP processing NEWS articles' % cmi_debug )
                 print ( "DEBUG: Not doing DEEP data extraction of news article !")
 
-            schizzle = [data_outlet, data_url, data_urlhash, deep_data[0], deep_data[3] ]
-            ml_dict[x] = schizzle
-            #print ( "DEBUG: ", x, data_outlet, data_url, data_urlhash, deep_data[0], deep_data[3] )
-
         print ( " " )
         print ( "Main TOP level news page processed")
         print ( f"News articles evaluated: {x}")
         print ( f"Local URLs: {l_url} / Remote URLs: {r_url}" )
         print ( " " )
-        for k, v in ml_dict.items():
+        for k, v in ml_ingest.items():
             print ( f"{k}: {v}" )
 
         return x        # number of NEWS articles discovered
