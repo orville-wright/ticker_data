@@ -124,7 +124,8 @@ class y_newsfilter:
             x += 1
             # print ( f"====== News item: #{x} ===============" )     # DEBUG
             # print ( f"News outlet: {html_element.div.find(attrs={'class': 'C(#959595)'}).string }" )     # DEBUG
-            data_parent = html_element.div.find(attrs={'class': 'C(#959595)'}).string
+            data_parent = str( "{:.15}".format(html_element.div.find(attrs={'class': 'C(#959595)'}).string) )
+            #shorten down the above data element for the pandas DataFrame insert that happens later...
 
             # FRUSTRATING element that cant be locally extracted from High-level page
             # TODO: Figure out WHY? - getting this from main page would increase speed by 10x
@@ -196,7 +197,9 @@ class y_newsfilter:
                 ndate = a_subset[erow].time.text
                 dt_ISO8601 = datetime.strptime(nztime, "%Y-%m-%dT%H:%M:%S.%fz")
                 if a_subset[erow].div:  # if this element row has a sub <div>
-                    nauthor = a_subset[erow].div.find(attrs={'itemprop': 'name'}).text
+                    nauthor = str( "{:.15}".format(a_subset[erow].div.find(attrs={'itemprop': 'name'}).text) )
+                    # nauthor = a_subset[erow].div.find(attrs={'itemprop': 'name'}).text
+                    #shorten down the above data element for the pandas DataFrame insert that happens later...
 
             if self.args['bool_xray'] is True:        # DEBUG Xray
                 taglist = []
