@@ -202,7 +202,7 @@ def main():
     if args['bool_news'] is True:
         print ( " " )
         print ( "========== ** HACKING ** : News Sentiment Ai =======================================" )
-        z = y_newsfilter(1, "NTLA", args )
+        z = y_newsfilter(1, "IBM", args )
         z.scan_news_depth_0()
         ml_prep = z.read_allnews_depth_0()
         for k, v in ml_prep.items():

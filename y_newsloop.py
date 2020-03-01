@@ -160,16 +160,15 @@ class y_newsfilter:
                     deep_data = self.extract_article_data(a_deep_link)      # extract deep data from1 news article. Returned as list []
                     ml_inlist = [data_parent, data_outlet, url_prehash, deep_data[0], deep_data[3] ]
                     ml_ingest[x] = ml_inlist        # add this data set to dict{}
+                    print ( "\r{} processed...".format(x), end='', flush=True )
                     logging.info('%s - DEEP news article extratcion of 1 article...' % cmi_debug )
                 else:
                     logging.info('%s - REMOTE Hard-linked URL - NOT Extracting NEWS from article...' % cmi_debug )
             else:
                 logging.info('%s - Not DEEP processing NEWS articles' % cmi_debug )
-                print ( "DEBUG: Not doing DEEP data extraction of news article !")
 
         print ( " " )
-        print ( "Main TOP level news page processed")
-        print ( f"News articles evaluated: {x}")
+        print ( f"Top level news articles evaluated: {x}")
         print ( f"Local URLs: {l_url} / Remote URLs: {r_url}" )
         print ( " " )
         return ml_ingest        # returns a dict{} ready for ML pre-processing
@@ -205,6 +204,7 @@ class y_newsfilter:
                 print ( "Unique tags:", set(taglist) )
 
             logging.info('%s - Cycle: Follow News deep URL extratcion' % cmi_debug )
+
         # print ( f"Details: {ndate} / Time: {dt_ISO8601} / Author: {nauthor}" )        # DEBUG
         days_old = (dt_ISO8601.date() - right_now)
         date_posted = str(dt_ISO8601.date())
