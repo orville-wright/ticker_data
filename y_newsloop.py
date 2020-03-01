@@ -56,7 +56,7 @@ class y_newsfilter:
         logging.info('%s - IN' % cmi_debug )
         news_url = "https://finance.yahoo.com/quote/" + self.symbol + "/news?p=" + self.symbol      # form the correct URL
         logging.info('%s - URL:' % (cmi_debug) )
-        print ( f"Extract news for: {news_url}" )
+        print ( f"Looking at news for: {self.symbol}" )
         with urllib.request.urlopen(news_url) as url:
             s = url.read()
             logging.info('%s - read html stream' % cmi_debug )
@@ -64,8 +64,7 @@ class y_newsfilter:
         logging.info('%s - save data object handle' % cmi_debug )
         self.ul_tag_dataset = self.soup.find(attrs={"class": "My(0) Ov(h) P(0) Wow(bw)"} )
         logging.info('%s - close main news page url handle' % cmi_debug )
-        print ( f"Level 0 dataset has {len(self.ul_tag_dataset)} sections" )
-        #print ( f"{self.ul_tag_dataset}" )
+        print ( f"Scanning {len(self.ul_tag_dataset)} news articles..." )
         url.close()
         return
 
@@ -123,42 +122,35 @@ class y_newsfilter:
         for datarow in range(len(mtd_0)):
             html_element = mtd_0[datarow]
             x += 1
-            print ( f"====== News item: #{x} ===============" )
-            print ( f"News outlet: {html_element.div.find(attrs={'class': 'C(#959595)'}).string }" )
-            data_outlet = html_element.div.find(attrs={'class': 'C(#959595)'}).string
-            #print ( f"News outlet2: {datarow[0].contents}" )
+            # print ( f"====== News item: #{x} ===============" )     # DEBUG
+            # print ( f"News outlet: {html_element.div.find(attrs={'class': 'C(#959595)'}).string }" )     # DEBUG
+            data_parent = html_element.div.find(attrs={'class': 'C(#959595)'}).string
 
             # FRUSTRATING element that cant be locally extracted from High-level page
-            # TODO: Figure out WHY?
-            # extracting this from the main page would increase speed by 10x
-            # print ( f"DOT: {html_element.i.find(attrs={'class': 'Mx(4px)'}) }" )"""
+            # TODO: Figure out WHY? - getting this from main page would increase speed by 10x
 
             # Identify Local or Remote news article
-            # An href that begins with http:// is a hard link to external news outlet that forces us off-site
-            # Otherwise we'll see a raw Rescource Path /..../..../
+            # An href that begins with http:// is link to external news outlet, otherwise it found a local Rescource Path /..../..../
             rhl_url = False     # safety pre-set
             url_p = urlparse(html_element.a.get('href'))
             if url_p.scheme == "https" or url_p.scheme == "http":    # check URL scheme specifier
-                print ( f"Remote news URL: {url_p.netloc}  - Artcile path: {url_p.path}" )
+                # print ( f"Remote news URL: {url_p.netloc}  - Artcile path: {url_p.path}" )     # DEBUG
                 data_outlet = url_p.netloc
                 data_path = url_p.path
-                #  ParseResult(scheme='https', netloc='techcrunch.com', path='/2020/02/10/what-happened-to-slack-today/', params='', query='', fragment=''
                 rhl_url = True    # This URL is remote
                 r_url += 1        # count remote URLs
             else:
-                print ( f"Local news URL:  finance.yahoo.com  - Article path: {html_element.a.get('href')}" )
+                # print ( f"Local news URL:  finance.yahoo.com  - Article path: {html_element.a.get('href')}" )     # DEBUG
                 l_url += 1        # count local URLs
                 data_outlet = 'finance.yahoo.com'
                 data_path = html_element.a.get('href')
 
-            print ( f"News headline: {html_element.a.text}" )
-            print ( "News Short Brief: {:.400}".format(html_element.p.text) )    # truncate long New Brief headlines to max 400 chars
+            # print ( f"News headline: {html_element.a.text}" )     # DEBUG
+            # print ( "News Short Brief: {:.400}".format(html_element.p.text) )    # DEBUG: truncate long New Brief headlines to max 400 chars
             data_headline = html_element.a.text
-
-            # generate a unuque hash for each new URL, for easier dupe tests & comparrisons etc
-            url_prehash = html_element.a.get('href')
+            url_prehash = html_element.a.get('href')        # generate unuque hash for each URL. For dupe tests & comparrisons etc
             result = hashlib.sha256(url_prehash.encode())
-            print ( f"Hash encoded URL: {result.hexdigest()}" )
+            # print ( f"Hash encoded URL: {result.hexdigest()}" )     # DEBUG
             data_urlhash = result.hexdigest()
 
             # BIG logic decision here...!!!
@@ -166,7 +158,7 @@ class y_newsfilter:
                 if rhl_url == False:                  # yahoo,com local? or remote hosted non-yahoo.com article?
                     a_deep_link = 'https://finance.yahoo.com' + url_prehash
                     deep_data = self.extract_article_data(a_deep_link)      # extract deep data from1 news article. Returned as list []
-                    ml_inlist = [data_outlet, data_outlet, url_prehash, deep_data[0], deep_data[3] ]
+                    ml_inlist = [data_parent, data_outlet, url_prehash, deep_data[0], deep_data[3] ]
                     ml_ingest[x] = ml_inlist        # add this data set to dict{}
                     logging.info('%s - DEEP news article extratcion of 1 article...' % cmi_debug )
                 else:
@@ -180,11 +172,7 @@ class y_newsfilter:
         print ( f"News articles evaluated: {x}")
         print ( f"Local URLs: {l_url} / Remote URLs: {r_url}" )
         print ( " " )
-        for k, v in ml_ingest.items():
-            print ( f"{k}: {v}" )
-
-        return x        # number of NEWS articles discovered
-
+        return ml_ingest        # returns a dict{} ready for ML pre-processing
     """
     #print ( f"== {erow}: == URL.div element: {a_subset[erow].name}" )
     # print ( f" / Date: {a_subset[erow].time.text}" )         # Pretty data
@@ -201,18 +189,15 @@ class y_newsfilter:
         logging.info('%s - IN' % cmi_debug )
         right_now = date.today()
         a_subset = self.news_article_depth_1(news_article_url)      # got DEEP into this 1 news HTML page & setup data extraction zones
-        print ( f"Tag sections in news page: {len(a_subset)}" )
+        # print ( f"Tag sections in news page: {len(a_subset)}" )   # DEBUG
         for erow in range(len(a_subset)):       # cycyle through tag sections in this dataset (not predictible or consistent)
             if a_subset[erow].time:     # if this element rown has a <time> tag...
                 nztime = a_subset[erow].time['datetime']
                 ndate = a_subset[erow].time.text
                 dt_ISO8601 = datetime.strptime(nztime, "%Y-%m-%dT%H:%M:%S.%fz")
-                # TODO: calculate age of this news article
-                # TODO: parse out date component, subtract date from today, calculate num_of_days old
                 if a_subset[erow].div:  # if this element row has a sub <div>
                     nauthor = a_subset[erow].div.find(attrs={'itemprop': 'name'}).text
 
-            # DEBUG
             if self.args['bool_xray'] is True:        # DEBUG Xray
                 taglist = []
                 for tag in a_subset[erow].find_all(True):
@@ -220,11 +205,11 @@ class y_newsfilter:
                 print ( "Unique tags:", set(taglist) )
 
             logging.info('%s - Cycle: Follow News deep URL extratcion' % cmi_debug )
-        print ( f"Details: {ndate} / Time: {dt_ISO8601} / Author: {nauthor}" )
+        # print ( f"Details: {ndate} / Time: {dt_ISO8601} / Author: {nauthor}" )        # DEBUG
         days_old = (dt_ISO8601.date() - right_now)
         date_posted = str(dt_ISO8601.date())
         time_posted = str(dt_ISO8601.time())
-        print ( f"News article age: DATE: {date_posted} / TIME: {time_posted} / AGE: {abs(days_old.days)}" )
+        # print ( f"News article age: DATE: {date_posted} / TIME: {time_posted} / AGE: {abs(days_old.days)}" )  # DEBUG
         return ( [nauthor, date_posted, time_posted, abs(days_old.days)] )  # return a list []
 
 # method #3
