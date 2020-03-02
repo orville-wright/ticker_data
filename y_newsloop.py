@@ -23,9 +23,6 @@ class y_newsfilter:
     """Class to extract a specific stock's News from finance.yahoo.com"""
 
     # global accessors
-    n_df0 = ""          # DataFrame - Full list of top gainers
-    n_df1 = ""          # DataFrame - Ephemerial list of top 10 gainers. Allways overwritten
-    n_df2 = ""          # DataFrame - Top 10 ever 10 secs for 60 secs
     soup = ""           # the entire HTML doc
     ul_tag_dataset = ""      # BS4 handle of the <tr> extracted data
     inst_uid = 0
@@ -37,10 +34,6 @@ class y_newsfilter:
         cmi_debug = __name__+"::"+self.__init__.__name__
         logging.info('%s - INIT inst' % cmi_debug )
         self.args = global_args
-        # init empty DataFrame with present colum names
-        self.n_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time'] )
-        self.n_df1 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time'] )
-        self.n_df2 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time'] )
         self.inst_uid = i
         self.symbol = symbol
         return
@@ -103,8 +96,6 @@ class y_newsfilter:
         cmi_debug = __name__+"::"+self.read_allnews_depth_0.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
-        logging.info('%s - Drop all rows from DF0' % cmi_debug )
-        self.n_df0.drop(self.n_df0.index, inplace=True)
         x = 0    # row counter Also leveraged for unique dataframe key
 
         # element zones from main dataset @ depth_0
