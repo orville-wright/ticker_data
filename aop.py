@@ -119,6 +119,14 @@ def main():
         med_large_mega_gainers = y_topgainers(1)       # instantiate class
         med_large_mega_gainers.get_topg_data()        # extract data from finance.Yahoo.com
         x = med_large_mega_gainers.build_tg_df0()     # build full dataframe
+
+        tlp = med_large_mega_gainers.tg_df0['Cur_price'].min()
+        tminv = med_large_mega_gainers.tg_df0['Cur_price'].idxmin()
+        tlsym = med_large_mega_gainers.tg_df0.loc[tminv, ['Symbol']][0]
+        tlname = med_large_mega_gainers.tg_df0.loc[tminv, ['Co_name']][0]
+        print ( f">>Lowest<< price OPPTY is: {tlname.rstrip()} ({tlsym.rstrip()}) @ ${tlp}" )
+        print ( " " )
+
         med_large_mega_gainers.build_top10()           # show top 10
         med_large_mega_gainers.print_top10()           # print it
         print ( " ")
@@ -171,9 +179,18 @@ def main():
     if args['bool_uvol'] is True:
         print ( "========== Unusually high Volume ** UP ** =====================================================" )
         un_vol_activity = unusual_vol(1, args)       # instantiate class, args = global var
+
         un_vol_activity.get_up_unvol_data()        # extract data from finance.Yahoo.com
         uv_up = un_vol_activity.build_df(0)     # build full dataframe
+
+        lp = un_vol_activity.up_df0['Cur_price'].min()
+        minv = un_vol_activity.up_df0['Cur_price'].idxmin()
+        lsym = un_vol_activity.up_df0.loc[minv, ['Symbol']][0]
+        lname = un_vol_activity.up_df0.loc[minv, ['Co_name']][0]
+        print ( f">>Lowest<< price OPPTY is: {lname.rstrip()} ({lsym.rstrip()}) @ ${lp}" )
+        print ( " " )
         un_vol_activity.up_unvol_listall()
+
         print ( " ")
         print ( "========== Unusually high Volume ** DOWN ** =====================================================" )
         un_vol_activity.get_down_unvol_data()

@@ -227,5 +227,13 @@ class screener_dg1:
         self.dg1_df1 =  pd.concat( [ self.dg1_df1, self.dg1_df0[self.dg1_df0.M_B == "SB"] ] )  # now capture BILLIONS & concat both results
         self.dg1_df1 = self.dg1_df1.sort_values(by=['Pct_change'], ascending=False )
         self.dg1_df1.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
+        
+        lowestprice = self.dg1_df1['Cur_price'].min()
+        minv = self.dg1_df1['Cur_price'].idxmin()
+        lowsym = self.dg1_df1.loc[minv, ['Symbol']][0]
+        lowconame = self.dg1_df1.loc[minv, ['Co_name']][0]
+
+        print ( f"Lowest price OPPTY is: {lowconame.rstrip()} ({lowsym.rstrip()}) @ ${lowestprice}" )
+        print ( " " )
         print ( self.dg1_df1 )
         return
