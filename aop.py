@@ -113,6 +113,8 @@ def main():
 
     print ( " " )
 
+    recommended = {}
+
 ########### 1 - TOP GAINERS ################
     if args['bool_tops'] is True:
         print ( "========== Top 10 Gainers ==========" )
@@ -124,7 +126,9 @@ def main():
         tminv = med_large_mega_gainers.tg_df0['Cur_price'].idxmin()
         tlsym = med_large_mega_gainers.tg_df0.loc[tminv, ['Symbol']][0]
         tlname = med_large_mega_gainers.tg_df0.loc[tminv, ['Co_name']][0]
-        print ( f">>Lowest<< price OPPTY is: {tlname.rstrip()} ({tlsym.rstrip()}) @ ${tlp}" )
+        recommended[tminv] = (tlsym.rstrip(), '$'+str(tlp), tlname.rstrip(), '+%'+str(med_large_mega_gainers.tg_df0.loc[tminv, ['Pct_change']][0]) )
+
+        print ( f">>Lowest<< price OPPTY is: #{tminv} - {tlname.rstrip()} ({tlsym.rstrip()}) @ ${tlp}" )
         print ( " " )
 
         med_large_mega_gainers.build_top10()           # show top 10
@@ -172,7 +176,7 @@ def main():
         x = small_cap_dataset.build_df0()     # build full dataframe
         # scrn1.build_top10()           # show top 10
         # scrn1.print_top10()           # print it
-        small_cap_dataset.screener_logic()
+        recommended.update(small_cap_dataset.screener_logic())
         print ( " ")
 
 ########### unusual_vol ################
@@ -183,11 +187,13 @@ def main():
         un_vol_activity.get_up_unvol_data()        # extract data from finance.Yahoo.com
         uv_up = un_vol_activity.build_df(0)     # build full dataframe
 
-        lp = un_vol_activity.up_df0['Cur_price'].min()
-        minv = un_vol_activity.up_df0['Cur_price'].idxmin()
-        lsym = un_vol_activity.up_df0.loc[minv, ['Symbol']][0]
-        lname = un_vol_activity.up_df0.loc[minv, ['Co_name']][0]
-        print ( f">>Lowest<< price OPPTY is: {lname.rstrip()} ({lsym.rstrip()}) @ ${lp}" )
+        ulp = un_vol_activity.up_df0['Cur_price'].min()
+        uminv = un_vol_activity.up_df0['Cur_price'].idxmin()
+        ulsym = un_vol_activity.up_df0.loc[uminv, ['Symbol']][0]
+        ulname = un_vol_activity.up_df0.loc[uminv, ['Co_name']][0]
+        recommended[uminv] = (ulsym.rstrip(), '$'+str(ulp), ulname.rstrip(), '+%'+str(un_vol_activity.up_df0.loc[uminv, ['Pct_change']][0]) )
+
+        print ( f">>LOWEST<< price OPPTY is: #{uminv} - {ulname.rstrip()} ({ulsym.rstrip()}) @ ${ulp}" )
         print ( " " )
         un_vol_activity.up_unvol_listall()
 
@@ -213,7 +219,13 @@ def main():
         x.rank_unvol()
         x.rank_caps()
         x.combo_listall_ranked()
-        print ( " " )
+        recommended.update(x.rx)
+
+        print ( f"============ >>LOW<< buy-in recommendations ============" )
+        for k, v in recommended.items():
+            print ( f"{k}: {v[0]} {v[1]} {v[2]} {v[3]}" )
+            print ( "=========================================================" )
+
         x.combo_grouped()
 
     if args['bool_news'] is True:
