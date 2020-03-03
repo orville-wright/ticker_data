@@ -121,6 +121,7 @@ class y_toplosers:
 
             if not TRILLIONS and not BILLIONS and not MILLIONS:
                 mktcap_clean = 0    # error condition - possible bad data
+                mb = "Z"            # Zillions !!
                 logging.info('%s - found TRILLIONS. set T' % cmi_debug )
                 # handle bad data in mktcap html page field
 

@@ -122,13 +122,13 @@ def main():
         med_large_mega_gainers.get_topg_data()        # extract data from finance.Yahoo.com
         x = med_large_mega_gainers.build_tg_df0()     # build full dataframe
 
-        tlp = med_large_mega_gainers.tg_df0['Cur_price'].min()
-        tminv = med_large_mega_gainers.tg_df0['Cur_price'].idxmin()
-        tlsym = med_large_mega_gainers.tg_df0.loc[tminv, ['Symbol']][0]
-        tlname = med_large_mega_gainers.tg_df0.loc[tminv, ['Co_name']][0]
-        recommended[tminv] = (tlsym.rstrip(), '$'+str(tlp), tlname.rstrip(), '+%'+str(med_large_mega_gainers.tg_df0.loc[tminv, ['Pct_change']][0]) )
+        # tlp = med_large_mega_gainers.tg_df0['Cur_price'].min()
+        # tminv = med_large_mega_gainers.tg_df0['Cur_price'].idxmin()
+        # tlsym = med_large_mega_gainers.tg_df0.loc[tminv, ['Symbol']][0]
+        # tlname = med_large_mega_gainers.tg_df0.loc[tminv, ['Co_name']][0]
+        # recommended[tminv] = (tlsym.rstrip(), '$'+str(tlp), tlname.rstrip(), '+%'+str(med_large_mega_gainers.tg_df0.loc[tminv, ['Pct_change']][0]) )
 
-        print ( f">>Lowest<< price OPPTY is: #{tminv} - {tlname.rstrip()} ({tlsym.rstrip()}) @ ${tlp}" )
+        # print ( f">>Lowest<< price OPPTY is: #{tminv} - {tlname.rstrip()} ({tlsym.rstrip()}) @ ${tlp}" )
         print ( " " )
 
         med_large_mega_gainers.build_top10()           # show top 10
@@ -221,12 +221,15 @@ def main():
         x.combo_listall_ranked()
         recommended.update(x.rx)
 
-        print ( f"============ >>LOW<< buy-in recommendations ============" )
+        print ( " " )
+        print ( f"============ >>LOW<< buy-in recommendations =============" )
         for k, v in recommended.items():
             print ( f"{k}: {v[0]} {v[1]} {v[2]} {v[3]}" )
             print ( "=========================================================" )
 
-        x.combo_grouped()
+        print ( " " )
+        print ( "============== High level inisghts ======================" )
+        x.combo_grouped()       # insights
 
     if args['bool_news'] is True:
         print ( " " )
@@ -243,6 +246,7 @@ def main():
             news_df = pd.DataFrame.from_dict(ml_prep, orient='index', \
                         columns=['Source', 'Outet', 'url_link', 'Author', 'Age'])
 
+            print ( " " )
             print ( news_df )
 
     print ( "####### done #####")
