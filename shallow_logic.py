@@ -25,7 +25,7 @@ class shallow_combo:
     combo_df = ""
     combo_dupes = ""
     args = []               # class dict to hold global args being passed in from main() methods
-    rx = {}
+    rx = []
 
     def __init__(self, i, d1, d2, d3, global_args):
         cmi_debug = __name__+"::"+self.__init__.__name__
@@ -118,7 +118,7 @@ class shallow_combo:
             for v in min_price.values():    # v = tuple structured like: (0, BEAM, 28.42)
                 if v[2] == mptv:            # v[2] = 3rd element = price for this stock symbol
                     row_idx = int(v[0])     # v[0] = 1st emelent = DataFrame index for this stock symbol
-                    self.rx[row_idx] = ( v[1].rstrip(), '$'+str(v[2]), 'Blank company name', '%-gain' )
+                    self.rx = [row_idx, v[1].rstrip()]
                     print ( ">>LOW<< price *Hot* stock is:", v[1].rstrip(), "price:", v[2] )
                     self.combo_df.loc[row_idx,'Hot'] = "*Hot*"      # Tag as a **HOT** stock in DataFrame
 

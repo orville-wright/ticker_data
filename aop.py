@@ -219,16 +219,37 @@ def main():
         x.rank_unvol()
         x.rank_caps()
         x.combo_listall_ranked()
-        recommended.update(x.rx)
+        # print ( f"X.RX.keys: {list(x.rx.keys())} / X.RX.values: {list(x.rx.values())}"  )
+
+        # lowest price **Hottest** stock (i.e. hot in *all* metrics)
+        hotidx = x.rx[0]
+        hotsym = x.rx[1]
+        hotp = x.combo_df.loc[hotidx, ['Cur_price']][0]
+        hotname = x.combo_df.loc[hotidx, ['Co_name']][0]
+        recommended[hotidx] = (hotsym.rstrip(), '$'+str(hotp), hotname.rstrip(), '+%'+str(x.combo_df.loc[hotidx, ['Pct_change']][0]) )
+
+        # lowest priced stock in combo_df
+        clp = x.combo_df['Cur_price'].min()
+        cminv = x.combo_df['Cur_price'].idxmin()
+        clsym = x.combo_df.loc[cminv, ['Symbol']][0]
+        clname = x.combo_df.loc[cminv, ['Co_name']][0]
+        recommended[cminv] = (clsym.rstrip(), '$'+str(clp), clname.rstrip(), '+%'+str(x.combo_df.loc[cminv, ['Pct_change']][0]) )
+
+        # Biggest & gainer stock in combo_df
+        cmax = x.combo_df['Pct_change'].idxmax()
+        clp = x.combo_df.loc[cmax, 'Cur_price']
+        clsym = x.combo_df.loc[cmax, ['Symbol']][0]
+        clname = x.combo_df.loc[cmax, ['Co_name']][0]
+        recommended[cmax] = (clsym.rstrip(), '$'+str(clp), clname.rstrip(), '+%'+str(x.combo_df.loc[cmax, ['Pct_change']][0]) )
 
         print ( " " )
         print ( f"============ >>LOW<< buy-in recommendations =============" )
         for k, v in recommended.items():
             print ( f"{k}: {v[0]} {v[1]} {v[2]} {v[3]}" )
-            print ( "=========================================================" )
+            print ( "---------------------------------------------------------" )
 
         print ( " " )
-        print ( "============== High level inisghts ======================" )
+        print ( "============== High level activity inisghts =================" )
         x.combo_grouped()       # insights
 
     if args['bool_news'] is True:
