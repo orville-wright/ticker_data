@@ -167,7 +167,7 @@ class unusual_vol:
             co_name_lj = (re.sub('[\']', '', co_name_lj) )    # remove " ' and strip leading/trailing spaces
 
             price_cl = (re.sub('[ $,]', '', price))
-            price_pct_cl = (re.sub('[%]', '', price_pct))
+            price_pct_cl = (re.sub('[\-+%]', '', price_pct))
             vol_abs_cl = (re.sub('[,]', '', vol_abs))
             vol_pct_cl = (re.sub('[%]', '', vol_pct))
 

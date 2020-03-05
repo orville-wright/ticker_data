@@ -116,6 +116,11 @@ class y_topgainers:
                 logging.info('%s - bad mktcap data. set to L0' % cmi_debug )
                 # handle bad data in mktcap html page field
 
+            if pct == "N/A":            # Bad data. FOund a filed with N/A instead of read num
+                pct = "1.0"
+
+            pct = np.float(re.sub('[-+,%]', '', pct))
+
             # note: Pandas DataFrame : top_gainers pre-initalized as EMPYT
             # Data treatment:
             # Data is extracted as raw strings, so needs wrangeling...
@@ -129,7 +134,7 @@ class y_topgainers:
                        co_name_lj, \
                        np.float(re.sub('\,', '', price)), \
                        np.float(re.sub('[\+,]', '', change)), \
-                       np.float(re.sub('[\+,%]', '', pct)), \
+                       pct, \
                        mktcap_clean, \
                        mb, \
                        time_now ]]
