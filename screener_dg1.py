@@ -126,7 +126,8 @@ class screener_dg1:
             if pct == "N/A":            # Bad data. FOund a filed with N/A instead of read num
                 pct = "1.0"
 
-            pct = np.float(re.sub('[\-+,%]', '', pct))
+            #pct = np.float(re.sub('[\-+,%]', '', pct))
+            pct = np.float(re.sub('[,%]', '', pct))
 
             # note: Pandas DataFrame : top_gainers pre-initalized as EMPYT
             # Data is extracted as raw strings, so needs wrangeling...
@@ -185,7 +186,8 @@ class screener_dg1:
         logging.info('%s - Drop all rows from DF1' % cmi_debug )
         self.dg1_df1.drop(self.dg1_df1.index, inplace=True)
         logging.info('%s - Copy DF0 -> ephemerial DF1' % cmi_debug )
-        self.dg1_df1 = self.dg1_df0.sort_values(by='Pct_change', ascending=False ).head(10).copy(deep=True)    # create new DF via copy of top 10 entries
+        #self.dg1_df1 = self.dg1_df0.sort_values(by='Pct_change', ascending=False ).head(20).copy(deep=True)    # create new DF of top 10 entries
+        self.dg1_df1 = self.dg1_df0.sort_values(by='Pct_change', ascending=False ).copy(deep=True)    # create new DF via copy of top 10 entries
         self.dg1_df1.rename(columns = {'Row':'ERank'}, inplace = True)    # Rank is more accurate for this Ephemerial DF
         self.dg1_df1.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
         return
@@ -198,7 +200,8 @@ class screener_dg1:
         logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
-        print ( self.dg1_df1.sort_values(by='Pct_change', ascending=False ).head(10) )
+        #print ( self.dg1_df1.sort_values(by='Pct_change', ascending=False ).head(20) )
+        print ( self.dg1_df1.sort_values(by='Pct_change', ascending=False ) )
         return
 
 # method #6
