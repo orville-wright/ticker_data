@@ -222,7 +222,8 @@ def main():
         # print ( f"X.RX.keys: {list(x.rx.keys())} / X.RX.values: {list(x.rx.values())}"  )
 
         # lowest price **Hottest** stock (i.e. hot in *all* metrics)
-        if not x.rx[0]:
+        #if not x.rx[0]:
+        if len(x.rx) == 0:
             print ( f"No **hot** stock to add to recommendations list yet" )
         else:
             hotidx = x.rx[0]
