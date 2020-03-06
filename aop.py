@@ -218,18 +218,22 @@ def main():
         x.rank_hot()
         x.rank_unvol()
         x.rank_caps()
-        x.combo_listall_ranked()
-        # print ( f"X.RX.keys: {list(x.rx.keys())} / X.RX.values: {list(x.rx.values())}"  )
 
         # lowest price **Hottest** stock (i.e. hot in *all* metrics)
-        if not x.rx[0]:
-            print ( f"No **hot** stock to add to recommendations list yet" )
+
+        if len(x.rx) == 0:      # empty list[]. no stock found yet (prob very early in trading morning)
+            print ( " " )
+            print ( f"No **hot** stock for >>LOW<< buy-in recommendations list yet" )
         else:
             hotidx = x.rx[0]
             hotsym = x.rx[1]
             hotp = x.combo_df.loc[hotidx, ['Cur_price']][0]
             hotname = x.combo_df.loc[hotidx, ['Co_name']][0]
             recommended[hotidx] = (hotsym.rstrip(), '$'+str(hotp), hotname.rstrip(), '+%'+str(x.combo_df.loc[hotidx, ['Pct_change']][0]) )
+            print ( f">>LOW<< prine **Hot** stock: {hotsym.rstrip()} {'$'+str(hotp)} {hotname.rstrip()} {'+%'+str(x.combo_df.loc[hotidx, ['Pct_change']][0])} " )
+            print ( " " )
+
+        x.combo_listall_ranked()
 
         # lowest priced stock in combo_df
         clp = x.combo_df['Cur_price'].min()

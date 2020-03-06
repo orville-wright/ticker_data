@@ -25,7 +25,7 @@ class shallow_combo:
     combo_df = ""
     combo_dupes = ""
     args = []               # class dict to hold global args being passed in from main() methods
-    rx = []
+    rx = []                 # hottest stock with lowest price overall
 
     def __init__(self, i, d1, d2, d3, global_args):
         cmi_debug = __name__+"::"+self.__init__.__name__
@@ -105,7 +105,7 @@ class shallow_combo:
                 elif pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == True and pd.isna(self.combo_df.loc[row_idx].M_B) == True:
                     self.combo_df.drop([row_idx], inplace=True)
                 else:
-                    Print ( "Don't know what to do !!" )
+                    Print ( "WARNING: Don't know what to do !!" )
 
         # TODO: ** This code is BUGGY & still faills at Market open when many things are empty & unpopulated...
         if not bool(min_price):
@@ -118,8 +118,8 @@ class shallow_combo:
             for v in min_price.values():    # v = tuple structured like: (0, BEAM, 28.42)
                 if v[2] == mptv:            # v[2] = 3rd element = price for this stock symbol
                     row_idx = int(v[0])     # v[0] = 1st emelent = DataFrame index for this stock symbol
-                    self.rx = [row_idx, v[1].rstrip()]
-                    print ( ">>LOW<< price *Hot* stock is:", v[1].rstrip(), "price:", v[2] )
+                    self.rx = [row_idx, v[1].rstrip()]      # add hottest stock with lowest price (will only ever be 1 entry in list[])
+                    #print ( ">>LOW<< price *Hot* stock is:", v[1].rstrip(), "price:", v[2] )
                     self.combo_df.loc[row_idx,'Hot'] = "*Hot*"      # Tag as a **HOT** stock in DataFrame
 
             print ( " " )
