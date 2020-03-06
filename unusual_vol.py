@@ -115,7 +115,7 @@ class unusual_vol:
         logging.info('ins.#%s.down_unvol_listall() - IN' % self.yti )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
-        print ( self.down_df0.sort_values(by='Pct_change', ascending=True ) )    # only do after fixtures datascience dataframe has been built
+        print ( self.down_df0.sort_values(by='Pct_change', ascending=False ) )    # only do after fixtures datascience dataframe has been built
         logging.info('ins.#%s.down_unvol_listall() - DONE' % self.yti )
         return
 
