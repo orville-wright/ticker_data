@@ -220,7 +220,6 @@ def main():
         x.rank_caps()
 
         # lowest price **Hottest** stock (i.e. hot in *all* metrics)
-
         if len(x.rx) == 0:      # empty list[]. no stock found yet (prob very early in trading morning)
             print ( " " )
             print ( f"No **hot** stock for >>LOW<< buy-in recommendations list yet" )
