@@ -107,8 +107,8 @@ class shallow_combo:
                 else:
                     Print ( "WARNING: Don't know what to do !!" )
 
-        # TODO: ** This code is BUGGY & still faills at Market open when many things are empty & unpopulated...
-        if not bool(min_price):
+        # TODO: ** This logix test is BUGGY & possible faills at Market open when many things are empty & unpopulated...
+        if not bool(min_price):         # is empty?
             print ( "No **HOT stocks to evaluate yet" )
 
         # since we are Tagging and annotating this DataFrame...
@@ -119,10 +119,7 @@ class shallow_combo:
                 if v[2] == mptv:            # v[2] = 3rd element = price for this stock symbol
                     row_idx = int(v[0])     # v[0] = 1st emelent = DataFrame index for this stock symbol
                     self.rx = [row_idx, v[1].rstrip()]      # add hottest stock with lowest price (will only ever be 1 entry in list[])
-                    #print ( ">>LOW<< price *Hot* stock is:", v[1].rstrip(), "price:", v[2] )
                     self.combo_df.loc[row_idx,'Hot'] = "*Hot*"      # Tag as a **HOT** stock in DataFrame
-
-            print ( " " )
 
         return
 
