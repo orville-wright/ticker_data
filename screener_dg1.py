@@ -243,7 +243,9 @@ class screener_dg1:
         lowsym = self.dg1_df1.loc[minv, ['Symbol']][0]
         lowconame = self.dg1_df1.loc[minv, ['Co_name']][0]
 
-        rx[minv] = (lowsym.rstrip(), '$'+str(ulp), lowconame.rstrip(), '+%'+str(self.dg1_df1.loc[minv, ['Pct_change']][0]) )
+        # Allways make sure this is key #1 in the recommendations dict
+        rx['1'] = ('Small cap % gainer:', lowsym.rstrip(), '$'+str(ulp), lowconame.rstrip(), '+%'+str(self.dg1_df1.loc[minv, ['Pct_change']][0]) )
+        #rx[minv] = (lowsym.rstrip(), '$'+str(ulp), lowconame.rstrip(), '+%'+str(self.dg1_df1.loc[minv, ['Pct_change']][0]) )
 
         print ( f">>Lowest<< price OPPTY is: #{minv} - {lowconame.rstrip()} ({lowsym.rstrip()}) @ ${lowestprice}" )
         print ( " " )

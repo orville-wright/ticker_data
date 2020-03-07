@@ -113,7 +113,7 @@ def main():
 
     print ( " " )
 
-    recommended = {}
+    recommended = {}        # dict of recomendations
 
 ########### 1 - TOP GAINERS ################
     if args['bool_tops'] is True:
@@ -122,22 +122,14 @@ def main():
         med_large_mega_gainers.get_topg_data()        # extract data from finance.Yahoo.com
         x = med_large_mega_gainers.build_tg_df0()     # build full dataframe
 
-        # tlp = med_large_mega_gainers.tg_df0['Cur_price'].min()
-        # tminv = med_large_mega_gainers.tg_df0['Cur_price'].idxmin()
-        # tlsym = med_large_mega_gainers.tg_df0.loc[tminv, ['Symbol']][0]
-        # tlname = med_large_mega_gainers.tg_df0.loc[tminv, ['Co_name']][0]
-        # recommended[tminv] = (tlsym.rstrip(), '$'+str(tlp), tlname.rstrip(), '+%'+str(med_large_mega_gainers.tg_df0.loc[tminv, ['Pct_change']][0]) )
-
-        # print ( f">>Lowest<< price OPPTY is: #{tminv} - {tlname.rstrip()} ({tlsym.rstrip()}) @ ${tlp}" )
         print ( " " )
-
         med_large_mega_gainers.build_top10()           # show top 10
         med_large_mega_gainers.print_top10()           # print it
-        print ( " ")
 
 ########### 2 - TOP LOSERS ################
     if args['bool_tops'] is True:
         print ( "========== Top 10 Losers ==========" )
+        print ( " ")
         med_large_mega_loosers = y_toplosers(1)       # instantiate class
         med_large_mega_loosers.get_topg_data()        # extract data from finance.Yahoo.com
         x = med_large_mega_loosers.build_tg_df0()     # build full dataframe
@@ -168,7 +160,8 @@ def main():
     else:
         print ( " " )
 
-########### SCREENER 1 ################
+########### Small Cap gainers & loosers ################
+# small caps are isolate outside the regular dataset by yahoo.com
     if args['bool_scr'] is True:
         print ( "========== Screener: SMALL CAP Day Gainers : +5% & > $750M Mkt-cap ==========" )
         small_cap_dataset = screener_dg1(1)       # instantiate class
@@ -176,6 +169,8 @@ def main():
         x = small_cap_dataset.build_df0()     # build full dataframe
         # scrn1.build_top10()           # show top 10
         # scrn1.print_top10()           # print it
+
+        # Recommendation #1 - Best small cap % gainer with lowest buy-in price
         recommended.update(small_cap_dataset.screener_logic())
         print ( " ")
 
@@ -191,7 +186,10 @@ def main():
         uminv = un_vol_activity.up_df0['Cur_price'].idxmin()
         ulsym = un_vol_activity.up_df0.loc[uminv, ['Symbol']][0]
         ulname = un_vol_activity.up_df0.loc[uminv, ['Co_name']][0]
-        recommended[uminv] = (ulsym.rstrip(), '$'+str(ulp), ulname.rstrip(), '+%'+str(un_vol_activity.up_df0.loc[uminv, ['Pct_change']][0]) )
+
+        # Allways make sure this is key #2 in recommendations dict
+        recommended['2'] = ('Unusual vol:', ulsym.rstrip(), '$'+str(ulp), ulname.rstrip(), '+%'+str(un_vol_activity.up_df0.loc[uminv, ['Pct_change']][0]) )
+        #recommended[uminv] = (ulsym.rstrip(), '$'+str(ulp), ulname.rstrip(), '+%'+str(un_vol_activity.up_df0.loc[uminv, ['Pct_change']][0]) )
 
         print ( f">>LOWEST<< price OPPTY is: #{uminv} - {ulname.rstrip()} ({ulsym.rstrip()}) @ ${ulp}" )
         print ( " " )
@@ -228,7 +226,10 @@ def main():
             hotsym = x.rx[1]
             hotp = x.combo_df.loc[hotidx, ['Cur_price']][0]
             hotname = x.combo_df.loc[hotidx, ['Co_name']][0]
-            recommended[hotidx] = (hotsym.rstrip(), '$'+str(hotp), hotname.rstrip(), '+%'+str(x.combo_df.loc[hotidx, ['Pct_change']][0]) )
+
+            # allways make sure this is key #3 in recommendations dict
+            recommended['3'] = ('Hottest:', hotsym.rstrip(), '$'+str(hotp), hotname.rstrip(), '+%'+str(x.combo_df.loc[hotidx, ['Pct_change']][0]) )
+            #recommended[hotidx] = (hotsym.rstrip(), '$'+str(hotp), hotname.rstrip(), '+%'+str(x.combo_df.loc[hotidx, ['Pct_change']][0]) )
             print ( f">>LOW<< prine **Hot** stock: {hotsym.rstrip()} {'$'+str(hotp)} {hotname.rstrip()} {'+%'+str(x.combo_df.loc[hotidx, ['Pct_change']][0])} " )
             print ( " " )
 
@@ -239,20 +240,26 @@ def main():
         cminv = x.combo_df['Cur_price'].idxmin()
         clsym = x.combo_df.loc[cminv, ['Symbol']][0]
         clname = x.combo_df.loc[cminv, ['Co_name']][0]
-        recommended[cminv] = (clsym.rstrip(), '$'+str(clp), clname.rstrip(), '+%'+str(x.combo_df.loc[cminv, ['Pct_change']][0]) )
 
-        # Biggest & gainer stock in combo_df
+        # allways make sure this is key #4 in recommendations dict
+        recommended['4'] = ('Large cap:', clsym.rstrip(), '$'+str(clp), clname.rstrip(), '+%'+str(x.combo_df.loc[cminv, ['Pct_change']][0]) )
+        #recommended[cminv] = (clsym.rstrip(), '$'+str(clp), clname.rstrip(), '+%'+str(x.combo_df.loc[cminv, ['Pct_change']][0]) )
+
+        # Biggest gainer stock in combo_df
         cmax = x.combo_df['Pct_change'].idxmax()
         clp = x.combo_df.loc[cmax, 'Cur_price']
         clsym = x.combo_df.loc[cmax, ['Symbol']][0]
         clname = x.combo_df.loc[cmax, ['Co_name']][0]
-        recommended[cmax] = (clsym.rstrip(), '$'+str(clp), clname.rstrip(), '+%'+str(x.combo_df.loc[cmax, ['Pct_change']][0]) )
+
+        # allways make sure this is key #5 in recommendations dict
+        recommended['5'] = ('Highest % gainer:', clsym.rstrip(), '$'+str(clp), clname.rstrip(), '+%'+str(x.combo_df.loc[cmax, ['Pct_change']][0]) )
+        #recommended[cmax] = (clsym.rstrip(), '$'+str(clp), clname.rstrip(), '+%'+str(x.combo_df.loc[cmax, ['Pct_change']][0]) )
 
         print ( " " )
-        print ( f"============ >>LOW<< buy-in recommendations =============" )
+        print ( f"================= >>LOW<< buy-in recommendations ==================" )
         for k, v in recommended.items():
-            print ( f"{k}: {v[0]} {v[1]} {v[2]} {v[3]}" )
-            print ( "---------------------------------------------------------" )
+            print ( f"{k}: {v[0]} {v[1]} {v[2]} {v[3]} {v[4]}" )
+            print ( "-------------------------------------------------------------------" )
 
         print ( " " )
         print ( "============== High level activity inisghts =================" )
