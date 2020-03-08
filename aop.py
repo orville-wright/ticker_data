@@ -30,7 +30,8 @@ global parser
 parser = argparse.ArgumentParser(description="Entropy apperture engine")
 parser.add_argument('-c','--cycle', help='Ephemerial top 10 every 10 secs for 60 secs', action='store_true', dest='bool_tenten60', required=False, default=False)
 parser.add_argument('-d','--deep', help='Deep converged multi data list', action='store_true', dest='bool_deep', required=False, default=False)
-parser.add_argument('-n','--newsai', help='News sentiment Ai', action='store_true', dest='bool_news', required=False, default=False)
+#parser.add_argument('-n','--newsai', help='News sentiment Ai', action='store_true', dest='bool_news', required=False, default=False)
+parser.add_argument('-n','--newsai', help='News sentiment Ai', action='store', dest='newsymbol', required=False, default=False)
 parser.add_argument('-s','--screen', help='screener logic parser', action='store_true', dest='bool_scr', required=False, default=False)
 parser.add_argument('-t','--tops', help='show top ganers/losers', action='store_true', dest='bool_tops', required=False, default=False)
 parser.add_argument('-u','--unusual', help='unusual up & down volume', action='store_true', dest='bool_uvol', required=False, default=False)
@@ -110,6 +111,10 @@ def main():
         logging.disable(0)                  # Log level = OFF
     else:
         logging.disable(20)                 # Log lvel = INFO
+
+    if args['newsymbol'] is not False:
+        print ( " " )
+        print ( f"Scanning news for symbol: {args['newsymbol']}" )
 
     print ( " " )
 
@@ -252,7 +257,7 @@ def main():
         clname = x.combo_df.loc[cmax, ['Co_name']][0]
 
         # allways make sure this is key #5 in recommendations dict
-        recommended['5'] = ('Highest % gainer:', clsym.rstrip(), '$'+str(clp), clname.rstrip(), '+%'+str(x.combo_df.loc[cmax, ['Pct_change']][0]) )
+        recommended['5'] = ('Top % gainer:', clsym.rstrip(), '$'+str(clp), clname.rstrip(), '+%'+str(x.combo_df.loc[cmax, ['Pct_change']][0]) )
         #recommended[cmax] = (clsym.rstrip(), '$'+str(clp), clname.rstrip(), '+%'+str(x.combo_df.loc[cmax, ['Pct_change']][0]) )
 
         print ( " " )
@@ -265,10 +270,11 @@ def main():
         print ( "============== High level activity inisghts =================" )
         x.combo_grouped()       # insights
 
-    if args['bool_news'] is True:
+    if args['newsymbol'] is not False:
         print ( " " )
         print ( "========== ** HACKING ** : News Sentiment Ai =======================================" )
-        z = y_newsfilter(1, "IBM", args )
+        news_symbol = str(args['newsymbol'])
+        z = y_newsfilter(1, news_symbol, args )
         z.scan_news_depth_0()
         if args['bool_deep'] is True:
             ml_prep = z.read_allnews_depth_0()
