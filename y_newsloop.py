@@ -28,6 +28,7 @@ class y_newsfilter:
     inst_uid = 0
     cycle = 0           # class thread loop counter
     symbol = ""         # Unique company symbol
+    ml_brief = []       # ML TXT matrix for Naieve Bayes Classifier pre Count Vectorizer
 
     def __init__(self, i, symbol, global_args):
         # WARNING: There is/can-be NO checking to ensure this is a valid/real symbol
@@ -96,7 +97,7 @@ class y_newsfilter:
         cmi_debug = __name__+"::"+self.read_allnews_depth_0.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
-        x = 0    # row counter Also leveraged for unique dataframe key
+        x = 0    # num of new articiels read counter
 
         # element zones from main dataset @ depth_0
         li_superclass = self.ul_tag_dataset.find_all(attrs={"class": "js-stream-content Pos(r)"} )
@@ -138,7 +139,8 @@ class y_newsfilter:
                 data_path = html_element.a.get('href')
 
             # print ( f"News headline: {html_element.a.text}" )     # DEBUG
-            # print ( "News Short Brief: {:.400}".format(html_element.p.text) )    # DEBUG: truncate long New Brief headlines to max 400 chars
+            #print ( "Brief #: {} / News Short Brief: {:.400}".format(x, html_element.p.text) )    # DEBUG: truncate long Brief headlines to 400 chars
+            self.ml_brief.append(html_element.p.text)               # add Brief TXT into ML pre count vectorizer matrix 
             data_headline = html_element.a.text
             url_prehash = html_element.a.get('href')        # generate unuque hash for each URL. For dupe tests & comparrisons etc
             result = hashlib.sha256(url_prehash.encode())

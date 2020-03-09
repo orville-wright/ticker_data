@@ -11,6 +11,9 @@ import argparse
 import time
 import threading
 
+# ML capabilities
+from sklearn.feature_extraction.text import CountVectorizer
+
 # logging setup
 logging.basicConfig(level=logging.INFO)
 
@@ -268,12 +271,15 @@ def main():
 
         print ( " " )
         print ( "============== High level activity inisghts =================" )
-        x.combo_grouped()       # insights
+        averages = x.combo_grouped()       # insights
+        print ( averages )
+        print ( " " )
 
+###################### News Sentiment Ai ###################################
     if args['newsymbol'] is not False:
         print ( " " )
         print ( "========== ** HACKING ** : News Sentiment Ai =======================================" )
-        news_symbol = str(args['newsymbol'])
+        news_symbol = str(args['newsymbol'])            # symbol provided on CMDLine
         z = y_newsfilter(1, news_symbol, args )
         z.scan_news_depth_0()
         if args['bool_deep'] is True:
@@ -281,14 +287,31 @@ def main():
             # for k, v in ml_prep.items():
                 # print ( f"{k}: {v}" )
 
-                # TODO : dump this dict into a Pandas DF and drop+reset the index every time. Add SYMBOL column to DF
+                # TODO : drop+reset the DF index every time. Add SYMBOL column to DF (maybe?)
                 # NOTE: dont iter over dict{} & renumber dict keys. Very bad python form !!
             news_df = pd.DataFrame.from_dict(ml_prep, orient='index', \
                         columns=['Source', 'Outet', 'url_link', 'Author', 'Age'])
 
             print ( " " )
             print ( news_df )
+            print ( " " )
+            print ( "ML pre-Count Vectorizer matrix" )
+            for i in range(len(z.ml_brief)):
+                    print ( f"News item: #{i} {z.ml_brief[i]}" )
+                    print ( "---------------------------------------------------------------------------------" )
 
+            vectorizer = CountVectorizer()
+            corpus = [z.ml_brief[1]]
+            vf = vectorizer.fit_transform(corpus)         # testing on just 1 news article
+            print ( ">>Feature names<<" )
+            print( vectorizer.get_feature_names() )
+            print ( " " )
+            print ( f"vf: {vf}" )
+            print ( " " )
+            print ( f"vf-to-array: {vf.toarray()}" )
+
+
+    print ( " " )
     print ( "####### done #####")
 
 if __name__ == '__main__':
