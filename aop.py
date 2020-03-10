@@ -10,6 +10,7 @@ import logging
 import argparse
 import time
 import threading
+import random
 
 # ML capabilities
 from sklearn.feature_extraction.text import CountVectorizer
@@ -90,6 +91,7 @@ def bkgrnd_worker():
     extract_done.set()
     logging.info('main::bkgrnd_worker() EXIT thread inst #: %s' % work_inst.yti )
     return      # dont know if this this requireed or good semantics?
+
 
 #######################################################################
 # TODO: methods/Functions to add...
@@ -276,6 +278,7 @@ def main():
         print ( " " )
 
 ###################### News Sentiment Ai ###################################
+
     if args['newsymbol'] is not False:
         print ( " " )
         print ( "========== ** HACKING ** : News Sentiment Ai =======================================" )
@@ -295,20 +298,56 @@ def main():
             print ( " " )
             print ( news_df )
             print ( " " )
-            print ( "ML pre-Count Vectorizer matrix" )
-            for i in range(len(z.ml_brief)):
-                    print ( f"News item: #{i} {z.ml_brief[i]}" )
-                    print ( "---------------------------------------------------------------------------------" )
+            # for i in range(len(z.ml_brief)):                            # print all the News Brief headlines
+            #         print ( f"News item: #{i} {z.ml_brief[i]}" )
+            #         print ( "---------------------------------------------------------------------------------" )
 
+            print ( " " )
+            # Machine Learning hacking
+            randnb = random.randint(0, len(z.ml_brief)-1 )
+            print ( f"ML working on news brief #{randnb}..." )
+            print ( f"{z.ml_brief[randnb]}" )
             vectorizer = CountVectorizer()
-            corpus = [z.ml_brief[1]]
-            vf = vectorizer.fit_transform(corpus)         # testing on just 1 news article
-            print ( ">>Feature names<<" )
-            print( vectorizer.get_feature_names() )
+            corpus = [z.ml_brief[randnb]]                 # pick a random news brief to hack/work on
+            # vf = vectorizer.fit(corpus)
+            # vt = vectorizer.transform(corpus)
+            vft = vectorizer.fit_transform(corpus)        # testing on just 1 news article
+            print ( "----------- Feature names --------------------" )
+            print( f"{vectorizer.get_feature_names()}" )
+            print ( "--------------- Feature counts ---------------" )
+            print ( f"{vft}" )
+            print ( "----------------------------------------------" )
+
+	    # working & decoding native scikit-learn CSR data (i.e. Compressed Sparse Row matrix data)
+            #print ( f"DATA: {vft.data}" )
+            #print ( f"INDICES: {vft.indices}" )
+            #print ( f"INDPTR: {vft.indptr}" )
+            vmax = vft.max()				# the word(s) that holds the highest count
+            for i in range(0, vft.nnz):			# num of indexed items
+                for kv in vectorizer.vocabulary_.items():	# feature words in a dict{} index=word, value=feature_index_ptr
+                    if kv[1] == vft.indices[i]:		# {value} = this index?
+                        vword = kv[0]			# yes, get {key} (i.e. the english word)
+                        break
+
+                if vmax > 1:
+                    if vmax == vft.data[i]:			# is this word a max count word?
+                        print ( f"Item: {i} / Indice: {vft.indices[i]} / word: {vword} / Max freq word: {vft.data[i]} times" )
+                    else:
+                        print ( f"Item: {i} / Indice: {vft.indices[i]} / word: {vword} / {vft.data[i]}" )
+                # all words have equal count = 1
+                else:
+                    print ( f"Item: {i} / Indice: {vft.indices[i]} / word: {vword} / {vft.data[i]}" )
+
+            print ( "----------- Vocabulary dictionary ------------" )
+            print ( f"{vectorizer.vocabulary_}" )
             print ( " " )
-            print ( f"vf: {vf}" )
-            print ( " " )
-            print ( f"vf-to-array: {vf.toarray()}" )
+            #print ( "--------------- vft.toarray ------------------" )
+            #print ( f"{vft.toarray()}" )
+            print ( "------------ max word ------------------------" )
+            print ( f"Num of elements: {vft.nnz}" )
+            print ( f"Highest count word: {vft.max()}" )
+
+            #print ( f"V[0]: {vectorizer.vocabulary_}" )
 
 
     print ( " " )

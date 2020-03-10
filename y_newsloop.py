@@ -151,7 +151,9 @@ class y_newsfilter:
             if self.args['bool_deep'] is True:        # go DEEP & process each news article deeply?
                 if rhl_url == False:                  # yahoo,com local? or remote hosted non-yahoo.com article?
                     a_deep_link = 'https://finance.yahoo.com' + url_prehash
+                    #
                     deep_data = self.extract_article_data(a_deep_link)      # extract deep data from1 news article. Returned as list []
+                    #
                     ml_inlist = [data_parent, data_outlet, url_prehash, deep_data[0], deep_data[3] ]
                     ml_ingest[x] = ml_inlist        # add this data set to dict{}
                     print ( "\r{} processed...".format(x), end='', flush=True )
@@ -182,7 +184,9 @@ class y_newsfilter:
         cmi_debug = __name__+"::"+self.extract_article_data.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
         right_now = date.today()
-        a_subset = self.news_article_depth_1(news_article_url)      # got DEEP into this 1 news HTML page & setup data extraction zones
+        #
+        a_subset = self.news_article_depth_1(news_article_url)      # go DEEP into this 1 news HTML page & setup data extraction zones
+        #
         # print ( f"Tag sections in news page: {len(a_subset)}" )   # DEBUG
         for erow in range(len(a_subset)):       # cycyle through tag sections in this dataset (not predictible or consistent)
             if a_subset[erow].time:     # if this element rown has a <time> tag...
