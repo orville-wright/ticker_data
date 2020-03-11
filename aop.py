@@ -128,13 +128,13 @@ def main():
 ########### 1 - TOP GAINERS ################
     if args['bool_tops'] is True:
         print ( "========== Top 10 Gainers ==========" )
+        print ( " " )
         med_large_mega_gainers = y_topgainers(1)       # instantiate class
         med_large_mega_gainers.get_topg_data()        # extract data from finance.Yahoo.com
         x = med_large_mega_gainers.build_tg_df0()     # build full dataframe
-
-        print ( " " )
         med_large_mega_gainers.build_top10()           # show top 10
         med_large_mega_gainers.print_top10()           # print it
+        print ( " " )
 
 ########### 2 - TOP LOSERS ################
     if args['bool_tops'] is True:
@@ -285,69 +285,71 @@ def main():
         news_symbol = str(args['newsymbol'])            # symbol provided on CMDLine
         z = y_newsfilter(1, news_symbol, args )
         z.scan_news_depth_0()
+        #z.read_allnews_depth_0()                        # if bool_deep is not set, this does shallow extraction
+
         if args['bool_deep'] is True:
             ml_prep = z.read_allnews_depth_0()
-            # for k, v in ml_prep.items():
-                # print ( f"{k}: {v}" )
-
-                # TODO : drop+reset the DF index every time. Add SYMBOL column to DF (maybe?)
-                # NOTE: dont iter over dict{} & renumber dict keys. Very bad python form !!
             news_df = pd.DataFrame.from_dict(ml_prep, orient='index', \
                         columns=['Source', 'Outet', 'url_link', 'Author', 'Age'])
-
             print ( " " )
             print ( news_df )
             print ( " " )
-            # for i in range(len(z.ml_brief)):                            # print all the News Brief headlines
-            #         print ( f"News item: #{i} {z.ml_brief[i]}" )
-            #         print ( "---------------------------------------------------------------------------------" )
+        else:
+            z.read_allnews_depth_0()                        # just do a shallow extraction for ML level 1 testing
 
-            print ( " " )
-            # Machine Learning hacking
-            randnb = random.randint(0, len(z.ml_brief)-1 )
-            print ( f"ML working on news brief #{randnb}..." )
-            print ( f"{z.ml_brief[randnb]}" )
-            vectorizer = CountVectorizer()
-            corpus = [z.ml_brief[randnb]]                 # pick a random news brief to hack/work on
-            # vf = vectorizer.fit(corpus)
-            # vt = vectorizer.transform(corpus)
-            vft = vectorizer.fit_transform(corpus)        # testing on just 1 news article
-            print ( "----------- Feature names --------------------" )
-            print( f"{vectorizer.get_feature_names()}" )
-            print ( "--------------- Feature counts ---------------" )
-            print ( f"{vft}" )
-            print ( "----------------------------------------------" )
+        # Machine Learning hacking
+        # FOr now, focusing on New Brief headlines (i.e. short text docs)
+        # print ( "---------------------------------- Source dataset ---------------------------------------------" )
+        # for i in range(len(z.ml_brief)):                            # print all the News Brief headlines
+        #         print ( f"News item: #{i} {z.ml_brief[i]}" )
 
-	    # working & decoding native scikit-learn CSR data (i.e. Compressed Sparse Row matrix data)
-            #print ( f"DATA: {vft.data}" )
-            #print ( f"INDICES: {vft.indices}" )
-            #print ( f"INDPTR: {vft.indptr}" )
-            vmax = vft.max()				# the word(s) that holds the highest count
-            for i in range(0, vft.nnz):			# num of indexed items
-                for kv in vectorizer.vocabulary_.items():	# feature words in a dict{} index=word, value=feature_index_ptr
-                    if kv[1] == vft.indices[i]:		# {value} = this index?
-                        vword = kv[0]			# yes, get {key} (i.e. the english word)
-                        break
+        print ( "---------------------------------- Vectorizer -----------------------------------------" )
+        print ( " " )
+        # Machine Learning hacking
+        randnb = random.randint(0, len(z.ml_brief)-1 )
+        print ( f"ML working on news brief #{randnb}..." )
+        print ( f"{z.ml_brief[randnb]}" )
+        vectorizer = CountVectorizer()
+        corpus = [z.ml_brief[randnb]]                 # pick a random news brief to hack/work on
+        # vf = vectorizer.fit(corpus)
+        # vt = vectorizer.transform(corpus)
+        vft = vectorizer.fit_transform(corpus)        # testing on just 1 news article
+        print ( "----------- Feature names --------------------" )
+        print( f"{vectorizer.get_feature_names()}" )
+        print ( "--------------- Feature counts ---------------" )
+        print ( f"{vft}" )
+        print ( "---------- Feature word matrix map -----------" )
 
-                if vmax > 1:
-                    if vmax == vft.data[i]:			# is this word a max count word?
-                        print ( f"Item: {i} / Indice: {vft.indices[i]} / word: {vword} / Max freq word: {vft.data[i]} times" )
-                    else:
-                        print ( f"Item: {i} / Indice: {vft.indices[i]} / word: {vword} / {vft.data[i]}" )
-                # all words have equal count = 1
+	# working & decoding native scikit-learn CSR data (i.e. Compressed Sparse Row matrix data)
+        #print ( f"DATA: {vft.data}" )
+        #print ( f"INDICES: {vft.indices}" )
+        #print ( f"INDPTR: {vft.indptr}" )
+        vmax = vft.max()				# the word(s) that holds the highest count
+        for i in range(0, vft.nnz):			# num of indexed items
+            for kv in vectorizer.vocabulary_.items():	# feature words in a dict{} index=word, value=feature_index_ptr
+                if kv[1] == vft.indices[i]:		# {value} = this index?
+                    vword = kv[0]			# yes, get {key} (i.e. the english word)
+                    break
+
+            if vmax > 1:
+                if vmax == vft.data[i]:			# is this word a max count word?
+                    print ( f"Item: {i} / Indice: {vft.indices[i]} / word: {vword} / Max freq word: {vft.data[i]} times" )
                 else:
                     print ( f"Item: {i} / Indice: {vft.indices[i]} / word: {vword} / {vft.data[i]}" )
+            # all words have equal count = 1
+            else:
+                print ( f"Item: {i} / Indice: {vft.indices[i]} / word: {vword} / {vft.data[i]}" )
 
-            print ( "----------- Vocabulary dictionary ------------" )
-            print ( f"{vectorizer.vocabulary_}" )
-            print ( " " )
-            #print ( "--------------- vft.toarray ------------------" )
-            #print ( f"{vft.toarray()}" )
-            print ( "------------ max word ------------------------" )
-            print ( f"Num of elements: {vft.nnz}" )
-            print ( f"Highest count word: {vft.max()}" )
+        print ( "----------- Vocabulary dictionary ------------" )
+        print ( f"{vectorizer.vocabulary_}" )
+        print ( " " )
+        #print ( "--------------- vft.toarray ------------------" )
+        #print ( f"{vft.toarray()}" )
+        print ( "------------ max word ------------------------" )
+        print ( f"Num of elements: {vft.nnz}" )
+        print ( f"Highest count word: {vft.max()}" )
 
-            #print ( f"V[0]: {vectorizer.vocabulary_}" )
+        #print ( f"V[0]: {vectorizer.vocabulary_}" )
 
 
     print ( " " )

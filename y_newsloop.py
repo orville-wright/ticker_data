@@ -94,6 +94,12 @@ class y_newsfilter:
         """NOTE: This is main controller logic loop because we're at the TOP high-level news page for this stock."""
         """Wrangle, clean/convert/format the data correctly"""
 
+        # Data & Elements extrated and computed
+        # 1. article url path
+        # 2. Is news article url local (on Yahoo.com) or remotely hosted
+        # 3. Unique Sha256 Hash of URL
+        # 4. Brief (short article headline)
+
         cmi_debug = __name__+"::"+self.read_allnews_depth_0.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
@@ -138,21 +144,23 @@ class y_newsfilter:
                 data_outlet = 'finance.yahoo.com'
                 data_path = html_element.a.get('href')
 
-            # print ( f"News headline: {html_element.a.text}" )     # DEBUG
-            #print ( "Brief #: {} / News Short Brief: {:.400}".format(x, html_element.p.text) )    # DEBUG: truncate long Brief headlines to 400 chars
-            self.ml_brief.append(html_element.p.text)               # add Brief TXT into ML pre count vectorizer matrix 
-            data_headline = html_element.a.text
+            # Short brief headline...
+            # print ( f"News headline: {html_element.a.text}" )
+            # print ( "Brief #: {} / News Short Brief: {:.400}".format(x, html_element.p.text) )    # truncate long Brief down to 400 chars
+            self.ml_brief.append(html_element.p.text)       # add Brief TXT into ML pre count vectorizer matrix 
+
+            # URL unique hash
             url_prehash = html_element.a.get('href')        # generate unuque hash for each URL. For dupe tests & comparrisons etc
             result = hashlib.sha256(url_prehash.encode())
-            # print ( f"Hash encoded URL: {result.hexdigest()}" )     # DEBUG
             data_urlhash = result.hexdigest()
+            # print ( f"Hash encoded URL: {result.hexdigest()}" )     # DEBUG
 
             # BIG logic decision here...!!!
             if self.args['bool_deep'] is True:        # go DEEP & process each news article deeply?
                 if rhl_url == False:                  # yahoo,com local? or remote hosted non-yahoo.com article?
                     a_deep_link = 'https://finance.yahoo.com' + url_prehash
                     #
-                    deep_data = self.extract_article_data(a_deep_link)      # extract deep data from1 news article. Returned as list []
+                    deep_data = self.extract_article_data(a_deep_link)      # extract extra data from news article. Returned as list []
                     #
                     ml_inlist = [data_parent, data_outlet, url_prehash, deep_data[0], deep_data[3] ]
                     ml_ingest[x] = ml_inlist        # add this data set to dict{}
@@ -180,6 +188,9 @@ class y_newsfilter:
         """A complex html DATA EXTRACTION. We are now getting into the dirty details"""
         """and low-levl data components/elements within specific HTML news data page."""
         """WARN: This is extremley specific to a single https://finance.yahoo.com news article."""
+
+        # data elements extracted & computed
+        # Authour, Date posted, Time posted, Age of article
 
         cmi_debug = __name__+"::"+self.extract_article_data.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
@@ -212,16 +223,6 @@ class y_newsfilter:
         time_posted = str(dt_ISO8601.time())
         # print ( f"News article age: DATE: {date_posted} / TIME: {time_posted} / AGE: {abs(days_old.days)}" )  # DEBUG
         return ( [nauthor, date_posted, time_posted, abs(days_old.days)] )  # return a list []
-
-# method #3
-# Hacking function - keep me arround for a while
-    def prog_bar(self, x, y):
-        """simple progress dialogue function"""
-        if x % y == 0:
-            print ( " " )
-        else:
-            print ( ".", end="" )
-        return
 
 # method #4
     def topg_listall(self):
