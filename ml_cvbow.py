@@ -29,19 +29,21 @@ class y_bow:
     fo_tokens = ""          # Vocabulary of tokens in a doc (NOT a Term doc Matrix)
     vectorizer = ""         # tokenized & count matrix handle
     corpus = []             # Corpus of text documents we ar working with
+    stopwords = []          # Stopwords
     cv_df0 = ""             # DataFrame - Full list of top loserers
     cv_df1 = ""             # DataFrame - Ephemerial list of top 10 loserers. Allways overwritten
     cv_df2 = ""             # DataFrame - Top 10 ever 10 secs for 60 secs
     inst_uid = 0            # instance UID
     cycle = 0               # class thread loop counter
 
-    def __init__(self, id, global_args):
+    def __init__(self, id, sw, global_args):
         cmi_debug = __name__+"::"+self.__init__.__name__
         logging.info('%s - INSTANTIATE' % cmi_debug )
         # init empty DataFrame with present colum names
         self.inst_uid = id
+        self.stopwords = sw
         self.args = global_args
-        self.vectorizer = CountVectorizer()
+        self.vectorizer = CountVectorizer(stop_words=sw)
         return
 
 # methods
@@ -95,7 +97,7 @@ class y_bow:
 
             if vmax > 1:
                 if vmax == self.ft_tdmatrix.data[i]:			# is this word a highest frequency count word?
-                    print ( f"Item: {i} / Indice: {self.ft_tdmatrix.indices[i]} / word: {vword} / Max freq word: {self.ft_tdmatrix.data[i]} times" )
+                    print ( f"Item: {i} / Indice: {self.ft_tdmatrix.indices[i]} / word: {vword} / Max freq word: {self.ft_tdmatrix.data[i]} times <<" )
                 else:
                     print ( f"Item: {i} / Indice: {self.ft_tdmatrix.indices[i]} / word: {vword} / {self.ft_tdmatrix.data[i]}" )
             else:   # all words have equal count = 1, so dont Identify the High Frequency word

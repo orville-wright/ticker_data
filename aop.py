@@ -14,6 +14,7 @@ import random
 
 # ML capabilities
 from sklearn.feature_extraction.text import CountVectorizer
+from nltk.corpus import stopwords
 
 # logging setup
 logging.basicConfig(level=logging.INFO)
@@ -304,18 +305,51 @@ def main():
         # for i in range(len(z.ml_brief)):                            # print all the News Brief headlines
         #         print ( f"News item: #{i} {z.ml_brief[i]}" )
 
-        print ( "---------------------------------- Vectorizer 1 -----------------------------------------" )
         print ( " " )
-        # Machine Learning hacking
+
+        # ML core setup
         randnb = random.randint(0, len(z.ml_brief)-1 )  # pick a random news brief to hack/work on
-        print ( f"ML working on news brief #{randnb}..." )
-        print ( f"{z.ml_brief[randnb]}" )
-        v = y_bow(1, args)                      # initalize a Bag_of_Words CoountVectorizer
+        sw = stopwords.words("english")
+        v = y_bow(1, sw, args)                  # initalize a Bag_of_Words CoountVectorizer
         v.corpus = [z.ml_brief[randnb]]         # initalize this BOW with a corpus of TX words
         v.fitandtransform()                     # FIT and TRANSFOR the corpus into a CSR tokenized Term-DOc Matrix
+
+        # test #1
+        print ( "---------------------------------- Vectorizer 1 -----------------------------------------" )
+        print ( f"ML working on news brief #{randnb}..." )
+        print ( f"{z.ml_brief[randnb]}" )
+        print ( f"Num of word elements: {v.ft_tdmatrix.nnz}" )
         print ( f"Most common word: {v.get_hfword()}" )
+        print ( f"High Frequency word: {v.get_hfword()}" )
+        print ( f"Highest count word: {v.ft_tdmatrix.max()}" )
+        """
+        print ( "----------- Feature names --------------------" )
+        print( f"{v.vectorizer.get_feature_names()}" )
+        print ( "--------------- Feature counts ---------------" )
+        print ( f"{v.ft_tdmatrix}" )
+        print ( "---------- Feature word matrix map -----------" )
+        v.view_tdmatrix()
+        print ( "----------- Vocabulary dictionary ------------" )
+        print ( f"{v.vectorizer.vocabulary_}" )
+        print ( " " )
+        print ( "------------ max word ------------------------" )
+        """
+
+        print ( "---------------------------------- Vectorizer 2 -----------------------------------------" )
+        randnb2 = random.randint(0, len(z.ml_brief)-1 )
+        v.corpus = [z.ml_brief[randnb2]]
+        v.fitandtransform()
+        print ( f"ML working on news brief #{randnb2}..." )
+        print ( f"{z.ml_brief[randnb2]}" )
+        print ( f"Num of word elements: {v.ft_tdmatrix.nnz}" )
+        print ( f"Most common word: {v.get_hfword()}" )
+        print ( f"High Frequency word: {v.get_hfword()}" )
+        print ( f"Highest count word: {v.ft_tdmatrix.max()}" )
 
         """
+        print ( f"ML working on news brief #{randnb2}..." )
+        print ( f"{z.ml_brief[randnb2]}" )
+        print ( f"Most common word: {v.get_hfword()}" )
         print ( "----------- Feature names --------------------" )
         print( f"{v.vectorizer.get_feature_names()}" )
         print ( "--------------- Feature counts ---------------" )
@@ -330,21 +364,7 @@ def main():
         print ( "------------ max word ------------------------" )
         print ( f"Num of elements: {v.ft_tdmatrix.nnz}" )
         print ( f"Highest count word: {v.ft_tdmatrix.max()}" )
-        """
-
-        print ( "---------------------------------- Vectorizer 2 -----------------------------------------" )
-        randnb2 = random.randint(0, len(z.ml_brief)-1 )
-        print ( f"ML working on news brief #{randnb2}..." )
-        print ( f"{z.ml_brief[randnb2]}" )
-        v.corpus = [z.ml_brief[randnb2]]
-        v.fitandtransform()
-        print ( f"Most common word: {v.get_hfword()}" )
-
-        """
-        print ( "----------- Vocabulary dictionary ------------" )
-        print ( f"{v.vectorizer.vocabulary_}" )
-        print ( f"*** High Frequency word: {v.get_hfword()}" )
-        """
+	"""
 
     print ( " " )
     print ( "####### done #####")
