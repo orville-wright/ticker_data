@@ -14,6 +14,7 @@ import inspect
 
 # ML capabilities
 from sklearn.feature_extraction.text import CountVectorizer
+from nltk.corpus import stopwords
 
 # logging setup
 logging.basicConfig(level=logging.INFO)
