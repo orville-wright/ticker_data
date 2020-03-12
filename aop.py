@@ -25,6 +25,7 @@ from screener_dg1 import screener_dg1
 from unusual_vol import unusual_vol
 from shallow_logic import shallow_combo
 from y_newsloop import y_newsfilter
+from ml_cvbow import y_bow
 
 # Globals
 work_inst = 0
@@ -303,54 +304,47 @@ def main():
         # for i in range(len(z.ml_brief)):                            # print all the News Brief headlines
         #         print ( f"News item: #{i} {z.ml_brief[i]}" )
 
-        print ( "---------------------------------- Vectorizer -----------------------------------------" )
+        print ( "---------------------------------- Vectorizer 1 -----------------------------------------" )
         print ( " " )
         # Machine Learning hacking
-        randnb = random.randint(0, len(z.ml_brief)-1 )
+        randnb = random.randint(0, len(z.ml_brief)-1 )  # pick a random news brief to hack/work on
         print ( f"ML working on news brief #{randnb}..." )
         print ( f"{z.ml_brief[randnb]}" )
-        vectorizer = CountVectorizer()
-        corpus = [z.ml_brief[randnb]]                 # pick a random news brief to hack/work on
-        # vf = vectorizer.fit(corpus)
-        # vt = vectorizer.transform(corpus)
-        vft = vectorizer.fit_transform(corpus)        # testing on just 1 news article
+        v = y_bow(1, args)                      # initalize a Bag_of_Words CoountVectorizer
+        v.corpus = [z.ml_brief[randnb]]         # initalize this BOW with a corpus of TX words
+        v.fitandtransform()                     # FIT and TRANSFOR the corpus into a CSR tokenized Term-DOc Matrix
+        print ( f"Most common word: {v.get_hfword()}" )
+
+        """
         print ( "----------- Feature names --------------------" )
-        print( f"{vectorizer.get_feature_names()}" )
+        print( f"{v.vectorizer.get_feature_names()}" )
         print ( "--------------- Feature counts ---------------" )
-        print ( f"{vft}" )
+        print ( f"{v.ft_tdmatrix}" )
         print ( "---------- Feature word matrix map -----------" )
-
-	# working & decoding native scikit-learn CSR data (i.e. Compressed Sparse Row matrix data)
-        #print ( f"DATA: {vft.data}" )
-        #print ( f"INDICES: {vft.indices}" )
-        #print ( f"INDPTR: {vft.indptr}" )
-        vmax = vft.max()				# the word(s) that holds the highest count
-        for i in range(0, vft.nnz):			# num of indexed items
-            for kv in vectorizer.vocabulary_.items():	# feature words in a dict{} index=word, value=feature_index_ptr
-                if kv[1] == vft.indices[i]:		# {value} = this index?
-                    vword = kv[0]			# yes, get {key} (i.e. the english word)
-                    break
-
-            if vmax > 1:
-                if vmax == vft.data[i]:			# is this word a max count word?
-                    print ( f"Item: {i} / Indice: {vft.indices[i]} / word: {vword} / Max freq word: {vft.data[i]} times" )
-                else:
-                    print ( f"Item: {i} / Indice: {vft.indices[i]} / word: {vword} / {vft.data[i]}" )
-            # all words have equal count = 1
-            else:
-                print ( f"Item: {i} / Indice: {vft.indices[i]} / word: {vword} / {vft.data[i]}" )
+        v.view_tdmatrix()
+        print ( f"*** High Frequency word: {v.get_hfword()}" )
 
         print ( "----------- Vocabulary dictionary ------------" )
-        print ( f"{vectorizer.vocabulary_}" )
+        print ( f"{v.vectorizer.vocabulary_}" )
         print ( " " )
-        #print ( "--------------- vft.toarray ------------------" )
-        #print ( f"{vft.toarray()}" )
         print ( "------------ max word ------------------------" )
-        print ( f"Num of elements: {vft.nnz}" )
-        print ( f"Highest count word: {vft.max()}" )
+        print ( f"Num of elements: {v.ft_tdmatrix.nnz}" )
+        print ( f"Highest count word: {v.ft_tdmatrix.max()}" )
+        """
 
-        #print ( f"V[0]: {vectorizer.vocabulary_}" )
+        print ( "---------------------------------- Vectorizer 2 -----------------------------------------" )
+        randnb2 = random.randint(0, len(z.ml_brief)-1 )
+        print ( f"ML working on news brief #{randnb2}..." )
+        print ( f"{z.ml_brief[randnb2]}" )
+        v.corpus = [z.ml_brief[randnb2]]
+        v.fitandtransform()
+        print ( f"Most common word: {v.get_hfword()}" )
 
+        """
+        print ( "----------- Vocabulary dictionary ------------" )
+        print ( f"{v.vectorizer.vocabulary_}" )
+        print ( f"*** High Frequency word: {v.get_hfword()}" )
+        """
 
     print ( " " )
     print ( "####### done #####")
