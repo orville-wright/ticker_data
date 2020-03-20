@@ -56,12 +56,9 @@ class screener_dg1:
             logging.info('%s read html stream' % cmi_debug )
             self.soup = BeautifulSoup(s, "html.parser")
         # ATTR style search. Results -> Dict
-        # <tr tag in target merkup line has a very complex 'class=' but the attributes are unique. e.g. 'simpTblRow' is just one unique attribute
+        # <tr> tag has a very complex 'class=' but attributes are unique. e.g. 'simpTblRow'
         logging.info('%s store url data handle' % cmi_debug )
         self.all_tag_tr = self.soup.find_all(attrs={"class": "simpTblRow"})
-
-        # target markup line I am scanning looks like this...
-        # soup.find_all( "tr", class_="simpTblRow Bgc($extraLightBlue):h BdB Bdbc($finLightGrayAlt) Bdbc($tableBorderBlue):h H(32px) Bgc($extraLightBlue)" )
 
         # Example CSS Selector
         #all_tag_tr1 = soup.select( "tr.simpTblRow.Bgc" )
@@ -172,7 +169,6 @@ class screener_dg1:
         logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
-        #print ( self.dg1_df0.sort_values(by='Pct_change', ascending=False ) )
         print ( self.dg1_df0.sort_values(by='Row', ascending=True ) )
         return
 
@@ -186,7 +182,6 @@ class screener_dg1:
         logging.info('%s - Drop all rows from DF1' % cmi_debug )
         self.dg1_df1.drop(self.dg1_df1.index, inplace=True)
         logging.info('%s - Copy DF0 -> ephemerial DF1' % cmi_debug )
-        #self.dg1_df1 = self.dg1_df0.sort_values(by='Pct_change', ascending=False ).head(20).copy(deep=True)    # create new DF of top 10 entries
         self.dg1_df1 = self.dg1_df0.sort_values(by='Pct_change', ascending=False ).copy(deep=True)    # create new DF via copy of top 10 entries
         self.dg1_df1.rename(columns = {'Row':'ERank'}, inplace = True)    # Rank is more accurate for this Ephemerial DF
         self.dg1_df1.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
@@ -194,13 +189,12 @@ class screener_dg1:
 
 # method #7
     def print_top10(self):
-        """Prints the Top 10 Dataframe"""
+        """Prints the Top 20 Dataframe"""
 
         cmi_debug = __name__+"::"+self.print_top10.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
-        #print ( self.dg1_df1.sort_values(by='Pct_change', ascending=False ).head(20) )
         print ( self.dg1_df1.sort_values(by='Pct_change', ascending=False ) )
         return
 
@@ -219,7 +213,7 @@ class screener_dg1:
     def screener_logic(self):
         """Exectract a list of small cap **GAINERS ONLY** logic"""
         """ 1. Sort by Cur_price """
-        """ 2. exclude any company with Market Cap < $750M """
+        """ 2. exclude any company with Market Cap < $299M """
         """ 3. manage company's with Market cap in BILLION's (requires special handeling) """
         """ 3. exclude any comany with %gain less than 5% """
         """ 4. SMALL CAP stocks only - Excludes Medium. Large, Mega cap companies!!"""
@@ -229,13 +223,12 @@ class screener_dg1:
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
 
-        # This method is more gracefull, but it fails on Winodws/Python
-        #self.dg1_df1 = self.dg1_df0.query('Mkt_cap > 749' ).copy(deep=True)       # capture MILLIONS 1st
-        self.dg1_df1 = self.dg1_df0[self.dg1_df0.Mkt_cap > 500 ]       # capture MILLIONS only becasue Billions = num/1000
-        self.dg1_df1 =  pd.concat( [ self.dg1_df1, self.dg1_df0[self.dg1_df0.M_B == "SB"] ] )  # now capture BILLIONS & concat both results
+        self.dg1_df1 = self.dg1_df0[self.dg1_df0.Mkt_cap > 299 ]       # limit to greater than $299M
+        self.dg1_df1 =  pd.concat( [ self.dg1_df1, self.dg1_df0[self.dg1_df0.M_B == "SB"] ] )  # now capture all BILLIONS
         self.dg1_df1 = self.dg1_df1.sort_values(by=['Pct_change'], ascending=False )
         self.dg1_df1.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
 
+        # save some key stats items
         rx = {}
         ulp = self.dg1_df1['Cur_price'].min()
         lowestprice = self.dg1_df1['Cur_price'].min()
@@ -245,7 +238,6 @@ class screener_dg1:
 
         # Allways make sure this is key #1 in the recommendations dict
         rx['1'] = ('Small cap % gainer:', lowsym.rstrip(), '$'+str(ulp), lowconame.rstrip(), '+%'+str(self.dg1_df1.loc[minv, ['Pct_change']][0]) )
-        #rx[minv] = (lowsym.rstrip(), '$'+str(ulp), lowconame.rstrip(), '+%'+str(self.dg1_df1.loc[minv, ['Pct_change']][0]) )
 
         print ( f">>Lowest<< price OPPTY is: #{minv} - {lowconame.rstrip()} ({lowsym.rstrip()}) @ ${lowestprice}" )
         print ( " " )

@@ -175,10 +175,10 @@ def main():
 ########### Small Cap gainers & loosers ################
 # small caps are isolate outside the regular dataset by yahoo.com
     if args['bool_scr'] is True:
-        print ( "========== Screener: SMALL CAP Day Gainers : +5% & > $750M Mkt-cap ==========" )
+        print ( "========== Screener: SMALL CAP Day Gainers : +5% & > $299M Mkt-cap ==========" )
         small_cap_dataset = screener_dg1(1)       # instantiate class
-        small_cap_dataset.get_data()        # extract data from finance.Yahoo.com
-        x = small_cap_dataset.build_df0()     # build full dataframe
+        small_cap_dataset.get_data()              # extract data from finance.Yahoo.com
+        x = small_cap_dataset.build_df0()         # build full dataframe
         # scrn1.build_top10()           # show top 10
         # scrn1.print_top10()           # print it
 
@@ -241,7 +241,6 @@ def main():
 
             # allways make sure this is key #3 in recommendations dict
             recommended['3'] = ('Hottest:', hotsym.rstrip(), '$'+str(hotp), hotname.rstrip(), '+%'+str(x.combo_df.loc[hotidx, ['Pct_change']][0]) )
-            #recommended[hotidx] = (hotsym.rstrip(), '$'+str(hotp), hotname.rstrip(), '+%'+str(x.combo_df.loc[hotidx, ['Pct_change']][0]) )
             print ( f">>LOW<< prine **Hot** stock: {hotsym.rstrip()} {'$'+str(hotp)} {hotname.rstrip()} {'+%'+str(x.combo_df.loc[hotidx, ['Pct_change']][0])} " )
             print ( " " )
 
@@ -255,7 +254,6 @@ def main():
 
         # allways make sure this is key #4 in recommendations dict
         recommended['4'] = ('Large cap:', clsym.rstrip(), '$'+str(clp), clname.rstrip(), '+%'+str(x.combo_df.loc[cminv, ['Pct_change']][0]) )
-        #recommended[cminv] = (clsym.rstrip(), '$'+str(clp), clname.rstrip(), '+%'+str(x.combo_df.loc[cminv, ['Pct_change']][0]) )
 
         # Biggest gainer stock in combo_df
         cmax = x.combo_df['Pct_change'].idxmax()
@@ -265,7 +263,6 @@ def main():
 
         # allways make sure this is key #5 in recommendations dict
         recommended['5'] = ('Top % gainer:', clsym.rstrip(), '$'+str(clp), clname.rstrip(), '+%'+str(x.combo_df.loc[cmax, ['Pct_change']][0]) )
-        #recommended[cmax] = (clsym.rstrip(), '$'+str(clp), clname.rstrip(), '+%'+str(x.combo_df.loc[cmax, ['Pct_change']][0]) )
 
         print ( " " )
         print ( f"================= >>LOW<< buy-in recommendations ==================" )
