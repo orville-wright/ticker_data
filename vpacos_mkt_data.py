@@ -40,35 +40,29 @@ def main():
     acct_info = rx.get_account()
     pos_info = rx.list_positions()
 
-    #print ( f"---------------- Account info ------------------" )
-    #print ( acct_info )
-
-    #print ( f"---------------- Positions info ------------------" )
-    #for i in range(len(pos_info)):
-    #    print ( f"Item #{i} \n {pos_info[i]}" )
-
-    print ( " " )
-    print ( f"---------------- Stock price info ------------------" )
-    print ( " " )
-    print ( f"Looking at the RAW format data we extracted..." )
-    print ( f"---------------------------------------------------" )
-
     price_info = rx.get_barset(symbols='CODX', timeframe='1Min', limit=15)
     stock_bars = price_info['CODX']
     print ( f"{price_info}" )
     print ( " " )
 
-    #for k, v in price_info.items():
-    #    print ( f"**KEY: {k}" )
     print ( f"Some info about the data..." )
     print ( f"-----------------------------------" )
     my_keys = price_info.keys()
     list_of_my_keys = list(my_keys)
-    print ( f"List of all stocks symbols held inside this data DICTionary: {list_of_my_keys}" )
-    print ( f"How many stock symbols are inside this data dictionary: {len(list_of_my_keys)}" )
-    print ( f"Dictionary KEY # 0 is for symbol: {list_of_my_keys[0]}" )
+    print ( f"KEYS: {my_keys}" )
+    print ( f"TYpe KEYS: {type(my_keys)}" )
+    print ( f"LIST of KEYS 1: {list(my_keys)}" )
+    print ( f"LEN of list of keys: {len(list_of_my_keys)}" )
+    print ( f"KEY # 0 / 1: {list_of_my_keys[0]}" )
+    print ( f"KEY # 0 / 2: {list(my_keys)[0]}" )
+    print ( f"ITER price_info: {iter(price_info)}" )
+    for i in iter(price_info):
+        print ( f"ITERATE over keys: {i}" )
+        print ( f"---------------- ITERATE ----------------" )
+
+    print ( f"price_info.values(): {price_info.values()}" )
     print ( " " )
-    print ( f"Looking at the raw data iside the {list_of_my_keys[0]} dataset..." )
+    print ( f"RAW dict data:  {list_of_my_keys[0]} dataset..." )        # same as price_info.values()
     print ( f"{stock_bars}" )
 
     print ( " " )
