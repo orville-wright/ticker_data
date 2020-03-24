@@ -15,6 +15,11 @@ import re
 
 
 def get_live_price(ticker):
+    # NOTE: This method is slower than method #2
+    #       because it uses a URL that has richer media elements. So the page builds slower in the extraction.
+    #       Although, it's data elements are structured in a much closer and simpler group. i.e. Extraction is a bit simpler.
+    #       It also has 1 field not available in method #2 (i.e. %change)
+
     with urllib.request.urlopen( f"https://bigcharts.marketwatch.com/quickchart/quickchart.asp?symb={ticker}&insttype=&freq=9&show=True&time=1" ) as url:
         s = url.read()
         data_soup = BeautifulSoup(s, "html.parser")
@@ -31,23 +36,27 @@ def get_live_price(ticker):
         walk_quote1 = quote1.find_all("td")
         for i in walk_quote1:
             if not i.select('img'):
-                print ( f"{i.span.text} / {i.div.text}" )
+                print ( f"{i.span.text}  {i.div.text}" )
             else:
                 change_abs = re.sub('[\n\ ]', '', i.div.text)
-                print ( f"{i.span.text} / {change_abs}" )
+                print ( f"{i.span.text}  {change_abs}" )
 
         walk_quote2 = quote2.find_all("td")
         for i in walk_quote2:
             if not i.select('img'):
-                print ( f"{i.span.text} / {i.div.text}" )
+                print ( f"{i.span.text}  {i.div.text}" )
             else:
                 change_abs = re.sub('[\n\ ]', '', i.div.text)
-                print ( f"{i.span.text} / {change_abs}" )
+                print ( f"{i.span.text}  {change_abs}" )
 
     return
 
 
 def get_quick_price(ticker):
+    # NOTE: This method is much faster
+    #       The URL is a minimal webpage doc with almost NO rich meida elements. i.e. page builds very quickly on extractrion
+    #       Although the data elemets require a little extra setup attention for quick extraction
+
     with urllib.request.urlopen( f"https://bigcharts.marketwatch.com/quickchart/qsymbinfo.asp?symb={ticker}" ) as url:
         s = url.read()
         data_soup = BeautifulSoup(s, "html.parser")
@@ -69,10 +78,10 @@ def get_quick_price(ticker):
         print ( f"Last price: {next(qhx)}" )
         print ( f"Change: {next(qhx)}" )
 
-        print ( f"------------------ Quickquote / price action: {ticker} ---------------------" )
+        print ( f"------------------ Quickquote price action: {ticker} ---------------------" )
         qlen = len(quote_data)
         for i in range(1, qlen, 2):
-            print ( f"{quote_data[i].text} / {quote_data[i+1].text}" )
+            print ( f"{quote_data[i].text} {quote_data[i+1].text}" )
 
         print ( f"------------------ Quickquote / Financials: {ticker} ---------------------" )
         flen = len(fin_data)
@@ -81,7 +90,7 @@ def get_quick_price(ticker):
             clean2 = re.sub('[\n\r]', '', fin_data[i+1].text)
             clean1 = clean1.strip()
             clean2 = clean2.strip()
-            print ( f"{clean1} / {clean2}" )
+            print ( f"{clean1} {clean2}" )
 
     return
 
