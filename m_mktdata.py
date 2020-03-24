@@ -6,13 +6,24 @@ import urllib
 import re
 
 # TODO:
+    # Basic quote: split 52 week range into 2 data elemets
+    # Finaincials: split short interest into 2 data elements
+    #              split 52-week high into 2 elemets
+    #              split 52-week low into 2 elements
+    #              split average price into 2 elemets (50-day & 200-day)
+    #              split average volume into 2 elements (50-day & 200-day)
+    #
     # Make ths a class
     # build a DICT {} for each section
     # make DICT a class gloabl attribute
     # DICT 1 - Basic quote
     # DICT 2 - QUick quote
     # DICT 3 - Basic Finaincials
-
+    # Before adding data to DICT's...
+    #       make sure all numeric strings are converted to float before addig to DICT's
+    #       remove () from strings
+    #       remove () from negative numbers and formats as negative float
+    #       re-compute data strings as true date objects
 
 def get_live_price(ticker):
     # NOTE: This method is slower than method #2
