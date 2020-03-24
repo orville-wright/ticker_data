@@ -35,13 +35,11 @@ def get_live_price(ticker):
         s = url.read()
         data_soup = BeautifulSoup(s, "html.parser")
         quote_section = data_soup.find(attrs={"id": "quote"} )
-        #print ( f" ------------------ quote section ---------------------" )
-        #print ( quote_section )
-        url.close()
         quote_table = quote_section.find("td", attrs={"class": "last"} )
         quote_data = quote_section.find_all("tr")
         quote1 = quote_data[2]
         quote2 = quote_data[3]
+        url.close()
 
         print ( f" ------------------ Basic quote: {ticker} ---------------------" )
         walk_quote1 = quote1.find_all("td")
@@ -65,8 +63,8 @@ def get_live_price(ticker):
 
 def get_quick_price(ticker):
     # NOTE: This method is much faster
-    #       The URL is a minimal webpage doc with almost NO rich meida elements. i.e. page builds very quickly on extractrion
-    #       Although the data elemets require a little extra setup attention for quick extraction
+    #       The URL is a minimal webpage doc with almost NO rich meida elements. i.e. page builds very quickly on extraction
+    #       Although the data elemets require a little extra setup & attention for quick extraction
 
     with urllib.request.urlopen( f"https://bigcharts.marketwatch.com/quickchart/qsymbinfo.asp?symb={ticker}" ) as url:
         s = url.read()
