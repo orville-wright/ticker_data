@@ -108,7 +108,6 @@ class mw_quote:
         ticker = ticker
         self.symbol = ticker
         url_endpoint = "https://bigcharts.marketwatch.com/quickchart/qsymbinfo.asp?symb="
-        print ( f"URL endpoint: {url_endpoint}{ticker}" )
 
         with urllib.request.urlopen( f"{url_endpoint}{ticker}" ) as url:
             s = url.read()
