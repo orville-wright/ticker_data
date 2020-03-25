@@ -28,7 +28,7 @@ logging.basicConfig(level=logging.INFO)
     #       remove () from strings
     #       remove () from negative numbers and formats as negative float
     #       re-compute data strings as true date objects
-class mw_quote(self, symbol):
+class mw_quote:
     """Get a live quote via a fast data extraction from a fast web URL endpoint.
     There are 2 differnt URL endpoints leveraged via  www.marketwatch.com. Both are simple
     URL pages have almost zero rich media elements embedded in them. i.e. they are almost 100% TXT.
@@ -38,6 +38,7 @@ class mw_quote(self, symbol):
     inst_uid = 0
     cycle = 0           # class thread loop counter
     symbol = ""         # Unique company symbol
+    prev_symbol = ""    # the ticker we previously looked at
     ml_brief = []       # ML TXT matrix for Naieve Bayes Classifier pre Count Vectorizer
     quote = {}          # the core data dict
 
@@ -47,7 +48,8 @@ class mw_quote(self, symbol):
         logging.info('%s - INIT inst' % cmi_debug )
         self.args = global_args
         self.inst_uid = i
-        self.symbol = NONE
+        self.symbol = 'NONE'
+        self.prev_symbol = 'NONE'
         return
 
     #### methods
@@ -65,9 +67,8 @@ class mw_quote(self, symbol):
         self.symbol = ticker
         url_endpoint = "https://bigcharts.marketwatch.com/quickchart/quickchart.asp?symb="
         url_queryopts = "&insttype=&freq=9&show=True&time=1"
-        print ( f"URL endpoint: {url_endpoint}{ticker}{url_queryopts}" )
 
-        with urllib.request.urlopen( f"https://bigcharts.marketwatch.com/quickchart/quickchart.asp?symb={ticker}&insttype=&freq=9&show=True&time=1" ) as url:
+        with urllib.request.urlopen( f"{url_endpoint}{ticker}{url_queryopts}" ) as url:
             s = url.read()
             data_soup = BeautifulSoup(s, "html.parser")
             quote_section = data_soup.find(attrs={"id": "quote"} )
@@ -109,7 +110,7 @@ class mw_quote(self, symbol):
         url_endpoint = "https://bigcharts.marketwatch.com/quickchart/qsymbinfo.asp?symb="
         print ( f"URL endpoint: {url_endpoint}{ticker}" )
 
-        with urllib.request.urlopen( f"https://bigcharts.marketwatch.com/quickchart/qsymbinfo.asp?symb={ticker}" ) as url:
+        with urllib.request.urlopen( f"{url_endpoint}{ticker}" ) as url:
             s = url.read()
             data_soup = BeautifulSoup(s, "html.parser")
             qq_head = data_soup.find("h1", attrs={"class": "quote"} )

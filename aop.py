@@ -367,5 +367,9 @@ def main():
     print ( " " )
     print ( "####### done #####")
 
+    qp = mw_quote(1, args)
+    qp.get_basicquote('UBER')
+    qp.get_quickquote('TEAM')
+
 if __name__ == '__main__':
     main()
