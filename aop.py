@@ -27,6 +27,7 @@ from unusual_vol import unusual_vol
 from shallow_logic import shallow_combo
 from y_newsloop import y_newsfilter
 from ml_cvbow import y_bow
+from m_mktdata import mw_quote
 
 # Globals
 work_inst = 0
