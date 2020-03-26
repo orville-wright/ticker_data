@@ -9,7 +9,7 @@ import logging
 # logging setup
 logging.basicConfig(level=logging.INFO)
 
-class mw_quote:
+class bc_quote:
     """Get a live quotefrom a fast web URL endpoint.
     There are 2 differnt URL endpoints leveraged via  www.marketwatch.com. Both are simple
     URL pages & have almost zero rich media elements embedded in them. i.e. they are almost 100% TXT.

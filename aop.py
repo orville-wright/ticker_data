@@ -27,7 +27,7 @@ from unusual_vol import unusual_vol
 from shallow_logic import shallow_combo
 from y_newsloop import y_newsfilter
 from ml_cvbow import y_bow
-from m_mktdata import mw_quote
+from bigcharts_md import mw_quote
 
 # Globals
 work_inst = 0
@@ -368,12 +368,14 @@ def main():
     if args['qsymbol'] is not False:
         print ( " " )
         print ( f"Get price action quote for: {args['qsymbol']}" )
-        qp = mw_quote(1, args)
+        qp = bc_quote(1, args)
         qp.get_basicquote(args['qsymbol'])
         qp.get_quickquote(args['qsymbol'])
         qp.q_polish()
         print ( qp.quote )
+
         if args['bool_xray'] is True:        # DEBUG Xray
+            print ( " " )
             c = 1
             for k, v in qp.quote.items():
                 print ( f"{c} - {k}\t\t : {v}" )
