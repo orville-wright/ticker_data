@@ -46,8 +46,8 @@ class mw_quote:
     #   value = key to be used when building-out core data dict
     # WARN: This dict does not EXACTLY match the taregt core QUOTE DICT, due to dupe field complexities !!
     qlabels = {'52 Week Range:': 'range52w', '52-Week EPS:': 'eps52w', '52-Week High:': 'high52w', \
-                '52-Week Low:': 'low52w', 'Ask:': 'ask', 'Average Price:': 'avg50d_p', \
-                'Average Volume:': 'avg50d_v', 'Bid:': 'bid', 'Change:': 'change_s', \
+                '52-Week Low:': 'low52w', 'Ask:': 'ask', 'Average Price:': 'range_a_p', \
+                'Average Volume:': 'range_a_v', 'Bid:': 'bid', 'Change:': 'change_s', \
                 'Company Name:': 'co_name', 'Dow Jones Industry:': 'dowjones', 'Ex Div. Amount:': 'ex_diva', \
                 'Ex Div. Date:': 'ex_divd', 'Exchange:': 'exch', 'High:': 'high', 'Last:': 'last', \
                 'Low:': 'low', 'Market Cap:': 'mkt_cap', 'Open:': 'open', 'P/E Ratio:': 'pe_ratio', \
@@ -198,5 +198,64 @@ class mw_quote:
 
         cmi_debug = __name__+"::"+self.q_polish.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
-        
+
+        # wragle change_s (i.e. Positive/negative/unchanged )
+        d = self.quote['change_s']
+        d = re.sub('[0-9,\.]', '', d)     # remove all nums, "," & "."
+        self.quote['change_s'] = d       # update to new value (shuld be "+" or "-") - TODO: how is UNCHANGED handled?
+
+        # market cap scale (MIllions, Billions, Trillions)
+        m = self.quote['mkt_cap']
+        ms = m.split('MBT')          # remove all nums, "," & "."
+        # maybe string slicing -1 last char
+        #self.quote['mkt_cap_s'] = d       # update to new value (shuld be "+" or "-") - TODO: how is UNCHANGED handled?
+
+        # make vol -> a real int
+        d = self.quote['vol']
+        d = re.sub(',', '', d)          # remove "," from num
+        self.quote['vol'] = int(d)      # update orignal STRING vlaue as real INT num
+
+        # split some compound data elements into 2 & create new DICT fields for new data items
+
+        # 52 week range
+        r = self.quote['range52w']                   # e.g. '5.90 to 13.26'
+        rt = r.partition(' to ')                     # seperator = ' to ' result is fast, light tupple
+        self.quote['range52w_l'] = float(rt[0])      # 52 Week HIGH
+        self.quote['range52w_h'] = float(rt[2])      # 52 week LOW
+
+        # 52 week HIGH date & value
+        h = self.quote['high52w']                   # e.g. '5.90 to 13.26'
+        ht = h.partition(' on ')                    # seperator = ' to ' result is fast, light tupple
+        self.quote['high52w_p'] = float(ht[0])      # 52 Week HIGH (shuld be same as range52w_h)
+        self.quote['high52w_d'] = ht[2]             # date of 52 week HIGH
+
+        # 52 week LOW date & value
+        l = self.quote['low52w']                   # e.g. '5.90 to 13.26'
+        lt = l.partition(' on ')                   # seperator = ' to ' result is fast, light tupple
+        self.quote['low52w_p'] = float(lt[0])      # 52 Week LOW (shuld be same as range52w_l)
+        self.quote['low52w_d'] = lt[2]             # date of 52 week LOW
+
+        # SHORT interest (num_of_shares) & shorted % (shorted share as % of outstanding shares)
+        d = self.quote['short_i']                  # e.g. '106,614,436 (1.22%)'
+        dt = d.partition(' (')                     # seperator = ' ('
+        dt0 = re.sub(',', '', dt[0])               # remove "," from num
+        dt2 = re.sub('\)', '', dt[2])              # remove trailing ")" from % num
+        self.quote['short_i_s'] = int(dt0)         # absolute num os shares shorted
+        self.quote['short_i_p'] = dt2              # % of shares shorted
+
+        # 50day & 200day average price range
+        a = self.quote['range_a_p']                # e.g. '10.719 (50-day) 10.2152 (200-day)'
+        at = a.split(' ')                          # seperator = ' ' 4 fields split, butonlu 2 of interest
+        self.quote['avg50d_p'] = float(at[0])      # 50 day avg price
+        self.quote['avg200d_p'] = float(at[2])     # 200 day avg price
+
+        # 50day & 200day average volume range
+        a = self.quote['range_a_v']                # e.g. '10.719 (50-day) 10.2152 (200-day)'
+        at = a.split(' ')                          # seperator = ' ' 4 fields split, butonlu 2 of interest
+        at0 = re.sub(',', '', at[0])               # remove "," from num
+        at2 = re.sub(',', '', at[2])               # remove "," from num
+        self.quote['avg50d_v'] = int(at0)          # vol num int
+        self.quote['avg200d_v'] = int(at2)         # vol num as int
+
+
         return

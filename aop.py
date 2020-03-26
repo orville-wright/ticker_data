@@ -370,14 +370,14 @@ def main():
     qp = mw_quote(1, args)
     qp.get_basicquote('GE')
     qp.get_quickquote('GE')
+    qp.q_polish()
     print ( f"--- DICT build-out test ---" )
     print ( qp.quote )
-    """
+
     c = 1
     for k, v in qp.quote.items():
         print ( f"{c} / KEY: {k}  - VALUE: {v}" )
         c += 1
-    """
 
 if __name__ == '__main__':
     main()
