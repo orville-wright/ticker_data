@@ -10,17 +10,20 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 class bc_quote:
-    """Get a live quotefrom a fast web URL endpoint.
-    There are 2 differnt URL endpoints leveraged via  www.marketwatch.com. Both are simple
-    URL pages & have almost zero rich media elements embedded in them. i.e. they are almost 100% TXT.
-    This means they build very quickly in the extraction process."""
+    """Get a live quote from a fast web URL endpoint.
+    There are 2 slightly differnt but yet similar URL's leveraged via  www.marketwatch.com.
+    Both are simple pages & have near-zero rich media elements in them. (i.e. almost 100% TXT)
+    This means they build quickly during the extraction process.
+    The core URL is: https://bigcharts.marketwatch.com/quickchart/qsymbinfo.asp
+    WARN: This URL provides market data that is ~10-15 mins delayed
+    """
 
     # class global accessors
     inst_uid = 0
     cycle = 0           # class thread loop counter
     symbol = ""         # Unique company symbol
-    prev_symbol = ""    # the ticker we previously looked at
-    quote = {}          # the core data dict
+    prev_symbol = ""    # NOT USED - the ticker previously looked at
+    quote = {}          # the final quote data dict
 
     # DICT qlabels
     # STRING labels to find + test against when populating main data DICT

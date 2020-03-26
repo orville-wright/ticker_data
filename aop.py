@@ -378,7 +378,7 @@ def main():
             print ( " " )
             c = 1
             for k, v in qp.quote.items():
-                print ( f"{c} - {k}\t\t : {v}" )
+                print ( "{:02d} - {}\t\t : {}".format(c, k, v) )
                 c += 1
 
     print ( " " )
