@@ -44,7 +44,7 @@ class mw_quote:
     # DICT qlabels = STRING data labels to find & test against when populating main data DICT
     #   key = string value of TXT field embedded in source webpage
     #   value = key to be used when building-out core data dict
-    # WARN: This dict does not EXACTLY match the taregt core data DICT, due to dupe field complexities !!
+    # WARN: This dict does not EXACTLY match the taregt core QUOTE DICT, due to dupe field complexities !!
     qlabels = {'52 Week Range:': 'range52w', '52-Week EPS:': 'eps52w', '52-Week High:': 'high52w', \
                 '52-Week Low:': 'low52w', 'Ask:': 'ask', 'Average Price:': 'avg50d_p', \
                 'Average Volume:': 'avg50d_v', 'Bid:': 'bid', 'Change:': 'change_s', \
@@ -98,14 +98,14 @@ class mw_quote:
                     k = i.span.text.strip()
                     print ( f"{i.span.text.strip()}  {i.div.text.strip()}" )
                     if k in self.qlabels:
-                        self.quote[self.qlabels[k]] = i.div.text.strip()    # build core DICT
+                        self.quote[self.qlabels[k]] = i.div.text.strip()    # add to quote DICT
                     else:
                         print ( f"KEY: {k} NOT found !" )
                 else:       # treat 'Change: +0.73' as special item.
                     k = i.span.text
                     change_pn = re.sub('[\n\ ]', '', i.div.text)    # clean up
                     print ( f"{i.span.text}  {change_pn}" )
-                    self.quote['change_s'] = change_pn    # build core DICT
+                    self.quote['change_s'] = change_pn    # add to quote DICT
 
             # walk the 2nd embeded data structure...
             walk_quote2 = quote2.find_all("td")
@@ -114,7 +114,7 @@ class mw_quote:
                     k = i.span.text.strip()
                     print ( f"{i.span.text.strip()}  {i.div.text.strip()}" )
                     if k in self.qlabels:
-                        self.quote[self.qlabels[k]] = i.div.text.strip()    # build core DICT
+                        self.quote[self.qlabels[k]] = i.div.text.strip()    # add to quote DICT
                     else:
                         print ( f"NO key found !" )
                 else:
@@ -122,7 +122,7 @@ class mw_quote:
                     change_abs = re.sub('[\n\ ]', '', i.div.text)
                     print ( f"{i.span.text}  {change_abs}" )
                     if k in self.qlabels:
-                        self.quote[self.qlabels[k]] = change_abs    # build core DICT
+                        self.quote[self.qlabels[k]] = change_abs    # add to quote DICT
                     else:
                         print ( f"NO key found !" )
 
@@ -154,16 +154,17 @@ class mw_quote:
             fin_data = qfin_table.find_all("td")
 
             print ( f"------------------ Quickquote / simple: {ticker} ---------------------" )
-            qhc = qq_head_co.stripped_strings
+            # manuall traverse a small set of data elements - looping through small generators is pointless
+            qhc = qq_head_co.stripped_strings           # manually work on 1st small generator obj
             ds = next(qhc)
-            print ( f"Symbol: {ds}" )
-            self.quote['symbol:'] = ds.strip()          # build core DICT
-            print ( f"Name: {next(qhc)}" )              # ignored from adding into quote DICT
-            qhx = qq_head_data.stripped_strings
-            print ( f"Last price: {next(qhx)}" )        # ignored from adding into quote DICT
-            dc = next(qhx)
-            print ( f"Change: {dc}" )                   # manually manage this DUPEd data item (appears 3 times in source data)
-            self.quote['change_n'] = dc.strip()         # build core DICT
+            print ( f"Symbol: {ds}" )                   # item #1
+            self.quote['symbol:'] = ds.strip()          # add into quote DICT
+            print ( f"Name: {next(qhc)}" )              # item 2, IGNORED - DUPE data item. Not needed again
+            qhx = qq_head_data.stripped_strings         # manuall work on 2nd small generator obj
+            print ( f"Last price: {next(qhx)}" )        # item #1 IGNORED - DUPE data ite,. Not needed again
+            dc = next(qhx)                              # item #2
+            print ( f"Change: {dc}" )                   # manually treat this DUPEd data item (appears 3 times in source data)
+            self.quote['change_n'] = dc.strip()         # add into quote DICT
 
             print ( f"------------------ Quickquote price action: {ticker} ---------------------" )
             qlen = len(quote_data)
@@ -171,7 +172,7 @@ class mw_quote:
                 k = quote_data[i].text.strip()
                 print ( f"{quote_data[i].text} {quote_data[i+1].text}" )
                 if k in self.qlabels:
-                    self.quote[self.qlabels[k]] = quote_data[i+1].text.strip()    # build core DICT
+                    self.quote[self.qlabels[k]] = quote_data[i+1].text.strip()    # add to quote DICT
                 else:
                     print ( f"NO key found !" )
 
@@ -185,5 +186,17 @@ class mw_quote:
                 print ( f"{clean1} {clean2}" )
                 k = clean1
                 if k in self.qlabels:
-                    self.quote[self.qlabels[k]] = clean2
+                    self.quote[self.qlabels[k]] = clean2        # add to quote DICT
+        return
+
+    def q_polish(self):
+        """This method curates and polishes a few data elements in the quote DICT
+        that need additinoal treatement after the inital build-out"""
+
+        # Its much easer to do this data re-structuring after the quote DICT has been mostly built
+        # rather than embed this data wrangeling logic inside the DICT creation method.
+
+        cmi_debug = __name__+"::"+self.q_polish.__name__+".#"+str(self.inst_uid)
+        logging.info('%s - IN' % cmi_debug )
+        
         return
