@@ -9,29 +9,10 @@ import logging
 # logging setup
 logging.basicConfig(level=logging.INFO)
 
-# TODO:
-    # Basic quote: split 52 week range into 2 data elemets
-    # Finaincials: split short interest into 2 data elements
-    #              split 52-week high into 2 elemets
-    #              split 52-week low into 2 elements
-    #              split average price into 2 elemets (50-day & 200-day)
-    #              split average volume into 2 elements (50-day & 200-day)
-    #
-    # Make ths a class
-    # build a DICT {} for each section
-    # make DICT a class gloabl attribute
-    # DICT 1 - Basic quote
-    # DICT 2 - QUick quote
-    # DICT 3 - Basic Finaincials
-    # Before adding data to DICT's...
-    #       make sure all numeric strings are converted to float before addig to DICT's
-    #       remove () from strings
-    #       remove () from negative numbers and formats as negative float
-    #       re-compute data strings as true date objects
 class mw_quote:
-    """Get a live quote via a fast data extraction from a fast web URL endpoint.
+    """Get a live quotefrom a fast web URL endpoint.
     There are 2 differnt URL endpoints leveraged via  www.marketwatch.com. Both are simple
-    URL pages have almost zero rich media elements embedded in them. i.e. they are almost 100% TXT.
+    URL pages & have almost zero rich media elements embedded in them. i.e. they are almost 100% TXT.
     This means they build very quickly in the extraction process."""
 
     # class global accessors
@@ -41,18 +22,19 @@ class mw_quote:
     prev_symbol = ""    # the ticker we previously looked at
     quote = {}          # the core data dict
 
-    # DICT qlabels = STRING data labels to find & test against when populating main data DICT
+    # DICT qlabels
+    # STRING labels to find + test against when populating main data DICT
     #   key = string value of TXT field embedded in source webpage
     #   value = key to be used when building-out core data dict
-    # WARN: This dict does not EXACTLY match the taregt core QUOTE DICT, due to dupe field complexities !!
-    qlabels = {'52 Week Range:': 'range52w', '52-Week EPS:': 'eps52w', '52-Week High:': 'high52w', \
-                '52-Week Low:': 'low52w', 'Ask:': 'ask', 'Average Price:': 'range_a_p', \
+    # WARN: This dict does not MIRROR the fina taregt QUOTE DICT, due to dupe field complexities
+    qlabels = {'52 Week Range:': 'range52w_t', '52-Week EPS:': 'eps52w', '52-Week High:': 'high52w_t', \
+                '52-Week Low:': 'low52w_t', 'Ask:': 'ask', 'Average Price:': 'range_a_p', \
                 'Average Volume:': 'range_a_v', 'Bid:': 'bid', 'Change:': 'change_s', \
                 'Company Name:': 'co_name', 'Dow Jones Industry:': 'dowjones', 'Ex Div. Amount:': 'ex_diva', \
                 'Ex Div. Date:': 'ex_divd', 'Exchange:': 'exch', 'High:': 'high', 'Last:': 'last', \
                 'Low:': 'low', 'Market Cap:': 'mkt_cap', 'Open:': 'open', 'P/E Ratio:': 'pe_ratio', \
-                'Percent Change:': 'change_p', 'Shares Outstanding:': 'shares_o', 'Symbol': 'symbol', \
-                'Short Interest:': 'short_i', 'Volume:': 'vol', 'Yield:': 'yield' }
+                'Percent Change:': 'change_c', 'Shares Outstanding:': 'shares_o', 'Symbol:': 'symbol', \
+                'Short Interest:': 'short_i_t', 'Volume:': 'vol', 'Yield:': 'yield' }
 
     def __init__(self, i, global_args):
         """ WARNING: symbol is set to NONE at instantiation."""
@@ -71,7 +53,7 @@ class mw_quote:
         #       Although, it's data elements are structured in a much cleaner & simpler form. i.e. Extraction is a bit simpler.
         #       It also has 1 data field not available in method #2 (i.e. %change)
         #       The URL endpoint can also take an extended URL "?" quoery_string compponet to control data extraction (but This
-        #        isn't that useful as it controls the embeded rich media elemet output. Which we aren't interested in).
+        #       isn't that useful as it controls the embeded rich media elemet output. Which we aren't interested in).
 
         cmi_debug = __name__+"::"+self.get_basicquote.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
@@ -90,13 +72,13 @@ class mw_quote:
             quote2 = quote_data[3]
             url.close()
 
-            print ( f" ------------------ Basic quote: {ticker} ---------------------" )
+            # print ( f" ------------------ Basic quote: {ticker} ---------------------" )
             # walk the 1st embeded data structure...
             walk_quote1 = quote1.find_all("td")
             for i in walk_quote1:
                 if not i.select('img'):         # special treatment for "Change" field. Has <img> tag
                     k = i.span.text.strip()
-                    print ( f"{i.span.text.strip()}  {i.div.text.strip()}" )
+                    # print ( f"{i.span.text.strip()}  {i.div.text.strip()}" )      # DEBUG
                     if k in self.qlabels:
                         self.quote[self.qlabels[k]] = i.div.text.strip()    # add to quote DICT
                     else:
@@ -104,7 +86,7 @@ class mw_quote:
                 else:       # treat 'Change: +0.73' as special item.
                     k = i.span.text
                     change_pn = re.sub('[\n\ ]', '', i.div.text)    # clean up
-                    print ( f"{i.span.text}  {change_pn}" )
+                    # print ( f"{i.span.text}  {change_pn}" )                       # DEBUG
                     self.quote['change_s'] = change_pn    # add to quote DICT
 
             # walk the 2nd embeded data structure...
@@ -112,7 +94,7 @@ class mw_quote:
             for i in walk_quote2:
                 if not i.select('img'):
                     k = i.span.text.strip()
-                    print ( f"{i.span.text.strip()}  {i.div.text.strip()}" )
+                    # print ( f"{i.span.text.strip()}  {i.div.text.strip()}" )      # DEBUG
                     if k in self.qlabels:
                         self.quote[self.qlabels[k]] = i.div.text.strip()    # add to quote DICT
                     else:
@@ -120,7 +102,7 @@ class mw_quote:
                 else:
                     k = i.span.text.strip()
                     change_abs = re.sub('[\n\ ]', '', i.div.text)
-                    print ( f"{i.span.text}  {change_abs}" )
+                    # print ( f"{i.span.text}  {change_abs}" )                      # DEBUG
                     if k in self.qlabels:
                         self.quote[self.qlabels[k]] = change_abs    # add to quote DICT
                     else:
@@ -153,48 +135,50 @@ class mw_quote:
             quote_data = qquote_table.find_all("td")
             fin_data = qfin_table.find_all("td")
 
-            print ( f"------------------ Quickquote / simple: {ticker} ---------------------" )
+            # print ( f"------------------ Quickquote / simple: {ticker} ---------------------" )
             # manuall traverse a small set of data elements - looping through small generators is pointless
             qhc = qq_head_co.stripped_strings           # manually work on 1st small generator obj
             ds = next(qhc)
-            print ( f"Symbol: {ds}" )                   # item #1
-            self.quote['symbol:'] = ds.strip()          # add into quote DICT
-            print ( f"Name: {next(qhc)}" )              # item 2, IGNORED - DUPE data item. Not needed again
+            self.quote['symbol'] = ds.strip()           # add into quote DICT
+
             qhx = qq_head_data.stripped_strings         # manuall work on 2nd small generator obj
-            print ( f"Last price: {next(qhx)}" )        # item #1 IGNORED - DUPE data ite,. Not needed again
+            # print ( f"Last price: {next(qhx)}" )      # item #1 IGNORED - DUPE data ite,. Not needed again
+            next(qhx)                                   # manually advance generator
             dc = next(qhx)                              # item #2
-            print ( f"Change: {dc}" )                   # manually treat this DUPEd data item (appears 3 times in source data)
             self.quote['change_n'] = dc.strip()         # add into quote DICT
 
-            print ( f"------------------ Quickquote price action: {ticker} ---------------------" )
+            # print ( f"------------------ Quickquote price action: {ticker} ---------------------" )
             qlen = len(quote_data)
             for i in range(1, qlen, 2):
                 k = quote_data[i].text.strip()
-                print ( f"{quote_data[i].text} {quote_data[i+1].text}" )
+                # print ( f"{quote_data[i].text} {quote_data[i+1].text}" )          # DEBUG
                 if k in self.qlabels:
                     self.quote[self.qlabels[k]] = quote_data[i+1].text.strip()    # add to quote DICT
                 else:
                     print ( f"NO key found !" )
 
-            print ( f"------------------ Quickquote / Financials: {ticker} ---------------------" )
+            # print ( f"------------------ Quickquote / Financials: {ticker} ---------------------" )
             flen = len(fin_data)
             for i in range(0, flen, 2):
                 clean1 = re.sub('[\n\r]', '', fin_data[i].text)
                 clean2 = re.sub('[\n\r]', '', fin_data[i+1].text)
                 clean1 = clean1.strip()
                 clean2 = clean2.strip()
-                print ( f"{clean1} {clean2}" )
+                # print ( f"{clean1} {clean2}" )                                    # DEBUG
                 k = clean1
                 if k in self.qlabels:
                     self.quote[self.qlabels[k]] = clean2        # add to quote DICT
         return
 
     def q_polish(self):
-        """This method curates and polishes a few data elements in the quote DICT
-        that need additinoal treatement after the inital build-out"""
+        """This method curates & polishes a few data elements in the quote DICT
+        that need additinoal treatement after the inital build-out. It also
+        augments the quote DICT with new data elements.
+        """
 
-        # Its much easer to do this data re-structuring after the quote DICT has been mostly built
+        # Its cleaner to do data re-structuring after the quote DICT has been initially populated
         # rather than embed this data wrangeling logic inside the DICT creation method.
+        # NOTE: No loops. Linear, simple & fast.
 
         cmi_debug = __name__+"::"+self.q_polish.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
@@ -204,44 +188,45 @@ class mw_quote:
         d = re.sub('[0-9,\.]', '', d)     # remove all nums, "," & "."
         self.quote['change_s'] = d       # update to new value (shuld be "+" or "-") - TODO: how is UNCHANGED handled?
 
-        # market cap scale (MIllions, Billions, Trillions)
+        # market cap & mkt_cap scale (i.e. Millions, Billions, Trillions)
         m = self.quote['mkt_cap']
-        ms = m.split('MBT')          # remove all nums, "," & "."
-        # maybe string slicing -1 last char
-        #self.quote['mkt_cap_s'] = d       # update to new value (shuld be "+" or "-") - TODO: how is UNCHANGED handled?
+        ms = m[-1]                                  # access last char (will be M, B, T)
+        mv = re.sub('[MBT]', '', m)                 # remove trailing M, B, T
+        self.quote['mkt_cap_s'] = ms                # M=Million, B=Billion, T=Trillion
+        self.quote['mkt_cap'] = float(mv)           # mkt_cap as real num
 
         # make vol -> a real int
         d = self.quote['vol']
-        d = re.sub(',', '', d)          # remove "," from num
-        self.quote['vol'] = int(d)      # update orignal STRING vlaue as real INT num
+        d = re.sub(',', '', d)                      # remove "," from num
+        self.quote['vol'] = int(d)                  # update orignal STRING vlaue as real INT num
 
-        # split some compound data elements into 2 & create new DICT fields for new data items
+        # split compound data elements & create new DICT fields as needed
 
         # 52 week range
-        r = self.quote['range52w']                   # e.g. '5.90 to 13.26'
+        r = self.quote['range52w_t']                 # e.g. '5.90 to 13.26'
         rt = r.partition(' to ')                     # seperator = ' to ' result is fast, light tupple
         self.quote['range52w_l'] = float(rt[0])      # 52 Week HIGH
         self.quote['range52w_h'] = float(rt[2])      # 52 week LOW
 
         # 52 week HIGH date & value
-        h = self.quote['high52w']                   # e.g. '5.90 to 13.26'
+        h = self.quote['high52w_t']                 # e.g. '5.90 to 13.26'
         ht = h.partition(' on ')                    # seperator = ' to ' result is fast, light tupple
         self.quote['high52w_p'] = float(ht[0])      # 52 Week HIGH (shuld be same as range52w_h)
         self.quote['high52w_d'] = ht[2]             # date of 52 week HIGH
 
         # 52 week LOW date & value
-        l = self.quote['low52w']                   # e.g. '5.90 to 13.26'
+        l = self.quote['low52w_t']                 # e.g. '5.90 to 13.26'
         lt = l.partition(' on ')                   # seperator = ' to ' result is fast, light tupple
         self.quote['low52w_p'] = float(lt[0])      # 52 Week LOW (shuld be same as range52w_l)
         self.quote['low52w_d'] = lt[2]             # date of 52 week LOW
 
         # SHORT interest (num_of_shares) & shorted % (shorted share as % of outstanding shares)
-        d = self.quote['short_i']                  # e.g. '106,614,436 (1.22%)'
+        d = self.quote['short_i_t']                # e.g. '106,614,436 (1.22%)'
         dt = d.partition(' (')                     # seperator = ' ('
         dt0 = re.sub(',', '', dt[0])               # remove "," from num
         dt2 = re.sub('\)', '', dt[2])              # remove trailing ")" from % num
-        self.quote['short_i_s'] = int(dt0)         # absolute num os shares shorted
-        self.quote['short_i_p'] = dt2              # % of shares shorted
+        self.quote['short_i_s'] = int(dt0)         # make shares shorted an real INT
+        self.quote['short_i_c'] = dt2              # % of shares shorted
 
         # 50day & 200day average price range
         a = self.quote['range_a_p']                # e.g. '10.719 (50-day) 10.2152 (200-day)'
@@ -250,12 +235,11 @@ class mw_quote:
         self.quote['avg200d_p'] = float(at[2])     # 200 day avg price
 
         # 50day & 200day average volume range
-        a = self.quote['range_a_v']                # e.g. '10.719 (50-day) 10.2152 (200-day)'
+        a = self.quote['range_a_v']                # e.g. '84,447,810 (50-day) 65,450,970 (200-day)'
         at = a.split(' ')                          # seperator = ' ' 4 fields split, butonlu 2 of interest
-        at0 = re.sub(',', '', at[0])               # remove "," from num
-        at2 = re.sub(',', '', at[2])               # remove "," from num
-        self.quote['avg50d_v'] = int(at0)          # vol num int
-        self.quote['avg200d_v'] = int(at2)         # vol num as int
-
+        at0 = re.sub(',', '', at[0])               # remove "," from vol nums
+        at2 = re.sub(',', '', at[2])               # remove "," vol nums
+        self.quote['avg50d_v'] = int(at0)          # make vol num real int
+        self.quote['avg200d_v'] = int(at2)         # make vol num real int
 
         return

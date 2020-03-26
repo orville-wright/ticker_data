@@ -39,6 +39,7 @@ parser.add_argument('-c','--cycle', help='Ephemerial top 10 every 10 secs for 60
 parser.add_argument('-d','--deep', help='Deep converged multi data list', action='store_true', dest='bool_deep', required=False, default=False)
 #parser.add_argument('-n','--newsai', help='News sentiment Ai', action='store_true', dest='bool_news', required=False, default=False)
 parser.add_argument('-n','--newsai', help='News sentiment Ai', action='store', dest='newsymbol', required=False, default=False)
+parser.add_argument('-q','--quote', help='Get ticker price action quote', action='store', dest='qsymbol', required=False, default=False)
 parser.add_argument('-s','--screen', help='screener logic parser', action='store_true', dest='bool_scr', required=False, default=False)
 parser.add_argument('-t','--tops', help='show top ganers/losers', action='store_true', dest='bool_tops', required=False, default=False)
 parser.add_argument('-u','--unusual', help='unusual up & down volume', action='store_true', dest='bool_uvol', required=False, default=False)
@@ -364,20 +365,23 @@ def main():
         print ( f"Highest count word: {v.ft_tdmatrix.max()}" )
 	"""
 
+    if args['qsymbol'] is not False:
+        print ( " " )
+        print ( f"Get price action quote for: {args['qsymbol']}" )
+        qp = mw_quote(1, args)
+        qp.get_basicquote(args['qsymbol'])
+        qp.get_quickquote(args['qsymbol'])
+        qp.q_polish()
+        print ( qp.quote )
+        if args['bool_xray'] is True:        # DEBUG Xray
+            c = 1
+            for k, v in qp.quote.items():
+                print ( f"{c} - {k}\t\t : {v}" )
+                c += 1
+
     print ( " " )
     print ( "####### done #####")
 
-    qp = mw_quote(1, args)
-    qp.get_basicquote('GE')
-    qp.get_quickquote('GE')
-    qp.q_polish()
-    print ( f"--- DICT build-out test ---" )
-    print ( qp.quote )
-
-    c = 1
-    for k, v in qp.quote.items():
-        print ( f"{c} / KEY: {k}  - VALUE: {v}" )
-        c += 1
 
 if __name__ == '__main__':
     main()
