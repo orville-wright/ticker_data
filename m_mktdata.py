@@ -39,8 +39,20 @@ class mw_quote:
     cycle = 0           # class thread loop counter
     symbol = ""         # Unique company symbol
     prev_symbol = ""    # the ticker we previously looked at
-    ml_brief = []       # ML TXT matrix for Naieve Bayes Classifier pre Count Vectorizer
     quote = {}          # the core data dict
+
+    # DICT qlabels = STRING data labels to find & test against when populating main data DICT
+    #   key = string value of TXT field embedded in source webpage
+    #   value = key to be used when building-out core data dict
+    # WARN: This dict does not EXACTLY match the taregt core data DICT, due to dupe field complexities !!
+    qlabels = {'52 Week Range:': 'range52w', '52-Week EPS:': 'eps52w', '52-Week High:': 'high52w', \
+                '52-Week Low:': 'low52w', 'Ask:': 'ask', 'Average Price:': 'avg50d_p', \
+                'Average Volume:': 'avg50d_v', 'Bid:': 'bid', 'Change:': 'change_s', \
+                'Company Name:': 'co_name', 'Dow Jones Industry:': 'dowjones', 'Ex Div. Amount:': 'ex_diva', \
+                'Ex Div. Date:': 'ex_divd', 'Exchange:': 'exch', 'High:': 'high', 'Last:': 'last', \
+                'Low:': 'low', 'Market Cap:': 'mkt_cap', 'Open:': 'open', 'P/E Ratio:': 'pe_ratio', \
+                'Percent Change:': 'change_p', 'Shares Outstanding:': 'shares_o', 'Symbol': 'symbol', \
+                'Short Interest:': 'short_i', 'Volume:': 'vol', 'Yield:': 'yield' }
 
     def __init__(self, i, global_args):
         """ WARNING: symbol is set to NONE at instantiation."""
@@ -79,21 +91,40 @@ class mw_quote:
             url.close()
 
             print ( f" ------------------ Basic quote: {ticker} ---------------------" )
+            # walk the 1st embeded data structure...
             walk_quote1 = quote1.find_all("td")
             for i in walk_quote1:
-                if not i.select('img'):
-                    print ( f"{i.span.text}  {i.div.text}" )
-                else:
-                    change_abs = re.sub('[\n\ ]', '', i.div.text)
-                    print ( f"{i.span.text}  {change_abs}" )
+                if not i.select('img'):         # special treatment for "Change" field. Has <img> tag
+                    k = i.span.text.strip()
+                    print ( f"{i.span.text.strip()}  {i.div.text.strip()}" )
+                    if k in self.qlabels:
+                        self.quote[self.qlabels[k]] = i.div.text.strip()    # build core DICT
+                    else:
+                        print ( f"KEY: {k} NOT found !" )
+                else:       # treat 'Change: +0.73' as special item.
+                    k = i.span.text
+                    change_pn = re.sub('[\n\ ]', '', i.div.text)    # clean up
+                    print ( f"{i.span.text}  {change_pn}" )
+                    self.quote['change_s'] = change_pn    # build core DICT
 
+            # walk the 2nd embeded data structure...
             walk_quote2 = quote2.find_all("td")
             for i in walk_quote2:
                 if not i.select('img'):
-                    print ( f"{i.span.text}  {i.div.text}" )
+                    k = i.span.text.strip()
+                    print ( f"{i.span.text.strip()}  {i.div.text.strip()}" )
+                    if k in self.qlabels:
+                        self.quote[self.qlabels[k]] = i.div.text.strip()    # build core DICT
+                    else:
+                        print ( f"NO key found !" )
                 else:
+                    k = i.span.text.strip()
                     change_abs = re.sub('[\n\ ]', '', i.div.text)
                     print ( f"{i.span.text}  {change_abs}" )
+                    if k in self.qlabels:
+                        self.quote[self.qlabels[k]] = change_abs    # build core DICT
+                    else:
+                        print ( f"NO key found !" )
 
         return
 
@@ -124,16 +155,25 @@ class mw_quote:
 
             print ( f"------------------ Quickquote / simple: {ticker} ---------------------" )
             qhc = qq_head_co.stripped_strings
-            print ( f"Symbol: {next(qhc)}" )
-            print ( f"Name: {next(qhc)}" )
+            ds = next(qhc)
+            print ( f"Symbol: {ds}" )
+            self.quote['symbol:'] = ds.strip()          # build core DICT
+            print ( f"Name: {next(qhc)}" )              # ignored from adding into quote DICT
             qhx = qq_head_data.stripped_strings
-            print ( f"Last price: {next(qhx)}" )
-            print ( f"Change: {next(qhx)}" )
+            print ( f"Last price: {next(qhx)}" )        # ignored from adding into quote DICT
+            dc = next(qhx)
+            print ( f"Change: {dc}" )                   # manually manage this DUPEd data item (appears 3 times in source data)
+            self.quote['change_n'] = dc.strip()         # build core DICT
 
             print ( f"------------------ Quickquote price action: {ticker} ---------------------" )
             qlen = len(quote_data)
             for i in range(1, qlen, 2):
+                k = quote_data[i].text.strip()
                 print ( f"{quote_data[i].text} {quote_data[i+1].text}" )
+                if k in self.qlabels:
+                    self.quote[self.qlabels[k]] = quote_data[i+1].text.strip()    # build core DICT
+                else:
+                    print ( f"NO key found !" )
 
             print ( f"------------------ Quickquote / Financials: {ticker} ---------------------" )
             flen = len(fin_data)
@@ -143,5 +183,7 @@ class mw_quote:
                 clean1 = clean1.strip()
                 clean2 = clean2.strip()
                 print ( f"{clean1} {clean2}" )
-
+                k = clean1
+                if k in self.qlabels:
+                    self.quote[self.qlabels[k]] = clean2
         return
