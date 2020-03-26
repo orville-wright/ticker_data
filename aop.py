@@ -27,7 +27,7 @@ from unusual_vol import unusual_vol
 from shallow_logic import shallow_combo
 from y_newsloop import y_newsfilter
 from ml_cvbow import y_bow
-from bigcharts_md import mw_quote
+from bigcharts_md import bc_quote
 
 # Globals
 work_inst = 0
