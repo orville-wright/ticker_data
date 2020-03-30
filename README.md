@@ -8,7 +8,7 @@ Currently supporting the following data sources, data extraction methods and API
   3. bigcharts.marketwatch.com  - BS4 web scraper/data extarctor - (delayed stock stock & ticker details)
   4. marketwatch.com - BS4 web scraper/data extractor - (live quotes, ticker details)
   * The marketwatch.com module is not yet fully working.
-  * marketwatch.com is highly bloated in rich media site, so its slow but it has realtime quotes and lots of geat data.
+  * marketwatch.com is vert bloated rich media site, so its slow-ish but it has realtime quotes and lots of geat data.
   * They also enforces javascript and also do highly paranoia JS testing early in the webpage setup. They are also
   * extremly paranoid about Robot scrapers & forcefully check for these early. I havent hacked arround these yet.
 
