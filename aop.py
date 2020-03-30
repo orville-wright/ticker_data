@@ -28,6 +28,7 @@ from shallow_logic import shallow_combo
 from y_newsloop import y_newsfilter
 from ml_cvbow import y_bow
 from bigcharts_md import bc_quote
+from marketwatch_md import mw_quote
 
 # Globals
 work_inst = 0
@@ -380,6 +381,10 @@ def main():
             for k, v in qp.quote.items():
                 print ( "{:02d} - {}\t\t : {}".format(c, k, v) )
                 c += 1
+
+    # print ( " " )
+    # qm = mw_quote(1, args)
+    # qm.get_quote(args['qsymbol'])
 
     print ( " " )
     print ( "####### done #####")
