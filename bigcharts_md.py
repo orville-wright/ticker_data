@@ -63,7 +63,8 @@ class bc_quote:
         ticker = ticker
         self.symbol = ticker
         url_endpoint = "https://bigcharts.marketwatch.com/quickchart/quickchart.asp?symb="
-        url_queryopts = "&insttype=&freq=9&show=True&time=1"
+        url_queryopts = "&insttype=Stock&freq=9&show=True&time=1"
+        #url_queryopts = "&insttype=&freq=9&show=True&time=1"
 
         with urllib.request.urlopen( f"{url_endpoint}{ticker}{url_queryopts}" ) as url:
             s = url.read()
@@ -124,6 +125,8 @@ class bc_quote:
         ticker = ticker
         self.symbol = ticker
         url_endpoint = "https://bigcharts.marketwatch.com/quickchart/qsymbinfo.asp?symb="
+        #url_queryopts = "&insttype=&freq=9&show=True&time=1"
+        url_queryopts = "&time=9&freq=1"
 
         with urllib.request.urlopen( f"{url_endpoint}{ticker}" ) as url:
             s = url.read()
@@ -194,6 +197,11 @@ class bc_quote:
         # market cap & mkt_cap scale (i.e. Millions, Billions, Trillions)
         m = self.quote['mkt_cap']
         ms = m[-1]                                  # access last char (will be M, B, T)
+        print ( f"*** DEBUG: mkt_cap: {m} / mkt_cap_sign: {ms}" ) 
+        if m == 'n/a':
+            m = 0
+            ms = 'X'
+
         mv = re.sub('[MBT]', '', m)                 # remove trailing M, B, T
         self.quote['mkt_cap_s'] = ms                # M=Million, B=Billion, T=Trillion
         self.quote['mkt_cap'] = float(mv)           # mkt_cap as real num
