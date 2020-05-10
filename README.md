@@ -1,5 +1,5 @@
 # ticker_data
-Extract live stock data from vasrious realtime Market feeds.
+Extract live stock data from various realtime Market feeds.
 
 Currently supporting the following data sources, data extraction methods and API's...
   1. yahoo.com/finance  - BS4 web scraper/data extractor - (S/M/L/X sector/mkt-cap stats, top gainers/loosers)
@@ -12,7 +12,7 @@ Currently supporting the following data sources, data extraction methods and API
   * They also enforce javascript=ON & also do highly paranoia JS testing early in the webpage setup. They are also
   * extremly paranoid about Robot scrapers & forcefully check for these early. I havent hacked arround these yet.
 
-Data is packaged into multipel formats...
+Data is packaged into multiple formats...
 1. Pandas Data Frames
 2. Numpy arrays
 3. Native pythons DICT's {}
@@ -22,14 +22,14 @@ This is not a backtesting framework (yawn...boring) or trade execution platform 
 
 This tool's goal is to extract tonnes of data in real time about the market (on any day, at any moment right now) and build up a
 large corpus of live data to leverage as a feed into Machine Learning, Data Science & Statistics algorithyms...in order to support
-trade strategies (specifically - multiple Day Trading & Swing Trading strategies).
+trade strategies (specifically - Day Trading & Swing Trading strategies).
 
 There are many websites that provide considerable data and analytics in their beautifully rich web pages, but they are slow, 
 over-inflated with useless bloat, riddled with targeted adds and pointless news headlines. They are unusable as a DS/ML tool for a
-trader who is executing real trades in real-time....but the data they show is delicious and wonderful. - Thats all you really need from
+trader who is executing trades in real-time....but the data they show is delicious and wonderful. - Thats all you really need from
 their websites.
 
-So this tool is focused taking their data and focusing it into ONE single pool of information.
+So this tool's objective is to tak their data, poackage it into internal API methods and focus it into ONE single pool of information.
 
 
 ~Orville
