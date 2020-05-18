@@ -1,5 +1,6 @@
 # ticker_data
 Extract live stock data from various realtime Market feeds.
+See the WIKI for more info: https://github.com/orville-wright/ticker_data/wiki
 
 Currently supporting the following data sources, data extraction methods and API's...
   1. yahoo.com/finance  - BS4 web scraper/data extractor - (S/M/L/X sector/mkt-cap stats, top gainers/loosers)
@@ -30,6 +31,8 @@ trader who is executing trades in real-time....but the data they show is delicio
 their websites.
 
 So this tool's objective is to tak their data, poackage it into internal API methods and focus it into ONE single pool of information.
+<br>
+<br>
 
-
-~Orville
+Regards,<br>
+**~Orville**
