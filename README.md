@@ -3,7 +3,7 @@
 WARNING: This code is still in heavy development & design. Much of it works well, but a few areas are still early in their prototying phase (e.g. ML & A.I). Also, the overall strategy behind the design is subject to change as the code in key areas builds in capability.
 - Use at you own risk
 
-Extract live stock data from various realtime Market feeds.<br>
+Purpose: Extract live stock data from various realtime Market feeds.<br>
 See the WIKI for more info: https://github.com/orville-wright/ticker_data/wiki
 
 Currently supporting the following data sources, data extraction methods and API's...
