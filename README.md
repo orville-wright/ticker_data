@@ -12,7 +12,7 @@ Currently supporting the following data sources, data extraction methods and API
   2. alpaca.markets.com - native python API (live stock quotes, live 60 second O/H/L/C/V candlestick bars)
   3. bigcharts.marketwatch.com  - BS4 web scraper/data extarctor - (delayed stock stock & ticker details)
   4. nasdaq.com - BS4 scraper/data extractor - (delayed data)
-     I leverage an old website maintained by NASDAQ that is very easy to scrape. The site is a slow at the market open becasue unusual volume needs to build-up before being flagged as 'unusual'.
+     I leverage an old website maintained/updated by NASDAQ with live data. This webpage is easy to scrape, but the site is a slow at the market open becasue unusual volume needs to build-up significantly before being flagged as 'unusual'.
   5. marketwatch.com - BS4 web scraper/data extractor - (live quotes, ticker details)
   * The marketwatch.com module is not yet fully working.
   * marketwatch.com is a very bloated rich media site, so its slow-ish but it has nice 'realtime data' and lots of geat rich info.
