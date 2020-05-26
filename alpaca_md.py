@@ -12,8 +12,8 @@ POSURL = '{}/v2/positions'.format(BASEURL)
 
 UNKNOWN = 'api.alpaca.markets/paper-api.alpaca.markets'
 
-APIKEY = "PK61TNWINAVOEE9C610J"
-SECRETKEY = "oqsxqFZWaIEj7Tu3ev4o8kCcttieV6kuvbV4CAtk"
+APIKEY = "_your_key_here_"
+SECRETKEY = "_your_key_here_"
 
 ################# Style 1 ############################'
 
@@ -36,7 +36,7 @@ def show_data(data):
 ############################## MAIN #############################################
 
 def main():
-    rx = tradeapi.REST('PK61TNWINAVOEE9C610J', 'oqsxqFZWaIEj7Tu3ev4o8kCcttieV6kuvbV4CAtk', 'https://paper-api.alpaca.markets', 'v2' )
+    rx = tradeapi.REST(APIKEY, SECRETKEY, 'https://paper-api.alpaca.markets', 'v2' )
     acct_info = rx.get_account()
     pos_info = rx.list_positions()
 
