@@ -5,6 +5,7 @@ import alpaca_trade_api as tradeapi
 import pandas as pd
 import datetime
 import time
+from environs import Env
 
 BASEURL = 'https://paper-api.alpaca.markets'
 ACCURL = '{}/v2/account'.format(BASEURL)
@@ -36,6 +37,18 @@ def show_data(data):
 ############################## MAIN #############################################
 
 def main():
+
+    env = Env()
+    env.read_env()  # read .env file, will recurrsively hunt for .env file if not in CWD
+    # casting api variables
+    APIKEY = env.str("ALPACA_API-KEY")
+    SECRETKEY = env.str("ALPACA_SEC-KEY")
+
+    print ( " ")
+    print ( f"Using API key: {APIKEY}" )
+    print ( f"Using SECKEY key: {SECRETKEY}" )
+    print ( " ")
+
     rx = tradeapi.REST(APIKEY, SECRETKEY, 'https://paper-api.alpaca.markets', 'v2' )
     acct_info = rx.get_account()
     pos_info = rx.list_positions()
