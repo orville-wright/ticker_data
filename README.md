@@ -1,12 +1,12 @@
 # ticker_data
 
-DISCLAIMER: This code is still in heavy development & design. Much of it works well, but a few areas are still early in their prototyping phase (e.g. ML & A.I). Also, the overall strategy behind the design is subject to change as code in key areas becomes more functional.
+**DISCLAIMER**: This code is still in heavy development & design. Much of it works well, but a few areas are still early in their prototyping phase (e.g. ML & A.I). Also, the overall strategy behind the design is subject to change as code in key areas becomes more functional.
 - Use at you own risk
 
-Purpose: I built this app to Extract live stock data (raw data) from various realtime Market feeds.<br>
+**SYNOPSIS**: I built this App to etract live stock data (the raw data info) from various realtime Market web feeds.<br>
 See the WIKI for more info: https://github.com/orville-wright/ticker_data/wiki
 
-Currently supporting the following data sources, data extraction methods and API's...
+The code currently supports the following data sources, data extraction methods and API's...
   1. yahoo.com/finance  - BS4 web scraper/data extractor - (S/M/L/X sector/mkt-cap stats, top gainers/loosers)
   2. yahoo.com/news - BS4 web scraper/data exrtactor - all news for a ticker)
   2. alpaca.markets.com - native python API (live stock quotes, live 60 second O/H/L/C/V candlestick bars)
@@ -40,7 +40,7 @@ So this tool's objective is to tak their data, poackage it into internal API met
 <br>
 <br>
 
-DISCLAIMER: Most websites do not like or appreciate data scraping apps/robots or apps that treat thier website as a source of raw data (by extracting data from their underlying platform). Using this App might not be well-aligned with some website usage 'Terms & conditions'.  - Caveat emptor.
+**DISCLAIMER**: Most websites do not like or appreciate data scraping apps/robots or apps that treat thier website as a source of raw data (by extracting data from their underlying platform). Using this App might not be well-aligned with some website usage 'Terms & conditions'.  - Caveat emptor.
 
 Regards,<br>
 **~Orville**
