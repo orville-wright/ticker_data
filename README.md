@@ -40,7 +40,7 @@ So this tool's objective is to tak their data, poackage it into internal API met
 <br>
 <br>
 
-DISCLAIMER: Most websites do not like or appreciate data scraping apps/robots or apps that treat thier website as a source of raw data and extract data from thier underlying websites. Using this code might not be well-aligned with some website usage terms & conditions.
+DISCLAIMER: Most websites do not like or appreciate data scraping apps/robots or apps that treat thier website as a source of raw data (by extracting data from their underlying platform). Using this App might not be well-aligned with some website usage 'Terms & conditions'.  - Cavaet emptor.
 
 Regards,<br>
 **~Orville**
