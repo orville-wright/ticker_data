@@ -24,6 +24,7 @@ from y_topgainers import y_topgainers
 from y_toplosers import y_toplosers
 from screener_dg1 import screener_dg1
 from unusual_vol import unusual_vol
+from nasdaq_unvol import un_volumes
 from shallow_logic import shallow_combo
 from y_newsloop import y_newsfilter
 from ml_cvbow import y_bow
@@ -192,11 +193,13 @@ def main():
 ########### unusual_vol ################
     if args['bool_uvol'] is True:
         print ( "========== Unusually high Volume ** UP ** =====================================================" )
-        un_vol_activity = unusual_vol(1, args)       # instantiate class, args = global var
+        un_vol_activity = un_volumes(1)       # instantiate NEW nasdaq data class, args = global var
 
-        un_vol_activity.get_up_unvol_data()        # extract data from finance.Yahoo.com
-        uv_up = un_vol_activity.build_df(0)     # build full dataframe
+        un_vol_activity.get_uponuvol_data()        # extract data from nasdaq.com
+        #un_vol_activity.get_up_unvol_data()        # extract data from finance.Yahoo.com
+        #uv_up = un_vol_activity.build_df(0)     # build full dataframe
 
+        """
         ulp = un_vol_activity.up_df0['Cur_price'].min()
         uminv = un_vol_activity.up_df0['Cur_price'].idxmin()
         ulsym = un_vol_activity.up_df0.loc[uminv, ['Symbol']][0]
@@ -204,7 +207,7 @@ def main():
 
         # Allways make sure this is key #2 in recommendations dict
         recommended['2'] = ('Unusual vol:', ulsym.rstrip(), '$'+str(ulp), ulname.rstrip(), '+%'+str(un_vol_activity.up_df0.loc[uminv, ['Pct_change']][0]) )
-        #recommended[uminv] = (ulsym.rstrip(), '$'+str(ulp), ulname.rstrip(), '+%'+str(un_vol_activity.up_df0.loc[uminv, ['Pct_change']][0]) )
+        recommended[uminv] = (ulsym.rstrip(), '$'+str(ulp), ulname.rstrip(), '+%'+str(un_vol_activity.up_df0.loc[uminv, ['Pct_change']][0]) )
 
         print ( f">>LOWEST<< price OPPTY is: #{uminv} - {ulname.rstrip()} ({ulsym.rstrip()}) @ ${ulp}" )
         print ( " " )
@@ -215,6 +218,8 @@ def main():
         un_vol_activity.get_down_unvol_data()
         uv_down = un_vol_activity.build_df(1)     # build full dataframe
         un_vol_activity.down_unvol_listall()
+        """
+
         print ( " ")
 
 ########### multi COMBO dataframe query build-out ################
