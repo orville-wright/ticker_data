@@ -1,4 +1,10 @@
+0. BUG #0 : NASDAQ has deprictaed its legacy webapp for tracking Unusual Activity.
+            - They've hacked it by wrapping it in Javascript so that scraping is nearly impossible.
+            - This is super annoying b/c it was a one of the only free data sources to this market data
+            - parts of the code rely on this data to inferr some logic.
+
 1. BUG #1 : extraction is dropping/ignoring each 2nd line of data in the table - FIXED
+
 2. BUG #2 : escaped DF setup 're substitutions' gens errors on WINDOWS but not LINUX
 
 2. push extracted data into pandas dataframe (DF) - DONE
