@@ -236,8 +236,13 @@ class bc_quote:
         dt = d.partition(' (')                     # seperator = ' ('
         dt0 = re.sub(',', '', dt[0])               # remove "," from num
         dt2 = re.sub('\)', '', dt[2])              # remove trailing ")" from % num
-        self.quote['short_i_s'] = int(dt0)         # make shares shorted an real INT
         self.quote['short_i_c'] = dt2              # % of shares shorted
+
+        if dt0[:1].isdigit() is True:              # test if string starts with a num (i.e. 0123456789)
+            self.quote['short_i_s'] = int(dt0)     # cast as real INT
+        else:
+            self.quote['short_i_s'] = 'n/a'        # cast shares shorted as real INT
+            self.quote['short_i_c'] = 'n/a'        # set % shorted = n/a if shares shorted is not a num
 
         # 50day & 200day average price range
         a = self.quote['range_a_p']                # e.g. '10.719 (50-day) 10.2152 (200-day)'
