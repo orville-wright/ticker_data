@@ -1,6 +1,8 @@
 #!/usr/bin/python3
-import urllib
-import urllib.request
+#import urllib
+#import urllib.request
+import requests
+
 from bs4 import BeautifulSoup
 import pandas as pd
 import numpy as np
@@ -45,10 +47,11 @@ class y_toplosers:
 
         cmi_debug = __name__+"::"+self.get_topg_data.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
-        with urllib.request.urlopen("https://finance.yahoo.com/losers/" ) as url:
-            s = url.read()
-            logging.info('%s - read html stream' % cmi_debug )
-            self.soup = BeautifulSoup(s, "html.parser")
+
+        r = requests.get("https://finance.yahoo.com/losers" )
+        logging.info('%s - read html stream' % cmi_debug )
+        self.soup = BeautifulSoup(r.text, 'html.parser')
+
         # ATTR style search. Results -> Dict
         # <tr tag in target merkup line has a very complex 'class=' but the attributes are unique. e.g. 'simpTblRow' is just one unique attribute
         logging.info('%s - save data handle' % cmi_debug )
@@ -56,11 +59,10 @@ class y_toplosers:
 
         # target markup line I am scanning looks like this...
         # soup.find_all( "tr", class_="simpTblRow Bgc($extraLightBlue):h BdB Bdbc($finLightGrayAlt) Bdbc($tableBorderBlue):h H(32px) Bgc($extraLightBlue)" )
-
         # Example CSS Selector
         #all_tag_tr1 = soup.select( "tr.simpTblRow.Bgc" )
+
         logging.info('%s - close url handle' % cmi_debug )
-        url.close()
         return
 
 # method #2

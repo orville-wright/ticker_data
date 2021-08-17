@@ -1,6 +1,7 @@
 #!/usr/bin/python3
-import urllib
-import urllib.request
+#import urllib
+#import urllib.request
+import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 import numpy as np
@@ -43,17 +44,22 @@ class y_topgainers:
 
         cmi_debug = __name__+"::"+self.get_topg_data.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
-        with urllib.request.urlopen("https://finance.yahoo.com/gainers/" ) as url:
-            s = url.read()
-            logging.info('%s - read html stream' % cmi_debug )
-            self.soup = BeautifulSoup(s, "html.parser")
+        r = requests.get("https://finance.yahoo.com/gainers" )
+        logging.info('%s - read html stream' % cmi_debug )
+        self.soup = BeautifulSoup(r.text, 'html.parser')
+
         # ATTR style search. Results -> Dict
         # <tr tag in target merkup line has a very complex 'class=' but the attributes are unique. e.g. 'simpTblRow' is just one unique attribute
         logging.info('%s - save data object handle' % cmi_debug )
-        self.all_tag_tr = self.soup.find_all(attrs={"class": "simpTblRow"})
+        self.all_tag_tr = self.soup.find_all(attrs={"class": "simpTblRow"})   # simpTblRow
         logging.info('%s - close url handle' % cmi_debug )
-        url.close()
         return
+
+
+    def dump_all_tag_tr(self):
+        print ( "Dumping ALL_TAG_TR..." )
+        return
+
 
 # method #2
     def build_tg_df0(self):
