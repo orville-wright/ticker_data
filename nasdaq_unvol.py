@@ -1,8 +1,9 @@
 #!/usr/bin/python3
-import urllib
-import urllib.request
+#import urllib
+#import urllib.request
 import requests
 from requests import Request, Session
+from requests_html import HTMLSession
 from bs4 import BeautifulSoup
 import pandas as pd
 import numpy as np
@@ -31,6 +32,19 @@ class un_volumes:
     soup = ""               # BS4 shared handle between UP & DOWN (1 URL, 2 embeded data sets in HTML doc)
     args = []               # class dict to hold global args being passed in from main() methods
 
+    # NASDAQ.com header/cookie hack
+    nasdaq_headers = { \
+                    'authority': 'api.nasdaq.com', \
+                    'path': '/api/quote/list-type/unusual_volume', \
+                    'origin': 'https://www.nasdaq.com', \
+                    'referer': 'https://www.nasdaq.com', \
+                    'sec-ch-ua': '"Chromium";v="92", " Not A;Brand";v="99", "Google Chrome";v="92"', \
+                    'sec-ch-ua-mobile': '"?0"', \
+                    'sec-fetch-mode': 'cors', \
+                    'sec-fetch-site': 'same-site', \
+                    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36' }
+
+
     def __init__(self, yti):
         cmi_debug = __name__+"::"+self.__init__.__name__
         logging.info('%s - INIT' % cmi_debug )
@@ -39,6 +53,9 @@ class un_volumes:
         self.down_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Vol', 'Vol_pct', 'Time'] )
         self.df2 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Vol', 'Vol_pct', 'Time'] )
         self.yti = yti
+        # init JAVAScript processor early
+        self.js_session = HTMLSession()
+        self.js_session.cookies.update(self.nasdaq_headers)    # load cookie/header hack data set into session
         return
 
 # method #1
@@ -50,42 +67,55 @@ class un_volumes:
         cmi_debug = __name__+"::"+self.get_uponuvol_data.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
 
-        s = requests.Session()
-        logging.info('%s - req.Session()' % cmi_debug )
-        user_agent = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:61.0) Gecko/20100101 Firefox/61.0'}
-        logging.info('%s - user_agent' % cmi_debug )
+        # present ourself to NASDAQ.com so we can extract the critical cookie -> ak_bmsc
+        self.js_resp0 = self.js_session.get("https://www.nasdaq.com" )
 
-        API_URL0 = "https://www.nasdaq.com/market-activity/unusual-volume"
+        # render the extracted js webpage in our js engine processor
+        # initial get() is denided by NASDAQ.com as unauthourised. *BUT* we are issued the critical 'ak_bmsc' cookie in the deny response
+        logging.info('%s - JS engine render' % cmi_debug )
+        self.js_resp0.html.render()
+
+        # NASDAQ cookie hack
+        logging.info('%s - INSERT session cookie/headers  ' % cmi_debug )
+        self.js_session.cookies.update({'ak_bmsc': self.js_session.cookies['ak_bmsc']} )
+
+        # no BeautifulSoup scraping needed...
+        # we can access pure 'Unusual VOlume' JSON data via an authenticated/valid REST API call
+        logging.info('%s - API JSON read' % cmi_debug )
+        self.js_resp2 = self.js_session.get("https://api.nasdaq.com/api/quote/list-type/unusual_volume")
+        logging.info('%s - data extracted' % cmi_debug )
+
+        #s = requests.Session()
+        #logging.info('%s - req.Session()' % cmi_debug )
+        #user_agent = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:61.0) Gecko/20100101 Firefox/61.0'}
+        #logging.info('%s - user_agent' % cmi_debug )
+        #API_URL0 = "https://www.nasdaq.com/market-activity/unusual-volume"
         #API_URL0 = "https://www.nyse.com/"
-        logging.info('%s - s.get()' % cmi_debug )
-        rx0 = s.get( API_URL0, headers=user_agent )
+        #logging.info('%s - s.get()' % cmi_debug )
+        #rx0 = s.get( API_URL0, headers=user_agent )
 
-        logging.info('get_uponuvol_data:: - READ url: %s' % rx0.status_code )
-        self.soup = BeautifulSoup(s, "html.parser")
+        #logging.info('get_uponuvol_data:: - READ url: %s' % rx0.status_code )
+        #self.soup = BeautifulSoup(s, "html.parser")
 
-        """
-        with urllib.request.urlopen("https://www.nasdaq.com/market-activity/unusual-volume") as url:
-            logging.info('%s - Open URL' % cmi_debug )
-            s = url.read()
-            logging.info('%s - read html stream' % cmi_debug )
-            self.soup = BeautifulSoup(s, "html.parser")
-        """
 
-        logging.info('%s - save BS4 class data object' % cmi_debug )
-        self.all_tagid_up = self.soup.find( id="up" )           # locate the section with ID = '_up' > output RAW htnml
-        self.all_tag_tc = self.soup.find_all(attrs={"class": "unusual-volume__table"})
-        self.up_table_data = self.all_tagid_up.table             # move into the <table> section > ouput RAW HTML
-        self.up_table_tbody = ( tb_row for tb_row in ( self.up_table_data.find_all( 'tbody' ) ) )      # build a generattor of <tr> objects
-        self.up_table_rows = ( tr_row for tr_row in ( self.up_table_data.find_all( 'tbody' ) ) )      # build a generattor of <tr> objects
+        #logging.info('%s - save BS4 class data object' % cmi_debug )
+        #self.all_tagid_up = self.soup.find( id="up" )           # locate the section with ID = '_up' > output RAW htnml
+        #self.all_tag_tc = self.soup.find_all(attrs={"class": "unusual-volume__table"})
+        #self.up_table_data = self.all_tagid_up.table             # move into the <table> section > ouput RAW HTML
+        #self.up_table_tbody = ( tb_row for tb_row in ( self.up_table_data.find_all( 'tbody' ) ) )      # build a generattor of <tr> objects
+        #self.up_table_rows = ( tr_row for tr_row in ( self.up_table_data.find_all( 'tbody' ) ) )      # build a generattor of <tr> objects
 
         # other HTML accessor methods - good for reference
         #self.up_table_rows = self.up_table_data.find_all( "tr")
         #self.up_table_rows = self.up_table_data.tr
         #self.up_table_rows2 = self.up_table_data.td
 
-        logging.info('%s - close url handle' % cmi_debug )
-        rx0.close()
-        #url.close()
+        logging.info('%s - JS engine work done ' % cmi_debug )
+        #rx0.close()
+
+        logging.info('%s - JSON payload ' % cmi_debug )
+        print ( self.js_resp2.text )
+
         return
 
 # method #2

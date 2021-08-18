@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 #import urllib
 #import urllib.request
+import requests
+from requests import Request, Session
 from requests_html import HTMLSession
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -10,26 +12,28 @@ import logging
 import argparse
 import time
 import threading
+import json
 
 # logging setup
 logging.basicConfig(level=logging.INFO)
 
 #####################################################
 
-class unusual_vol:
+class un_volumes:
     """Class to discover unusual volume data from NASDAQ.com data source"""
 
     # global accessors
-    up_df0 = ""                # DataFrame - Full list of Unusual UP volume
-    down_df1 = ""                # DataFrame - Full list of Unusual DOWN volume
+    up_df0 = ""             # DataFrame - Full list of Unusual UP volume
+    down_df1 = ""           # DataFrame - Full list of Unusual DOWN volume
     df2 = ""                # DataFrame - List of Top 10 (both UP & DOWN
-    up_table_data = ""      # BS4 constructor object of HTML <table> sub-doc > UP vol data
-    down_table_data = ""    # BS4 constructor object of HTML <table> sub-doc > DOWN vol data
+    uvol_json_data =""      # JSON dataset contains both UP & DOWN data
+    up_table_data = ""      # DEPRICATED - BS4 constructor object of HTML <table> sub-doc > UP vol data
+    down_table_data = ""    # DEPRICATED - BS4 constructor object of HTML <table> sub-doc > DOWN vol data
     yti = 0                 # Unique instance identifier
     cycle = 0               # class thread loop counter
     soup = ""               # BS4 shared handle between UP & DOWN (1 URL, 2 embeded data sets in HTML doc)
     args = []               # class dict to hold global args being passed in from main() methods
-    # NASDAQ.com header/cookie hack
+                            # NASDAQ.com header/cookie hack
     nasdaq_headers = { \
                     'authority': 'api.nasdaq.com', \
                     'path': '/api/quote/list-type/unusual_volume', \
@@ -42,67 +46,69 @@ class unusual_vol:
                     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36' }
 
 
-    def __init__(self, yti, global_args):
+    def __init__(self, yti):
         cmi_debug = __name__+"::"+self.__init__.__name__
-        logging.info('%s - INSTANTIATE' % cmi_debug )
-        self.args = global_args
+        logging.info('%s - INIT' % cmi_debug )
         # init empty DataFrame with preset colum names
         self.up_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Vol', 'Vol_pct', 'Time'] )
         self.down_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Vol', 'Vol_pct', 'Time'] )
         self.df2 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Vol', 'Vol_pct', 'Time'] )
         self.yti = yti
         # init JAVAScript processor early
-        self.js_sesssion = HTMLSession()
-        self.js_session.cookies.update(nasdaq_headers)    # load cookie/header hack data set into session
+        self.js_session = HTMLSession()
+        self.js_session.cookies.update(self.nasdaq_headers)    # load cookie/header hack data set into session
         return
 
 # method #1
-    def get_up_unvol_data(self):
-        """Connect to old.nasdaq.com and extract (scrape) the raw HTML string data from"""
-        """the embedded html data table [UP_on_unusual_vol ]. Returns a BS4 handle."""
+    def get_un_vol_data(self):
+        """Access NEW nasdaq.com JAVASCRIPT page [unusual volume] and extract the native JSON dataset"""
+        """JSON dataset contains *BOTH* UP vol & DOWN vol for top 25 symbols, right now!"""
+        """NO BeautifulSOup scraping needed anymore. We access the pure JSON datset via native API rest call"""
+        """note: Javascript engine is required, Cant process/read a JS page via requests(). The get() hangs forever"""
 
-        cmi_debug = __name__+"::"+self.get_up_unvol_data.__name__+".#"+str(self.yti)
+        cmi_debug = __name__+"::"+self.get_un_vol_data.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
 
+        # present ourself to NASDAQ.com so we can extract the critical cookie -> ak_bmsc
+        self.js_resp0 = self.js_session.get("https://www.nasdaq.com" )
 
-        logging.info('%s - Javascript INIT session' % cmi_debug )
-        self.js_resp0 = self.js_session.get("https://www.nasdaq.com" )    # present yourself to NASDAQ so we can extract the critical cookie -> ak_bmsc
-        self.js_resp0.html.render()   # render the extracted js webpage in our js engine processor
-                                      # initial get() is denided by NASDAQ.com as unauthourised. *BUT* we are issued the critical 'ak_bmsc' cookie in the deny response
-        logging.info('%s - Nasdaq cookie/headers LOAD' % cmi_debug )
-        self.js_session.cookies.update({'ak_bmsc': js_session.cookies['ak_bmsc']} )    # extract & insert the critical cookie that NASDAQ issued to us
-        # no BeautifulSoup scrpaing need now...
-        # we can extract the pure 'Unusual VOlume' JSON data via an authenticated/valid REST API call
-        logging.info('%s - Nasdaq JSON API call' % cmi_debug )
+        # render the extracted js webpage in our js engine processor
+        # initial get() is denided by NASDAQ.com as unauthourised. *BUT* we are issued the critical 'ak_bmsc' cookie in the deny response
+        logging.info('%s - JS engine render' % cmi_debug )
+        self.js_resp0.html.render()
+
+        # NASDAQ cookie hack
+        logging.info('%s - INSERT session cookie/headers  ' % cmi_debug )
+        self.js_session.cookies.update({'ak_bmsc': self.js_session.cookies['ak_bmsc']} )
+
+        # no BeautifulSoup scraping needed...
+        # we can access pure 'Unusual VOlume' JSON data via an authenticated/valid REST API call
+        logging.info('%s - API JSON read' % cmi_debug )
         self.js_resp2 = self.js_session.get("https://api.nasdaq.com/api/quote/list-type/unusual_volume")
+        logging.info('%s - data extracted' % cmi_debug )
 
-        # with urllib.request.urlopen("https://old.nasdaq.com/markets/unusual-volume.aspx") as url:
-        #     s = url.read()
-        #     logging.info('%s - read html stream' % cmi_debug )
-        #     self.soup = BeautifulSoup(s, "html.parser")
+        logging.info('%s - store JSON dataset ' % cmi_debug )   # store as pure JSON
+        self.uvol_json_data = json.loads(self.js_resp2.text)
+        logging.info('%s - JSON payload ' % cmi_debug )
+        
+        # HACKING...
+        #print ( self.js_resp2.text )
+        for c in range (0,25):
+            print ( self.uvol_json_data['data']['up']['table']['rows'][c] )
 
-        #logging.info('%s - save BS4 class data object' % cmi_debug )
-        logging.info('%s - Javascript JSON data extracted' % cmi_debug )
-        #self.all_tagid_up = self.soup.find( id="_up" )           # locate the section with ID = '_up' > output RAW htnml
-        #self.up_table_data = self.all_tagid_up.table             # move into the <table> section > ouput RAW HTML
-        #self.up_table_rows = ( tr_row for tr_row in ( self.up_table_data.find_all( 'tr' ) ) )      # build a generattor of <tr> objects
+        for c in range (0,25):
+            print ( self.uvol_json_data['data']['down']['table']['rows'][c] )
 
-        # other HTML accessor methods - good for reference
-        #self.up_table_rows = self.up_table_data.find_all( "tr")
-        #self.up_table_rows = self.up_table_data.tr
-        #self.up_table_rows2 = self.up_table_data.td
-
-        logging.info('%s - close url handle' % cmi_debug )
-        #url.close()
         return
 
 # method #2
-    def get_down_unvol_data(self):
+    def get_downonuvol_data(self):
         """Connect to old.nasdaq.com and extract (scrape) the raw HTML string data from"""
         """the embedded html data table [DOWN_on_unusual_vol ]. Returns a BS4 handle."""
 
-        cmi_debug = __name__+"::"+self.get_down_unvol_data.__name__+".#"+str(self.yti)
+        cmi_debug = __name__+"::"+self.get_downonuvol_data.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
+
         if not self.soup:
             logging.info('%s - BS4 object empty: Constructing now' % cmi_debug )
             with urllib.request.urlopen("https://old.nasdaq.com/markets/unusual-volume.aspx") as url:
@@ -148,6 +154,9 @@ class unusual_vol:
         print ( self.down_df0.sort_values(by='Pct_change', ascending=False ) )    # only do after fixtures datascience dataframe has been built
         logging.info('ins.#%s.down_unvol_listall() - DONE' % self.yti )
         return
+
+# method #6
+# New method to build a Pandas DataFrame from JSON data structure
 
 # method #5
     def build_df(self, ud):

@@ -23,13 +23,14 @@ logging.basicConfig(level=logging.INFO)
 from y_topgainers import y_topgainers
 from y_toplosers import y_toplosers
 from screener_dg1 import screener_dg1
-from unusual_vol import unusual_vol
-from nasdaq_unvol import un_volumes
+from nasdaq_uvoljs import un_volumes
 from shallow_logic import shallow_combo
 from y_newsloop import y_newsfilter
 from ml_cvbow import y_bow
 from bigcharts_md import bc_quote
 from marketwatch_md import mw_quote
+#from nasdaq_unvol import un_volumes
+#from unusual_vol import unusual_vol    # DELETE ME - pretty sure this is no longer used
 
 # Globals
 work_inst = 0
@@ -194,10 +195,14 @@ def main():
     if args['bool_uvol'] is True:
         print ( "========== Unusually high Volume ** UP ** =====================================================" )
         un_vol_activity = un_volumes(1)       # instantiate NEW nasdaq data class, args = global var
+        un_vol_activity.get_un_vol_data()        # extract JSON data (Up & DOWN) from api.nasdaq.com
 
-        un_vol_activity.get_uponuvol_data()        # extract data from nasdaq.com
         #un_vol_activity.get_up_unvol_data()        # extract data from finance.Yahoo.com
         #uv_up = un_vol_activity.build_df(0)     # build full dataframe
+
+
+        # temporarily disbaled becuase nasdaq.com retired the old unusual volume website.
+        # its now a full javasccript only site. Working on fix...
 
         """
         ulp = un_vol_activity.up_df0['Cur_price'].min()
