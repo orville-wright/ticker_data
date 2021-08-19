@@ -1,6 +1,4 @@
 #!/usr/bin/python3
-#import urllib
-#import urllib.request
 import requests
 from requests import Request, Session
 from requests_html import HTMLSession
@@ -26,13 +24,14 @@ class un_volumes:
     up_df0 = ""             # DataFrame - Full list of Unusual UP volume
     down_df1 = ""           # DataFrame - Full list of Unusual DOWN volume
     df2 = ""                # DataFrame - List of Top 10 (both UP & DOWN
-    uvol_json_data =""      # JSON dataset contains both UP & DOWN data
-    up_table_data = ""      # DEPRICATED - BS4 constructor object of HTML <table> sub-doc > UP vol data
-    down_table_data = ""    # DEPRICATED - BS4 constructor object of HTML <table> sub-doc > DOWN vol data
+    uvol_all_data =""       # JSON dataset contains ALL data
+    uvol_up_data =""        # JSON dataset contains UP data only
+    uvol_down_data =""      # JSON dataset contains DOWN data only
     yti = 0                 # Unique instance identifier
     cycle = 0               # class thread loop counter
     soup = ""               # BS4 shared handle between UP & DOWN (1 URL, 2 embeded data sets in HTML doc)
     args = []               # class dict to hold global args being passed in from main() methods
+
                             # NASDAQ.com header/cookie hack
     nasdaq_headers = { \
                     'authority': 'api.nasdaq.com', \
@@ -50,12 +49,11 @@ class un_volumes:
         cmi_debug = __name__+"::"+self.__init__.__name__
         logging.info('%s - INIT' % cmi_debug )
         # init empty DataFrame with preset colum names
-        self.up_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Vol', 'Vol_pct', 'Time'] )
-        self.down_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Vol', 'Vol_pct', 'Time'] )
-        self.df2 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Vol', 'Vol_pct', 'Time'] )
+        self.up_df0 = pd.DataFrame(columns=[ 'Row', 'Co_symbol', 'Co_name', 'Price', 'Net_change', 'Prc_pct', "Vol", 'Vol_pct', 'Time' ] )
+        self.down_df1 = pd.DataFrame(columns=[ 'Row', 'Co_symbol', 'Co_name', 'Price', 'Net_change', 'Prc_pct', "Vol", 'Vol_pct', 'Time' ] )
+        self.df2 = pd.DataFrame(columns=[ 'ERank', 'Co_symbol', 'Co_name', 'Price', 'Net_change', 'Prc_pct', "Vol", 'Vol_pct', 'Time' ] )
         self.yti = yti
-        # init JAVAScript processor early
-        self.js_session = HTMLSession()
+        self.js_session = HTMLSession()                        # init JAVAScript processor early
         self.js_session.cookies.update(self.nasdaq_headers)    # load cookie/header hack data set into session
         return
 
@@ -70,15 +68,16 @@ class un_volumes:
         logging.info('%s - IN' % cmi_debug )
 
         # present ourself to NASDAQ.com so we can extract the critical cookie -> ak_bmsc
+        logging.info('%s - blind get()' % cmi_debug )
         self.js_resp0 = self.js_session.get("https://www.nasdaq.com" )
 
         # render the extracted js webpage in our js engine processor
         # initial get() is denided by NASDAQ.com as unauthourised. *BUT* we are issued the critical 'ak_bmsc' cookie in the deny response
         logging.info('%s - JS engine render' % cmi_debug )
-        self.js_resp0.html.render()
+        self.js_resp0.html.render()  # might be able to not do this. DO I really need to render() for the initial fake/blind get?
 
         # NASDAQ cookie hack
-        logging.info('%s - INSERT session cookie/headers  ' % cmi_debug )
+        logging.info('%s - EXTRACT/INSERT valid cookie  ' % cmi_debug )
         self.js_session.cookies.update({'ak_bmsc': self.js_session.cookies['ak_bmsc']} )
 
         # no BeautifulSoup scraping needed...
@@ -87,51 +86,107 @@ class un_volumes:
         self.js_resp2 = self.js_session.get("https://api.nasdaq.com/api/quote/list-type/unusual_volume")
         logging.info('%s - data extracted' % cmi_debug )
 
-        logging.info('%s - store JSON dataset ' % cmi_debug )   # store as pure JSON
-        self.uvol_json_data = json.loads(self.js_resp2.text)
-        logging.info('%s - JSON payload ' % cmi_debug )
-        
-        # HACKING...
-        #print ( self.js_resp2.text )
-        for c in range (0,25):
-            print ( self.uvol_json_data['data']['up']['table']['rows'][c] )
-
-        for c in range (0,25):
-            print ( self.uvol_json_data['data']['down']['table']['rows'][c] )
+        logging.info('%s - store JSON datasets ' % cmi_debug )   # store JSON datasets
+        logging.info('%s - store ALL' % cmi_debug )
+        self.uvol_all_data = json.loads(self.js_resp2.text)
+        logging.info('%s - store UP' % cmi_debug )
+        self.uvol_up_data =  self.uvol_all_data['data']['up']['table']['rows']
+        logging.info('%s - store DOWN' % cmi_debug )
+        self.uvol_down_data = self.uvol_all_data['data']['down']['table']['rows']
 
         return
+
+
 
 # method #2
-    def get_downonuvol_data(self):
-        """Connect to old.nasdaq.com and extract (scrape) the raw HTML string data from"""
-        """the embedded html data table [DOWN_on_unusual_vol ]. Returns a BS4 handle."""
+# New method to build a Pandas DataFrame from JSON data structure
+    def build_df(self, ud):
+        """Build-out a fully populated Pandas DataFrame containg the"""
+        """key fields from the JSON dataset"""
+        """Wrangle, clean/convert/format the data correctly."""
+        """calling arg: ud  (up_volume = 0 / down_volume = 1)"""
 
-        cmi_debug = __name__+"::"+self.get_downonuvol_data.__name__+".#"+str(self.yti)
+        this_df = ""
+        cmi_debug = __name__+"::"+self.build_df.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
 
-        if not self.soup:
-            logging.info('%s - BS4 object empty: Constructing now' % cmi_debug )
-            with urllib.request.urlopen("https://old.nasdaq.com/markets/unusual-volume.aspx") as url:
-                s = url.read()
-                logging.info('%s - open url, read in html stream & parse' % cmi_debug )
-                self.soup = BeautifulSoup(s, "html.parser")
-                logging.info('%s - save BS4 class data object' % cmi_debug )
-                self.all_tagid_down = self.soup.find( id="_down" )           # locate the section with ID = '_down' > output RAW htnml
-                self.down_table_data = self.all_tagid_down.table             # move into the <table> section > ouput RAW HTML
-                self.down_table_rows = ( tr_row for tr_row in ( self.down_table_data.find_all( 'tr' ) ) )      # build a generator of <tr> objects
-                logging.info('%s - close url handle' % cmi_debug )
-                url.close()
+        if ud == 0:
+            logging.info('%s - build UP df' % cmi_debug )
+            this_df = self.up_df0
+            dataset = self.uvol_up_data
+        elif ud == 1:
+            logging.info('%s - build DOWN df' % cmi_debug )
+            this_df = self.down_df1
+            dataset = self.uvol_down_data
         else:
-            logging.info('%s - BS4 object cached, re-use hot data. No network op' % cmi_debug )      # this might not be a good idea !!
-            self.all_tagid_down = self.soup.find( id="_down" )           # locate the section with ID = '_down' > output RAW htnml
-            self.down_table_data = self.all_tagid_down.table             # move into the <table> section > ouput RAW HTML
-            self.down_table_rows = ( tr_row for tr_row in ( self.down_table_data.find_all( 'tr' ) ) )      # build a generator of <tr> objects
-        # other HTML accessor methods - good for reference
-        #self.up_table_rows = self.up_table_data.find_all( "tr")
-        #self.up_table_rows = self.up_table_data.tr
-        #self.up_table_rows2 = self.up_table_data.td
-        logging.info('%s - DONE' % cmi_debug )
-        return
+            logging.info('%s - Error: invalid dataframe. EXITING' % cmi_debug )
+            return 0
+
+        time_now = time.strftime("%H:%M:%S", time.localtime() )
+        logging.info('%s - Drop all rows from DF' % cmi_debug )
+        this_df.drop(this_df.index, inplace=True)
+
+        x = 1    # row counter Also leveraged for unique dataframe key
+        for json_data_row in dataset:     # genrator object
+            co_sym = json_data_row['symbol']
+            co_name = json_data_row['company']
+            price = json_data_row['lastSale']
+            price_net = json_data_row['netChange']
+            arrow_updown = json_data_row['deltaIndicator']
+            price_pct = json_data_row['percentChange']
+            vol_abs = json_data_row['shareVolume']
+            vol_pct = json_data_row['volumePctChange']
+
+            # COL NAME     variable       final varable cleansed
+            # ==================================================
+            # Row        = x              x
+            # Co_symbol  = co_sym         co_sym_lj
+            # Co_name    = co_name        co_name_lj
+            # Price      = price          price_cl
+            # Net_change = price_net      price_net_cl
+            # Prc_pct    = price_pct      price_pct_cl
+            # vol        = vol_abs        vol_abs_cl
+            # vol_pct    = vol_pct        vol_pct_cl
+            # Time       = time_now       time_now
+
+            # wrangle, clean, cast & prepare the data
+            co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )         # left justify TXT in DF & convert to raw string
+            co_name_lj = (re.sub('[\'\"]', '', co_name) )                  # remove " ' and strip leading/trailing spaces
+            co_name_lj = np.array2string(np.char.ljust(co_name_lj, 25) )   # left justify TXT in DF & convert to raw string
+            co_name_lj = (re.sub('[\']', '', co_name_lj) )                 # remove " ' and strip leading/trailing spaces
+
+            price_cl = (re.sub('[ $,]', '', price))                        # remove $ sign
+            price_net_cl = (re.sub('[\-+]', '', price_net))                # remove - + signs
+            price_pct_cl = (re.sub('[\-+%]', '', price_pct))               # remove - + % signs
+            vol_abs_cl = (re.sub('[,]', '', vol_abs))                      # remove ,
+            vol_pct_cl = (re.sub('[%]', '', vol_pct))                      # remover %
+
+            self.data0 = [[ \
+                       x, \
+                       re.sub('\'', '', co_sym_lj), \
+                       co_name_lj, \
+                       np.float(price_cl), \
+                       np.float(price_net_cl), \
+                       np.float(price_pct_cl), \
+                       np.float(vol_abs_cl), \
+                       np.float(vol_pct_cl), \
+                       time_now ]]
+
+            if ud == 0:
+                logging.info('%s - append UP Volume data into DataFrame' % cmi_debug )
+                self.temp_df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Co_symbol', 'Co_name', 'Price', 'Net_change', 'Prc_pct', "Vol", 'Vol_pct', 'Time' ], index=[x] )
+                self.up_df0 = self.up_df0.append(self.temp_df0, sort=False)    # append this ROW of data into the REAL DataFrame
+            else:
+                logging.info('%s - append DOWN Volume data into DataFrame' % cmi_debug )
+                self.temp_df1 = pd.DataFrame(self.data0, columns=[ 'Row', 'Co_symbol', 'Co_name', 'Price', 'Net_change', "Prc_pct", "Vol", 'Vol_pct', 'Time' ], index=[x] )
+                self.down_df1 = self.down_df1.append(self.temp_df1, sort=False)    # append this ROW of data into the REAL DataFrame
+
+            x += 1
+
+        logging.info('%s - populated new DF' % cmi_debug )
+        return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
+                        # sucess = lobal class accessor (y_toplosers.df0) populated & updated
+
 
 # method #3
     def up_unvol_listall(self):
@@ -140,7 +195,7 @@ class un_volumes:
         logging.info('ins.#%s.up_unvol_listall() - IN' % self.yti )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
-        print ( self.up_df0.sort_values(by='Pct_change', ascending=False ) )    # only do after fixtures datascience dataframe has been built
+        print ( self.up_df0.sort_values(by='Prc_pct', ascending=False ) )
         logging.info('ins.#%s.up_unvol_listall() - DONE' % self.yti )
         return
 
@@ -151,91 +206,6 @@ class un_volumes:
         logging.info('ins.#%s.down_unvol_listall() - IN' % self.yti )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
-        print ( self.down_df0.sort_values(by='Pct_change', ascending=False ) )    # only do after fixtures datascience dataframe has been built
+        print ( self.down_df1.sort_values(by='Prc_pct', ascending=False ) )
         logging.info('ins.#%s.down_unvol_listall() - DONE' % self.yti )
         return
-
-# method #6
-# New method to build a Pandas DataFrame from JSON data structure
-
-# method #5
-    def build_df(self, ud):
-        """Build-out a fully populated Pandas DataFrame containg all the"""
-        """extracted/scraped fields from the html/markup table data"""
-        """Wrangle, clean/convert/format the data correctly."""
-        """calling arg: ud  (up_volume = 0 / down_volume = 1)"""
-
-        this_df = ""
-        cmi_debug = __name__+"::"+self.build_df.__name__+".#"+str(self.yti)
-        logging.info('%s - IN' % cmi_debug )
-
-        if ud == 0:
-            logging.info('%s - UP volume analysis' % cmi_debug )
-            this_df = self.up_df0
-            table_section = self.up_table_rows
-        elif ud == 1:
-            logging.info('%s - DOWN volume analysis' % cmi_debug )
-            this_df = self.down_df0
-            table_section = self.down_table_rows
-        else:
-            logging.info('%s - Error: invalid dataframe. EXITING' % cmi_debug )
-            return 0
-
-        time_now = time.strftime("%H:%M:%S", time.localtime() )
-        logging.info('%s - Drop all rows from DataFrame' % cmi_debug )
-        this_df.drop(this_df.index, inplace=True)
-
-        x = 1    # row counter Also leveraged for unique dataframe key
-        col_headers = next(table_section)     # ignore the 1st TR row object, which is column header titles
-        for tr_data in table_section:     # genrator object
-            extr_strings = tr_data.stripped_strings
-            co_sym = next(extr_strings)
-            co_name = next(extr_strings)
-            price = next(extr_strings)
-            price_net = next(extr_strings)
-            arrow_updown = next(extr_strings)
-            price_pct = next(extr_strings)
-            vol_abs = next(extr_strings)
-            vol_pct = next(extr_strings)
-
-            # wrangle & clean the data
-            co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )      # left justify TXT in DF & convert to raw string
-
-            co_name_lj = (re.sub('[\'\"]', '', co_name) )    # remove " ' and strip leading/trailing spaces
-            co_name_lj = np.array2string(np.char.ljust(co_name_lj, 25) )   # left justify TXT in DF & convert to raw string
-            co_name_lj = (re.sub('[\']', '', co_name_lj) )    # remove " ' and strip leading/trailing spaces
-
-            price_cl = (re.sub('[ $,]', '', price))
-            price_pct_cl = (re.sub('[\-+%]', '', price_pct))
-            vol_abs_cl = (re.sub('[,]', '', vol_abs))
-            vol_pct_cl = (re.sub('[%]', '', vol_pct))
-
-            self.data0 = [[ \
-                       x, \
-                       re.sub('\'', '', co_sym_lj), \
-                       co_name_lj, \
-                       np.float(price_cl), \
-                       np.float(price_net), \
-                       np.float(price_pct_cl), \
-                       np.float(vol_abs_cl), \
-                       np.float(vol_pct_cl), \
-                       time_now ]]
-
-            if ud == 0:
-                logging.info('%s - append UP Volume data into DataFrame' % cmi_debug )
-                self.temp_df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ], index=[x] )
-                self.up_df0 = self.up_df0.append(self.temp_df0, sort=False)    # append this ROW of data into the REAL DataFrame
-            else:
-                logging.info('%s - append DOWN Volume data into DataFrame' % cmi_debug )
-                self.temp_df1 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ], index=[x] )
-                self.down_df0 = self.down_df0.append(self.temp_df1, sort=False)    # append this ROW of data into the REAL DataFrame
-
-            # DEBUG
-            if self.args['bool_xray'] is True:        # DEBUG
-                print ( "================================", x, "======================================")
-                print ( co_sym, co_name, price_cl, price_net, price_pct_cl, vol_abs_cl, vol_pct_cl )
-
-            x += 1
-        logging.info('%s - populated new DF0 dataset' % cmi_debug )
-        return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
-                        # sucess = lobal class accessor (y_toplosers.df0) populated & updated

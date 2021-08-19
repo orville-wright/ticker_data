@@ -29,8 +29,6 @@ from y_newsloop import y_newsfilter
 from ml_cvbow import y_bow
 from bigcharts_md import bc_quote
 from marketwatch_md import mw_quote
-#from nasdaq_unvol import un_volumes
-#from unusual_vol import unusual_vol    # DELETE ME - pretty sure this is no longer used
 
 # Globals
 work_inst = 0
@@ -178,7 +176,7 @@ def main():
         print ( " " )
 
 ########### Small Cap gainers & loosers ################
-# small caps are isolate outside the regular dataset by yahoo.com
+# small caps are isolated outside the regular dataset by yahoo.com
     if args['bool_scr'] is True:
         print ( "========== Screener: SMALL CAP Day Gainers : +5% & > $299M Mkt-cap ==========" )
         small_cap_dataset = screener_dg1(1)       # instantiate class
@@ -193,9 +191,18 @@ def main():
 
 ########### unusual_vol ################
     if args['bool_uvol'] is True:
-        print ( "========== Unusually high Volume ** UP ** =====================================================" )
+        print ( "========== Unusually high Volume =====================================================" )
         un_vol_activity = un_volumes(1)       # instantiate NEW nasdaq data class, args = global var
-        un_vol_activity.get_un_vol_data()        # extract JSON data (Up & DOWN) from api.nasdaq.com
+        un_vol_activity.get_un_vol_data()     # extract JSON data (Up & DOWN) from api.nasdaq.com
+
+        # should test success of extract before attempting DF population
+        un_vol_activity.build_df(0)           # 0 = UP Unusual volume
+        un_vol_activity.build_df(1)           # 1 = DOWN unusual volume
+
+        #print ( " " )
+        #un_vol_activity.up_unvol_listall()
+        #print ( " " )
+        #un_vol_activity.down_unvol_listall()
 
         #un_vol_activity.get_up_unvol_data()        # extract data from finance.Yahoo.com
         #uv_up = un_vol_activity.build_df(0)     # build full dataframe
@@ -204,15 +211,29 @@ def main():
         # temporarily disbaled becuase nasdaq.com retired the old unusual volume website.
         # its now a full javasccript only site. Working on fix...
 
-        """
-        ulp = un_vol_activity.up_df0['Cur_price'].min()
-        uminv = un_vol_activity.up_df0['Cur_price'].idxmin()
-        ulsym = un_vol_activity.up_df0.loc[uminv, ['Symbol']][0]
-        ulname = un_vol_activity.up_df0.loc[uminv, ['Co_name']][0]
+        # DataFrame COL NAME
+        # ==================
+        # Row
+        # Co_symbol
+        # Co_name
+        # Price
+        # Net_change
+        # Prc_pct
+        # vol
+        # vol_pct
+        # Time
+
+        ulp = un_vol_activity.up_df0['Price'].min()                  # find lowest price row
+        uminv = un_vol_activity.up_df0['Price'].idxmin()             # get index ID of lowest price item
+        ulsym = un_vol_activity.up_df0.loc[uminv, ['Co_symbol']][0]  # get symbol of lowest price item
+        ulname = un_vol_activity.up_df0.loc[uminv, ['Co_name']][0]   # get name of lowest price item
+
+        # Make a recommendation
+        # lowest price stock experincing unusually high UP volume
 
         # Allways make sure this is key #2 in recommendations dict
-        recommended['2'] = ('Unusual vol:', ulsym.rstrip(), '$'+str(ulp), ulname.rstrip(), '+%'+str(un_vol_activity.up_df0.loc[uminv, ['Pct_change']][0]) )
-        recommended[uminv] = (ulsym.rstrip(), '$'+str(ulp), ulname.rstrip(), '+%'+str(un_vol_activity.up_df0.loc[uminv, ['Pct_change']][0]) )
+        recommended['2'] = ('Unusual vol:', ulsym.rstrip(), '$'+str(ulp), ulname.rstrip(), '+%'+str(un_vol_activity.up_df0.loc[uminv, ['Prc_pct']][0]) )
+        recommended[uminv] = (ulsym.rstrip(), '$'+str(ulp), ulname.rstrip(), '+%'+str(un_vol_activity.up_df0.loc[uminv, ['Prc_pct']][0]) )
 
         print ( f">>LOWEST<< price OPPTY is: #{uminv} - {ulname.rstrip()} ({ulsym.rstrip()}) @ ${ulp}" )
         print ( " " )
@@ -220,10 +241,7 @@ def main():
 
         print ( " ")
         print ( "========== Unusually high Volume ** DOWN ** =====================================================" )
-        un_vol_activity.get_down_unvol_data()
-        uv_down = un_vol_activity.build_df(1)     # build full dataframe
         un_vol_activity.down_unvol_listall()
-        """
 
         print ( " ")
 
