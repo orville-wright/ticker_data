@@ -9,15 +9,18 @@ See the WIKI for more info: https://github.com/orville-wright/ticker_data/wiki
 The code currently supports the following data sources, data extraction methods and API's...
   1. yahoo.com/finance  - BS4 web scraper/data extractor - (S/M/L/X sector/mkt-cap stats, top gainers/loosers)
   2. yahoo.com/news - BS4 web scraper/data exrtactor - all news for a ticker)
-  2. alpaca.markets.com - native python API (live stock quotes, live 60 second O/H/L/C/V candlestick bars)
-  3. bigcharts.marketwatch.com  - BS4 web scraper/data extarctor - (delayed stock stock & ticker details)
-  4. nasdaq.com - BS4 scraper/data extractor - (delayed data)
-     I leverage an old website maintained/updated by NASDAQ with a live Unusual Volume data feed. This webpage is easy to scrape, but it is slow at the market open becasue unusual volume needs to build-up mass (for 5/10 mins) before being flagged as 'unusual'.
-  5. marketwatch.com - BS4 web scraper/data extractor - (live quotes, ticker details)
-  * The marketwatch.com module is not yet fully working.
-  * marketwatch.com is a very bloated rich media site, so its slow-ish but it has nice 'realtime data' and lots of geat rich info.
-  * They also enforce javascript=ON & also do highly paranoid JS validation/checking early in the client connection setup.
-  * They are paranoid about Robot scrapers & forcefully check/block these early in the setup. I havent hacked arround these yet.
+  3. alpaca.markets.com - native python API (live stock quotes, live 60 second O/H/L/C/V candlestick bars)
+  4. bigcharts.marketwatch.com  - BS4 web scraper/data extarctor - (delayed stock stock & ticker details)
+  5. nasdaq.com - Native API & JSON extractor
+     No BS4 scraping needed anymore (depricated)
+     The old NASDAQ Unusual Volume website is ofically dead. The website is now a fancy/complex Javascript site.
+     The new site is much far difficult to read as it's 100% Javascript. The new code works with native NASDAQ API & gets pure JSON data.
+     The page is slow at the market open becasue unusual volume needs to build-up momentum (for 5/10 mins) before being flagged as 'unusual'.
+  6. marketwatch.com - BS4 web scraper/data extractor - (live quotes, ticker details)
+     * marketwatch.com module is not yet fully working.
+     * marketwatch.com is a very bloated rich media site, so its slow-ish but it has nice 'realtime data' and lots of rich info.
+     * They enforce javascript=ON & also do highly paranoid JS validation/checking early in the client connection setup.
+     * They are paranoid about Robot scrapers & forcefully check/block these early in the setup. I havent hacked arround these yet.
 
 Data is packaged into multiple formats...
 1. Pandas Data Frames
