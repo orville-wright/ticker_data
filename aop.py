@@ -41,7 +41,7 @@ parser.add_argument('-d','--deep', help='Deep converged multi data list', action
 #parser.add_argument('-n','--newsai', help='News sentiment Ai', action='store_true', dest='bool_news', required=False, default=False)
 parser.add_argument('-n','--newsai', help='News sentiment Ai', action='store', dest='newsymbol', required=False, default=False)
 parser.add_argument('-q','--quote', help='Get ticker price action quote', action='store', dest='qsymbol', required=False, default=False)
-parser.add_argument('-s','--screen', help='screener logic parser', action='store_true', dest='bool_scr', required=False, default=False)
+parser.add_argument('-s','--screen', help='Small cap screener logic', action='store_true', dest='bool_scr', required=False, default=False)
 parser.add_argument('-t','--tops', help='show top ganers/losers', action='store_true', dest='bool_tops', required=False, default=False)
 parser.add_argument('-u','--unusual', help='unusual up & down volume', action='store_true', dest='bool_uvol', required=False, default=False)
 parser.add_argument('-v','--verbose', help='verbose error logging', action='store_true', dest='bool_verbose', required=False, default=False)
@@ -191,25 +191,13 @@ def main():
 
 ########### unusual_vol ################
     if args['bool_uvol'] is True:
-        print ( "========== Unusually high Volume =====================================================" )
+        print ( "========== Unusually high Volume ** UP ** =====================================================" )
         un_vol_activity = un_volumes(1)       # instantiate NEW nasdaq data class, args = global var
         un_vol_activity.get_un_vol_data()     # extract JSON data (Up & DOWN) from api.nasdaq.com
 
         # should test success of extract before attempting DF population
         un_vol_activity.build_df(0)           # 0 = UP Unusual volume
         un_vol_activity.build_df(1)           # 1 = DOWN unusual volume
-
-        #print ( " " )
-        #un_vol_activity.up_unvol_listall()
-        #print ( " " )
-        #un_vol_activity.down_unvol_listall()
-
-        #un_vol_activity.get_up_unvol_data()        # extract data from finance.Yahoo.com
-        #uv_up = un_vol_activity.build_df(0)     # build full dataframe
-
-
-        # temporarily disbaled becuase nasdaq.com retired the old unusual volume website.
-        # its now a full javasccript only site. Working on fix...
 
         # DataFrame COL NAME
         # ==================
@@ -223,31 +211,36 @@ def main():
         # vol_pct
         # Time
 
-        ulp = un_vol_activity.up_df0['Price'].min()                  # find lowest price row
-        uminv = un_vol_activity.up_df0['Price'].idxmin()             # get index ID of lowest price item
+        # find lowest price stock in unusuall UP volume list
+        ulp = un_vol_activity.up_df0['Price'].min()                  # find lowest price row in DF
+        uminv = un_vol_activity.up_df0['Price'].idxmin()             # get index ID of lowest price row
         ulsym = un_vol_activity.up_df0.loc[uminv, ['Co_symbol']][0]  # get symbol of lowest price item
         ulname = un_vol_activity.up_df0.loc[uminv, ['Co_name']][0]   # get name of lowest price item
-
-        # Make a recommendation
-        # lowest price stock experincing unusually high UP volume
-
-        # Allways make sure this is key #2 in recommendations dict
-        recommended['2'] = ('Unusual vol:', ulsym.rstrip(), '$'+str(ulp), ulname.rstrip(), '+%'+str(un_vol_activity.up_df0.loc[uminv, ['Prc_pct']][0]) )
-        recommended[uminv] = (ulsym.rstrip(), '$'+str(ulp), ulname.rstrip(), '+%'+str(un_vol_activity.up_df0.loc[uminv, ['Prc_pct']][0]) )
-
         print ( f">>LOWEST<< price OPPTY is: #{uminv} - {ulname.rstrip()} ({ulsym.rstrip()}) @ ${ulp}" )
         print ( " " )
-        un_vol_activity.up_unvol_listall()
 
+        un_vol_activity.up_unvol_listall()
         print ( " ")
         print ( "========== Unusually high Volume ** DOWN ** =====================================================" )
         un_vol_activity.down_unvol_listall()
-
         print ( " ")
+
+
+############################# build recommendation #######################################
+        # recommendation[]
+        # A list we build of a handful of recomendations
+        # lowest price stock having unusually high UP volume is a good recomendation
+        # todo: we should do a linear regression on the price curve for this item
+
+        # reconemdation[2] : holds unusualaly hight volume stock with lowest buy price
+        recommended['2'] = ('Unusual vol:', ulsym.rstrip(), '$'+str(ulp), ulname.rstrip(), '+%'+str(un_vol_activity.up_df0.loc[uminv, ['Prc_pct']][0]) )
+        recommended[uminv] = (ulsym.rstrip(), '$'+str(ulp), ulname.rstrip(), '+%'+str(un_vol_activity.up_df0.loc[uminv, ['Prc_pct']][0]) )
 
 ########### multi COMBO dataframe query build-out ################
     if args['bool_deep'] is True and args['bool_scr'] is True and args['bool_uvol'] is True:
-        # first combine Small_cap + med + large + mega
+
+        # first combine Small_cap + med + large + mega into a single dataframe
+        # 
         x = shallow_combo(1, med_large_mega_gainers, small_cap_dataset, un_vol_activity, args )
         x.prepare_combo_df()
         print ( "========== ** OUTLIERS ** : Unusual UP volume + Top Gainers by +5% ================================" )

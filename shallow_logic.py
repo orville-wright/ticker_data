@@ -45,7 +45,7 @@ class shallow_combo:
         logging.info('%s - IN' % cmi_debug )
         deep_1 = self.dataset_1.tg_df1.drop(columns=[ 'ERank', 'Time' ]).sort_values(by='Pct_change', ascending=False )
         deep_2 = self.dataset_2.dg1_df1.drop(columns=[ 'Row', 'Time' ] )
-        deep_3 = self.dataset_3.up_df0.drop(columns=[ 'Row', 'Time', 'Vol', 'Vol_pct']).sort_values(by='Pct_change', ascending=False )
+        deep_3 = self.dataset_3.up_df0.drop(columns=[ 'Row', 'Time', 'Vol', 'Vol_pct']).sort_values(by='Prc_pct', ascending=False )
 
         # combine all dataframes...
         # prescribed concoluted Pandas logic b/c problematic & error-prone when done as a pandas 1-liner

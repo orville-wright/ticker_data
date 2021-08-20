@@ -1,6 +1,7 @@
 #!/usr/bin/python3
-import urllib
-import urllib.request
+#import urllib
+#import urllib.request
+import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 import numpy as np
@@ -51,10 +52,11 @@ class screener_dg1:
 
         cmi_debug = __name__+"::"+self.get_data.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
-        with urllib.request.urlopen("https://finance.yahoo.com/screener/predefined/small_cap_gainers" ) as url:
-            s = url.read()
-            logging.info('%s read html stream' % cmi_debug )
-            self.soup = BeautifulSoup(s, "html.parser")
+
+        r = requests.get("https://finance.yahoo.com/screener/predefined/small_cap_gainers" )
+        logging.info('%s - read html stream' % cmi_debug )
+        self.soup = BeautifulSoup(r.text, 'html.parser')
+
         # ATTR style search. Results -> Dict
         # <tr> tag has a very complex 'class=' but attributes are unique. e.g. 'simpTblRow'
         logging.info('%s store url data handle' % cmi_debug )
@@ -63,12 +65,12 @@ class screener_dg1:
         # Example CSS Selector
         #all_tag_tr1 = soup.select( "tr.simpTblRow.Bgc" )
         logging.info('%s close url handle' % cmi_debug )
-        url.close()
+        r.close()
         return
 
 # method #2
     def build_df0(self):
-        """Build-out a fully populated Pandas DataFrame containg all the"""
+        """Build-out Pandas DataFrame containg all the"""
         """extracted/scraped fields from the html/markup table data"""
         """Wrangle, clean/convert/format the data correctly."""
 
@@ -77,7 +79,8 @@ class screener_dg1:
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         logging.info('%s - Drop all rows from DF0' % cmi_debug )
         self.dg1_df0.drop(self.dg1_df0.index, inplace=True)
-        x = 1    # row counter Also leveraged for unique dataframe key
+
+        x = 1                               # row counter leveraged for unique dataframe key
         for datarow in self.all_tag_tr:
             # BS4 generator object comes from "extracted strings" BS4 operation (nice)
             extr_strings = datarow.stripped_strings
@@ -91,13 +94,12 @@ class screener_dg1:
             mktcap = next(extr_strings)     # 7th <td> : Market cap
             # 8th <td> : PE ratio - **IGNORED & NOT extracted**
 
-            co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )      # left justify TXT in DF & convert to raw string
-
-            co_name_lj = (re.sub('[\'\"]', '', co_name) )    # remove " ' and strip leading/trailing spaces
+            co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )         # left justify TXT in DF & convert to raw string
+            co_name_lj = (re.sub('[\'\"]', '', co_name) )                  # remove " ' and strip leading/trailing spaces
             co_name_lj = np.array2string(np.char.ljust(co_name_lj, 25) )   # left justify TXT in DF & convert to raw string
-            co_name_lj = (re.sub('[\']', '', co_name_lj) )    # remove " ' and strip leading/trailing spaces
+            co_name_lj = (re.sub('[\']', '', co_name_lj) )                 # remove " ' and strip leading/trailing spaces
 
-            mktcap = (re.sub('[N\/A]', '0', mktcap))   # handle N/A
+            mktcap = (re.sub('[N\/A]', '0', mktcap))                       # handle N/A in market cap field
 
             # TODO: co_name_lj has "" removed later in data setup as some odd companies have " surround their name.
             # But remving " leaves 1 space infront/behind name str. Fix that
@@ -120,7 +122,7 @@ class screener_dg1:
                 logging.info('%s - bad mktcap data. set to S0' % cmi_debug )
                 # handle bad data in mktcap html page field
 
-            if pct == "N/A":            # Bad data. FOund a filed with N/A instead of read num
+            if pct == "N/A":            # Bad data. Found a filed with N/A instead of read num
                 pct = "1.0"
 
             #pct = np.float(re.sub('[\-+,%]', '', pct))
