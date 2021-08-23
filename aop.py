@@ -192,8 +192,8 @@ def main():
 ########### unusual_vol ################
     if args['bool_uvol'] is True:
         print ( "========== Unusually high Volume ** UP ** =====================================================" )
-        un_vol_activity = un_volumes(1)       # instantiate NEW nasdaq data class, args = global var
-        un_vol_activity.get_un_vol_data()     # extract JSON data (Up & DOWN) from api.nasdaq.com
+        un_vol_activity = un_volumes(1, args)       # instantiate NEW nasdaq data class, args = global var
+        un_vol_activity.get_un_vol_data()           # extract JSON data (Up & DOWN) from api.nasdaq.com
 
         # should test success of extract before attempting DF population
         un_vol_activity.build_df(0)           # 0 = UP Unusual volume
