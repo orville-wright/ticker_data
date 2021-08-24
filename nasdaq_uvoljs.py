@@ -74,28 +74,25 @@ class un_volumes:
         logging.info('%s - blind get()' % cmi_debug )
         self.js_session.cookies.update(self.nasdaq_headers)    # redundent as it's done in INIT but I'm not sure its persisting from there
         with self.js_session.get("https://www.nasdaq.com", stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp0:
-            #logging.info('%s - JS engine render' % cmi_debug )
-            #self.js_resp0.html.render()  # might be able to not do this. DO I really need to render() for the initial fake/blind get?
-
-            # NASDAQ cookie hack
             logging.info('%s - EXTRACT/INSERT valid cookie  ' % cmi_debug )
-            self.js_session.cookies.update({'ak_bmsc': self.js_resp0.cookies['ak_bmsc']} )
+            self.js_session.cookies.update({'ak_bmsc': self.js_resp0.cookies['ak_bmsc']} )    # NASDAQ cookie hack
 
         # 2nd get with the secret nasdaq.com cookie no inserted
-        logging.info('%s - API JSON read' % cmi_debug )
+        logging.info('%s - rest API read json' % cmi_debug )
         with self.js_session.get("https://api.nasdaq.com/api/quote/list-type/unusual_volume", stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp2:
-            logging.info('%s - data extracted' % cmi_debug )
-            logging.info('%s - store JSON datasets ' % cmi_debug )   # store JSON datasets
-            logging.info('%s - store ALL data' % cmi_debug )
             # read the webpage with our Javascript engine processor
+            logging.info('%s - Javascript engine processing...' % cmi_debug )
             self.js_resp2.html.render()
+            logging.info('%s - Javascript engine completed!' % cmi_debug )
 
             # no BeautifulSoup scraping needed...
             # we can access pure 'Unusual VOlume' JSON data via an authenticated/valid REST API call
+            logging.info('%s - json data extracted' % cmi_debug )
+            logging.info('%s - store FULL json dataset' % cmi_debug )
             self.uvol_all_data = json.loads(self.js_resp2.text)
-            logging.info('%s - store UP data' % cmi_debug )
+            logging.info('%s - store UP data locale' % cmi_debug )
             self.uvol_up_data =  self.uvol_all_data['data']['up']['table']['rows']
-            logging.info('%s - store DOWN data' % cmi_debug )
+            logging.info('%s - store DOWN data locale' % cmi_debug )
             self.uvol_down_data = self.uvol_all_data['data']['down']['table']['rows']
 
          # Xray DEBUG 
@@ -105,10 +102,7 @@ class un_volumes:
             for i in self.js_session.cookies.items():
                 print ( f"{i}" )
 
-
         return
-
-
 
 # method #2
 # New method to build a Pandas DataFrame from JSON data structure
