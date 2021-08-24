@@ -226,8 +226,19 @@ def main():
         print ( " ")
 
 
+        # testing new method()
+        #un_vol_activity.up_down_combo()
+
 ############################# build recommendation #######################################
-        # recommendation[]
+        # recommendation list []
+        #  key    recomendation data     - (example output shown)
+        # =====================================================================
+        #   1:    Small cap % gainer: TXMD $0.818 TherapeuticsMD, Inc. +%7.12
+        #   2:    Unusual vol: SPRT $11.17 support.com, Inc. +%26.79
+        #   3:    HOttest:  ??????? <broken due to shallow_combo DF collumn name changes>
+        #   4:    Large cap: ??????
+        #   5:    Top % gainer:  ?????
+
         # A list we build of a handful of recomendations
         # lowest price stock having unusually high UP volume is a good recomendation
         # todo: we should do a linear regression on the price curve for this item
@@ -237,10 +248,23 @@ def main():
         recommended[uminv] = (ulsym.rstrip(), '$'+str(ulp), ulname.rstrip(), '+%'+str(un_vol_activity.up_df0.loc[uminv, ['Pct_change']][0]) )
 
 ########### multi COMBO dataframe query build-out ################
+#
+# This section...
+# should be moved to its own class
+# builds a single large DataFrame that combines all the findings into 1 place
+# the combo DF will be a single source of truth to iterate over symbols and apply ML logic
+# like... linear regressions for the last 5/10/15/30/60 mins
+#         to decide if a stock of interest is trending UP or DOWN based on linear regressions
+#         to fill out missing data fields that couldnt be grabbed during initial data gathering
+#             e.g. sometimes you cant grab the symbol/price when poppulating some dataframes
+#
+# BROKEN: This is broken b/c the Nasdaq_Unusual volume collumn names changed
+
+#         to fix, all the _combo_() code in shallow_combo:: class needs to be updated
+#
     if args['bool_deep'] is True and args['bool_scr'] is True and args['bool_uvol'] is True:
 
         # first combine Small_cap + med + large + mega into a single dataframe
-        # 
         x = shallow_combo(1, med_large_mega_gainers, small_cap_dataset, un_vol_activity, args )
         x.prepare_combo_df()
         print ( "========== ** OUTLIERS ** : Unusual UP volume + Top Gainers by +5% ================================" )
@@ -300,6 +324,7 @@ def main():
         print ( averages )
         print ( " " )
 
+############# Machine Learning dev code ####################################
 ###################### News Sentiment Ai ###################################
 
     if args['newsymbol'] is not False:

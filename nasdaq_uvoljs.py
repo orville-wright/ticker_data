@@ -215,3 +215,15 @@ class un_volumes:
         print ( self.down_df1.sort_values(by='Pct_change', ascending=False ) )
         logging.info('ins.#%s.down_unvol_listall() - DONE' % self.yti )
         return
+
+# method 5
+    def up_down_combo(self):
+        """Build a combo dataframe that hows all the reallnice results of UP and DOwn"""
+        """UNusual volume data. Tag each row is an easy UP/DOWN tag"""
+        logging.info('ins.#%s.up_down_combo() - IN' % self.yti )
+        # should drop entire df before starting to ensure its empty
+        self.df2=self.up_df0.copy()
+        self.df2.drop('Row', axis=1, inplace=True )
+        logging.info('ins.#%s.up_down_combo() - DONE' % self.yti )
+        print ( f"{self.df2}" )
+        return
