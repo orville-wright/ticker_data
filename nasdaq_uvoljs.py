@@ -50,9 +50,9 @@ class un_volumes:
         logging.info('%s - INIT' % cmi_debug )
         # init empty DataFrame with preset colum names
         self.args = global_args                                # Only set once per INIT. all methods are set globally
-        self.up_df0 = pd.DataFrame(columns=[ 'Row', 'Co_symbol', 'Co_name', 'Price', 'Net_change', 'Prc_pct', "Vol", 'Vol_pct', 'Time' ] )
-        self.down_df1 = pd.DataFrame(columns=[ 'Row', 'Co_symbol', 'Co_name', 'Price', 'Net_change', 'Prc_pct', "Vol", 'Vol_pct', 'Time' ] )
-        self.df2 = pd.DataFrame(columns=[ 'ERank', 'Co_symbol', 'Co_name', 'Price', 'Net_change', 'Prc_pct', "Vol", 'Vol_pct', 'Time' ] )
+        self.up_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ] )
+        self.down_df1 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ] )
+        self.df2 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ] )
         self.yti = yti
         self.js_session = HTMLSession()                        # init JAVAScript processor early
         self.js_session.cookies.update(self.nasdaq_headers)    # load cookie/header hack data set into session
@@ -145,15 +145,15 @@ class un_volumes:
 
             # COL NAME     variable       final varable cleansed
             # ==================================================
-            # Row        = x              x
-            # Co_symbol  = co_sym         co_sym_lj
-            # Co_name    = co_name        co_name_lj
-            # Price      = price          price_cl
-            # Net_change = price_net      price_net_cl
-            # Prc_pct    = price_pct      price_pct_cl
-            # vol        = vol_abs        vol_abs_cl
-            # vol_pct    = vol_pct        vol_pct_cl
-            # Time       = time_now       time_now
+            # Row           = x              x
+            # Symbol        = co_sym         co_sym_lj
+            # Co_name       = co_name        co_name_lj
+            # Cur_price     = price          price_cl
+            # Prc_change    = price_net      price_net_cl
+            # Pct_change    = price_pct      price_pct_cl
+            # vol           = vol_abs        vol_abs_cl
+            # vol_pct       = vol_pct        vol_pct_cl
+            # Time          = time_now       time_now
 
             # wrangle, clean, cast & prepare the data
             co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )         # left justify TXT in DF & convert to raw string
@@ -180,11 +180,11 @@ class un_volumes:
 
             if ud == 0:
                 logging.info('%s - append UP Volume data into DataFrame' % cmi_debug )
-                self.temp_df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Co_symbol', 'Co_name', 'Price', 'Net_change', 'Prc_pct', "Vol", 'Vol_pct', 'Time' ], index=[x] )
+                self.temp_df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ], index=[x] )
                 self.up_df0 = self.up_df0.append(self.temp_df0, sort=False)    # append this ROW of data into the REAL DataFrame
             else:
                 logging.info('%s - append DOWN Volume data into DataFrame' % cmi_debug )
-                self.temp_df1 = pd.DataFrame(self.data0, columns=[ 'Row', 'Co_symbol', 'Co_name', 'Price', 'Net_change', "Prc_pct", "Vol", 'Vol_pct', 'Time' ], index=[x] )
+                self.temp_df1 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', "Pct_change", "Vol", 'Vol_pct', 'Time' ], index=[x] )
                 self.down_df1 = self.down_df1.append(self.temp_df1, sort=False)    # append this ROW of data into the REAL DataFrame
 
             x += 1
@@ -201,7 +201,7 @@ class un_volumes:
         logging.info('ins.#%s.up_unvol_listall() - IN' % self.yti )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
-        print ( self.up_df0.sort_values(by='Prc_pct', ascending=False ) )
+        print ( self.up_df0.sort_values(by='Pct_change', ascending=False ) )
         logging.info('ins.#%s.up_unvol_listall() - DONE' % self.yti )
         return
 
@@ -212,6 +212,6 @@ class un_volumes:
         logging.info('ins.#%s.down_unvol_listall() - IN' % self.yti )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
-        print ( self.down_df1.sort_values(by='Prc_pct', ascending=False ) )
+        print ( self.down_df1.sort_values(by='Pct_change', ascending=False ) )
         logging.info('ins.#%s.down_unvol_listall() - DONE' % self.yti )
         return

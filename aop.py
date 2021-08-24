@@ -202,19 +202,19 @@ def main():
         # DataFrame COL NAME
         # ==================
         # Row
-        # Co_symbol
+        # Symbol
         # Co_name
-        # Price
-        # Net_change
-        # Prc_pct
+        # Cur_price
+        # Prc_change
+        # Pct_change
         # vol
         # vol_pct
         # Time
 
         # find lowest price stock in unusuall UP volume list
-        ulp = un_vol_activity.up_df0['Price'].min()                  # find lowest price row in DF
-        uminv = un_vol_activity.up_df0['Price'].idxmin()             # get index ID of lowest price row
-        ulsym = un_vol_activity.up_df0.loc[uminv, ['Co_symbol']][0]  # get symbol of lowest price item
+        ulp = un_vol_activity.up_df0['Cur_price'].min()                  # find lowest price row in DF
+        uminv = un_vol_activity.up_df0['Cur_price'].idxmin()             # get index ID of lowest price row
+        ulsym = un_vol_activity.up_df0.loc[uminv, ['Symbol']][0]  # get symbol of lowest price item
         ulname = un_vol_activity.up_df0.loc[uminv, ['Co_name']][0]   # get name of lowest price item
         print ( f">>LOWEST<< price OPPTY is: #{uminv} - {ulname.rstrip()} ({ulsym.rstrip()}) @ ${ulp}" )
         print ( " " )
@@ -233,8 +233,8 @@ def main():
         # todo: we should do a linear regression on the price curve for this item
 
         # reconemdation[2] : holds unusualaly hight volume stock with lowest buy price
-        recommended['2'] = ('Unusual vol:', ulsym.rstrip(), '$'+str(ulp), ulname.rstrip(), '+%'+str(un_vol_activity.up_df0.loc[uminv, ['Prc_pct']][0]) )
-        recommended[uminv] = (ulsym.rstrip(), '$'+str(ulp), ulname.rstrip(), '+%'+str(un_vol_activity.up_df0.loc[uminv, ['Prc_pct']][0]) )
+        recommended['2'] = ('Unusual vol:', ulsym.rstrip(), '$'+str(ulp), ulname.rstrip(), '+%'+str(un_vol_activity.up_df0.loc[uminv, ['Pct_change']][0]) )
+        recommended[uminv] = (ulsym.rstrip(), '$'+str(ulp), ulname.rstrip(), '+%'+str(un_vol_activity.up_df0.loc[uminv, ['Pct_change']][0]) )
 
 ########### multi COMBO dataframe query build-out ################
     if args['bool_deep'] is True and args['bool_scr'] is True and args['bool_uvol'] is True:
