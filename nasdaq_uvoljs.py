@@ -52,7 +52,7 @@ class un_volumes:
         self.args = global_args                                # Only set once per INIT. all methods are set globally
         self.up_df0 = pd.DataFrame(columns=[ 'Row', 'Co_symbol', 'Co_name', 'Price', 'Net_change', 'Prc_pct', "Vol", 'Vol_pct', 'Time' ] )
         self.down_df1 = pd.DataFrame(columns=[ 'Row', 'Co_symbol', 'Co_name', 'Price', 'Net_change', 'Prc_pct', "Vol", 'Vol_pct', 'Time' ] )
-        self.df2 = pd.DataFrame(columns=[ 'ERank', 'Co_symbol', 'Co_name', 'Price', 'Net_change', 'Prc_pct', "Vol", 'Vol_pct', 'Time' ] )
+        self.df2 = pd.DataFrame(columns=[ 'Row', 'Co_symbol', 'Co_name', 'Price', 'Net_change', 'Prc_pct', "Vol", 'Vol_pct', 'Time' ] )
         self.yti = yti
         self.js_session = HTMLSession()                        # init JAVAScript processor early
         self.js_session.cookies.update(self.nasdaq_headers)    # load cookie/header hack data set into session
@@ -214,4 +214,16 @@ class un_volumes:
         pd.set_option('max_colwidth', 30)
         print ( self.down_df1.sort_values(by='Prc_pct', ascending=False ) )
         logging.info('ins.#%s.down_unvol_listall() - DONE' % self.yti )
+        return
+
+# method 5
+    def up_down_combo(self):
+        """Build a combo dataframe that hows all the reallnice results of UP and DOwn"""
+        """UNusual volume data. Tag each row is an easy UP/DOWN tag"""
+        logging.info('ins.#%s.up_down_combo() - IN' % self.yti )
+        # should drop entire df before starting to ensure its empty
+        self.df2=self.up_df0.copy()
+        self.df2.drop('Row', axis=1, inplace=True )
+        logging.info('ins.#%s.up_down_combo() - DONE' % self.yti )
+        print ( f"{self.df2}" )
         return
