@@ -12,6 +12,8 @@ import time
 import threading
 import json
 
+from bigcharts_md import bc_quote
+
 # logging setup
 logging.basicConfig(level=logging.INFO)
 
@@ -226,4 +228,33 @@ class un_volumes:
         self.df2.drop('Row', axis=1, inplace=True )
         logging.info('ins.#%s.up_down_combo() - DONE' % self.yti )
         print ( f"{self.df2}" )
+        return
+
+# method 6
+    def pop_mkt_cap(self):
+        """
+        nasdaq.com JSON payload has NO Market_Cap info. They just dont show
+        that info in the wbe page table. So we need to grab it from elsewhere now
+        now that we have the full list of unusual volume activity
+        note: This will cycle though ALL symbols in dataframe and populate
+        every row in the dataframe.
+        """
+
+        logging.info('ins.#%s.pop_mkt_cap() - IN' % self.yti )
+        logging.info('ins.#%s.pop_mkt_cap() - instantiate quote class' % self.yti )
+
+        # get the list of all symbols in this DF
+        self.up_symbols = self.up_df0['Symbol'].tolist()
+        print ( f"list of symbols in UP UNVOL DF..." )
+        print ( f"{self.up_symbols}" )
+        #self.down_symbols = self.down_df1['SYmbol'].tolist()
+
+        qp = bc_quote(2, self.args)       # setup an emphemerial dict
+        # loop from here
+        for qsymbol in self.up_symbols:
+            print ( f"Populatling symbol: {qsymbol}..." )
+            qp.get_basicquote(qsymbol.strip())
+            qp.get_quickquote(qsymbol.strip())
+            qp.q_polish()
+
         return

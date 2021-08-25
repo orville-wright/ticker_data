@@ -29,7 +29,7 @@ class bc_quote:
     # STRING labels to find + test against when populating main data DICT
     #   key = string value of TXT field embedded in source webpage
     #   value = key to be used when building-out core data dict
-    # WARN: This dict does not MIRROR the fina taregt QUOTE DICT, due to dupe field complexities
+    # WARN: This dict does not MIRROR the final target QUOTE DICT, due to dupe field complexities
     qlabels = {'52 Week Range:': 'range52w_t', '52-Week EPS:': 'eps52w', '52-Week High:': 'high52w_t', \
                 '52-Week Low:': 'low52w_t', 'Ask:': 'ask', 'Average Price:': 'range_a_p', \
                 'Average Volume:': 'range_a_v', 'Bid:': 'bid', 'Change:': 'change_s', \
@@ -47,6 +47,7 @@ class bc_quote:
         self.inst_uid = i
         self.symbol = 'NONE'
         self.prev_symbol = 'NONE'
+
         return
 
     #### methods
@@ -66,52 +67,89 @@ class bc_quote:
         url_queryopts = "&insttype=Stock&freq=9&show=True&time=1"
         #url_queryopts = "&insttype=&freq=9&show=True&time=1"
 
+
+        logging.info('%s - Open URL : Basic quote' % cmi_debug )
         with urllib.request.urlopen( f"{url_endpoint}{ticker}{url_queryopts}" ) as url:
             s = url.read()
+            logging.info('%s - setup data scrape pointers' % cmi_debug )
             data_soup = BeautifulSoup(s, "html.parser")
             quote_section = data_soup.find(attrs={"id": "quote"} )
-            quote_table = quote_section.find("td", attrs={"class": "last"} )
+            #quote_table = quote_section.find("td", attrs={"class": "last"} )    # DELETE ME!!!
             quote_data = quote_section.find_all("tr")
             quote1 = quote_data[2]
             quote2 = quote_data[3]
+            logging.info('%s - Close URL' % cmi_debug )
             url.close()
 
-            # print ( f" ------------------ Basic quote: {ticker} ---------------------" )
-            # walk the 1st embeded data structure...
-            walk_quote1 = quote1.find_all("td")
+                                                       # walk the 1st embeded data structure...
+            walk_quote1 = quote1.find_all("td")        # <td> is where the data is hiding...
+            logging.info('%s - Walk QUOTE-1 data' % cmi_debug )
             for i in walk_quote1:
-                if not i.select('img'):         # special treatment for "Change" field. Has <img> tag
-                    k = i.span.text.strip()
-                    # print ( f"{i.span.text.strip()}  {i.div.text.strip()}" )      # DEBUG
-                    if k in self.qlabels:
-                        self.quote[self.qlabels[k]] = i.div.text.strip()    # add to quote DICT
+                if not i.select('img'):                # special treatment for "Change" field. It has <img> tag
+
+                    logging.info('%s - FOUND Simple data' % cmi_debug )
+                    # potentiall we have some real TEXT to look at
+                    # but... NULL test here on BS extract attempt becasue
+                    #        the .strip() fails on NULL fields becase you cant .strip() a NULL
+                    print ( f"DEBUG: - check i.sleect type(): {type(i.span.text)}" )
+                    if type(i.span) is not None:
+                        k = i.span.text.strip()        # yes we have text to play with
+                        # DEBIG: print ( f"{i.span.text.strip()}  {i.div.text.strip()}" )
+                        if k in self.qlabels:              # cycle through our known list of labels
+                            logging.info('DEBUG - INSERT data - %s' % k )
+                            self.quote[self.qlabels[k]] = i.div.text.strip()    # add data into quote DICT
+                        else:
+                            logging.info('%s - ERROR : KEY not found' % cmi_debug )
+                            print ( f"KEY: {k} NOT found !" )
                     else:
-                        print ( f"KEY: {k} NOT found !" )
-                else:       # treat 'Change: +0.73' as special item.
+                        # this dataset has some NULL / empty data fields
+                        logging.info('%s - ERROR : NULL / Empty data found' % cmi_debug )
+                        #k = i.span.text        # yes we have text to play with
+                        print ( f"DEBUG: Found a field with NULL/EMpty data" )
+
+                else:    # found the <img> field that sit infront of some data
+                         # wrangle data - e.g. 'Change: +0.73'
+                    logging.info('%s - Found fancy UP/DOWN image' % cmi_debug )
+                    logging.info('%s - READ +/- sign' % cmi_debug )
                     k = i.span.text
-                    change_pn = re.sub('[\n\ ]', '', i.div.text)    # clean up
-                    # print ( f"{i.span.text}  {change_pn}" )                       # DEBUG
-                    self.quote['change_s'] = change_pn    # add to quote DICT
+                    change_pn = re.sub('[\n\ ]', '', i.div.text)    # remove trailing newline
+                    logging.info('%s - INSERT +/- sign data' % cmi_debug )
+                    self.quote['change_s'] = change_pn              # add change_sign into quote DICT
 
             # walk the 2nd embeded data structure...
             walk_quote2 = quote2.find_all("td")
+            logging.info('%s - Walk QUOTE-2 data' % cmi_debug )
             for i in walk_quote2:
                 if not i.select('img'):
-                    k = i.span.text.strip()
-                    # print ( f"{i.span.text.strip()}  {i.div.text.strip()}" )      # DEBUG
-                    if k in self.qlabels:
-                        self.quote[self.qlabels[k]] = i.div.text.strip()    # add to quote DICT
+                    logging.info('%s - FOUND simple data' % cmi_debug )
+
+                    if type(i.span) is not type(None):                   # capture bad, missing, NULL, Empty data
+                        k = i.span.text.strip()
+                        # print ( f"{i.span.text.strip()}  {i.div.text.strip()}" )      # DEBUG
+                        if k in self.qlabels:
+                            logging.info('DEBUD - INSERT data - %s' % k )
+                            self.quote[self.qlabels[k]] = i.div.text.strip()    # add to quote DICT
+                        else:
+                            logging.info('%s - ERROR : KEY not found' % cmi_debug )
+                            print ( f"NO key found !" )
                     else:
-                        print ( f"NO key found !" )
+                        logging.info('%s - ERROR : NULL / Empty data found' % cmi_debug )
+                        print ( f"DEBUG: Found a field with NULL/EMpty data" )
+                        print ( f"DEBUG: (i) - {i}" )
+
                 else:
+                    logging.info('%s - Found fancy UP/DOWN image' % cmi_debug )
+                    logging.info('%s - READ change_abs data' % cmi_debug )
                     k = i.span.text.strip()
                     change_abs = re.sub('[\n\ ]', '', i.div.text)
-                    # print ( f"{i.span.text}  {change_abs}" )                      # DEBUG
                     if k in self.qlabels:
                         self.quote[self.qlabels[k]] = change_abs    # add to quote DICT
+                        logging.info('%s - INSERT change_abs data' % cmi_debug )
                     else:
+                        logging.info('%s - ERROR : KEY not found' % cmi_debug )
                         print ( f"NO key found !" )
 
+        logging.info('%s - DONE' % cmi_debug )
         return
 
 
@@ -180,6 +218,10 @@ class bc_quote:
         """This method curates & polishes a few data elements in the quote DICT
         that need additinoal treatement after the inital build-out. It also
         augments the quote DICT with new data elements.
+
+        note: method assumes a fullpopulated BASICQUOTE data struct
+              so it only works with get_basicquote
+              not quickquote, b/c quickquote will have field missing
         """
 
         # Its cleaner to do data re-structuring after the quote DICT has been initially populated
@@ -189,10 +231,10 @@ class bc_quote:
         cmi_debug = __name__+"::"+self.q_polish.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
 
-        # wragle change_s (i.e. Positive/negative/unchanged )
+        # wragle change_s (i.e. sign 'Positive/negative/unchanged' of change value)
         d = self.quote['change_s']
         d = re.sub('[0-9,\.]', '', d)     # remove all nums, "," & "."
-        self.quote['change_s'] = d       # update to new value (shuld be "+" or "-") - TODO: how is UNCHANGED handled?
+        self.quote['change_s'] = d       # update to new value (should be "+" or "-") - TODO: how is UNCHANGED handled?
 
         # market cap & mkt_cap scale (i.e. Millions, Billions, Trillions)
         m = self.quote['mkt_cap']
@@ -201,10 +243,11 @@ class bc_quote:
         if m == 'n/a':
             m = 0
             ms = 'X'
-
-        mv = re.sub('[MBT]', '', m)                 # remove trailing M, B, T
-        self.quote['mkt_cap_s'] = ms                # M=Million, B=Billion, T=Trillion
-        self.quote['mkt_cap'] = float(mv)           # mkt_cap as real num
+            self.quote['mkt_cap'] = 0                   # set Mkt_cap = ZERO
+        else:
+            mv = re.sub('[MBT]', '', m)                 # remove trailing M, B, T
+            self.quote['mkt_cap_s'] = ms                # M=Million, B=Billion, T=Trillion
+            self.quote['mkt_cap'] = float(mv)           # set mkt_cap to real num
 
         # make vol -> a real int
         d = self.quote['vol']

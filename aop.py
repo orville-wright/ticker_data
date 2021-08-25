@@ -202,7 +202,7 @@ def main():
         # DataFrame COL NAME
         # ==================
         # Row
-        # Symbol
+        # Co_symbol
         # Co_name
         # Cur_price
         # Prc_change
@@ -210,6 +210,8 @@ def main():
         # vol
         # vol_pct
         # Time
+
+        # note: nasdasq.com unusual volume iJSON data payload does NOT contain Market cap info
 
         # find lowest price stock in unusuall UP volume list
         ulp = un_vol_activity.up_df0['Cur_price'].min()                  # find lowest price row in DF
@@ -225,6 +227,7 @@ def main():
         un_vol_activity.down_unvol_listall()
         print ( " ")
 
+        un_vol_activity.pop_mkt_cap()
 
         # testing new method()
         #un_vol_activity.up_down_combo()
