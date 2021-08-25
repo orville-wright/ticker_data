@@ -24,6 +24,7 @@ from y_topgainers import y_topgainers
 from y_toplosers import y_toplosers
 from screener_dg1 import screener_dg1
 from nasdaq_uvoljs import un_volumes
+from nasdaq_quotes import nquote
 from shallow_logic import shallow_combo
 from y_newsloop import y_newsfilter
 from ml_cvbow import y_bow
@@ -307,15 +308,13 @@ def main():
 
         up_symbols = x.combo_df[x.combo_df['Mkt_cap'].isna()]
         up_symbols = up_symbols['Symbol'].tolist()
-        #self.down_symbols = self.down_df1['Symbol'].tolist()
 
-        qp = bc_quote(2, args)       # setup an emphemerial dict
-        # loop from here
+        qp = nquote(3, args)       # setup an emphemerial dict
         for qsymbol in up_symbols:
-            qp.get_basicquote(qsymbol.strip())
-            qp.get_quickquote(qsymbol.strip())
-            qp.q_polish()
-            print ( f"symbol: {qsymbol} - Mkt cap: {qp.quote['mkt_cap']} - Mktcap_scale: {qp.quote['mkt_cap_s']}" )
+            qp.get_nquote(qsymbol.strip())
+            qp.build_df()
+            logging.info('x.combo get quote loop - %s' % qsymbol )
+            print ( f"symbol: {qp.quote['symbol']} - Mkt cap: {qp.quote['mkt_cap']}" )
 
         x.combo_listall_ranked()
 
@@ -441,17 +440,25 @@ def main():
     if args['qsymbol'] is not False:
         print ( " " )
         print ( f"Get price action quote for: {args['qsymbol']}" )
+        qp = nquote(1, args)
+        qp.get_nquote(args['qsymbol'])
+        qp.build_df()
+
+        """
         qp = bc_quote(1, args)
         qp.get_basicquote(args['qsymbol'])
         qp.get_quickquote(args['qsymbol'])
         qp.q_polish()
-        print ( qp.quote )
+        """
+        print ( f"================= quote dataframe =======================" )
+        print ( f"{qp.quote_df0}" )
+        print ( f"================= quote dataframe =======================" )
 
         if args['bool_xray'] is True:        # DEBUG Xray
             print ( " " )
             c = 1
             for k, v in qp.quote.items():
-                print ( "{:02d} - {}\t\t : {}".format(c, k, v) )
+                print ( f"{c} - {k} : {v}" )
                 c += 1
 
     # print ( " " )
