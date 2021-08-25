@@ -244,17 +244,20 @@ class un_volumes:
         logging.info('ins.#%s.pop_mkt_cap() - instantiate quote class' % self.yti )
 
         # get the list of all symbols in this DF
+        # TODO: we dont need to list all symbols in DF, just the ones that have 'NaaN'
+        #       data in the mkt_cap collumn.
+        #       In this scenariom the (mkt_cap_s collumn will also be 'Naan' by association.
         self.up_symbols = self.up_df0['Symbol'].tolist()
-        print ( f"list of symbols in UP UNVOL DF..." )
-        print ( f"{self.up_symbols}" )
-        #self.down_symbols = self.down_df1['SYmbol'].tolist()
+        #self.up_symbols = self.up_df0[self.up_df0['Mkt_cap'].isna()]
+        #self.up_symbols = self.up_symbols['Symbol'].tolist()
+        #self.down_symbols = self.down_df1['Symbol'].tolist()
 
         qp = bc_quote(2, self.args)       # setup an emphemerial dict
         # loop from here
         for qsymbol in self.up_symbols:
-            print ( f"Populatling symbol: {qsymbol}..." )
             qp.get_basicquote(qsymbol.strip())
             qp.get_quickquote(qsymbol.strip())
             qp.q_polish()
+            print ( f"symbol: {qsymbol} - Mkt cap: {qp.quote['mkt_cap']} - Mktcap_scale: {qp.quote['mkt_cap_s']}" )
 
         return

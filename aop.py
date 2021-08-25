@@ -227,7 +227,7 @@ def main():
         un_vol_activity.down_unvol_listall()
         print ( " ")
 
-        un_vol_activity.pop_mkt_cap()
+        #un_vol_activity.pop_mkt_cap()
 
         # testing new method()
         #un_vol_activity.up_down_combo()
@@ -295,8 +295,31 @@ def main():
             print ( f">>LOW<< prine **Hot** stock: {hotsym.rstrip()} {'$'+str(hotp)} {hotname.rstrip()} {'+%'+str(x.combo_df.loc[hotidx, ['Pct_change']][0])} " )
             print ( " " )
 
+        # any symbols that are from the nasdaq.com unsual volume dataset will have
+        # mkt_cap & mkt_cap_s fields set to 'NaaN' becasue that data is not present
+        # in the nasdaq.com webpage.
+
+        # get the list of all symbols in this DF
+        # TODO: we dont need to list all symbols in DF, just the ones that have 'NaaN'
+        #       data in the mkt_cap collumn.
+        #       In this scenariom the (mkt_cap_s collumn will also be 'Naan' by association.
+        #self.up_symbols = self.up_df0['Symbol'].tolist()
+
+        up_symbols = x.combo_df[x.combo_df['Mkt_cap'].isna()]
+        up_symbols = up_symbols['Symbol'].tolist()
+        #self.down_symbols = self.down_df1['Symbol'].tolist()
+
+        qp = bc_quote(2, args)       # setup an emphemerial dict
+        # loop from here
+        for qsymbol in up_symbols:
+            qp.get_basicquote(qsymbol.strip())
+            qp.get_quickquote(qsymbol.strip())
+            qp.q_polish()
+            print ( f"symbol: {qsymbol} - Mkt cap: {qp.quote['mkt_cap']} - Mktcap_scale: {qp.quote['mkt_cap_s']}" )
+
         x.combo_listall_ranked()
 
+# ==================================================================================================
         # lowest priced stock in combo_df
         clp = x.combo_df['Cur_price'].min()
         cminv = x.combo_df['Cur_price'].idxmin()

@@ -50,7 +50,9 @@ class bc_quote:
 
         return
 
-    #### methods
+#### methods
+
+# method 1
     def get_basicquote(self, ticker):
         # NOTE: This method is slower than method #2 (quickquote)
         #       because it uses a URL endpoint that has some rich media elements. So the page builds slower in the extraction.
@@ -91,7 +93,6 @@ class bc_quote:
                     # potentiall we have some real TEXT to look at
                     # but... NULL test here on BS extract attempt becasue
                     #        the .strip() fails on NULL fields becase you cant .strip() a NULL
-                    print ( f"DEBUG: - check i.sleect type(): {type(i.span.text)}" )
                     if type(i.span) is not None:
                         k = i.span.text.strip()        # yes we have text to play with
                         # DEBIG: print ( f"{i.span.text.strip()}  {i.div.text.strip()}" )
@@ -103,9 +104,10 @@ class bc_quote:
                             print ( f"KEY: {k} NOT found !" )
                     else:
                         # this dataset has some NULL / empty data fields
-                        logging.info('%s - ERROR : NULL / Empty data found' % cmi_debug )
+                        logging.info('%s - ERROR : walk quote-1 - NULL / Empty data found' % cmi_debug )
                         #k = i.span.text        # yes we have text to play with
-                        print ( f"DEBUG: Found a field with NULL/EMpty data" )
+                        print ( f"DEBUG: walk quote-1 - Found NULL/EMpty data" )
+                        # TODO: >> take some actions here <<
 
                 else:    # found the <img> field that sit infront of some data
                          # wrangle data - e.g. 'Change: +0.73'
@@ -127,15 +129,15 @@ class bc_quote:
                         k = i.span.text.strip()
                         # print ( f"{i.span.text.strip()}  {i.div.text.strip()}" )      # DEBUG
                         if k in self.qlabels:
-                            logging.info('DEBUD - INSERT data - %s' % k )
+                            logging.info('DEBUG - INSERT data - %s' % k )
                             self.quote[self.qlabels[k]] = i.div.text.strip()    # add to quote DICT
                         else:
                             logging.info('%s - ERROR : KEY not found' % cmi_debug )
                             print ( f"NO key found !" )
                     else:
-                        logging.info('%s - ERROR : NULL / Empty data found' % cmi_debug )
-                        print ( f"DEBUG: Found a field with NULL/EMpty data" )
-                        print ( f"DEBUG: (i) - {i}" )
+                        logging.info('%s - ERROR : walk quote-2 - NULL / Empty data found' % cmi_debug )
+                        print ( f"DEBUG: walk quote-2 - Found NULL/EMpty data" )
+                        # TODO: >> take actions here <<
 
                 else:
                     logging.info('%s - Found fancy UP/DOWN image' % cmi_debug )
@@ -152,7 +154,7 @@ class bc_quote:
         logging.info('%s - DONE' % cmi_debug )
         return
 
-
+# method 2
     def get_quickquote(self, ticker):
         # NOTE: This method is much faster
         #       The URL is a minimal webpage doc with almost NO rich meida elements. i.e. page builds very quickly on extraction
@@ -214,6 +216,7 @@ class bc_quote:
                     self.quote[self.qlabels[k]] = clean2        # add to quote DICT
         return
 
+# method 3
     def q_polish(self):
         """This method curates & polishes a few data elements in the quote DICT
         that need additinoal treatement after the inital build-out. It also
@@ -239,11 +242,12 @@ class bc_quote:
         # market cap & mkt_cap scale (i.e. Millions, Billions, Trillions)
         m = self.quote['mkt_cap']
         ms = m[-1]                                  # access last char (will be M, B, T)
-        print ( f"*** DEBUG: mkt_cap: {m} / mkt_cap_sign: {ms}" ) 
+        #print ( f"*** DEBUG: mkt_cap: {m} / mkt_cap_sign: {ms}" ) 
         if m == 'n/a':
             m = 0
             ms = 'X'
             self.quote['mkt_cap'] = 0                   # set Mkt_cap = ZERO
+            self.quote['mkt_cap_s'] = ms                # M=Million, B=Billion, T=Trillion
         else:
             mv = re.sub('[MBT]', '', m)                 # remove trailing M, B, T
             self.quote['mkt_cap_s'] = ms                # M=Million, B=Billion, T=Trillion
