@@ -293,7 +293,7 @@ def main():
 
             # allways make sure this is key #3 in recommendations dict
             recommended['3'] = ('Hottest:', hotsym.rstrip(), '$'+str(hotp), hotname.rstrip(), '+%'+str(x.combo_df.loc[hotidx, ['Pct_change']][0]) )
-            print ( f">>LOW<< prine **Hot** stock: {hotsym.rstrip()} {'$'+str(hotp)} {hotname.rstrip()} {'+%'+str(x.combo_df.loc[hotidx, ['Pct_change']][0])} " )
+            print ( f">>LOW<< price **Hot** stock: {hotsym.rstrip()} {'$'+str(hotp)} {hotname.rstrip()} {'+%'+str(x.combo_df.loc[hotidx, ['Pct_change']][0])} " )
             print ( " " )
 
         # any symbols that are from the nasdaq.com unsual volume dataset will have
@@ -308,7 +308,7 @@ def main():
 
         up_symbols = x.combo_df[x.combo_df['Mkt_cap'].isna()]
         up_symbols = up_symbols['Symbol'].tolist()
-        
+
         nq = nquote(3, args)       # setup an emphemerial dict
         nq.init_dummy_session()    # will set cookie
 
@@ -345,6 +345,7 @@ def main():
 
         print ( " " )
         print ( f"================= >>LOW<< buy-in recommendations ==================" )
+        print ( f"{recommended} )
         for k, v in recommended.items():
             print ( f"{k}: {v[0]} {v[1]} {v[2]} {v[3]} {v[4]}" )
             print ( "-------------------------------------------------------------------" )
