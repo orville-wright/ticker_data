@@ -245,15 +245,15 @@ class nquote:
 
         if price_pct == "N/A":
             price_pct_cl = 0
-            logging.info('%s - Price % is bad, found N/A data' % cmi_debug )
+            logging.info('%s - Price pct is bad, found N/A data' % cmi_debug )
             wrangle_errors += 1
         elif price_pct == "UNCH":
             price_pct_cl = "Unch"
-            logging.info('%s - Price % is unchanged' % cmi_debug )
+            logging.info('%s - Price pct is unchanged' % cmi_debug )
             wrangle_errors += 1
         elif price_pct == '':
             price_pct_cl = "No data"
-            logging.info('%s - Price % is very bad, field is Null/empty' % cmi_debug )
+            logging.info('%s - Price pct is very bad, field is Null/empty' % cmi_debug )
             wrangle_errors += 1
         else:
             print ( f"DEBUG: price_pct: {price_pct}" )
