@@ -468,10 +468,6 @@ def main():
                 print ( f"{c} - {k} : {v}" )
                 c += 1
 
-    # print ( " " )
-    # qm = mw_quote(1, args)
-    # qm.get_quote(args['qsymbol'])
-
     print ( " " )
     print ( "####### done #####")
 
