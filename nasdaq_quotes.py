@@ -223,18 +223,22 @@ class nquote:
         co_name_lj = np.array2string(np.char.ljust(co_name_lj, 25) )   # left justify TXT in DF & convert to raw string
         co_name_lj = (re.sub('[\']', '', co_name_lj) )                 # remove " ' and strip leading/trailing spaces
 
+        wrangle_errors = 0    # error counter
         if price == "N/A":
             price_cl = 0
             logging.info('%s - Price is bad, found N/A data' % cmi_debug )
+            wrangle_errors += 1
         else:
             price_cl = (re.sub('[ $,]', '', price))                    # remove $ sign
 
         if price_net == "N/A":
             price_net_cl = 0
             logging.info('%s - Price NET is bad, found N/A data' % cmi_debug )
+            wrangle_errors += 1
         elif price_net == 'UNCH':
             price_net_cl = "Unch"
             logging.info('%s - Price NET is unchanged' % cmi_debug )
+            wrangle_errors += 1
         else:
             price_net_cl = (re.sub('[\-+]', '', price_net))                # remove - + signs
             price_net_cl = np.float(price_net)
@@ -242,12 +246,15 @@ class nquote:
         if price_pct == "N/A":
             price_pct_cl = 0
             logging.info('%s - Price % is bad, found N/A data' % cmi_debug )
+            wrangle_errors += 1
         elif price_pct == "UNCH":
             price_pct_cl = "Unch"
             logging.info('%s - Price % is unchanged' % cmi_debug )
+            wrangle_errors += 1
         elif price_pct == '':
             price_pct_cl = "No data"
             logging.info('%s - Price % is very bad, field is Null/empty' % cmi_debug )
+            wrangle_errors += 1
         else:
             print ( f"DEBUG: price_pct: {price_pct}" )
             price_pct = (re.sub('[\-+%]', '', price_pct))               # remove - + % signs
@@ -256,18 +263,21 @@ class nquote:
         if open_price == "N/A":
             open_price_cl = 0
             logging.info('%s - Open price is bad, found N/A data' % cmi_debug )
+            wrangle_errors += 1
         else:
             open_price_cl = (re.sub('[ $,]', '', open_price))               # remove $ sign
 
         if prev_close == "N/A":
             prev_close_cl = 0
             logging.info('%s - Prev close is bad, found N/A data' % cmi_debug )
+            wrangle_errors += 1
         else:
             prev_close_cl = (re.sub('[ $,]', '', prev_close))              # remove $ sign
 
         if mkt_cap == "N/A":
             mkt_cap_cl = 0
             logging.info('%s - Mkt cap is bad, found N/A data' % cmi_debug )
+            wrangle_errors += 1
         else:
             mkt_cap_cl = (re.sub('[,]', '', mkt_cap))                      # remove ,
 
@@ -305,7 +315,7 @@ class nquote:
                 vol=vol_abs_cl, \
                 mkt_cap=mkt_cap_cl )
 
-        return
+        return wrangle_errors
 
 # method 9
 # New method to build a Pandas DataFrame from JSON data structure
