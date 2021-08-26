@@ -276,19 +276,19 @@ class nquote:
 
         # craft final data structure.
         # NOTE: globally accessible and used by quote DF and quote DICT
-                self.data0 = [[ \
-                   co_sym_lj, \
-                   co_name_lj, \
-                   arrow_updown, \
-                   np.float(price_cl), \
-                   price_net_cl, \
-                   price_pct_cl, \
-                   np.float(open_price_cl), \
-                   np.float(prev_close_cl), \
-                   np.float(vol_abs_cl), \
-                   np.float(mkt_cap_cl), \
-                   timestamp_cl, \
-                   time_now ]]
+        self.data0 = [[ \
+           co_sym_lj, \
+           co_name_lj, \
+           arrow_updown, \
+           np.float(price_cl), \
+           price_net_cl, \
+           price_pct_cl, \
+           np.float(open_price_cl), \
+           np.float(prev_close_cl), \
+           np.float(vol_abs_cl), \
+           np.float(mkt_cap_cl), \
+           timestamp_cl, \
+           time_now ]]
 
         # craft the quote DICT. Doesn't hurt to do this here as it assumed that the data
         # is all nice & clean & in its final shape by now.
