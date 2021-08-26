@@ -308,8 +308,7 @@ def main():
 
         up_symbols = x.combo_df[x.combo_df['Mkt_cap'].isna()]
         up_symbols = up_symbols['Symbol'].tolist()
-        print ( f"DEBUG: up_symbols: {up_symbols}" )
-
+        
         nq = nquote(3, args)       # setup an emphemerial dict
         nq.init_dummy_session()    # will set cookie
 

@@ -188,7 +188,6 @@ class nquote:
 
         logging.info('%s - prepare json data accessors' % cmi_debug )
         jsondata = self.quote_pridata['data']       # HEAD of data payload
-        print ( f"DEBUG: {jsondata}" )
         co_sym = jsondata['symbol']
         co_name = jsondata['companyName']
         price = jsondata['primaryData']['lastSalePrice']
@@ -256,7 +255,6 @@ class nquote:
             logging.info('%s - Price pct is very bad, field is Null/empty' % cmi_debug )
             wrangle_errors += 1
         else:
-            print ( f"DEBUG: price_pct: {price_pct}" )
             price_pct = (re.sub('[\-+%]', '', price_pct))               # remove - + % signs
             price_pct_cl = np.float(price_pct)
 
