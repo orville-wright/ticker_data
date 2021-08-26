@@ -61,7 +61,7 @@ class nquote:
         self.js_session.cookies.update(self.nasdaq_headers)    # load DEFAUKT cookie/header hack package into session
         return
 
-# method 4
+# method 1
     def update_headers(self, symbol):
         cmi_debug = __name__+"::"+self.update_headers.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
@@ -74,7 +74,7 @@ class nquote:
         logging.info('cookies/headers path: object endpoint is - %s' % self.path )
         return
 
-# method 8
+# method 2
     def update_cookies(self):
         # assumes that the requests session has already been established
         cmi_debug = __name__+"::"+self.update_cookies.__name__+".#"+str(self.yti)
@@ -82,7 +82,7 @@ class nquote:
         self.js_session.cookies.update({'ak_bmsc': self.js_resp0.cookies['ak_bmsc']} )    # NASDAQ cookie hack
         return
 
-# method 6
+# method 3
     def form_api_endpoint(self, symbol):
         """This is the explicit quote URL that is used for the req get()"""
         cmi_debug = __name__+"::"+self.form_api_endpoint.__name__+".#"+str(self.yti)
@@ -92,7 +92,7 @@ class nquote:
         self.quote_url = self.quote_url
         return
 
-# method 6
+# method 4
     def do_simple_get(self):
         cmi_debug = __name__+"::"+self.init_blind_session.__name__+".#"+str(self.yti)
         # note: we ping www.nasdaq.com. No need for a API specific url. That comes later.
@@ -103,7 +103,7 @@ class nquote:
         # if the get() succeds, the response handle is automatically saved in Class Global accessor -> self.js_resp0
         return
 
-# method 7
+# method 5
     def init_dummy_session(self):
         cmi_debug = __name__+"::"+self.init_dummy_session.__name__+".#"+str(self.yti)
         # note: we ping www.nasdaq.com.
@@ -115,7 +115,7 @@ class nquote:
         # if the get() succeds, the response handle is automatically saved in Class Global accessor -> self.js_resp0
         return
 
-# method #1
+# method 6
     def get_nquote(self, symbol):
         """Access NEW nasdaq.com JAVASCRIPT page [unusual volume] and extract the native JSON dataset"""
         """JSON dataset contains *BOTH* UP vol & DOWN vol for top 25 symbols, right now!"""
@@ -145,7 +145,7 @@ class nquote:
             print ( f"========================== {self.yti} - get_nquote() session cookies : {self.qs} ================================" )
         return
 
-# method #1
+# method 7
     def get_js_nquote(self, symbol):
         """Access NEW nasdaq.com JAVASCRIPT page [unusual volume] and extract the native JSON dataset"""
         """JSON dataset contains *BOTH* UP vol & DOWN vol for top 25 symbols, right now!"""
@@ -171,7 +171,7 @@ class nquote:
             print ( f"========================== {self.yti} - get_js_nquote::session cookies ================================" )
         return
 
-# method #2
+# method 8
 # New method to build a Pandas DataFrame from JSON data structure
     def build_data(self):
         """
@@ -306,7 +306,7 @@ class nquote:
 
         return
 
-# method #2
+# method 9
 # New method to build a Pandas DataFrame from JSON data structure
     def build_df(self):
         """
