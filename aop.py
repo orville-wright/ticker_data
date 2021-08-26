@@ -298,7 +298,7 @@ def main():
         # mkt_cap & mkt_cap_s fields set to 'NaaN' becasue that data is not present
         # in the nasdaq.com webpage.
 
-        # get list of symbols in combo DF with missing data (i,e rows with NaaN in mkt_cap column) 
+        # get list of symbols in combo DF with missing data (i,e rows with NaaN in mkt_cap column)
 
         up_symbols = x.combo_df[x.combo_df['Mkt_cap'].isna()]
         up_symbols = up_symbols['Symbol'].tolist()
@@ -317,6 +317,8 @@ def main():
 
         # TODO: this is where we need to insert the missing market_cap data into the x.combo DF
 
+        print ( " " )
+        print ( f"================= >>COMBO<< Full list of intersting market observations ==================" )
         x.combo_listall_ranked()
 
 # ==================================================================================================
