@@ -311,15 +311,15 @@ def main():
         print ( f"DEBUG: up_symbols: {up_symbols}" )
 
         nq = nquote(3, args)       # setup an emphemerial dict
-        nq.init_dummy_session()
+        nq.init_dummy_session()    # will set cookie
 
         for qsymbol in up_symbols:
-            logging.info('nasdaq_quotes::x.combo get quote loop - %s' % qsymbol )
-            nq.update_headers(qsymbol.strip())
-            nq.init_blind_session()
+            logging.info('main::x.combo - get quote to find missing data for %s' % qsymbol )
+            nq.update_headers(qsymbol.strip())        # set path: header. doesnt touch secret nasdaq cookies
             nq.form_api_endpoint(qsymbol.strip())
             nq.get_nquote(qsymbol.strip())
-            nq.build_df()
+            nq.build_data()
+            #nq.build_df()
             #print ( f"symbol: {nq.quote['symbol']} - Mkt cap: {nq.quote['mkt_cap']}" )
             print ( f"symbol: {nq.quote}" )
 
