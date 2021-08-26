@@ -315,10 +315,10 @@ def main():
             total_wrangle_errors = total_wrangle_errors + wrangle_errors
             #nq.build_df()
             #print ( f"symbol: {nq.quote['symbol']} - Mkt cap: {nq.quote['mkt_cap']}" )
-            print ( f"main::x.combo - Find missing data for: {nq.quote['symbol']}   Market cap: {nq.quote['mkt_cap']}  - Data errors: {wrangle_errors}" )
+            print ( f"main::x.combo - Find missing data for: {nq.quote['symbol']}   Market cap: {nq.quote['mkt_cap']}  - Data issues: {wrangle_errors}" )
             wrangle_errors = 0
 
-        print  ( f"main::x.combo - Total data erros discovered & cleansed: {total_wrangle_errors}" )
+        print  ( f"main::x.combo - Total data issues discovered & cleansed: {total_wrangle_errors}" )
 
         # TODO: this is where we need to insert the missing market_cap data into the x.combo DF
 
