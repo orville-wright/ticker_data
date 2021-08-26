@@ -321,7 +321,7 @@ def main():
             nq.build_data()
             #nq.build_df()
             #print ( f"symbol: {nq.quote['symbol']} - Mkt cap: {nq.quote['mkt_cap']}" )
-            print ( f"main::x.combo - Symbol: {nq.quote}   Market cap: {nq.mkt_cap}" )
+            print ( f"main::x.combo - Symbol: {nq.quote['symbol']}   Market cap: {nq.quote['mkt_cap']}" )
 
         x.combo_listall_ranked()
 
