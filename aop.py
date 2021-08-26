@@ -305,15 +305,20 @@ def main():
         nq = nquote(3, args)       # setup an emphemerial dict
         nq.init_dummy_session()    # note: this will set nasdaq magic cookie
 
+        total_wrangle_errors = 0
         for qsymbol in up_symbols:
             logging.info('main::x.combo - get quote to find missing data for %s' % qsymbol )
             nq.update_headers(qsymbol.strip())        # set path: header. doesnt touch secret nasdaq cookies
             nq.form_api_endpoint(qsymbol.strip())
             nq.get_nquote(qsymbol.strip())
-            nq.build_data()
+            wrangle_errors = nq.build_data()    # will reutn how man data wrangeling errors we found & dealt with
+            total_wrangle_errors = total_wrangle_errors + wrangle_errors
             #nq.build_df()
             #print ( f"symbol: {nq.quote['symbol']} - Mkt cap: {nq.quote['mkt_cap']}" )
-            print ( f"main::x.combo - Find missing data for: {nq.quote['symbol']}   Market cap: {nq.quote['mkt_cap']}" )
+            print ( f"main::x.combo - Find missing data for: {nq.quote['symbol']}   Market cap: {nq.quote['mkt_cap']}  - Data errors: {wrangle_errors}" )
+            wrangle_errors = 0
+
+        print  ( f"main::x.combo - Total data erros discovered & cleansed: {total_wrangle_errors}" )"
 
         # TODO: this is where we need to insert the missing market_cap data into the x.combo DF
 
