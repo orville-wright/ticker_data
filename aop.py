@@ -228,28 +228,25 @@ def main():
         un_vol_activity.down_unvol_listall()
         print ( " ")
 
-        #un_vol_activity.pop_mkt_cap()
-
-        # testing new method()
-        #un_vol_activity.up_down_combo()
-
 ############################# build recommendation #######################################
-        # recommendation list []
+
+        # Add unusual vol into recommendation list []
+        # A list that holds a few discovered recomendations
+        # with plain english rationale explinations
+        #
+        # example output...
         #  key    recomendation data     - (example output shown)
         # =====================================================================
         #   1:    Small cap % gainer: TXMD $0.818 TherapeuticsMD, Inc. +%7.12
         #   2:    Unusual vol: SPRT $11.17 support.com, Inc. +%26.79
-        #   3:    HOttest:  ??????? <broken due to shallow_combo DF collumn name changes>
-        #   4:    Large cap: ??????
-        #   5:    Top % gainer:  ?????
+        #   3:    Hottest: AUPH $17.93 Aurinia Pharmaceuticals I +%9.06
+        #   4:    Large cap: PHJMF $0.07 PT Hanjaya Mandala Sampoe +%9.2
+        #   5:    Top % gainer: SPRT $19.7 support.com, Inc. +%41.12
 
-        # A list we build of a handful of recomendations
-        # lowest price stock having unusually high UP volume is a good recomendation
         # todo: we should do a linear regression on the price curve for this item
 
-        # reconemdation[2] : holds unusualaly hight volume stock with lowest buy price
         recommended['2'] = ('Unusual vol:', ulsym.rstrip(), '$'+str(ulp), ulname.rstrip(), '+%'+str(un_vol_activity.up_df0.loc[uminv, ['Pct_change']][0]) )
-        recommended[uminv] = (ulsym.rstrip(), '$'+str(ulp), ulname.rstrip(), '+%'+str(un_vol_activity.up_df0.loc[uminv, ['Pct_change']][0]) )
+
 
 ########### multi COMBO dataframe query build-out ################
 #
@@ -296,21 +293,17 @@ def main():
             print ( f">>LOW<< price **Hot** stock: {hotsym.rstrip()} {'$'+str(hotp)} {hotname.rstrip()} {'+%'+str(x.combo_df.loc[hotidx, ['Pct_change']][0])} " )
             print ( " " )
 
+# ########################## Hunt down missing data fields #########################
         # any symbols that are from the nasdaq.com unsual volume dataset will have
         # mkt_cap & mkt_cap_s fields set to 'NaaN' becasue that data is not present
         # in the nasdaq.com webpage.
 
-        # get the list of all symbols in this DF
-        # TODO: we dont need to list all symbols in DF, just the ones that have 'NaaN'
-        #       data in the mkt_cap collumn.
-        #       In this scenariom the (mkt_cap_s collumn will also be 'Naan' by association.
-        #self.up_symbols = self.up_df0['Symbol'].tolist()
+        # get list of symbols in combo DF with missing data (i,e rows with NaaN in mkt_cap column) 
 
         up_symbols = x.combo_df[x.combo_df['Mkt_cap'].isna()]
         up_symbols = up_symbols['Symbol'].tolist()
-
         nq = nquote(3, args)       # setup an emphemerial dict
-        nq.init_dummy_session()    # will set cookie
+        nq.init_dummy_session()    # note: this will set nasdaq magic cookie
 
         for qsymbol in up_symbols:
             logging.info('main::x.combo - get quote to find missing data for %s' % qsymbol )
@@ -320,7 +313,9 @@ def main():
             nq.build_data()
             #nq.build_df()
             #print ( f"symbol: {nq.quote['symbol']} - Mkt cap: {nq.quote['mkt_cap']}" )
-            print ( f"main::x.combo - Symbol: {nq.quote['symbol']}   Market cap: {nq.quote['mkt_cap']}" )
+            print ( f"main::x.combo - Find missing data for: {nq.quote['symbol']}   Market cap: {nq.quote['mkt_cap']}" )
+
+        # TODO: this is where we need to insert the missing market_cap data into the x.combo DF
 
         x.combo_listall_ranked()
 
@@ -345,7 +340,6 @@ def main():
 
         print ( " " )
         print ( f"================= >>LOW<< buy-in recommendations ==================" )
-        print ( f"{recommended} )
         for k, v in recommended.items():
             print ( f"{k}: {v[0]} {v[1]} {v[2]} {v[3]} {v[4]}" )
             print ( "-------------------------------------------------------------------" )
