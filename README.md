@@ -1,5 +1,12 @@
 # ticker_data
 
+Date: 26 August 2021
+** Major updates **
+- Lots of things were broken over the past few months. They are now all fixed.
+- Javacript page data processing/scraping is now fully working.
+- Nasadaq.com has been added as a reliable data source (pure JSON API access & Javascript scraping)
+
+
 **DISCLAIMER**: This code is still in heavy development & design. Much of it works well, but a few areas are still early in their prototyping phase (e.g. ML & A.I). Also, the overall strategy behind the design is subject to change as code in key areas becomes more functional.
 - Use at you own risk
 
