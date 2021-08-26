@@ -3,8 +3,8 @@
 Date: 26 August 2021
 ** Major updates **
 - Lots of things were broken over the past few months. They are now all fixed.
-- Javacript page data processing/scraping is now fully working.
-- Nasadaq.com has been added as a reliable data source (pure JSON API access & Javascript scraping)
+- JavaScript page data processing/scraping is now fully working.
+- Nasadaq.com has been added as a reliable data source (pure JSON API access & JavaScript scraping)
 
 
 **DISCLAIMER**: This code is still in heavy development & design. Much of it works well, but a few areas are still early in their prototyping phase (e.g. ML & A.I). Also, the overall strategy behind the design is subject to change as code in key areas becomes more functional.
@@ -41,7 +41,7 @@ This tool's goal is to extract tonnes of data in real time about the market (on 
 large corpus of live data to leverage as a feed into Machine Learning, Data Science & Statistics algorithyms...in order to support
 trade strategies (specifically - Day Trading & Swing Trading strategies).
 
-There are many websites that provide considerable data and analytics in their beautifully rich web pages, but they are slow, 
+There are many websites that provide considerable data and analytics in their beautifully rich web pages, but they are slow,
 over-inflated with useless bloat, riddled with targeted adds and pointless news headlines. They are unusable as a DS/ML tool for a
 trader who is executing trades in real-time....but the data they show is delicious and wonderful. - Thats all you really need from
 their websites.
