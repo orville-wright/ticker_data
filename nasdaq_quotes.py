@@ -287,7 +287,7 @@ class nquote:
         # craft final data structure.
         # NOTE: globally accessible and used by quote DF and quote DICT
         self.data0 = [[ \
-           co_sym_lj, \
+           co_sym_lj.strip(), \
            co_name_lj, \
            arrow_updown, \
            np.float(price_cl), \
