@@ -308,13 +308,20 @@ def main():
 
         up_symbols = x.combo_df[x.combo_df['Mkt_cap'].isna()]
         up_symbols = up_symbols['Symbol'].tolist()
+        print ( f"DEBUG: up_symbols: {up_symbols}" )
 
-        qp = nquote(3, args)       # setup an emphemerial dict
+        nq = nquote(3, args)       # setup an emphemerial dict
+        nq.init_dummy_session()
+
         for qsymbol in up_symbols:
-            qp.get_nquote(qsymbol.strip())
-            qp.build_df()
-            logging.info('x.combo get quote loop - %s' % qsymbol )
-            print ( f"symbol: {qp.quote['symbol']} - Mkt cap: {qp.quote['mkt_cap']}" )
+            logging.info('nasdaq_quotes::x.combo get quote loop - %s' % qsymbol )
+            nq.update_headers(qsymbol.strip())
+            nq.init_blind_session()
+            nq.form_api_endpoint(qsymbol.strip())
+            nq.get_nquote(qsymbol.strip())
+            nq.build_df()
+            #print ( f"symbol: {nq.quote['symbol']} - Mkt cap: {nq.quote['mkt_cap']}" )
+            print ( f"symbol: {nq.quote}" )
 
         x.combo_listall_ranked()
 
@@ -440,24 +447,24 @@ def main():
     if args['qsymbol'] is not False:
         print ( " " )
         print ( f"Get price action quote for: {args['qsymbol']}" )
-        qp = nquote(1, args)
-        qp.get_nquote(args['qsymbol'])
-        qp.build_df()
+        sq = nquote(4, args)
+        a_symbol = args['qsymbol']
+        sq_symbol = a_symbol.rstrip()
 
-        """
-        qp = bc_quote(1, args)
-        qp.get_basicquote(args['qsymbol'])
-        qp.get_quickquote(args['qsymbol'])
-        qp.q_polish()
-        """
+        sq.update_headers(sq_symbol)
+        sq.init_blind_session()
+        sq.form_api_endpoint(sq_symbol)
+        sq.get_nquote(sq_symbol)
+        sq.build_df()
+
         print ( f"================= quote dataframe =======================" )
-        print ( f"{qp.quote_df0}" )
+        print ( f"{sq.quote_df0}" )
         print ( f"================= quote dataframe =======================" )
 
         if args['bool_xray'] is True:        # DEBUG Xray
             print ( " " )
             c = 1
-            for k, v in qp.quote.items():
+            for k, v in sq.quote.items():
                 print ( f"{c} - {k} : {v}" )
                 c += 1
 
