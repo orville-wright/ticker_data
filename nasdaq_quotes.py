@@ -100,6 +100,7 @@ class nquote:
         #       NO cookie update done!!!
         logging.info('%s - Blind request get() on base url' % cmi_debug )
         with self.js_session.get('https://www.nasdaq.com', stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp0:
+            logging.info('%s - Request get() done' % cmi_debug )
         # if the get() succeds, the response handle is automatically saved in Class Global accessor -> self.js_resp0
         return
 
