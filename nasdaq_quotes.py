@@ -67,11 +67,11 @@ class nquote:
         logging.info('%s - IN' % cmi_debug )
 
         self.symbol = symbol
-        logging.info('%s - set cookies/headers (path:) object to endpoint' % cmi_debug )
+        logging.info('%s - set cookies/headers path: object' % cmi_debug )
         self.path = '/api/quote/' + self.symbol + '/info?assetclass=stocks'
         #self.nasdaq_headers['path'] = self.path
         self.js_session.cookies.update({'path': self.path} )
-        logging.info('cookies/headers path: object endpoint is - %s' % self.path )
+        logging.info('nasdaq_quotes::update_headers.## - cookies/headers path: object: %s' % self.path )
         return
 
 # method 2
@@ -88,7 +88,7 @@ class nquote:
         cmi_debug = __name__+"::"+self.form_api_endpoint.__name__+".#"+str(self.yti)
         logging.info('%s - form API endpoint URL' % cmi_debug )
         self.quote_url = 'https://api.nasdaq.com' + self.path
-        logging.info('API endpoint URL set to: %s' % self.quote_url )
+        logging.info('nasdaq_quotes::form_api_endpoint.## - API endpoint URL: %s' % self.quote_url )
         self.quote_url = self.quote_url
         return
 
