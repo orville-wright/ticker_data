@@ -319,7 +319,7 @@ def main():
             #print ( f"symbol: {nq.quote['symbol']} - Mkt cap: {nq.quote['mkt_cap']}" )
             print ( f"main::x.combo - Find missing data for: {nq.quote['symbol']}   Market cap: {nq.quote['mkt_cap']}  - Data issues: {wrangle_errors}" )
             wrangle_errors = 0
-            print ( f"DEBUG: {}".format(x.combo_df[x.combo_df['Symbol'] == qsymbol]) )
+            print ( f"DEBUG: DF Index for: {qsymbol} is: {x.combo_df[x.combo_df['Symbol'] == qsymbol].index} )
             #print ( x.combo_df[x.combo_df['Symbol'] == qsymbol] )
 
         print  ( f"main::x.combo - Total data issues discovered & cleansed: {total_wrangle_errors}" )
