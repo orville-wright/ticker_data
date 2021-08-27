@@ -326,7 +326,7 @@ def main():
                 logging.info( "main::x.combo - symbol is BAD/not regular company: %s" % qsymbol )
                 nq.quote.clear()    # make doublely sure that quote{} is empty & then bail out
                 wrangle_errors = 1
-                print ( f"main::x.combo - UNFIXABLE data problem: {nq.quote['symbol']} - not regular stock - Data issues: {wrangle_errors}" )
+                print ( f"main::x.combo - UNFIXABLE data problem: {qsymbol} - is not a regular stock - Data issues: {wrangle_errors}" )
             else:
                 print ( f"main::x.combo - FOUND missing data: {nq.quote['symbol']} - Market cap: {nq.quote['mkt_cap']} - Data issues: {wrangle_errors}" )
                 logging.info("main::x.combo ======================= %s ========================" % loop_count )
