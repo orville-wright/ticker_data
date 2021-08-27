@@ -217,10 +217,10 @@ class nquote:
 
         # wrangle, clean, cast & prepare the data
         logging.info('%s - Begin data wrangle work...' % cmi_debug )
-        co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )         # left justify TXT in DF & convert to raw string
-        co_name_lj = (re.sub('[\'\"]', '', co_name) )                  # remove " ' and strip leading/trailing spaces
-        co_name_lj = np.array2string(np.char.ljust(co_name_lj, 25) )   # left justify TXT in DF & convert to raw string
-        co_name_lj = (re.sub('[\']', '', co_name_lj) )                 # remove " ' and strip leading/trailing spaces
+        co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )           # left justify TXT in DF & convert to raw string
+        co_name_lj = (re.sub('[\'\"]', '', co_name) )                    # remove " ' and strip leading/trailing spaces
+        co_name_lj = np.array2string(np.char.ljust(co_name_lj, 25) )     # left justify TXT in DF & convert to raw string
+        co_name_lj = (re.sub('[\']', '', co_name_lj) )                   # remove " ' and strip leading/trailing spaces
 
         wrangle_errors = 0    # error counter
         if price == "N/A":
@@ -228,7 +228,7 @@ class nquote:
             logging.info('%s - Price is bad, found N/A data' % cmi_debug )
             wrangle_errors += 1
         else:
-            price_cl = (re.sub('[ $,]', '', price))                    # remove $ sign
+            price_cl = (re.sub('[ $,]', '', price))                      # remove $ sign
 
         if price_net == "N/A":
             price_net_cl = 0
@@ -239,7 +239,7 @@ class nquote:
             logging.info('%s - Price NET is unchanged' % cmi_debug )
             wrangle_errors += 1
         else:
-            price_net_cl = (re.sub('[\-+]', '', price_net))                # remove - + signs
+            price_net_cl = (re.sub('[\-+]', '', price_net))              # remove - + signs
             price_net_cl = np.float(price_net)
 
         if price_pct == "N/A":
@@ -255,7 +255,7 @@ class nquote:
             logging.info('%s - Price pct is very bad, field is Null/empty' % cmi_debug )
             wrangle_errors += 1
         else:
-            price_pct = (re.sub('[\-+%]', '', price_pct))               # remove - + % signs
+            price_pct = (re.sub('[\-+%]', '', price_pct))                # remove - + % signs
             price_pct_cl = np.float(price_pct)
 
         if open_price == "N/A":
@@ -263,24 +263,35 @@ class nquote:
             logging.info('%s - Open price is bad, found N/A data' % cmi_debug )
             wrangle_errors += 1
         else:
-            open_price_cl = (re.sub('[ $,]', '', open_price))               # remove $ sign
+            open_price_cl = (re.sub('[ $,]', '', open_price))            # remove $ sign
 
         if prev_close == "N/A":
             prev_close_cl = 0
             logging.info('%s - Prev close is bad, found N/A data' % cmi_debug )
             wrangle_errors += 1
         else:
-            prev_close_cl = (re.sub('[ $,]', '', prev_close))              # remove $ sign
+            prev_close_cl = (re.sub('[ $,]', '', prev_close))            # remove $ sign
 
         if mkt_cap == "N/A":
             mkt_cap_cl = 0
             logging.info('%s - Mkt cap is bad, found N/A data' % cmi_debug )
             wrangle_errors += 1
         else:
-            mkt_cap_cl = (re.sub('[,]', '', mkt_cap))                      # remove ,
+            mkt_cap_cl = np.float(re.sub('[,]', '', mkt_cap))            # remove ,
+            # TODO: 
+            # this is where we create M_B_T scale data to insert
+            # into x.combo_df along wiht mkt_cap
+            # if mkt_cap < 500000 MBT = SM
+            # MBT = if mkt_cap =< 500,000,000 MBT = SM
+            # MBT = if mkt_cap =< 999,000,000 MBT = LM
+            # MBT = if mkt_cap =< 2,000,000,0000 MBT = SB
+            # MBT = if mkt_cap =< 100,000,000,000 MBT = LB
+            # MBT = if mkt_cap =< 999,999,999,999 MBT = MT
 
-        vol_abs_cl = (re.sub('[,]', '', vol_abs))                      # remove ,
-        timestamp_cl = (re.sub('[DATA AS OF ]', '', price_timestamp) )    # remove prefix string "DATA AS OF "
+            mkt_cap_cl = round(mkt_cap_cl / 1000000, 3)                  # resize & round mantissa = 3, as nasdaq.com gives full num
+
+        vol_abs_cl = (re.sub('[,]', '', vol_abs))                        # remove ,
+        timestamp_cl = (re.sub('[DATA AS OF ]', '', price_timestamp) )   # remove prefix string "DATA AS OF "
 
         # craft final data structure.
         # NOTE: globally accessible and used by quote DF and quote DICT
@@ -294,13 +305,13 @@ class nquote:
            np.float(open_price_cl), \
            np.float(prev_close_cl), \
            np.float(vol_abs_cl), \
-           np.float(mkt_cap_cl), \
+           mkt_cap_cl, \
            timestamp_cl, \
            time_now ]]
 
         # craft the quote DICT. Doesn't hurt to do this here as it assumed that the data
-        # is all nice & clean & in its final shape by now.
-        logging.info('%s - Build global quote dict' % cmi_debug )                        # so we can access it natively if needed, without using pandas
+        # is all nice & clean & in its final beautiful shape by now.
+        logging.info('%s - Build global quote dict' % cmi_debug )        # so we can access it natively if needed, without using pandas
         self.quote = dict( \
                 symbol=co_sym_lj, \
                 name=co_name, \

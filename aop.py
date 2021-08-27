@@ -310,17 +310,20 @@ def main():
         total_wrangle_errors = 0
         for qsymbol in up_symbols:
             logging.info('main::x.combo - get quote to find missing data for %s' % qsymbol )
-            nq.update_headers(qsymbol.strip())        # set path: header. doesnt touch secret nasdaq cookies
+            nq.update_headers(qsymbol.strip())               # set path: header. doesnt touch secret nasdaq cookies
             nq.form_api_endpoint(qsymbol.strip())
             nq.get_nquote(qsymbol.strip())
-            wrangle_errors = nq.build_data()    # will reutn how man data wrangeling errors we found & dealt with
+            wrangle_errors = nq.build_data()                 # wrangle & cleanse the data 
             total_wrangle_errors = total_wrangle_errors + wrangle_errors
             #nq.build_df()
             #print ( f"symbol: {nq.quote['symbol']} - Mkt cap: {nq.quote['mkt_cap']}" )
             print ( f"main::x.combo - Find missing data for: {nq.quote['symbol']}   Market cap: {nq.quote['mkt_cap']}  - Data issues: {wrangle_errors}" )
             wrangle_errors = 0
-            print ( f"DEBUG: DF Index for: {qsymbol} is: {x.combo_df[x.combo_df['Symbol'] == qsymbol].index} )
-            #print ( x.combo_df[x.combo_df['Symbol'] == qsymbol] )
+            
+            # print ( f"DEBUG: DF Index for: {qsymbol} is: {x.combo_df[x.combo_df['Symbol'] == qsymbol].index}" )
+            # insert missing data into dataframe @ row / column
+            # this is a pretty complex row data insert
+            x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == qsymbol].index, 'Mkt_cap'] = nq.quote['mkt_cap']
 
         print  ( f"main::x.combo - Total data issues discovered & cleansed: {total_wrangle_errors}" )
 
