@@ -86,9 +86,9 @@ class nquote:
     def form_api_endpoint(self, symbol):
         """This is the explicit quote URL that is used for the req get()"""
         cmi_debug = __name__+"::"+self.form_api_endpoint.__name__+".#"+str(self.yti)
-        logging.info('%s - form API endpoint for API get' % cmi_debug )
+        logging.info('%s - form API endpoint URL' % cmi_debug )
         self.quote_url = 'https://api.nasdaq.com' + self.path
-        logging.info('API url endpoint set to: %s' % self.quote_url )
+        logging.info('API endpoint URL set to: %s' % self.quote_url )
         self.quote_url = self.quote_url
         return
 
@@ -278,7 +278,7 @@ class nquote:
             wrangle_errors += 1
         else:
             mkt_cap_cl = np.float(re.sub('[,]', '', mkt_cap))            # remove ,
-            # TODO: 
+            # TODO:
             # this is where we create M_B_T scale data to insert
             # into x.combo_df along wiht mkt_cap
             # if mkt_cap < 500000 MBT = SM
