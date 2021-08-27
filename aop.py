@@ -339,13 +339,13 @@ def main():
                 # warning: symbol has trailing spaces inside the df, which wont match symbol used on nasdaq.com which
                 #          is pre rstrip() cleaned. This is why xsymbol is used (i.e. a lazy fix)
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = nq.quote['mkt_cap']
-                cleansed_errors += 1
 
+            cleansed_errors += 1
             total_wrangle_errors = total_wrangle_errors + wrangle_errors
             wrangle_errors = 0
             loop_count += 1
 
-        print  ( f"main::x.combo - Repaired data: {cleansed_errors} / Unfixbale data: {unfixable_errors} / Total data issues: {total_wrangle_errors}" )
+        print  ( f"main::x.combo - Repaired data errors: {cleansed_errors} / Unfixbale data: {unfixable_errors} / Total data issues: {total_wrangle_errors}" )
 
         # TODO: this is where we need to insert the missing market_cap data into the x.combo DF
         """
