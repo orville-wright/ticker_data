@@ -313,9 +313,8 @@ def main():
         logging.info('main::x.combo - %s' % up_symbols )
         loop_count = 1
         for qsymbol in up_symbols:
-            qsymbol = qsymbol.rstrip()
             xsymbol = qsymbol                  # explicit field from df to match df insert column test - sloppy hack
-            qsymbol = qsymbol.rstrip()         # df field striped of trailing spaces for nasdaq.com quote system
+            qsymbol = qsymbol.rstrip()
             logging.info( "main::x.combo ====================== %s ==========================" % loop_count )
             logging.info( "main::x.combo - examine quote data for: %s" % qsymbol )
             nq.update_headers(qsymbol)               # set path: header. doesnt touch secret nasdaq cookies
@@ -332,7 +331,8 @@ def main():
                 logging.info("main::x.combo ======================= %s ========================" % loop_count )
                 # print ( f"DEBUG: DF Index for: {qsymbol} is: {x.combo_df[x.combo_df['Symbol'] == qsymbol].index}" )
                 # insert missing data into dataframe @ row / column
-                # warning: symbol has trailing spaces inside the df, which wont match symbol used on nasdaq.com which is pre rstrip() cleaned
+                # warning: symbol has trailing spaces inside the df, which wont match symbol used on nasdaq.com which
+                #          is pre rstrip() cleaned. This is why xsymbol is used (i.e. a lazy fix)
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = nq.quote['mkt_cap']
 
             total_wrangle_errors = total_wrangle_errors + wrangle_errors
