@@ -491,11 +491,11 @@ def main():
         print ( " " )
         print ( f"Get price action quote for: {bq_symbol}" )
         print ( f"================= quote json =======================" )
-        if bq.quote{'symbol] is not None:
+        if bq.quote{'symbol'} is not None:
             print ( f"{bq.quote}" )
         else:
             print ( f"Not a regular symbol - prob Trust, ETF etc" )
-    
+
         print ( f"================= quote data =======================" )
         c = 1
         for k, v in bq.quote.items():
