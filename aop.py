@@ -483,15 +483,15 @@ def main():
 
         logging.info('main::simple get_quote - for symbol: %s' % bq_symbol )
 
-        bq.update_headers(bq_symbol.strip())        # set path: header. doesnt touch secret nasdaq cookies
-        bq.form_api_endpoint(bq_symbol.strip())
-        bq.get_nquote(bq_symbol.strip())
+        bq.update_headers(bq_symbol.rstrip())        # set path: header. doesnt touch secret nasdaq cookies
+        bq.form_api_endpoint(bq_symbol.rstrip())
+        bq.get_nquote(bq_symbol.rstrip())
         wrangle_errors = bq.build_data()    # will reutn how man data wrangeling errors we found & dealt with
 
         print ( " " )
         print ( f"Get price action quote for: {bq_symbol}" )
         print ( f"================= quote json =======================" )
-        if bq.quote{'symbol'} is not None:
+        if bq.quote.get("symbol") is not None:
             print ( f"{bq.quote}" )
         else:
             print ( f"Not a regular symbol - prob Trust, ETF etc" )

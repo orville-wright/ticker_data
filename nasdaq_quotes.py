@@ -140,7 +140,7 @@ class nquote:
             logging.info( '%s - json data extracted' % cmi_debug )
             logging.info( '%s - Simple quote : store RAW json dataset' % cmi_debug )
             self.quote_pridata = json.loads(self.js_resp2.text)
-            logging.info( '%s - "Done' % cmi_debug )
+            logging.info( '%s - Done' % cmi_debug )
 
         # Xray DEBUG
         if self.args['bool_xray'] is True:
