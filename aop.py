@@ -314,28 +314,31 @@ def main():
         loop_count = 1
         for qsymbol in up_symbols:
             qsymbol = qsymbol.rstrip()
+            xsymbol = qsymbol                  # explicit field from df to match df insert column test - sloppy hack
+            qsymbol = qsymbol.rstrip()         # df field striped of trailing spaces for nasdaq.com quote system
             logging.info( "main::x.combo ====================== %s ==========================" % loop_count )
             logging.info( "main::x.combo - examine quote data for: %s" % qsymbol )
             nq.update_headers(qsymbol)               # set path: header. doesnt touch secret nasdaq cookies
             nq.form_api_endpoint(qsymbol)
             nq.get_nquote(qsymbol)
             wrangle_errors = nq.build_data()                 # wrangle & cleanse the data
-            total_wrangle_errors = total_wrangle_errors + wrangle_errors
-            if wrangle_errors = -1:
+
+            if wrangle_errors == -1:
                 logging.info( "main::x.combo - symbol is BAD/not regular company: %s" % qsymbol )
-                self.quote.clear()    # make doublely sure that quote{} is empty & then bail out
+                nq.quote.clear()    # make doublely sure that quote{} is empty & then bail out
+                wrangle_errors = 1
             else:
-                print ( f"main::x.combo - DEBUG: quote json - {nq.quote}" )
                 print ( f"main::x.combo - FOUND missing data: {nq.quote['symbol']} - Market cap: {nq.quote['mkt_cap']} - Data issues: {wrangle_errors}" )
                 logging.info("main::x.combo ======================= %s ========================" % loop_count )
                 # print ( f"DEBUG: DF Index for: {qsymbol} is: {x.combo_df[x.combo_df['Symbol'] == qsymbol].index}" )
                 # insert missing data into dataframe @ row / column
-                # this is a pretty complex row data insert
-                x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == qsymbol].index, 'Mkt_cap'] = nq.quote['mkt_cap']
-                wrangle_errors = 0
+                # warning: symbol has trailing spaces inside the df, which wont match symbol used on nasdaq.com which is pre rstrip() cleaned
+                x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = nq.quote['mkt_cap']
 
+            total_wrangle_errors = total_wrangle_errors + wrangle_errors
+            wrangle_errors = 0
             loop_count += 1
-:
+
         print  ( f"main::x.combo - Total data issues discovered & cleansed: {total_wrangle_errors}" )
 
         # TODO: this is where we need to insert the missing market_cap data into the x.combo DF
