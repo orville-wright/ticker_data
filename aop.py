@@ -346,7 +346,7 @@ def main():
             loop_count += 1
 
         print ( " " )
-        print  ( f"main::x.combo - Scanned symbols: {loop_count} / Data errors repaired: {total_wrangle_errors} / Unfixbale data: {unfixable_errors} / Total issues evaluated: {cleansed_errors}" )
+        print  ( f"main::x.combo - Scanned symbols: {loop_count-1} / Data errors repaired: {total_wrangle_errors} / Unfixbale data: {unfixable_errors} / Total issues evaluated: {cleansed_errors}" )
         print ( " " )
         print ( f"================= >>COMBO<< Full list of intersting market observations ==================" )
         x.combo_listall_ranked()
@@ -491,7 +491,11 @@ def main():
         print ( " " )
         print ( f"Get price action quote for: {bq_symbol}" )
         print ( f"================= quote json =======================" )
-        print ( f"{bq.quote}" )
+        if bq.quote{'symbol] is not None:
+            print ( f"{bq.quote}" )
+        else:
+            print ( f"Not a regular symbol - prob Trust, ETF etc" )
+    
         print ( f"================= quote data =======================" )
         c = 1
         for k, v in bq.quote.items():
