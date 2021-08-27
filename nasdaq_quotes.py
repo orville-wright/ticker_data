@@ -138,15 +138,16 @@ class nquote:
 
             # access pure 'stock quote' JSON data via an authenticated/valid REST API call
             logging.info('%s - json data extracted' % cmi_debug )
-            logging.info('%s - store FULL json dataset' % cmi_debug )
+            logging.info('%s - Simple quote : store RAW json dataset' % cmi_debug )
             self.quote_pridata = json.loads(self.js_resp2.text)
+            logging.info(%s - "Done" % cmi_debug )
 
-         # Xray DEBUG
+        # Xray DEBUG
         if self.args['bool_xray'] is True:
-            print ( f"========================== {self.yti} - get_nquote() session cookies : {self.qs} ================================" )
+            print ( f"===================== get_nquote.{self.yti} session cookies : {self.qs} ===========================" )
             for i in self.js_session.cookies.items():
                 print ( f"{i}" )
-            print ( f"========================== {self.yti} - get_nquote() session cookies : {self.qs} ================================" )
+            print ( f"===================== get_nquote.{self.yti} session cookies : {self.qs} ===========================" )
         return
 
 # method 7
@@ -164,7 +165,7 @@ class nquote:
             logging.info('%s - Javascript engine processing...' % cmi_debug )
             self.js_resp2.html.render()    # this isn't needed for this URL becuase is a RAW JSON output page. NOT Javascript
             logging.info('%s - Javascript engine completed!' % cmi_debug )
-            logging.info('%s - store FULL json dataset' % cmi_debug )
+            logging.info('%s - Javascript quote : store FULL json dataset' % cmi_debug )
             self.quote_pridata = json.loads(self.js_resp2.text)
 
         # Xray DEBUG
@@ -257,7 +258,7 @@ class nquote:
                 wrangle_errors += 1
             elif price_pct == '':
                 price_pct_cl = "No data"
-                logging.info('%s - Price pct is very bad, field is Null/empty' % cmi_debug )
+                logging.info('%s - Price pct is bad, field is Null/empty' % cmi_debug )
                 wrangle_errors += 1
             else:
                 price_pct = (re.sub('[\-+%]', '', price_pct))                # remove - + % signs
