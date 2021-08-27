@@ -474,33 +474,33 @@ def main():
 	"""
 
 # 1-off stock quote
-if args['qsymbol'] is not False:
-    bq = nquote(4, args)       # setup an emphemerial dict
-    bq.init_dummy_session()    # note: this will set nasdaq magic cookie
-    bq_symbol = args['qsymbol']
+    if args['qsymbol'] is not False:
+        bq = nquote(4, args)       # setup an emphemerial dict
+        bq.init_dummy_session()    # note: this will set nasdaq magic cookie
+        bq_symbol = args['qsymbol']
 
-    total_wrangle_errors = 0
+        total_wrangle_errors = 0
 
-    logging.info('main::simple get_quote - for symbol: %s' % bq_symbol )
+        logging.info('main::simple get_quote - for symbol: %s' % bq_symbol )
 
-    bq.update_headers(bq_symbol.strip())        # set path: header. doesnt touch secret nasdaq cookies
-    bq.form_api_endpoint(bq_symbol.strip())
-    bq.get_nquote(bq_symbol.strip())
-    wrangle_errors = bq.build_data()    # will reutn how man data wrangeling errors we found & dealt with
+        bq.update_headers(bq_symbol.strip())        # set path: header. doesnt touch secret nasdaq cookies
+        bq.form_api_endpoint(bq_symbol.strip())
+        bq.get_nquote(bq_symbol.strip())
+        wrangle_errors = bq.build_data()    # will reutn how man data wrangeling errors we found & dealt with
 
-    print ( " " )
-    print ( f"Get price action quote for: {bq_symbol}" )
-    print ( f"================= quote json =======================" )
-    print ( f"{bq.quote}" )
-    print ( f"================= quote data =======================" )
-    c = 1
-    for k, v in bq.quote.items():
-        print ( f"{c} - {k} : {v}" )
-        c += 1
-print ( f"========================================================" )
+        print ( " " )
+        print ( f"Get price action quote for: {bq_symbol}" )
+        print ( f"================= quote json =======================" )
+        print ( f"{bq.quote}" )
+        print ( f"================= quote data =======================" )
+        c = 1
+        for k, v in bq.quote.items():
+            print ( f"{c} - {k} : {v}" )
+            c += 1
+        print ( f"========================================================" )
 
-print ( " " )
-print ( "####### done #####")
+        print ( " " )
+        print ( "####### done #####")
 
 if __name__ == '__main__':
     main()
