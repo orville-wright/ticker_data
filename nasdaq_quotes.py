@@ -330,6 +330,7 @@ class nquote:
                     mkt_cap=mkt_cap_cl )
         else:
             logging.info('%s - Bad symbol NULL json payload - NOT regular stock' % cmi_debug )        # bad symbol json payload
+            self.quote.clear()
             wrangle_errors += 1
 
         return wrangle_errors
