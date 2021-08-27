@@ -309,6 +309,8 @@ def main():
         nq.init_dummy_session()    # note: this will set nasdaq magic cookie
 
         total_wrangle_errors = 0
+        unfixable_errors = 0
+        cleansed_errors = 0
         logging.info('main::x.combo - find missing data for: %s symbols' % len(up_symbols) )
         logging.info('main::x.combo - %s' % up_symbols )
         loop_count = 1
@@ -326,22 +328,24 @@ def main():
                 logging.info( "main::x.combo - symbol is BAD/not regular company: %s" % qsymbol )
                 nq.quote.clear()    # make doublely sure that quote{} is empty & then bail out
                 wrangle_errors = 1
+                unfixable_errors += 1
                 print ( f"main::x.combo - UNFIXABLE data problem: {qsymbol} - is not a regular stock - Data issues: {wrangle_errors}" )
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
             else:
-                print ( f"main::x.combo - FOUND missing data: {nq.quote['symbol']} - Market cap: {nq.quote['mkt_cap']} - Data issues: {wrangle_errors}" )
+                print ( f"main::x.combo - FOUND missing data, INSERTING: {qsymbol} - Market cap: {nq.quote['mkt_cap']} - Data issues: {wrangle_errors}" )
                 logging.info("main::x.combo ======================= %s ========================" % loop_count )
                 # print ( f"DEBUG: DF Index for: {qsymbol} is: {x.combo_df[x.combo_df['Symbol'] == qsymbol].index}" )
                 # insert missing data into dataframe @ row / column
                 # warning: symbol has trailing spaces inside the df, which wont match symbol used on nasdaq.com which
                 #          is pre rstrip() cleaned. This is why xsymbol is used (i.e. a lazy fix)
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = nq.quote['mkt_cap']
+                cleansed_errors += 1
 
             total_wrangle_errors = total_wrangle_errors + wrangle_errors
             wrangle_errors = 0
             loop_count += 1
 
-        print  ( f"main::x.combo - Total data issues discovered & cleansed: {total_wrangle_errors}" )
+        print  ( f"main::x.combo - Repaired data: {cleansed_errors} / Unfixbale data: {unfixable_errors} / Total data issues: {total_wrangle_errors}" )
 
         # TODO: this is where we need to insert the missing market_cap data into the x.combo DF
         """
