@@ -331,7 +331,7 @@ class nquote:
         else:
             logging.info('%s - Bad symbol NULL json payload - NOT regular stock' % cmi_debug )        # bad symbol json payload
             self.quote.clear()
-            wrangle_errors += 1
+            wrangle_errors += -1
 
         return wrangle_errors
 

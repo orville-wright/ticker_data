@@ -321,17 +321,21 @@ def main():
             nq.get_nquote(qsymbol)
             wrangle_errors = nq.build_data()                 # wrangle & cleanse the data
             total_wrangle_errors = total_wrangle_errors + wrangle_errors
-            print ( f"main::x.combo - DEBUG: {nq.quote}" )
-            print ( f"main::x.combo - FOUND missing data: {nq.quote['symbol']} - Market cap: {nq.quote['mkt_cap']} - Data issues: {wrangle_errors}" )
-            logging.info("main::x.combo ======================= %s ========================" % loop_count )
-            wrangle_errors = 0
+            if wrangle_errors = -1:
+                logging.info( "main::x.combo - symbol is BAD/not regular company: %s" % qsymbol )
+                self.quote.clear()    # make doublely sure that quote{} is empty & then bail out
+            else:
+                print ( f"main::x.combo - DEBUG: quote json - {nq.quote}" )
+                print ( f"main::x.combo - FOUND missing data: {nq.quote['symbol']} - Market cap: {nq.quote['mkt_cap']} - Data issues: {wrangle_errors}" )
+                logging.info("main::x.combo ======================= %s ========================" % loop_count )
+                # print ( f"DEBUG: DF Index for: {qsymbol} is: {x.combo_df[x.combo_df['Symbol'] == qsymbol].index}" )
+                # insert missing data into dataframe @ row / column
+                # this is a pretty complex row data insert
+                x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == qsymbol].index, 'Mkt_cap'] = nq.quote['mkt_cap']
+                wrangle_errors = 0
 
-            # print ( f"DEBUG: DF Index for: {qsymbol} is: {x.combo_df[x.combo_df['Symbol'] == qsymbol].index}" )
-            # insert missing data into dataframe @ row / column
-            # this is a pretty complex row data insert
-            x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == qsymbol].index, 'Mkt_cap'] = nq.quote['mkt_cap']
             loop_count += 1
-
+:
         print  ( f"main::x.combo - Total data issues discovered & cleansed: {total_wrangle_errors}" )
 
         # TODO: this is where we need to insert the missing market_cap data into the x.combo DF
