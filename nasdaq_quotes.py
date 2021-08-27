@@ -187,6 +187,7 @@ class nquote:
         time_now = time.strftime("%H:%M:%S", time.localtime() )
 
         logging.info('%s - prepare json data accessors' % cmi_debug )
+        print ( f"DEBUG: json data dump = {self.quote_pridata['data']} )
         jsondata = self.quote_pridata['data']       # HEAD of data payload
         co_sym = jsondata['symbol']
         co_name = jsondata['companyName']
