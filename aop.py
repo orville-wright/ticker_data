@@ -228,7 +228,7 @@ def main():
         un_vol_activity.down_unvol_listall()
         print ( " ")
 
-############################# build recommendation #######################################
+############################# Add unusual volume insights into recommendations #######################################
 
         # Add unusual vol into recommendation list []
         # A list that holds a few discovered recomendations
@@ -257,9 +257,8 @@ def main():
 # like... linear regressions for the last 5/10/15/30/60 mins
 #         to decide if a stock of interest is trending UP or DOWN based on linear regressions
 #         to fill out missing data fields that couldnt be grabbed during initial data gathering
-#             e.g. sometimes you cant grab the symbol/price when poppulating some dataframes
+#         e.g. sometimes you cant grab the symbol/price when poppulating some dataframes
 #
-# BROKEN: This is broken b/c the Nasdaq_Unusual volume collumn names changed
 
 #         to fix, all the _combo_() code in shallow_combo:: class needs to be updated
 #
@@ -290,7 +289,9 @@ def main():
 
             # allways make sure this is key #3 in recommendations dict
             recommended['3'] = ('Hottest:', hotsym.rstrip(), '$'+str(hotp), hotname.rstrip(), '+%'+str(x.combo_df.loc[hotidx, ['Pct_change']][0]) )
-            print ( f">>LOW<< price **Hot** stock: {hotsym.rstrip()} {'$'+str(hotp)} {hotname.rstrip()} {'+%'+str(x.combo_df.loc[hotidx, ['Pct_change']][0])} " )
+            print ( f">>Lowest price<< **Hot** stock: {hotsym.rstrip()} {'$'+str(hotp)} {hotname.rstrip()} {'+%'+str(x.combo_df.loc[hotidx, ['Pct_change']][0])} " )
+            print ( " " )
+            print ( f"=====================================================================================================" )
             print ( " " )
 
 # ########################## Hunt down missing data fields #########################
@@ -299,6 +300,7 @@ def main():
         # in the nasdaq.com webpage.
 
         # get list of symbols in combo DF with missing data (i,e rows with NaaN in mkt_cap column)
+        print ( f"Prepare final combo data list..." )
 
         up_symbols = x.combo_df[x.combo_df['Mkt_cap'].isna()]
         up_symbols = up_symbols['Symbol'].tolist()
@@ -317,10 +319,18 @@ def main():
             #print ( f"symbol: {nq.quote['symbol']} - Mkt cap: {nq.quote['mkt_cap']}" )
             print ( f"main::x.combo - Find missing data for: {nq.quote['symbol']}   Market cap: {nq.quote['mkt_cap']}  - Data issues: {wrangle_errors}" )
             wrangle_errors = 0
+            print ( f"DEBUG: {}".format(x.combo_df[x.combo_df['Symbol'] == qsymbol]) )
+            #print ( x.combo_df[x.combo_df['Symbol'] == qsymbol] )
 
         print  ( f"main::x.combo - Total data issues discovered & cleansed: {total_wrangle_errors}" )
 
         # TODO: this is where we need to insert the missing market_cap data into the x.combo DF
+        """
+        ulp = un_vol_activity.up_df0['Cur_price'].min()                  # find lowest price row in DF
+        uminv = un_vol_activity.up_df0['Cur_price'].idxmin()             # get index ID of lowest price row
+        ulsym = un_vol_activity.up_df0.loc[uminv, ['Symbol']][0]  # get symbol of lowest price item
+        ulname = un_vol_activity.up_df0.loc[uminv, ['Co_name']][0]   # get name of lowest price item
+        """
 
         print ( " " )
         print ( f"================= >>COMBO<< Full list of intersting market observations ==================" )
@@ -445,30 +455,32 @@ def main():
         print ( f"Highest count word: {v.ft_tdmatrix.max()}" )
 	"""
 
+# Get a stock quote ###################################
+
     if args['qsymbol'] is not False:
+        bq = nquote(4, args)       # setup an emphemerial dict
+        bq.init_dummy_session()    # note: this will set nasdaq magic cookie
+        bq_symbol = args['qsymbol']
+
+        total_wrangle_errors = 0
+
+        logging.info('main::simple get_quote - for symbol: %s' % bq_symbol )
+
+        bq.update_headers(bq_symbol.strip())        # set path: header. doesnt touch secret nasdaq cookies
+        bq.form_api_endpoint(bq_symbol.strip())
+        bq.get_nquote(bq_symbol.strip())
+        wrangle_errors = bq.build_data()    # will reutn how man data wrangeling errors we found & dealt with
+
         print ( " " )
-        print ( f"Get price action quote for: {args['qsymbol']}" )
-        sq = nquote(4, args)
-        a_symbol = args['qsymbol']
-        sq_symbol = a_symbol.rstrip()
-
-        sq.update_headers(sq_symbol)
-        sq.init_blind_session()
-        sq.form_api_endpoint(sq_symbol)
-        sq.get_nquote(sq_symbol)
-        sq.build_df()
-
-        print ( f"================= quote dataframe =======================" )
-        print ( f"{sq.quote_df0}" )
-        print ( f"================= quote dataframe =======================" )
-
-        if args['bool_xray'] is True:        # DEBUG Xray
-            print ( " " )
-            c = 1
-            for k, v in sq.quote.items():
-                print ( f"{c} - {k} : {v}" )
-                c += 1
-
+        print ( f"Get price action quote for: {bq_symbol}" )
+        print ( f"================= quote json =======================" )
+        print ( f"{bq.quote}" )
+        print ( f"================= quote data =======================" )
+        c = 1
+        for k, v in bq.quote.items():
+            print ( f"{c} - {k} : {v}" )
+            c += 1
+    print ( f"========================================================" )
     print ( " " )
     print ( "####### done #####")
 
