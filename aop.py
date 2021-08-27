@@ -327,6 +327,7 @@ def main():
                 nq.quote.clear()    # make doublely sure that quote{} is empty & then bail out
                 wrangle_errors = 1
                 print ( f"main::x.combo - UNFIXABLE data problem: {qsymbol} - is not a regular stock - Data issues: {wrangle_errors}" )
+                x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
             else:
                 print ( f"main::x.combo - FOUND missing data: {nq.quote['symbol']} - Market cap: {nq.quote['mkt_cap']} - Data issues: {wrangle_errors}" )
                 logging.info("main::x.combo ======================= %s ========================" % loop_count )
