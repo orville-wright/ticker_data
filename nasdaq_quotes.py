@@ -189,7 +189,7 @@ class nquote:
 
         time_now = time.strftime("%H:%M:%S", time.localtime() )
 
-        logging.info('%s - prepare json data accessors' % cmi_debug )
+        logging.info('%s - prepare quote json data accessors' % cmi_debug )
         # capture bad symbols (e.g. ETF's return NULL json payload. They're not real symbols)
         wrangle_errors = 0                              # Data wrangeling error counter
         if self.quote_pridata['data'] is not None:      # bad symbol with Null json payload
