@@ -137,10 +137,10 @@ class nquote:
             # logging.info('%s - Javascript engine completed!' % cmi_debug )
 
             # access pure 'stock quote' JSON data via an authenticated/valid REST API call
-            logging.info('%s - json data extracted' % cmi_debug )
-            logging.info('%s - Simple quote : store RAW json dataset' % cmi_debug )
+            logging.info( '%s - json data extracted' % cmi_debug )
+            logging.info( '%s - Simple quote : store RAW json dataset' % cmi_debug )
             self.quote_pridata = json.loads(self.js_resp2.text)
-            logging.info(%s - "Done" % cmi_debug )
+            logging.info( '%s - "Done' % cmi_debug )
 
         # Xray DEBUG
         if self.args['bool_xray'] is True:
