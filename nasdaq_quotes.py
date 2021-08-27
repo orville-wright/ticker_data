@@ -191,7 +191,8 @@ class nquote:
 
         logging.info('%s - prepare json data accessors' % cmi_debug )
         # capture bad symbols (e.g. ETF's return NULL json payload. They're not real symbols)
-        if self.quote_pridata['data'] is not Null:      # bad symbol with Null json payload
+        wrangle_errors = 0                              # Data wrangeling error counter
+        if self.quote_pridata['data'] is not None:      # bad symbol with Null json payload
             jsondata = self.quote_pridata['data']       # HEAD of data payload
             co_sym = jsondata['symbol']
             co_name = jsondata['companyName']
@@ -227,7 +228,6 @@ class nquote:
             co_name_lj = np.array2string(np.char.ljust(co_name_lj, 25) )     # left justify TXT in DF & convert to raw string
             co_name_lj = (re.sub('[\']', '', co_name_lj) )                   # remove " ' and strip leading/trailing spaces
 
-            wrangle_errors = 0    # error counter
             if price == "N/A":
                 price_cl = 0
                 logging.info('%s - Price is bad, found N/A data' % cmi_debug )
@@ -330,7 +330,7 @@ class nquote:
                     mkt_cap=mkt_cap_cl )
         else:
             logging.info('%s - Bad symbol NULL json payload - NOT regular stock' % cmi_debug )        # bad symbol json payload
-            pass
+            wrangle_errors += 1
 
         return wrangle_errors
 
