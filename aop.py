@@ -329,10 +329,10 @@ def main():
                 nq.quote.clear()    # make doublely sure that quote{} is empty & then bail out
                 wrangle_errors = 1
                 unfixable_errors += 1
-                print ( f"main::x.combo - UNFIXABLE data problem: {qsymbol} - is not a regular stock - Data issues: {wrangle_errors}" )
+                print ( f"main::x.combo - UNFIXABLE data problem: {qsymbol} - not a regular stock - Data issues: {wrangle_errors}" )
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
             else:
-                print ( f"main::x.combo - FOUND missing data, INSERTING: {qsymbol} - Market cap: {nq.quote['mkt_cap']} - Data issues: {wrangle_errors}" )
+                print ( f"main::x.combo - INSERTING missing data: {qsymbol} - Market cap: {nq.quote['mkt_cap']} - Data issues: {wrangle_errors}" )
                 logging.info("main::x.combo ======================= %s ========================" % loop_count )
                 # print ( f"DEBUG: DF Index for: {qsymbol} is: {x.combo_df[x.combo_df['Symbol'] == qsymbol].index}" )
                 # insert missing data into dataframe @ row / column
@@ -346,7 +346,7 @@ def main():
             loop_count += 1
 
         print ( " " )
-        print  ( f"main::x.combo - Scan data symbols: {loop_count}/  Repaired data errors: {cleansed_errors} / Unfixbale data: {unfixable_errors} / Total data issues: {total_wrangle_errors}" )
+        print  ( f"main::x.combo - Scanned symbols: {loop_count} / Data errors repaired: {total_wrangle_errors} / Unfixbale data: {unfixable_errors} / Total issues evaluated: {cleansed_errors}" )
         print ( " " )
         print ( f"================= >>COMBO<< Full list of intersting market observations ==================" )
         x.combo_listall_ranked()
