@@ -352,7 +352,7 @@ class nquote:
 
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         logging.info('%s - Drop ephemeral DF' % cmi_debug )
-        self.quote_df0.drop(self.quote_df0.index, inplace=True)        # ensure the DF is empty
+        #self.quote_df0.drop(self.quote_df0.index, inplace=True)        # ensure the DF is empty
 
         logging.info('%s - Populate DF with new quote data' % cmi_debug )
         self.quote_df0 = pd.DataFrame(self.data0, columns=[ 'Symbol', 'Co_name', 'arrow_updown', 'Cur_price', 'Prc_change', 'Pct_change', 'Open_price', 'Prev_close', 'Vol', 'Mkt_cap', 'Exch_timestamp', 'Time' ] )

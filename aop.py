@@ -494,6 +494,7 @@ def main():
         print ( f"================= quote json =======================" )
         if bq.quote.get("symbol") is not None:
             print ( f"{bq.quote}" )
+            print ( f"{bq.quote_df0}" )
         else:
             print ( f"Not a regular symbol - prob Trust, ETF etc" )
 
