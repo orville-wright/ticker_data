@@ -225,6 +225,7 @@ class nquote:
             # wrangle, clean, cast & prepare the data
             logging.info('%s - Begin data wrangle work...' % cmi_debug )
             co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )           # left justify TXT in DF & convert to raw string
+            co_sym_lj = co_sym_lj.rstrip()                                   # remove trailing spaces added somewhere. maybe left_Justify adds?
             co_name_lj = (re.sub('[\'\"]', '', co_name) )                    # remove " ' and strip leading/trailing spaces
             co_name_lj = np.array2string(np.char.ljust(co_name_lj, 25) )     # left justify TXT in DF & convert to raw string
             co_name_lj = (re.sub('[\']', '', co_name_lj) )                   # remove " ' and strip leading/trailing spaces
@@ -302,7 +303,7 @@ class nquote:
             # craft final data structure.
             # NOTE: globally accessible and used by quote DF and quote DICT
             self.data0 = [[ \
-               co_sym_lj.strip(), \
+               co_sym_lj, \
                co_name_lj, \
                arrow_updown, \
                np.float(price_cl), \
