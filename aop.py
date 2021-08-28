@@ -487,7 +487,8 @@ def main():
         bq.form_api_endpoint(bq_symbol.rstrip())
         bq.get_nquote(bq_symbol.rstrip())
         wrangle_errors = bq.build_data()    # will reutn how man data wrangeling errors we found & dealt with
-
+        bq.build_df()
+        
         print ( " " )
         print ( f"Get price action quote for: {bq_symbol}" )
         print ( f"================= quote json =======================" )

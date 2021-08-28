@@ -343,7 +343,8 @@ class nquote:
 # New method to build a Pandas DataFrame from JSON data structure
     def build_df(self):
         """
-        Build-out a fully populated Pandas DataFrame containg the
+        A 1-off nasdaq.com stored in a DataFrame
+        Might be useeful oneday?
         """
 
         cmi_debug = __name__+"::"+self.build_df.__name__+".#"+str(self.yti)
