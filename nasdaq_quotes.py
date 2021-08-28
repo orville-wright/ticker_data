@@ -224,10 +224,12 @@ class nquote:
 
             # wrangle, clean, cast & prepare the data
             logging.info('%s - Begin data wrangle work...' % cmi_debug )
-            co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )           # left justify TXT in DF & convert to raw string
-            co_sym_lj = co_sym_lj.rstrip()                                   # remove trailing spaces added somewhere. maybe left_Justify adds?
+
+            co_sym_lj = co_sym.strip()
+            #co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )          # left justify TXT & convert to raw string
+
             co_name_lj = (re.sub('[\'\"]', '', co_name) )                    # remove " ' and strip leading/trailing spaces
-            co_name_lj = np.array2string(np.char.ljust(co_name_lj, 25) )     # left justify TXT in DF & convert to raw string
+            co_name_lj = np.array2string(np.char.ljust(co_name_lj, 25) )     # left justify & convert to raw string
             co_name_lj = (re.sub('[\']', '', co_name_lj) )                   # remove " ' and strip leading/trailing spaces
 
             if price == "N/A":
@@ -320,7 +322,7 @@ class nquote:
             # is all nice & clean & in its final beautiful shape by now.
             logging.info('%s - Build global quote dict' % cmi_debug )        # so we can access it natively if needed, without using pandas
             self.quote = dict( \
-                    symbol=co_sym_lj, \
+                    symbol=co_sym_lj.rstrip(), \
                     name=co_name, \
                     updown=arrow_updown, \
                     cur_price=price_cl, \
