@@ -294,16 +294,15 @@ def main():
             print ( f"=====================================================================================================" )
             print ( " " )
 
-# ########################## Hunt down missing data fields #########################
-        # any symbols that are from the nasdaq.com unsual volume dataset will have
-        # mkt_cap & mkt_cap_s fields set to 'NaaN' becasue that data is not present
-        # in the nasdaq.com webpage.
+# ############# Hunt down missing data fields in main/final combo dataframe #########################
+        # nasdaq.com unusual volume webpage does provide market_cap fields.
+        # So the final combo DF will have mkt_cap holes in rows originalting from nasda.com unusual volume
+        # note: this code does a *lot* of data  wrangeling & cleansing
 
         # get list of symbols in combo DF with missing data (i,e rows with NaaN in mkt_cap column)
         print ( f"Prepare final combo data list..." )
 
         up_symbols = x.combo_df[x.combo_df['Mkt_cap'].isna()]
-        # need to make sure that this list is DEDUPed and UNIQUEd !!
         up_symbols = up_symbols['Symbol'].tolist()
         nq = nquote(3, args)       # setup an emphemerial dict
         nq.init_dummy_session()    # note: this will set nasdaq magic cookie
@@ -314,39 +313,50 @@ def main():
         logging.info('main::x.combo - find missing data for: %s symbols' % len(up_symbols) )
         logging.info('main::x.combo - %s' % up_symbols )
         loop_count = 1
+
+        # iterate over a list of symbols with missing mkt_cap data & get a live quote for each one
+
         for qsymbol in up_symbols:
-            xsymbol = qsymbol                  # explicit field from df to match df insert column test - sloppy hack
-            qsymbol = qsymbol.rstrip()
+            xsymbol = qsymbol                  # raw field from df to match df insert column test - sloppy hack
+            qsymbol = qsymbol.rstrip()         # same data but cleand/striped of trailing spaces
             logging.info( "main::x.combo ====================== %s ==========================" % loop_count )
             logging.info( "main::x.combo - examine quote data for: %s" % qsymbol )
-            nq.update_headers(qsymbol)               # set path: header. doesnt touch secret nasdaq cookies
-            nq.form_api_endpoint(qsymbol)
-            nq.get_nquote(qsymbol)
-            wrangle_errors = nq.build_data()                 # wrangle & cleanse the data
+            nq.update_headers(qsymbol)         # set path: header object. doesnt touch secret nasdaq cookies
+            nq.form_api_endpoint(qsymbol)      # set API endpoint url
+            nq.get_nquote(qsymbol)             # get a live quote
+            wrangle_errors = nq.build_data()   # wrangle & cleanse the data - lots done in here
 
-            if wrangle_errors == -1:
+            if wrangle_errors == -1:           # bad symbol (not a regular stock)
                 logging.info( "main::x.combo - symbol is BAD/not regular company: %s" % qsymbol )
-                nq.quote.clear()    # make doublely sure that quote{} is empty & then bail out
+                nq.quote.clear()               # make sure ephemerial quote{} is always empty before bailing out
                 wrangle_errors = 1
                 unfixable_errors += 1
                 print ( f"main::x.combo - UNFIXABLE data problem: {qsymbol} - not a regular stock - Data issues: {wrangle_errors}" )
+                # set default data for non-regualr stocks
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
+                x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = 'ZZ'
             else:
                 print ( f"main::x.combo - INSERTING missing data: {qsymbol} - Market cap: {nq.quote['mkt_cap']} - Data issues: {wrangle_errors}" )
                 logging.info("main::x.combo ======================= %s ========================" % loop_count )
-                # print ( f"DEBUG: DF Index for: {qsymbol} is: {x.combo_df[x.combo_df['Symbol'] == qsymbol].index}" )
                 # insert missing data into dataframe @ row / column
-                # warning: symbol has trailing spaces inside the df, which wont match symbol used on nasdaq.com which
-                #          is pre rstrip() cleaned. This is why xsymbol is used (i.e. a lazy fix)
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = nq.quote['mkt_cap']
                 cleansed_errors += 1
+
+                # figure out the market cap scale indicator (Small/Large Millions/Billions/Trillions)
+                for i in (("MT", 999999), ("LB", 10000), ("SB", 2000), ("LM", 500), ("SM", 50)):
+                    if i[1] > nq.quote['mkt_cap']:
+                        pass
+                    else:
+                        # insert market cap sale indiicator into dataframe @ column M_B for this symbol
+                        x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = i[0]
+                        break
 
             total_wrangle_errors = total_wrangle_errors + wrangle_errors
             wrangle_errors = 0
             loop_count += 1
 
         print ( " " )
-        print  ( f"main::x.combo - Scanned symbols: {loop_count-1} / Data errors repaired: {total_wrangle_errors} / Unfixbale data: {unfixable_errors} / Total issues evaluated: {cleansed_errors}" )
+        print  ( f"main::x.combo - Symbols scanned: {loop_count-1} / Issues evaluated: {cleansed_errors} / Errors repaired: {total_wrangle_errors} / Unfixbale errors: {unfixable_errors}" )
         print ( " " )
         print ( f"================= >>COMBO<< Full list of intersting market observations ==================" )
         x.combo_listall_ranked()
