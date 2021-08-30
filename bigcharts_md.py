@@ -50,16 +50,16 @@ class bc_quote:
 
         return
 
-#### methods
-
 # method 1
     def get_basicquote(self, ticker):
-        # NOTE: This method is slower than method #2 (quickquote)
-        #       because it uses a URL endpoint that has some rich media elements. So the page builds slower in the extraction.
-        #       Although, it's data elements are structured in a much cleaner & simpler form. i.e. Extraction is a bit simpler.
-        #       It also has 1 data field not available in method #2 (i.e. %change)
-        #       The URL endpoint can also take an extended URL "?" quoery_string compponet to control data extraction (but This
-        #       isn't that useful as it controls the embeded rich media elemet output. Which we aren't interested in).
+        """
+        NOTE: This method is slower than method get_quickquote()
+        because it accesses a URL endpoint that has rich media elements. So the page builds slower in the extraction.
+        But get_basicquote() data elements are structured in a much cleaner & simpler form. i.e. Extraction is a bit simpler.
+        It also has 1 data field not available in method #2 (i.e. %change)
+        This URL endpoint page supports extended URL "?" query_string compponets to control data extraction (but This
+        isn't that useful as it controls the embeded rich media elemet output. Which we aren't interested in).
+        """
 
         cmi_debug = __name__+"::"+self.get_basicquote.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
@@ -67,105 +67,97 @@ class bc_quote:
         self.symbol = ticker
         url_endpoint = "https://bigcharts.marketwatch.com/quickchart/quickchart.asp?symb="
         url_queryopts = "&insttype=Stock&freq=9&show=True&time=1"
-        #url_queryopts = "&insttype=&freq=9&show=True&time=1"
 
-
-        logging.info('%s - Open URL : Basic quote' % cmi_debug )
+        logging.info('%s - Read request : Basic quote URL endpoint' % cmi_debug )
         with urllib.request.urlopen( f"{url_endpoint}{ticker}{url_queryopts}" ) as url:
             s = url.read()
             logging.info('%s - setup data scrape pointers' % cmi_debug )
             data_soup = BeautifulSoup(s, "html.parser")
             quote_section = data_soup.find(attrs={"id": "quote"} )
-            #quote_table = quote_section.find("td", attrs={"class": "last"} )    # DELETE ME!!!
             quote_data = quote_section.find_all("tr")
             quote1 = quote_data[2]
             quote2 = quote_data[3]
             logging.info('%s - Close URL' % cmi_debug )
             url.close()
 
-                                                       # walk the 1st embeded data structure...
-            walk_quote1 = quote1.find_all("td")        # <td> is where the data is hiding...
-            logging.info('%s - Walk QUOTE-1 data' % cmi_debug )
+            # Process quote data Section #2...
+            walk_quote1 = quote1.find_all("td")        # Walk 1st data struct <td> is where data is hiding...
+            logging.info('%s - Walk section #1 data structure' % cmi_debug )
             for i in walk_quote1:
-                if not i.select('img'):                # special treatment for "Change" field. It has <img> tag
-
+                if not i.select('img'):                # "Change" field has leading <img> tag
                     logging.info('%s - FOUND Simple data' % cmi_debug )
-                    # potentiall we have some real TEXT to look at
-                    # but... NULL test here on BS extract attempt becasue
-                    #        the .strip() fails on NULL fields becase you cant .strip() a NULL
+                    # potentially we have some real TEXT to look at but...doe NULL/None test 1st
+                    # b/c the .strip() fails on NULL fields as  you cant .strip() a None structure
                     if type(i.span) is not None:
                         k = i.span.text.strip()        # yes we have text to play with
-                        # DEBIG: print ( f"{i.span.text.strip()}  {i.div.text.strip()}" )
-                        if k in self.qlabels:              # cycle through our known list of labels
-                            logging.info('DEBUG - INSERT data - %s' % k )
+                        if k in self.qlabels:          # cycle through our known list of labels
+                            logging.info('DEBUG - INSERT section #1 data into quote dict - %s' % k )
                             self.quote[self.qlabels[k]] = i.div.text.strip()    # add data into quote DICT
                         else:
-                            logging.info('%s - ERROR : KEY not found' % cmi_debug )
-                            print ( f"KEY: {k} NOT found !" )
+                            logging.info('%s - ERROR : extract KEY not found in section #1 dataset' % cmi_debug )
+                            print ( f"KEY: {k} NOT found in section #1 quote dataset" )
                     else:
                         # this dataset has some NULL / empty data fields
-                        logging.info('%s - ERROR : walk quote-1 - NULL / Empty data found' % cmi_debug )
-                        #k = i.span.text        # yes we have text to play with
-                        print ( f"DEBUG: walk quote-1 - Found NULL/EMpty data" )
+                        logging.info('%s - ERROR : quote section#1 - NULL / Empty data found' % cmi_debug )
+                        print ( f"DEBUG: quote section #1 - Found NULL/Empty data" )
                         # TODO: >> take some actions here <<
 
-                else:    # found the <img> field that sit infront of some data
-                         # wrangle data - e.g. 'Change: +0.73'
-                    logging.info('%s - Found fancy UP/DOWN image' % cmi_debug )
-                    logging.info('%s - READ +/- sign' % cmi_debug )
+                else:   # found the <img> tag, infront of quote data - e.g. 'Change: +0.73'
+                    logging.info('%s - in section #1 - Found fancy UP/DOWN image' % cmi_debug )
+                    logging.info('%s - in section #1 - READ +/- sign' % cmi_debug )
                     k = i.span.text
                     change_pn = re.sub('[\n\ ]', '', i.div.text)    # remove trailing newline
-                    logging.info('%s - INSERT +/- sign data' % cmi_debug )
+                    logging.info('%s - INSERT +/- sign data into quote dict' % cmi_debug )
                     self.quote['change_s'] = change_pn              # add change_sign into quote DICT
 
-            # walk the 2nd embeded data structure...
+            # Process quote data Section #2...
             walk_quote2 = quote2.find_all("td")
-            logging.info('%s - Walk QUOTE-2 data' % cmi_debug )
+            logging.info('%s - Walk section #2 data structure' % cmi_debug )
             for i in walk_quote2:
                 if not i.select('img'):
                     logging.info('%s - FOUND simple data' % cmi_debug )
 
                     if type(i.span) is not type(None):                   # capture bad, missing, NULL, Empty data
                         k = i.span.text.strip()
-                        # print ( f"{i.span.text.strip()}  {i.div.text.strip()}" )      # DEBUG
                         if k in self.qlabels:
-                            logging.info('DEBUG - INSERT data - %s' % k )
+                            logging.info('DEBUG - INSERT section #2 data into quote dict - %s' % k )
                             self.quote[self.qlabels[k]] = i.div.text.strip()    # add to quote DICT
                         else:
-                            logging.info('%s - ERROR : KEY not found' % cmi_debug )
-                            print ( f"NO key found !" )
+                            logging.info('%s - ERROR : extract KEY not found in section #2 dataset' % cmi_debug )
+                            print ( f"KEY: {k} NOT found in section #2 quote dataset" )
                     else:
-                        logging.info('%s - ERROR : walk quote-2 - NULL / Empty data found' % cmi_debug )
-                        print ( f"DEBUG: walk quote-2 - Found NULL/EMpty data" )
+                        logging.info('%s - ERROR : quote section#2 - NULL / Empty data found' % cmi_debug )
+                        print ( f"DEBUG: quote section #2 - Found NULL/Empty data" )
                         # TODO: >> take actions here <<
 
-                else:
-                    logging.info('%s - Found fancy UP/DOWN image' % cmi_debug )
-                    logging.info('%s - READ change_abs data' % cmi_debug )
+                else:    # found the <img> tag, infront of quote data - e.g. 'Change: +0.73'
+                    logging.info('%s - in section #2 - Found fancy UP/DOWN image' % cmi_debug )
+                    logging.info('%s - in section #2 - read change_abs data' % cmi_debug )
                     k = i.span.text.strip()
                     change_abs = re.sub('[\n\ ]', '', i.div.text)
                     if k in self.qlabels:
                         self.quote[self.qlabels[k]] = change_abs    # add to quote DICT
-                        logging.info('%s - INSERT change_abs data' % cmi_debug )
+                        logging.info('%s - INSERT change_abs data into quote dict' % cmi_debug )
                     else:
                         logging.info('%s - ERROR : KEY not found' % cmi_debug )
-                        print ( f"NO key found !" )
+                        print ( f"KEY: {k} NOT found in section #2 quote dataset" )
 
-        logging.info('%s - DONE' % cmi_debug )
+        logging.info('%s - basic_quote() DONE' % cmi_debug )
         return
 
 # method 2
     def get_quickquote(self, ticker):
-        # NOTE: This method is much faster
-        #       The URL is a minimal webpage doc with almost NO rich meida elements. i.e. page builds very quickly on extraction
-        #       Although the data elemets require a little extra setup & attention for quick extraction
+        """
+        NOTE: This method is much faster that get_basicquote()
+        The URL endpoint is a minimal webpage doc with almost NO rich meida elements. i.e. page builds very quickly on extraction.
+        Although the data elemets require a little extra setup & attention for quick extraction.
+        """
 
         cmi_debug = __name__+"::"+self.get_quickquote.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
         ticker = ticker
         self.symbol = ticker
         url_endpoint = "https://bigcharts.marketwatch.com/quickchart/qsymbinfo.asp?symb="
-        #url_queryopts = "&insttype=&freq=9&show=True&time=1"
         url_queryopts = "&time=9&freq=1"
 
         with urllib.request.urlopen( f"{url_endpoint}{ticker}" ) as url:
@@ -181,96 +173,89 @@ class bc_quote:
             quote_data = qquote_table.find_all("td")
             fin_data = qfin_table.find_all("td")
 
-            # print ( f"------------------ Quickquote / simple: {ticker} ---------------------" )
-            # manuall traverse a small set of data elements - looping through small generators is pointless
             qhc = qq_head_co.stripped_strings           # manually work on 1st small generator obj
             ds = next(qhc)
             self.quote['symbol'] = ds.strip()           # add into quote DICT
-
             qhx = qq_head_data.stripped_strings         # manuall work on 2nd small generator obj
-            # print ( f"Last price: {next(qhx)}" )      # item #1 IGNORED - DUPE data ite,. Not needed again
             next(qhx)                                   # manually advance generator
             dc = next(qhx)                              # item #2
             self.quote['change_n'] = dc.strip()         # add into quote DICT
 
-            # print ( f"------------------ Quickquote price action: {ticker} ---------------------" )
             qlen = len(quote_data)
             for i in range(1, qlen, 2):
                 k = quote_data[i].text.strip()
-                # print ( f"{quote_data[i].text} {quote_data[i+1].text}" )          # DEBUG
                 if k in self.qlabels:
+                    logging.info('%s - INSERT data into quote dict' % cmi_debug )
                     self.quote[self.qlabels[k]] = quote_data[i+1].text.strip()    # add to quote DICT
                 else:
-                    print ( f"NO key found !" )
+                    print ( f"KEY: {k} NOT found in quote dataset" )
 
-            # print ( f"------------------ Quickquote / Financials: {ticker} ---------------------" )
             flen = len(fin_data)
             for i in range(0, flen, 2):
                 clean1 = re.sub('[\n\r]', '', fin_data[i].text)
                 clean2 = re.sub('[\n\r]', '', fin_data[i+1].text)
                 clean1 = clean1.strip()
                 clean2 = clean2.strip()
-                # print ( f"{clean1} {clean2}" )                                    # DEBUG
                 k = clean1
                 if k in self.qlabels:
+                    logging.info('%s - INSERT data into quote dict' % cmi_debug )
                     self.quote[self.qlabels[k]] = clean2        # add to quote DICT
         return
 
 # method 3
     def q_polish(self):
-        """This method curates & polishes a few data elements in the quote DICT
-        that need additinoal treatement after the inital build-out. It also
-        augments the quote DICT with new data elements.
-
-        note: method assumes a fullpopulated BASICQUOTE data struct
-              so it only works with get_basicquote
-              not quickquote, b/c quickquote will have field missing
+        """
+        This method curates & polishes critical data elements in the quote DICT
+        that need wrangeling/cleaning after the inital extraction build-out. It also
+        augments the quote DICT by adding new data elements of my choice.
+        Note: method assumes a fully populated BASICQUOTE data struct. So it only works
+        It only works with get_basicquote not quickquote, b/c quickquote is a simple data strcuture
+        and will therefore have a bunch fo data fields missing. So q_polish() on wrangles the richer dataset.
         """
 
         # Its cleaner to do data re-structuring after the quote DICT has been initially populated
         # rather than embed this data wrangeling logic inside the DICT creation method.
-        # NOTE: No loops. Linear, simple & fast.
+        # NOTE: minimal loops. Linear processing = simple & fast.
 
         cmi_debug = __name__+"::"+self.q_polish.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
 
-        # wragle change_s (i.e. sign 'Positive/negative/unchanged' of change value)
+        # change_s = -/+ indicator ('Positive/negative/unchanged') sign
         d = self.quote['change_s']
         d = re.sub('[0-9,\.]', '', d)     # remove all nums, "," & "."
-        self.quote['change_s'] = d       # update to new value (should be "+" or "-") - TODO: how is UNCHANGED handled?
+        self.quote['change_s'] = d        # update to new value (should be "+" or "-") - TODO: how is UNCHANGED handled?
 
-        # market cap & mkt_cap scale (i.e. Millions, Billions, Trillions)
+        # market cap & mkt_cap_scale (i.e. Millions, Billions, Trillions)
         m = self.quote['mkt_cap']
-        ms = m[-1]                                  # access last char (will be M, B, T)
-        #print ( f"*** DEBUG: mkt_cap: {m} / mkt_cap_sign: {ms}" ) 
-        if m == 'n/a':
-            m = 0
-            ms = 'X'
-            self.quote['mkt_cap'] = 0                   # set Mkt_cap = ZERO
-            self.quote['mkt_cap_s'] = ms                # M=Million, B=Billion, T=Trillion
+        ms = m[-1]                                 # last char (will be M, B, T)
+        if m == 'n/a':                             # no MBT scale (maybe this isn't a regular stock)
+            m = 0                                  # set market_cap = $0
+            ms = 'X'                               # set scale  = X
+            self.quote['mkt_cap'] = 0              # set Mkt_cap = ZERO
+            self.quote['mkt_cap_s'] = ms           # M=Million, B=Billion, T=Trillion
         else:
-            mv = re.sub('[MBT]', '', m)                 # remove trailing M, B, T
-            self.quote['mkt_cap_s'] = ms                # M=Million, B=Billion, T=Trillion
-            self.quote['mkt_cap'] = float(mv)           # set mkt_cap to real num
+            mv = re.sub('[MBT]', '', m)            # remove trailing M, B, T
+            self.quote['mkt_cap_s'] = ms           # M=Million, B=Billion, T=Trillion
+            self.quote['mkt_cap'] = float(mv)      # set mkt_cap to real num
 
         # make vol -> a real int
         d = self.quote['vol']
-        d = re.sub(',', '', d)                      # remove "," from num
-        self.quote['vol'] = int(d)                  # update orignal STRING vlaue as real INT num
+        d = re.sub(',', '', d)                     # remove "," from num
+        self.quote['vol'] = int(d)                 # update orignal STRING vlaue as real INT num
 
-        # split compound data elements & create new DICT fields as needed
+        # Some compound data elements next. Split thgem up & create new DICT fields as needed
 
         # 52 week range
-        r = self.quote['range52w_t']                 # e.g. '5.90 to 13.26'
-        rt = r.partition(' to ')                     # seperator = ' to ' result is fast, light tupple
-        self.quote['range52w_l'] = float(rt[0])      # 52 Week HIGH
-        self.quote['range52w_h'] = float(rt[2])      # 52 week LOW
+        r = self.quote['range52w_t']               # e.g. '5.90 to 13.26'
+        rt = r.partition(' to ')                   # seperator = ' to ' result is fast, light tupple
+        self.quote['range52w_l'] = float(rt[0])    # 52 Week HIGH
+        self.quote['range52w_h'] = float(rt[2])    # 52 week LOW
 
         # 52 week HIGH date & value
-        h = self.quote['high52w_t']                 # e.g. '5.90 to 13.26'
-        ht = h.partition(' on ')                    # seperator = ' to ' result is fast, light tupple
-        self.quote['high52w_p'] = float(ht[0])      # 52 Week HIGH (shuld be same as range52w_h)
-        self.quote['high52w_d'] = ht[2]             # date of 52 week HIGH
+        h = self.quote['high52w_t']                # e.g. '5.90 to 13.26'
+        ht = h.partition(' on ')                   # seperator = ' to ' result is fast, light tupple
+        self.quote['high52w_p'] = float(ht[0])     # 52 Week HIGH (shuld be same as range52w_h)
+        self.quote['high52w_d'] = ht[2]            # date of 52 week HIGH
 
         # 52 week LOW date & value
         l = self.quote['low52w_t']                 # e.g. '5.90 to 13.26'
