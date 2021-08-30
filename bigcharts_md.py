@@ -99,7 +99,7 @@ class bc_quote:
                     else:
                         # this dataset has some NULL / empty data fields
                         logging.info('%s - ERROR : quote section#1 - NULL / Empty data found' % cmi_debug )
-                        print ( f"DEBUG: quote section #1 - Found NULL/Empty data" )
+                        print ( f"bigcharts_md::get_basicquote.## - Section #1 : Found NULL/Empty data" )
                         # TODO: >> take some actions here <<
 
                 else:   # found the <img> tag, infront of quote data - e.g. 'Change: +0.73'
@@ -127,7 +127,7 @@ class bc_quote:
                             print ( f"KEY: {k} NOT found in section #2 quote dataset" )
                     else:
                         logging.info('%s - ERROR : quote section#2 - NULL / Empty data found' % cmi_debug )
-                        print ( f"DEBUG: quote section #2 - Found NULL/Empty data" )
+                        print ( f"bigcharts_md::get_basicquote.## - Section #2 : Found NULL/Empty data" )
                         # TODO: >> take actions here <<
 
                 else:    # found the <img> tag, infront of quote data - e.g. 'Change: +0.73'
