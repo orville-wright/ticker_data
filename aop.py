@@ -524,7 +524,7 @@ def main():
     if args['qsymbol'] is not False:
         bc = bc_quote(5, args)       # setup an emphemerial dict
         bc_symbol = args['qsymbol']  # what symbol are we getting a quote for?
-        bc.get_basicquote
+        bc.get_basicquote(bc_symbol) # get the quote
         print ( " " )
         print ( f"Get BIGCharts.com quote for: {bc_symbol}" )
         print ( f"================= quote json =======================" )
