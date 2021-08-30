@@ -10,15 +10,14 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 class bc_quote:
-    """Get a live quote from a fast web URL endpoint.
-    There are 2 slightly differnt but yet similar URL's leveraged via  www.marketwatch.com.
-    Both are simple pages & have near-zero rich media elements in them. (i.e. almost 100% TXT)
-    This means they build quickly during the extraction process.
-    The core URL is: https://bigcharts.marketwatch.com/quickchart/qsymbinfo.asp
-    WARN: This URL provides market data that is ~10-15 mins delayed
+    """
+    Get a symbol quote & symbol/company info from bigcharts.marketwatch.com
+    Provide 2 methods to access quotes from 2 differnt url pages at bigcharts.marketwatch.com.
+    get_basicquote - simple & provides a short format data
+    get_quickquote - detailed & provides long format data
+    WARN: bigcharts.marketwatch.com market data is ~10-15 mins delayed
     """
 
-    # class global accessors
     inst_uid = 0
     cycle = 0           # class thread loop counter
     symbol = ""         # Unique company symbol
@@ -56,7 +55,7 @@ class bc_quote:
         NOTE: This method is slower than method get_quickquote()
         because it accesses a URL endpoint that has rich media elements. So the page builds slower in the extraction.
         But get_basicquote() data elements are structured in a much cleaner & simpler form. i.e. Extraction is a bit simpler.
-        It also has 1 data field not available in method #2 (i.e. %change)
+        It also has 1 data field not available in get_quickquote (i.e. %change)
         This URL endpoint page supports extended URL "?" query_string compponets to control data extraction (but This
         isn't that useful as it controls the embeded rich media elemet output. Which we aren't interested in).
         """
@@ -205,10 +204,10 @@ class bc_quote:
 # method 3
     def q_polish(self):
         """
-        Curate & polish data elements in the quote DICT that need wrangeling/cleaning after the inital
-        data extraction. Also augment the quote DICT by adding new data elements that we control.
-        Note: method assumes a fully populated BASICQUOTE data struct. It only works with get_basicquote *NOT* quickquote
-        b/c quickquote is a simple data strcuture and has data fields missing.
+        Curate & polish data elements in the quote DICT that need wrangeling/cleaning after data extraction.
+        Also augment the quote DICT by adding new data elements that we can compute & control.
+        Note: method assumes long format get_quickquote() data struct. It only works with get_quickquote().
+        *NOT* get_basic_quote() b/c that structure has fewer elements.
         """
 
         # Its cleaner to do data re-structuring after the quote DICT has been initially populated
