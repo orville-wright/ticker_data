@@ -483,24 +483,25 @@ def main():
         print ( f"Highest count word: {v.ft_tdmatrix.max()}" )
 	"""
 
-# 1-off stock quote
-    # temporarily disbale nasdaq.com quotes to test older bigcharts.com quotes
-    """
+# get a 1-off stock quote
+   """
+   There are 3 methods of getting a quote
+   1 method for nasdaq.com - real-time live nasda.com data via native JSON API test GET
+   2 methods for bigcharts.marketwatch.com - 15 mins delayed via BS4 scraped data
+   All 3 deliver differnt level of detail & data. All are very useful.
+   """
+
     if args['qsymbol'] is not False:
+        """ #1 : nasdaq.com live real-time quote """
         bq = nquote(4, args)       # setup an emphemerial dict
         bq.init_dummy_session()    # note: this will set nasdaq magic cookie
         bq_symbol = args['qsymbol']
-
-        total_wrangle_errors = 0
-
         logging.info('main::simple get_quote - for symbol: %s' % bq_symbol )
-
         bq.update_headers(bq_symbol.rstrip())        # set path: header. doesnt touch secret nasdaq cookies
         bq.form_api_endpoint(bq_symbol.rstrip())
         bq.get_nquote(bq_symbol.rstrip())
         wrangle_errors = bq.build_data()    # will reutn how man data wrangeling errors we found & dealt with
         bq.build_df()
-
         print ( " " )
         print ( f"Get Nasdaq.com quote for: {bq_symbol}" )
         print ( f"================= quote json =======================" )
@@ -516,12 +517,11 @@ def main():
             print ( f"{c} - {k} : {v}" )
             c += 1
         print ( f"========================================================" )
-
         print ( " " )
         print ( "####### done #####")
-    """
 
     if args['qsymbol'] is not False:
+        """ #2 : bigcharts.marketwatch.com delayed basic quote """
         bc = bc_quote(5, args)       # setup an emphemerial dict
         bc_symbol = args['qsymbol']  # what symbol are we getting a quote for?
         bc.get_basicquote(bc_symbol) # get the quote
@@ -535,10 +535,10 @@ def main():
             print ( f"{c} - {k} : {v}" )
             c += 1
         print ( f"========================================================" )
-
         print ( " " )
 
     if args['qsymbol'] is not False:
+        """ #3 : bigcharts.marketwatch.com delayed detailed quote """
         bc = bc_quote(5, args)       # setup an emphemerial dict
         bc_symbol = args['qsymbol']  # what symbol are we getting a quote for?
         bc.get_quickquote(bc_symbol) # get the quote
@@ -553,7 +553,6 @@ def main():
             print ( f"{c} - {k} : {v}" )
             c += 1
         print ( f"========================================================" )
-
         print ( " " )
 
 
