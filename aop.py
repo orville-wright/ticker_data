@@ -484,12 +484,12 @@ def main():
 	"""
 
 # get a 1-off stock quote
-   """
-   There are 3 methods of getting a quote
-   1 method for nasdaq.com - real-time live nasda.com data via native JSON API test GET
-   2 methods for bigcharts.marketwatch.com - 15 mins delayed via BS4 scraped data
-   All 3 deliver differnt level of detail & data. All are very useful.
-   """
+    """
+    There are 3 methods of getting a quote
+    1 method for nasdaq.com - real-time live nasda.com data via native JSON API test GET - 10 data fields
+    2 methods for bigcharts.marketwatch.com - 15 mins delayed via BS4 scraped data - 10 & 40 data fields
+    All 3 deliver differnt levels of detail & data. All are very useful.
+    """
 
     if args['qsymbol'] is not False:
         """ #1 : nasdaq.com live real-time quote """
