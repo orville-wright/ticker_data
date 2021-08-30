@@ -238,9 +238,9 @@ class shallow_combo:
         return g_df
 
     def combo_dupes_only_listall(self, opt):
-        """Print the full contents of the combo DataFrame"""
-        """ with the DUPES tagged & sorted by % Change"""
-        """Will only list the dupes unless you have called tag_dupes() first, and then youll get the full DF"""
+        """Print the full contents of the combo DataFrame with the DUPES tagged & sorted by % Change.
+        Will only list the dupes unless you have called tag_dupes() first, and then youll get the full DF
+        """
 
         cmi_debug = __name__+"::"+self.combo_dupes_only_listall.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
@@ -249,7 +249,7 @@ class shallow_combo:
 
         if opt == 1:
             temp_1 = self.combo_df.sort_values(by=['Pct_change'], ascending=False)
-            return (temp_1[temp_1.duplicated(['Symbol'])] )
+            #return (temp_1[temp_1.duplicated(['Symbol'])] )
 
         if opt == 2:
             return ( self.combo_dupes[self.combo_dupes[0] == True] )
