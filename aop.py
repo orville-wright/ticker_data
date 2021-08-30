@@ -525,7 +525,6 @@ def main():
         bc = bc_quote(5, args)       # setup an emphemerial dict
         bc_symbol = args['qsymbol']  # what symbol are we getting a quote for?
         bc.get_basicquote(bc_symbol) # get the quote
-        bc.q_polish()                # wrangel the data elements
         print ( " " )
         print ( f"Get BIGCharts.com basicquote for: {bc_symbol}" )
         print ( f"================= quote json =======================" )
@@ -543,6 +542,7 @@ def main():
         bc = bc_quote(5, args)       # setup an emphemerial dict
         bc_symbol = args['qsymbol']  # what symbol are we getting a quote for?
         bc.get_quickquote(bc_symbol) # get the quote
+        bc.q_polish()                # wrangel the data elements
         print ( " " )
         print ( f"Get BIGCharts.com quote for: {bc_symbol}" )
         print ( f"================= quickquote json =======================" )
