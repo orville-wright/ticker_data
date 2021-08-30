@@ -1,6 +1,4 @@
 #!/usr/bin/python3
-#import urllib
-#import urllib.request
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd

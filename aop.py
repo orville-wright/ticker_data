@@ -484,6 +484,8 @@ def main():
 	"""
 
 # 1-off stock quote
+    # temporarily disbale nasdaq.com quotes to test older bigcharts.com quotes
+    """
     if args['qsymbol'] is not False:
         bq = nquote(4, args)       # setup an emphemerial dict
         bq.init_dummy_session()    # note: this will set nasdaq magic cookie
@@ -498,9 +500,9 @@ def main():
         bq.get_nquote(bq_symbol.rstrip())
         wrangle_errors = bq.build_data()    # will reutn how man data wrangeling errors we found & dealt with
         bq.build_df()
-        
+
         print ( " " )
-        print ( f"Get price action quote for: {bq_symbol}" )
+        print ( f"Get Nasdaq.com quote for: {bq_symbol}" )
         print ( f"================= quote json =======================" )
         if bq.quote.get("symbol") is not None:
             print ( f"{bq.quote}" )
@@ -517,6 +519,25 @@ def main():
 
         print ( " " )
         print ( "####### done #####")
+    """
+
+    if args['qsymbol'] is not False:
+        bc = bc_quote(5, args)       # setup an emphemerial dict
+        bc_symbol = args['qsymbol']  # what symbol are we getting a quote for?
+        bc.get_basicquote
+        print ( " " )
+        print ( f"Get BIGCharts.com quote for: {bc_symbol}" )
+        print ( f"================= quote json =======================" )
+        print ( f"{bc.quote}" )
+        print ( f"================= quote data =======================" )
+        c = 1
+        for k, v in bc.quote.items():
+            print ( f"{c} - {k} : {v}" )
+            c += 1
+        print ( f"========================================================" )
+
+        print ( " " )
+
 
 if __name__ == '__main__':
     main()
