@@ -526,10 +526,27 @@ def main():
         bc_symbol = args['qsymbol']  # what symbol are we getting a quote for?
         bc.get_basicquote(bc_symbol) # get the quote
         print ( " " )
-        print ( f"Get BIGCharts.com quote for: {bc_symbol}" )
+        print ( f"Get BIGCharts.com basicquote for: {bc_symbol}" )
         print ( f"================= quote json =======================" )
         print ( f"{bc.quote}" )
-        print ( f"================= quote data =======================" )
+        print ( f"================= basicquote data =======================" )
+        c = 1
+        for k, v in bc.quote.items():
+            print ( f"{c} - {k} : {v}" )
+            c += 1
+        print ( f"========================================================" )
+
+        print ( " " )
+
+    if args['qsymbol'] is not False:
+        bc = bc_quote(5, args)       # setup an emphemerial dict
+        bc_symbol = args['qsymbol']  # what symbol are we getting a quote for?
+        bc.get_quickquote(bc_symbol) # get the quote
+        print ( " " )
+        print ( f"Get BIGCharts.com quote for: {bc_symbol}" )
+        print ( f"================= quickquote json =======================" )
+        print ( f"{bc.quote}" )
+        print ( f"================= quickquote data =======================" )
         c = 1
         for k, v in bc.quote.items():
             print ( f"{c} - {k} : {v}" )

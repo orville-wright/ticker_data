@@ -80,7 +80,7 @@ class bc_quote:
             logging.info('%s - Close URL' % cmi_debug )
             url.close()
 
-            # Process quote data Section #1...
+            # Process data Section #1...
             walk_quote1 = quote1.find_all("td")        # Walk 1st data struct <td> is where data is hiding...
             logging.info('%s - Walk section #1 data structure' % cmi_debug )
             for i in walk_quote1:
@@ -110,7 +110,7 @@ class bc_quote:
                     logging.info('%s - INSERT +/- sign data into quote dict' % cmi_debug )
                     self.quote['change_s'] = change_pn              # add change_sign into quote DICT
 
-            # Process quote data Section #2...
+            # Process data Section #2...
             walk_quote2 = quote2.find_all("td")
             logging.info('%s - Walk section #2 data structure' % cmi_debug )
             for i in walk_quote2:
@@ -205,12 +205,10 @@ class bc_quote:
 # method 3
     def q_polish(self):
         """
-        This method curates & polishes critical data elements in the quote DICT
-        that need wrangeling/cleaning after the inital extraction build-out. It also
-        augments the quote DICT by adding new data elements of my choice.
-        Note: method assumes a fully populated BASICQUOTE data struct. So it only works
-        It only works with get_basicquote not quickquote, b/c quickquote is a simple data strcuture
-        and will therefore have a bunch fo data fields missing. So q_polish() on wrangles the richer dataset.
+        Curate & polish data elements in the quote DICT that need wrangeling/cleaning after the inital
+        data extraction. Also augment the quote DICT by adding new data elements that we control.
+        Note: method assumes a fully populated BASICQUOTE data struct. It only works with get_basicquote *NOT* quickquote
+        b/c quickquote is a simple data strcuture and has data fields missing.
         """
 
         # Its cleaner to do data re-structuring after the quote DICT has been initially populated
