@@ -80,7 +80,7 @@ class bc_quote:
             logging.info('%s - Close URL' % cmi_debug )
             url.close()
 
-            # Process quote data Section #2...
+            # Process quote data Section #1...
             walk_quote1 = quote1.find_all("td")        # Walk 1st data struct <td> is where data is hiding...
             logging.info('%s - Walk section #1 data structure' % cmi_debug )
             for i in walk_quote1:
@@ -91,7 +91,7 @@ class bc_quote:
                     if type(i.span) is not None:
                         k = i.span.text.strip()        # yes we have text to play with
                         if k in self.qlabels:          # cycle through our known list of labels
-                            logging.info('DEBUG - INSERT section #1 data into quote dict - %s' % k )
+                            logging.info('bigcharts_md::get_basicquote.## - INSERT section #1 data into quote dict - %s' % k )
                             self.quote[self.qlabels[k]] = i.div.text.strip()    # add data into quote DICT
                         else:
                             logging.info('%s - ERROR : extract KEY not found in section #1 dataset' % cmi_debug )
@@ -120,7 +120,7 @@ class bc_quote:
                     if type(i.span) is not type(None):                   # capture bad, missing, NULL, Empty data
                         k = i.span.text.strip()
                         if k in self.qlabels:
-                            logging.info('DEBUG - INSERT section #2 data into quote dict - %s' % k )
+                            logging.info('bigcharts_md::get_basicquote.## - INSERT section #2 data into quote dict - %s' % k )
                             self.quote[self.qlabels[k]] = i.div.text.strip()    # add to quote DICT
                         else:
                             logging.info('%s - ERROR : extract KEY not found in section #2 dataset' % cmi_debug )
