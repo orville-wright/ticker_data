@@ -272,7 +272,6 @@ def main():
         # Final combo DF will have mkt_cap holes in rows originalting from nasda.com unusual volume
         # note: this code does a *lot* of data  wrangeling & cleansing
 
-
         print ( f"Prepare final combo data list..." )    # list of symbols with missing data (i.e mkt_cap NaaN rows)
         up_symbols = x.combo_df[x.combo_df['Mkt_cap'].isna()]
         up_symbols = up_symbols['Symbol'].tolist()
@@ -339,30 +338,22 @@ def main():
         x.combo_listall_ranked()
 
 # ==================================================================================================
-        # ox = x.combo_dupes_only_listall(1)
         temp_1 = x.combo_df.sort_values(by=['Pct_change'], ascending=False)
-        """
-        temp_1[temp_1.duplicated(['Symbol'])] )
-        """
+        print ( " " )
         print ( "========== ** OUTLIERS ** : Unusual UP volume + Top Gainers by +5% ================================" )
-        print ( f"{temp_1[temp_1.duplicated(['Symbol'])]}" )    # <<TODO: This is wrong. this DF has holes. its not built correctly.
-        print ( " ")
-        print ( "========== ** OUTLIERS ** : Ranked by oppty price + Annotated reasons =============================" )
+        print ( f"{temp_1[temp_1.duplicated(['Symbol'])]}" )    # duples in the df mean a curious outlier
 
         # lowest price **Hottest** stock (i.e. hot in *all* metrics)
-        if len(x.rx) == 0:      # empty list[]. no stock found yet (prob very early in trading morning)
-            print ( " " )
+        if len(x.rx) == 0:      # # hottest stock with lowest price overall
+            print ( " " )       # empty list[] = no stock found yet (prob very early in trading morning)
             print ( f"No **hot** stock for >>LOW<< buy-in recommendations list yet" )
         else:
             hotidx = x.rx[0]
             hotsym = x.rx[1]
             hotp = x.combo_df.loc[hotidx, ['Cur_price']][0]
             hotname = x.combo_df.loc[hotidx, ['Co_name']][0]
-
-            # allways make sure this is key #3 in recommendations dict
             recommended['3'] = ('Hottest:', hotsym.rstrip(), '$'+str(hotp), hotname.rstrip(), '+%'+str(x.combo_df.loc[hotidx, ['Pct_change']][0]) )
             print ( f">>Lowest price<< **Hot** stock: {hotsym.rstrip()} {'$'+str(hotp)} {hotname.rstrip()} {'+%'+str(x.combo_df.loc[hotidx, ['Pct_change']][0])} " )
-            print ( " " )
             print ( f"=====================================================================================================" )
             print ( " " )
 
