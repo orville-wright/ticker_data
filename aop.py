@@ -267,8 +267,9 @@ def main():
         # first combine Small_cap + med + large + mega into a single dataframe
         x = shallow_combo(1, med_large_mega_gainers, small_cap_dataset, un_vol_activity, args )
         x.prepare_combo_df()
+        ox = x.combo_dupes_only_listall(1)
         print ( "========== ** OUTLIERS ** : Unusual UP volume + Top Gainers by +5% ================================" )
-        print ( x.combo_dupes_only_listall(1) )    # <<TODO: This is wrong. this DF has holes. its not built correctly.
+        print ( f"{ox}" )    # <<TODO: This is wrong. this DF has holes. its not built correctly.
         print ( " ")
         print ( "========== ** OUTLIERS ** : Ranked by oppty price + Annotated reasons =======================================" )
         x.tag_dupes()
