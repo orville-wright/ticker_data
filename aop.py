@@ -268,8 +268,8 @@ def main():
         x = shallow_combo(1, med_large_mega_gainers, small_cap_dataset, un_vol_activity, args )
         x.prepare_combo_df()
         # ox = x.combo_dupes_only_listall(1)
-        """
         temp_1 = x.combo_df.sort_values(by=['Pct_change'], ascending=False)
+        """
         temp_1[temp_1.duplicated(['Symbol'])] )
         """
 
