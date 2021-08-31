@@ -265,16 +265,17 @@ def main():
     if args['bool_deep'] is True and args['bool_scr'] is True and args['bool_uvol'] is True:
 
         # first combine Small_cap + med + large + mega into a single dataframe
-        ox = shallow_combo(1, med_large_mega_gainers, small_cap_dataset, un_vol_activity, args )
-        ox.prepare_combo_df()
-        # ox = x.combo_dupes_only_listall(1)
-        """
-        temp_1 = ox.combo_df.sort_values(by=['Pct_change'], ascending=False)
-        temp_1[temp_1.duplicated(['Symbol'])] )
-        """
+        x = shallow_combo(1, med_large_mega_gainers, small_cap_dataset, un_vol_activity, args )
+        x.prepare_combo_df()
+        temp_1 = x.combo_df.sort_values(by=['Symbol'], ascending=False)
+        #temp_1 = x.combo_df.sort_values(by=['Pct_change'], ascending=False)
+
+        # x = x.combo_dupes_only_listall(1)
+        # temp_1[temp_1.duplicated(['Symbol'])] )
 
         print ( "========== ** OUTLIERS ** : Unusual UP volume + Top Gainers by +5% ================================" )
-        print ( f"{temp_1[temp_1.duplicated(['Symbol'])])} " )    # <<TODO: This is wrong. this DF has holes. its not built correctly.
+        #print ( f"{temp_1[temp_1.duplicated(['Symbol'])]} " )    # <<TODO: This is wrong. this DF has holes. its not built correctly.
+        print ( f"{temp_1} " )
         print ( " ")
         print ( "========== ** OUTLIERS ** : Ranked by oppty price + Annotated reasons =======================================" )
         x.tag_dupes()
