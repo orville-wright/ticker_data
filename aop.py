@@ -276,7 +276,7 @@ def main():
         print ( "========== ** OUTLIERS ** : Unusual UP volume + Top Gainers by +5% ================================" )
         print ( f"{temp_1[temp_1.duplicated(['Symbol'])]}" )    # <<TODO: This is wrong. this DF has holes. its not built correctly.
         print ( " ")
-        print ( "========== ** OUTLIERS ** : Ranked by oppty price + Annotated reasons =======================================" )
+        print ( "========== ** OUTLIERS ** : Ranked by oppty price + Annotated reasons =============================" )
         x.tag_dupes()
         x.tag_uniques()
         x.rank_hot()
@@ -343,18 +343,19 @@ def main():
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = 'ZZ'
             else:
                 print ( f"main::x.combo - INSERTING missing data: {qsymbol} - Market cap: {nq.quote['mkt_cap']} - Data issues: {wrangle_errors}" )
-                logging.info("main::x.combo ======================= End : %s ========================" % loop_count )
+                logging.info("main::x.combo ======================= End : %s ===========================" % loop_count )
                 # insert missing data into dataframe @ row / column
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = nq.quote['mkt_cap']
                 cleansed_errors += 1
 
                 # figure out the market cap scale indicator (Small/Large Millions/Billions/Trillions)
-                for i in (("MT", 999999), ("LB", 10000), ("SB", 2000), ("LM", 500), ("SM", 50)):
+                for i in (("MT", 999999), ("LB", 10000), ("SB", 2000), ("LM", 500), ("SM", 50), ("TM", 25)):
                     if i[1] > nq.quote['mkt_cap']:
                         pass
                     else:
                         # insert market cap sale indiicator into dataframe @ column M_B for this symbol
                         x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = i[0]
+                        logging.info( "main::x.combo - INSERT missing data : mkt_cap scale: %s" % i[0] )
                         break
 
             total_wrangle_errors = total_wrangle_errors + wrangle_errors
