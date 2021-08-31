@@ -267,47 +267,13 @@ def main():
         # first combine Small_cap + med + large + mega into a single dataframe
         x = shallow_combo(1, med_large_mega_gainers, small_cap_dataset, un_vol_activity, args )
         x.prepare_combo_df()
-        # ox = x.combo_dupes_only_listall(1)
-        temp_1 = x.combo_df.sort_values(by=['Pct_change'], ascending=False)
-        """
-        temp_1[temp_1.duplicated(['Symbol'])] )
-        """
-
-        print ( "========== ** OUTLIERS ** : Unusual UP volume + Top Gainers by +5% ================================" )
-        print ( f"{temp_1[temp_1.duplicated(['Symbol'])]}" )    # <<TODO: This is wrong. this DF has holes. its not built correctly.
-        print ( " ")
-        print ( "========== ** OUTLIERS ** : Ranked by oppty price + Annotated reasons =============================" )
-        x.tag_dupes()
-        x.tag_uniques()
-        x.rank_hot()
-        x.rank_unvol()
-        x.rank_caps()
-
-        # lowest price **Hottest** stock (i.e. hot in *all* metrics)
-        if len(x.rx) == 0:      # empty list[]. no stock found yet (prob very early in trading morning)
-            print ( " " )
-            print ( f"No **hot** stock for >>LOW<< buy-in recommendations list yet" )
-        else:
-            hotidx = x.rx[0]
-            hotsym = x.rx[1]
-            hotp = x.combo_df.loc[hotidx, ['Cur_price']][0]
-            hotname = x.combo_df.loc[hotidx, ['Co_name']][0]
-
-            # allways make sure this is key #3 in recommendations dict
-            recommended['3'] = ('Hottest:', hotsym.rstrip(), '$'+str(hotp), hotname.rstrip(), '+%'+str(x.combo_df.loc[hotidx, ['Pct_change']][0]) )
-            print ( f">>Lowest price<< **Hot** stock: {hotsym.rstrip()} {'$'+str(hotp)} {hotname.rstrip()} {'+%'+str(x.combo_df.loc[hotidx, ['Pct_change']][0])} " )
-            print ( " " )
-            print ( f"=====================================================================================================" )
-            print ( " " )
-
-# ############# Hunt down missing data fields in main/final combo dataframe #########################
-        # nasdaq.com unusual volume webpage does provide market_cap fields.
-        # So the final combo DF will have mkt_cap holes in rows originalting from nasda.com unusual volume
+        # ############# Hunt down missing data fields in main/final combo dataframe #########################
+        # nasdaq.com unusual volume webpage does *NOT* provide market_cap fields.
+        # Final combo DF will have mkt_cap holes in rows originalting from nasda.com unusual volume
         # note: this code does a *lot* of data  wrangeling & cleansing
 
-        # get list of symbols in combo DF with missing data (i,e rows with NaaN in mkt_cap column)
-        print ( f"Prepare final combo data list..." )
 
+        print ( f"Prepare final combo data list..." )    # list of symbols with missing data (i.e mkt_cap NaaN rows)
         up_symbols = x.combo_df[x.combo_df['Mkt_cap'].isna()]
         up_symbols = up_symbols['Symbol'].tolist()
         nq = nquote(3, args)       # setup an emphemerial dict
@@ -320,9 +286,7 @@ def main():
         logging.info('main::x.combo - %s' % up_symbols )
         loop_count = 1
 
-        # iterate over a list of symbols with missing mkt_cap data & get a live quote for each one
-
-        for qsymbol in up_symbols:
+        for qsymbol in up_symbols:             # iterate over symbols & get a live quote for each one
             xsymbol = qsymbol                  # raw field from df to match df insert column test - sloppy hack
             qsymbol = qsymbol.rstrip()         # same data but cleand/striped of trailing spaces
             logging.info( "main::x.combo ====================== Begin : %s ==========================" % loop_count )
@@ -367,6 +331,39 @@ def main():
         print ( " " )
         print ( f"================= >>COMBO<< Full list of intersting market observations ==================" )
         x.combo_listall_ranked()
+
+# ==================================================================================================
+        # ox = x.combo_dupes_only_listall(1)
+        temp_1 = x.combo_df.sort_values(by=['Pct_change'], ascending=False)
+        """
+        temp_1[temp_1.duplicated(['Symbol'])] )
+        """
+        print ( "========== ** OUTLIERS ** : Unusual UP volume + Top Gainers by +5% ================================" )
+        print ( f"{temp_1[temp_1.duplicated(['Symbol'])]}" )    # <<TODO: This is wrong. this DF has holes. its not built correctly.
+        print ( " ")
+        print ( "========== ** OUTLIERS ** : Ranked by oppty price + Annotated reasons =============================" )
+        x.tag_dupes()
+        x.tag_uniques()
+        x.rank_hot()
+        x.rank_unvol()
+        x.rank_caps()
+
+        # lowest price **Hottest** stock (i.e. hot in *all* metrics)
+        if len(x.rx) == 0:      # empty list[]. no stock found yet (prob very early in trading morning)
+            print ( " " )
+            print ( f"No **hot** stock for >>LOW<< buy-in recommendations list yet" )
+        else:
+            hotidx = x.rx[0]
+            hotsym = x.rx[1]
+            hotp = x.combo_df.loc[hotidx, ['Cur_price']][0]
+            hotname = x.combo_df.loc[hotidx, ['Co_name']][0]
+
+            # allways make sure this is key #3 in recommendations dict
+            recommended['3'] = ('Hottest:', hotsym.rstrip(), '$'+str(hotp), hotname.rstrip(), '+%'+str(x.combo_df.loc[hotidx, ['Pct_change']][0]) )
+            print ( f">>Lowest price<< **Hot** stock: {hotsym.rstrip()} {'$'+str(hotp)} {hotname.rstrip()} {'+%'+str(x.combo_df.loc[hotidx, ['Pct_change']][0])} " )
+            print ( " " )
+            print ( f"=====================================================================================================" )
+            print ( " " )
 
 # ==================================================================================================
         # lowest priced stock in combo_df
