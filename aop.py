@@ -345,7 +345,9 @@ def main():
         print ( averages )
         print ( " " )
 
-############# Machine Learning dev code ####################################
+
+
+# Machine Learning dev code ####################################
 # News Sentiment AI
     """
     Read Yahoo.com News for a given stock symbol
@@ -444,6 +446,9 @@ def main():
     All 3 deliver differnt levels of detail & data. All are very useful.
     """
 
+# 1-off quote - 3 differnt methods to get a quote ###############################
+    # method 1 : nasdaq.com
+    # 10 data fields provided
     if args['qsymbol'] is not False:
         """ #1 : nasdaq.com live real-time quote """
         bq = nquote(4, args)       # setup an emphemerial dict
@@ -473,6 +478,8 @@ def main():
         print ( " " )
         print ( "####### done #####")
 
+    # method 2 : bigcharts.marketwatch.com
+    # 10 data fields provided
     if args['qsymbol'] is not False:
         """ #2 : bigcharts.marketwatch.com delayed basic quote """
         bc = bc_quote(5, args)       # setup an emphemerial dict
@@ -490,6 +497,8 @@ def main():
         print ( f"========================================================" )
         print ( " " )
 
+    # method 3 : bigcharts.marketwatch.com
+    # 40 data fields provided
     if args['qsymbol'] is not False:
         """ #3 : bigcharts.marketwatch.com delayed detailed quote """
         bc = bc_quote(5, args)       # setup an emphemerial dict
