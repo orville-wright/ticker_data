@@ -353,7 +353,7 @@ def main():
                     else:
                         # insert market cap sale into dataframe @ column M_B for this symbol
                         x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = i[0]
-                        logging.info( "main::x.combo - INSERT missing data : mkt_cap scale: %s" % i[0] )
+                        logging.info( "main::x.combo - INSERT missing data : Market cap scale: %s" % i[0] )
                         cleansed_errors += 1
                         break
 
