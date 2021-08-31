@@ -249,7 +249,7 @@ class shallow_combo:
 
         if opt == 1:
             temp_1 = self.combo_df.sort_values(by=['Pct_change'], ascending=False)
-            #return (temp_1[temp_1.duplicated(['Symbol'])] )
+            return (temp_1[temp_1.duplicated(['Symbol'])] )
 
         if opt == 2:
             return ( self.combo_dupes[self.combo_dupes[0] == True] )
