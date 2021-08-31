@@ -342,22 +342,22 @@ def main():
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = 'ZZ'
             else:
-                print ( f"main::x.combo - INSERTING missing data: {qsymbol} - Market cap: {nq.quote['mkt_cap']} - Data issues: {wrangle_errors}" )
-                logging.info("main::x.combo ======================= End : %s ===========================" % loop_count )
                 # insert missing data into dataframe @ row / column
+                print ( f"main::x.combo - INSERTING missing data: {qsymbol} - Market cap: {nq.quote['mkt_cap']} - Data issues: {wrangle_errors}" )
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = nq.quote['mkt_cap']
                 cleansed_errors += 1
-
-                # figure out the market cap scale indicator (Small/Large Millions/Billions/Trillions)
-                for i in (("MT", 999999), ("LB", 10000), ("SB", 2000), ("LM", 500), ("SM", 50), ("TM", 25)):
+                # compute market cap scale indicator (Small/Large Millions/Billions/Trillions)
+                for i in (("MT", 999999), ("LB", 10000), ("SB", 2000), ("LM", 500), ("SM", 50), ("TM", 10)):
                     if i[1] > nq.quote['mkt_cap']:
                         pass
                     else:
-                        # insert market cap sale indiicator into dataframe @ column M_B for this symbol
+                        # insert market cap sale into dataframe @ column M_B for this symbol
                         x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = i[0]
                         logging.info( "main::x.combo - INSERT missing data : mkt_cap scale: %s" % i[0] )
+                        cleansed_errors += 1
                         break
 
+            logging.info("main::x.combo ======================= End : %s ===========================" % loop_count )
             total_wrangle_errors = total_wrangle_errors + wrangle_errors
             wrangle_errors = 0
             loop_count += 1
