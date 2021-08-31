@@ -267,15 +267,14 @@ def main():
         # first combine Small_cap + med + large + mega into a single dataframe
         x = shallow_combo(1, med_large_mega_gainers, small_cap_dataset, un_vol_activity, args )
         x.prepare_combo_df()
-        temp_1 = x.combo_df.sort_values(by=['Symbol'], ascending=False)
-        #temp_1 = x.combo_df.sort_values(by=['Pct_change'], ascending=False)
-
-        # x = x.combo_dupes_only_listall(1)
-        # temp_1[temp_1.duplicated(['Symbol'])] )
+        # ox = x.combo_dupes_only_listall(1)
+        """
+        temp_1 = x.combo_df.sort_values(by=['Pct_change'], ascending=False)
+        temp_1[temp_1.duplicated(['Symbol'])] )
+        """
 
         print ( "========== ** OUTLIERS ** : Unusual UP volume + Top Gainers by +5% ================================" )
-        #print ( f"{temp_1[temp_1.duplicated(['Symbol'])]} " )    # <<TODO: This is wrong. this DF has holes. its not built correctly.
-        print ( f"{temp_1} " )
+        print ( f"{temp_1[temp_1.duplicated(['Symbol'])])} " )    # <<TODO: This is wrong. this DF has holes. its not built correctly.
         print ( " ")
         print ( "========== ** OUTLIERS ** : Ranked by oppty price + Annotated reasons =======================================" )
         x.tag_dupes()
@@ -326,7 +325,7 @@ def main():
         for qsymbol in up_symbols:
             xsymbol = qsymbol                  # raw field from df to match df insert column test - sloppy hack
             qsymbol = qsymbol.rstrip()         # same data but cleand/striped of trailing spaces
-            logging.info( "main::x.combo ====================== %s ==========================" % loop_count )
+            logging.info( "main::x.combo ====================== Begin : %s ==========================" % loop_count )
             logging.info( "main::x.combo - examine quote data for: %s" % qsymbol )
             nq.update_headers(qsymbol)         # set path: header object. doesnt touch secret nasdaq cookies
             nq.form_api_endpoint(qsymbol)      # set API endpoint url
@@ -344,7 +343,7 @@ def main():
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = 'ZZ'
             else:
                 print ( f"main::x.combo - INSERTING missing data: {qsymbol} - Market cap: {nq.quote['mkt_cap']} - Data issues: {wrangle_errors}" )
-                logging.info("main::x.combo ======================= %s ========================" % loop_count )
+                logging.info("main::x.combo ======================= End : %s ========================" % loop_count )
                 # insert missing data into dataframe @ row / column
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = nq.quote['mkt_cap']
                 cleansed_errors += 1
