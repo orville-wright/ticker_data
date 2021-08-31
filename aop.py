@@ -438,16 +438,10 @@ def main():
         print ( f"Highest count word: {v.ft_tdmatrix.max()}" )
 	"""
 
-# get a 1-off stock quote
-    """
-    There are 3 methods of getting a quote
-    1 method for nasdaq.com - real-time live nasda.com data via native JSON API test GET - 10 data fields
-    2 methods for bigcharts.marketwatch.com - 15 mins delayed via BS4 scraped data - 10 & 40 data fields
-    All 3 deliver differnt levels of detail & data. All are very useful.
-    """
-
 # 1-off quote - 3 differnt methods to get a quote ###############################
-    # method 1 : nasdaq.com
+# TODO: Add a 4th method - via alpaca live API
+
+    # method 1 : nasdaq.com - live quotes via native JSON API test GET
     # 10 data fields provided
     if args['qsymbol'] is not False:
         """ #1 : nasdaq.com live real-time quote """
@@ -478,7 +472,7 @@ def main():
         print ( " " )
         print ( "####### done #####")
 
-    # method 2 : bigcharts.marketwatch.com
+    # method 2 : bigcharts.marketwatch.com - 15 mins delayed via BS4 scraped data
     # 10 data fields provided
     if args['qsymbol'] is not False:
         """ #2 : bigcharts.marketwatch.com delayed basic quote """
@@ -497,7 +491,7 @@ def main():
         print ( f"========================================================" )
         print ( " " )
 
-    # method 3 : bigcharts.marketwatch.com
+    # method 3 : bigcharts.marketwatch.com - 15 mins delayed via BS4 scraped data
     # 40 data fields provided
     if args['qsymbol'] is not False:
         """ #3 : bigcharts.marketwatch.com delayed detailed quote """
