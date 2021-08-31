@@ -274,7 +274,7 @@ def main():
         """
 
         print ( "========== ** OUTLIERS ** : Unusual UP volume + Top Gainers by +5% ================================" )
-        print ( f"{temp_1[temp_1.duplicated(['Symbol'])] )}" )    # <<TODO: This is wrong. this DF has holes. its not built correctly.
+        print ( f"{temp_1[temp_1.duplicated(['Symbol'])])} " )    # <<TODO: This is wrong. this DF has holes. its not built correctly.
         print ( " ")
         print ( "========== ** OUTLIERS ** : Ranked by oppty price + Annotated reasons =======================================" )
         x.tag_dupes()
