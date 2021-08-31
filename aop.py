@@ -190,7 +190,7 @@ def main():
         recommended.update(small_cap_dataset.screener_logic())
         print ( " ")
 
-########### unusual_vol ################
+# process Nasdaq.com unusual_vol ################
     if args['bool_uvol'] is True:
         print ( "========== Unusually high Volume ** UP ** =====================================================" )
         un_vol_activity = un_volumes(1, args)       # instantiate NEW nasdaq data class, args = global var
@@ -200,20 +200,6 @@ def main():
         un_vol_activity.build_df(0)           # 0 = UP Unusual volume
         un_vol_activity.build_df(1)           # 1 = DOWN unusual volume
 
-        # DataFrame COL NAME
-        # ==================
-        # Row
-        # Co_symbol
-        # Co_name
-        # Cur_price
-        # Prc_change
-        # Pct_change
-        # vol
-        # vol_pct
-        # Time
-
-        # note: nasdasq.com unusual volume iJSON data payload does NOT contain Market cap info
-
         # find lowest price stock in unusuall UP volume list
         ulp = un_vol_activity.up_df0['Cur_price'].min()                  # find lowest price row in DF
         uminv = un_vol_activity.up_df0['Cur_price'].idxmin()             # get index ID of lowest price row
@@ -221,20 +207,12 @@ def main():
         ulname = un_vol_activity.up_df0.loc[uminv, ['Co_name']][0]   # get name of lowest price item
         print ( f">>LOWEST<< price OPPTY is: #{uminv} - {ulname.rstrip()} ({ulsym.rstrip()}) @ ${ulp}" )
         print ( " " )
-
         un_vol_activity.up_unvol_listall()
         print ( " ")
         print ( "========== Unusually high Volume ** DOWN ** =====================================================" )
         un_vol_activity.down_unvol_listall()
         print ( " ")
-
-############################# Add unusual volume insights into recommendations #######################################
-
-        # Add unusual vol into recommendation list []
-        # A list that holds a few discovered recomendations
-        # with plain english rationale explinations
-        #
-        # example output...
+        # Add unusual vol into recommendations list []
         #  key    recomendation data     - (example output shown)
         # =====================================================================
         #   1:    Small cap % gainer: TXMD $0.818 TherapeuticsMD, Inc. +%7.12
@@ -242,41 +220,22 @@ def main():
         #   3:    Hottest: AUPH $17.93 Aurinia Pharmaceuticals I +%9.06
         #   4:    Large cap: PHJMF $0.07 PT Hanjaya Mandala Sampoe +%9.2
         #   5:    Top % gainer: SPRT $19.7 support.com, Inc. +%41.12
-
-        # todo: we should do a linear regression on the price curve for this item
-
+        # todo: we should do a linear regression on the price curve for each item
         recommended['2'] = ('Unusual vol:', ulsym.rstrip(), '$'+str(ulp), ulname.rstrip(), '+%'+str(un_vol_activity.up_df0.loc[uminv, ['Pct_change']][0]) )
 
-
-########### multi COMBO dataframe query build-out ################
-#
-# This section...
-# should be moved to its own class
-# builds a single large DataFrame that combines all the findings into 1 place
-# the combo DF will be a single source of truth to iterate over symbols and apply ML logic
-# like... linear regressions for the last 5/10/15/30/60 mins
-#         to decide if a stock of interest is trending UP or DOWN based on linear regressions
-#         to fill out missing data fields that couldnt be grabbed during initial data gathering
-#         e.g. sometimes you cant grab the symbol/price when poppulating some dataframes
-#
-
-#         to fix, all the _combo_() code in shallow_combo:: class needs to be updated
-#
+# generate INITIAL combo list ######################################################
     if args['bool_deep'] is True and args['bool_scr'] is True and args['bool_uvol'] is True:
 
         # first combine Small_cap + med + large + mega into a single dataframe
         x = shallow_combo(1, med_large_mega_gainers, small_cap_dataset, un_vol_activity, args )
         x.prepare_combo_df()
-        # ############# Hunt down missing data fields in main/final combo dataframe #########################
-        # nasdaq.com unusual volume webpage does *NOT* provide market_cap fields.
-        # Final combo DF will have mkt_cap holes in rows originalting from nasda.com unusual volume
-        # note: this code does a *lot* of data  wrangeling & cleansing
-
+        # now Hunt down missing data fields in nasdaq.com unusual volume data as it does *NOT*have market_cap info
+        # note: we're now doing a *lot* of data wrangeling & cleansing
         print ( f"Prepare final combo data list..." )    # list of symbols with missing data (i.e mkt_cap NaaN rows)
         up_symbols = x.combo_df[x.combo_df['Mkt_cap'].isna()]
         up_symbols = up_symbols['Symbol'].tolist()
-        nq = nquote(3, args)       # setup an emphemerial dict
-        nq.init_dummy_session()    # note: this will set nasdaq magic cookie
+        nq = nquote(3, args)                             # setup an emphemerial dict
+        nq.init_dummy_session()                          # note: will set nasdaq magic cookie
 
         total_wrangle_errors = 0
         unfixable_errors = 0
@@ -327,7 +286,9 @@ def main():
         print ( " " )
         print  ( f"main::x.combo - Symbols scanned: {loop_count-1} / Issues evaluated: {cleansed_errors} / Errors repaired: {total_wrangle_errors} / Unfixbale errors: {unfixable_errors}" )
 
-# ==================================================================================================
+# generate FINAL combo list ################################################################################
+# combine all the findings into 1 place - single source of truth
+
         print ( " " )
         print ( f"================= >>COMBO<< Full list of intersting market observations ==================" )
         x.tag_dupes()
@@ -337,13 +298,13 @@ def main():
         x.rank_caps()
         x.combo_listall_ranked()
 
-# ==================================================================================================
+# Summarize combo list key findings ##################################################################
+        # Curious Outliers
         temp_1 = x.combo_df.sort_values(by=['Pct_change'], ascending=False)
         print ( " " )
         print ( "========== ** OUTLIERS ** : Unusual UP volume + Top Gainers by +5% ================================" )
         print ( f"{temp_1[temp_1.duplicated(['Symbol'])]}" )    # duples in the df mean a curious outlier
 
-        # lowest price **Hottest** stock (i.e. hot in *all* metrics)
         if len(x.rx) == 0:      # # hottest stock with lowest price overall
             print ( " " )       # empty list[] = no stock found yet (prob very early in trading morning)
             print ( f"No **hot** stock for >>LOW<< buy-in recommendations list yet" )
@@ -357,25 +318,21 @@ def main():
             print ( f"=====================================================================================================" )
             print ( " " )
 
-# ==================================================================================================
-        # lowest priced stock in combo_df
+        # lowest priced stock
         clp = x.combo_df['Cur_price'].min()
         cminv = x.combo_df['Cur_price'].idxmin()
         clsym = x.combo_df.loc[cminv, ['Symbol']][0]
         clname = x.combo_df.loc[cminv, ['Co_name']][0]
-
-        # allways make sure this is key #4 in recommendations dict
         recommended['4'] = ('Large cap:', clsym.rstrip(), '$'+str(clp), clname.rstrip(), '+%'+str(x.combo_df.loc[cminv, ['Pct_change']][0]) )
 
-        # Biggest gainer stock in combo_df
+        # Biggest % gainer stock
         cmax = x.combo_df['Pct_change'].idxmax()
         clp = x.combo_df.loc[cmax, 'Cur_price']
         clsym = x.combo_df.loc[cmax, ['Symbol']][0]
         clname = x.combo_df.loc[cmax, ['Co_name']][0]
-
-        # allways make sure this is key #5 in recommendations dict
         recommended['5'] = ('Top % gainer:', clsym.rstrip(), '$'+str(clp), clname.rstrip(), '+%'+str(x.combo_df.loc[cmax, ['Pct_change']][0]) )
 
+        # Display recommendeds
         print ( " " )
         print ( f"================= >>LOW<< buy-in recommendations ==================" )
         for k, v in recommended.items():
@@ -383,7 +340,7 @@ def main():
             print ( "-------------------------------------------------------------------" )
 
         print ( " " )
-        print ( "============== High level activity inisghts =================" )
+        print ( "============== High level Markat activity, inisghts & stats =================" )
         averages = x.combo_grouped()       # insights
         print ( averages )
         print ( " " )
