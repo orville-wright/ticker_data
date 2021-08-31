@@ -325,11 +325,17 @@ def main():
             total_wrangle_errors = total_wrangle_errors + wrangle_errors
             wrangle_errors = 0
             loop_count += 1
-
         print ( " " )
         print  ( f"main::x.combo - Symbols scanned: {loop_count-1} / Issues evaluated: {cleansed_errors} / Errors repaired: {total_wrangle_errors} / Unfixbale errors: {unfixable_errors}" )
+
+# ==================================================================================================
         print ( " " )
         print ( f"================= >>COMBO<< Full list of intersting market observations ==================" )
+        x.tag_dupes()
+        x.tag_uniques()
+        x.rank_hot()
+        x.rank_unvol()
+        x.rank_caps()
         x.combo_listall_ranked()
 
 # ==================================================================================================
@@ -342,11 +348,6 @@ def main():
         print ( f"{temp_1[temp_1.duplicated(['Symbol'])]}" )    # <<TODO: This is wrong. this DF has holes. its not built correctly.
         print ( " ")
         print ( "========== ** OUTLIERS ** : Ranked by oppty price + Annotated reasons =============================" )
-        x.tag_dupes()
-        x.tag_uniques()
-        x.rank_hot()
-        x.rank_unvol()
-        x.rank_caps()
 
         # lowest price **Hottest** stock (i.e. hot in *all* metrics)
         if len(x.rx) == 0:      # empty list[]. no stock found yet (prob very early in trading morning)
