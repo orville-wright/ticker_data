@@ -262,7 +262,7 @@ def main():
                 print ( f"main::x.combo - UNFIXABLE data problem: {qsymbol} - not a regular stock - Data issues: {wrangle_errors}" )
                 # set default data for non-regualr stocks
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
-                x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = 'ZZ'
+                x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = 'EF'
             else:
                 # insert missing data into dataframe @ row / column
                 print ( f"INFO:root:main::x.combo - INSERT missing data: {qsymbol} - Market cap: {nq.quote['mkt_cap']} - Data issues: {wrangle_errors}" )
@@ -303,6 +303,7 @@ def main():
         temp_1 = x.combo_df.sort_values(by=['Pct_change'], ascending=False)
         print ( " " )
         print ( "========== ** OUTLIERS ** : Unusual UP volume + Top Gainers by +5% ================================" )
+        print ( " " )
         print ( f"{temp_1[temp_1.duplicated(['Symbol'])]}" )    # duples in the df mean a curious outlier
 
         if len(x.rx) == 0:      # # hottest stock with lowest price overall
@@ -313,8 +314,10 @@ def main():
             hotsym = x.rx[1]
             hotp = x.combo_df.loc[hotidx, ['Cur_price']][0]
             hotname = x.combo_df.loc[hotidx, ['Co_name']][0]
+            print ( " " )       # empty list[] = no stock found yet (prob very early in trading morning)
             recommended['3'] = ('Hottest:', hotsym.rstrip(), '$'+str(hotp), hotname.rstrip(), '+%'+str(x.combo_df.loc[hotidx, ['Pct_change']][0]) )
             print ( f">>Lowest price<< **Hot** stock: {hotsym.rstrip()} {'$'+str(hotp)} {hotname.rstrip()} {'+%'+str(x.combo_df.loc[hotidx, ['Pct_change']][0])} " )
+            print ( " " )
             print ( f"=====================================================================================================" )
             print ( " " )
 
@@ -335,8 +338,9 @@ def main():
         # Display recommendeds
         print ( " " )
         print ( f"=============== >> Lowest buy price with greatest % gain << recommendations ================" )
+        print ( " " )
         for k, v in recommended.items():
-            print ( f"{k:3}: {v[0]:21} {v[1]:6} {v[3]:28} {v[2]:7} /  {v[4]}" )
+            print ( f"{k:3}: {v[0]:21} {v[1]:6} {v[3]:28} {v[2]:8} /  {v[4]}" )
             print ( "--------------------------------------------------------------------------------------------" )
 
         print ( " " )

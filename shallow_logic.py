@@ -33,6 +33,7 @@ class shallow_combo:
         'SB': 'Big Small cap + % gainer only', \
         'SM': 'Small cap + % gainer only', \
         'SZ': 'Zero Small cap + % gainer only', \
+        'EF': 'ETF Fund Trust + % gainer only', \
         'TM': 'Tiny cap + % gainer',
         }
 
