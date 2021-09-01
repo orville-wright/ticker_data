@@ -24,8 +24,17 @@ class shallow_combo:
     inst_uid = 0
     combo_df = ""
     combo_dupes = ""
-    args = []               # class dict to hold global args being passed in from main() methods
-    rx = []                 # hottest stock with lowest price overall
+    args = []           # class dict to hold global args being passed in from main() methods
+    rx = []             # hottest stock with lowest price overall
+    cx = { 'LT': 'Mega cap + % gainer only', \
+        'LB': 'Large cap + % gainer only', \
+        'LM': 'Med cap + % gainer only', \
+        'LZ': 'Zero Large cap + % gainer only', \
+        'SB': 'Big Small cap + % gainer only', \
+        'SM': 'Small cap + % gainer only', \
+        'SZ': 'Zero Small cap + % gainer only', \
+        'TM': 'Tiny cap + % gainer',
+        }
 
     def __init__(self, i, d1, d2, d3, global_args):
         cmi_debug = __name__+"::"+self.__init__.__name__
@@ -57,6 +66,7 @@ class shallow_combo:
         self.combo_df = temp_df.sort_values(by=['Pct_change'], ascending=False )   # ensure sorted combo DF is avail as class global attr
         self.combo_dupes = self.combo_df.duplicated(['Symbol']).to_frame()         # convert Bool SERIES > DF & make avail as class global attr DF
         return
+
         # possible logic...
         # scan Nan rows DataFrame
         # does each item in duplicates DataFrame exists in NaN DataFrame - !!! also need symbol here
@@ -86,19 +96,10 @@ class shallow_combo:
                 scale = self.combo_df.loc[row_idx].M_B
                 price = self.combo_df.loc[row_idx].Cur_price
                 if pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == False and pd.isna(self.combo_df.loc[row_idx].M_B) == False:
-                    # Annotate in english why this stock is a ** Person of interest **
-                    cx = { 'LT': 'Mega cap + % gainer', \
-                        'LB': 'Large cap + % gainer', \
-                        'LM': 'Med cap + % gainer', \
-                        'LZ': 'Zero Large cap + % gainer', \
-                        'SB': 'Big Small cap + % gainer', \
-                        'SM': 'Small cap + % gainer', \
-                        'SZ': 'Zero Small cap + % gainer',
-                        }
                     self.combo_df.loc[row_idx,'Hot'] = "*Hot*"      # Tag as a **HOT** stock
-                    self.combo_df.loc[row_idx,'Insights'] = cx.get(scale) + " + Unu vol"     # Annotate why...
-                    #np.array2string(np.char.ljust(cx.get(scale), 20) )
-                    #annotation = "+ % gainer " + cx.get(scale)
+                    self.combo_df.loc[row_idx,'Insights'] = self.cx.get(scale) + " + Unu vol"     # Annotate why...
+                    #np.array2string(np.char.ljust(self.cx.get(scale), 20) )
+                    #annotation = "+ % gainer " + self.cx.get(scale)
                     #self.combo_df.loc[row_idx,'Insights'] = annotation.lstrip()     # Annotate why...
                     mpt = ( row_idx, sym, price )     # pack a tuple - for min_price analysis later
                     min_price.update({row_idx: mpt})
@@ -139,19 +140,7 @@ class shallow_combo:
             scale = self.combo_df.loc[row_idx].M_B
 
             if pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == False and pd.isna(self.combo_df.loc[row_idx].M_B) == False:
-                logging.info('%s - Apply good data inferrence logic' % cmi_debug )
-                # Annotate in english why this stock is a ** Person of interest **
-                ## NaN & NaN = Unusually high volume, but nothing else
-                # MKt_cap & M_B good data = Just a big day % gainer
-                cx = { 'LT': 'Mega cap + % gainer only', \
-                    'LB': 'Large cap + % gainer only', \
-                    'LM': 'Med cap + % gainer only', \
-                    'LZ': 'Zero Large cap + % gainer only', \
-                    'SB': 'Big Small cap + % gainer only', \
-                    'SM': 'Small cap + % gainer only', \
-                    'SZ': 'Zero Small cap + % gainer only',
-                    }
-                self.combo_df.loc[row_idx,'Insights'] = cx.get(scale)
+                self.combo_df.loc[row_idx,'Insights'] = self.cx.get(scale)
             elif pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == True and pd.isna(self.combo_df.loc[row_idx].M_B) == True:
                 logging.info('%s - Apply NaN/NaN inferrence logic' % cmi_debug )
                 self.combo_df.loc[row_idx,'Insights'] = "^ Unusual vol only"

@@ -203,6 +203,8 @@ class un_volumes:
         logging.info('ins.#%s.up_unvol_listall() - IN' % self.yti )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
+        # self.tg_df1.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
+        #print ( self.up_df0.sort_values(by='Pct_change', ascending=False ).reset_index(inplace=True, drop=True) )
         print ( self.up_df0.sort_values(by='Pct_change', ascending=False ) )
         logging.info('ins.#%s.up_unvol_listall() - DONE' % self.yti )
         return

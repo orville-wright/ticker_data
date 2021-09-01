@@ -203,8 +203,8 @@ def main():
         # find lowest price stock in unusuall UP volume list
         ulp = un_vol_activity.up_df0['Cur_price'].min()                  # find lowest price row in DF
         uminv = un_vol_activity.up_df0['Cur_price'].idxmin()             # get index ID of lowest price row
-        ulsym = un_vol_activity.up_df0.loc[uminv, ['Symbol']][0]  # get symbol of lowest price item
-        ulname = un_vol_activity.up_df0.loc[uminv, ['Co_name']][0]   # get name of lowest price item
+        ulsym = un_vol_activity.up_df0.loc[uminv, ['Symbol']][0]         # get symbol of lowest price item
+        ulname = un_vol_activity.up_df0.loc[uminv, ['Co_name']][0]       # get name of lowest price item
         print ( f">>LOWEST<< price OPPTY is: #{uminv} - {ulname.rstrip()} ({ulsym.rstrip()}) @ ${ulp}" )
         print ( " " )
         un_vol_activity.up_unvol_listall()
@@ -334,10 +334,10 @@ def main():
 
         # Display recommendeds
         print ( " " )
-        print ( f"================= >>LOW<< buy-in recommendations ==================" )
+        print ( f"=============== >> Lowest buy price with greatest % gain << recommendations ================" )
         for k, v in recommended.items():
-            print ( f"{k}: {v[0]} {v[1]} {v[2]} {v[3]} {v[4]}" )
-            print ( "-------------------------------------------------------------------" )
+            print ( f"{k:3}: {v[0]:21} {v[1]:6} {v[3]:28} {v[2]:7} /  {v[4]}" )
+            print ( "--------------------------------------------------------------------------------------------" )
 
         print ( " " )
         print ( "============== High level Markat activity, inisghts & stats =================" )
