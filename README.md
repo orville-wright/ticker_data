@@ -55,7 +55,10 @@ So this tool's objective is to take their data, package it into internal API met
 <br>
 <br>
 
-**DISCLAIMER**: Most websites do not like or appreciate data scraping apps/robots or apps that treat their website as a source of raw data (by extracting data from their underlying platform). Using this App might not be well-aligned with some website usage 'Terms & conditions'.  - Caveat emptor.
+**DISCLAIMER**: Most websites do not like or appreciate data scraping apps/robots or apps that treat their website as a source of raw data (by extracting data from their underlying platform). Using this App might not be well-aligned with some website usage 'Terms & conditions'.  - Caveat emptor.<br>
+<br>
+This code works on production websites/pages & API that are in constant development. The data scraping and API extraction  is coded for the internal structures of each source webpage & API; at a *point-in-time*. Those pages may change at any time as the sites do updates, enhancments & optimzations. - This may result in the data extraction & data wrangeling code breaking.
+
 
 Regards,<br>
 **~Orville**
