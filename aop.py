@@ -343,11 +343,23 @@ def main():
             print ( f"{k:3}: {v[0]:21} {v[1]:6} {v[3]:28} {v[2]:8} /  {v[4]}" )
             print ( "--------------------------------------------------------------------------------------------" )
 
+        # Summary - AVERGAES and computed info
         print ( " " )
         print ( "============== High level Markat activity, inisghts & stats =================" )
         averages = x.combo_grouped()       # insights
+        #oa = averages[['Insights'] == 'Average_overall']    # = averages.Pct_change - averages.Average_overall.
+        #oa = averages['Pct_change'] where average["Insights"] = Average_overall
+        #just get the average["Pct_change"] columns value of average["Insights"] row
+        averages.loc[1, ]
         print ( averages )
+        print ( f"{averages[['Insights'] == 'Average_overall']} )
         print ( " " )
+        """
+                ulp = un_vol_activity.up_df0['Cur_price'].min()                  # find lowest price row in DF column Cur_price
+                uminv = un_vol_activity.up_df0['Cur_price'].idxmin()             # get index ID of that lowest price row
+                ulsym = un_vol_activity.up_df0.loc[uminv, ['Symbol']][0]         # get symbol of lowest price item
+                ulname = un_vol_activity.up_df0.loc[uminv, ['Co_name']][0]       # get name of lowest price item
+        """
 
 
 
