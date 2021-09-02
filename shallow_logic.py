@@ -34,6 +34,7 @@ class shallow_combo:
         'SM': 'Small cap + % gainer only', \
         'SZ': 'Zero Small cap + % gainer only', \
         'EF': 'ETF Fund Trust + % gainer only', \
+        'UZ': 'Unknown cap + % gainer only', \
         'TM': 'Tiny cap + % gainer',
         }
 
@@ -223,7 +224,8 @@ class shallow_combo:
         logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 40)
-        g_df = pd.DataFrame(self.combo_df.sort_values(by=['rank'], ascending=True).groupby(['Insights'])['Pct_change'].mean() )
+        #g_df = pd.DataFrame(self.combo_df.sort_values(by=['rank'], ascending=True).groupby(['Insights'])['Pct_change'].mean() )
+        g_df = pd.DataFrame(self.combo_df.sort_values(by=['rank'], ascending=True).groupby(['Insights']).mean() )
         g_df.loc['Average_overall'] = g_df.mean()
         return g_df
 

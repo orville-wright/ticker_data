@@ -268,9 +268,9 @@ def main():
                 print ( f"INFO:root:main::x.combo - INSERT missing data: {qsymbol} - Market cap: {nq.quote['mkt_cap']} - Data issues: {wrangle_errors}" )
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = nq.quote['mkt_cap']
                 cleansed_errors += 1
-                # compute market cap scale indicator (Small/Large Millions/Billions/Trillions)
-                for i in (("MT", 999999), ("LB", 10000), ("SB", 2000), ("LM", 500), ("SM", 50), ("TM", 10)):
-                    if i[1] > nq.quote['mkt_cap']:
+                # compute market cap scale indicator (Unknown/Tiny/Small/Large/Millions/Billions/Trillions)
+                for i in (("MT", 999999), ("LB", 10000), ("SB", 2000), ("LM", 500), ("SM", 50), ("TM", 10), ("UZ", 0)):
+                    if i[1] >= nq.quote['mkt_cap']:
                         pass
                     else:
                         # insert market cap sale into dataframe @ column M_B for this symbol
@@ -347,20 +347,20 @@ def main():
         print ( " " )
         print ( "============== High level Markat activity, inisghts & stats =================" )
         averages = x.combo_grouped()       # insights
-        #oa = averages[['Insights'] == 'Average_overall']    # = averages.Pct_change - averages.Average_overall.
-        #oa = averages['Pct_change'] where average["Insights"] = Average_overall
-        #just get the average["Pct_change"] columns value of average["Insights"] row
-        averages.loc[1, ]
         print ( averages )
-        print ( f"{averages[['Insights'] == 'Average_overall']} )
         print ( " " )
+
+        #print ( f"{averages['Pct_change']}" )
+        print ( f"The markets Current running average % gain is: %{averages.iloc[-1]['Pct_change'].round(2)}" )
+        print ( " " )
+        #print ( f"{averages.iloc[0]}" )
+
         """
                 ulp = un_vol_activity.up_df0['Cur_price'].min()                  # find lowest price row in DF column Cur_price
                 uminv = un_vol_activity.up_df0['Cur_price'].idxmin()             # get index ID of that lowest price row
                 ulsym = un_vol_activity.up_df0.loc[uminv, ['Symbol']][0]         # get symbol of lowest price item
                 ulname = un_vol_activity.up_df0.loc[uminv, ['Co_name']][0]       # get name of lowest price item
         """
-
 
 
 # Machine Learning dev code ####################################
