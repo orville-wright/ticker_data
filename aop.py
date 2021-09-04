@@ -323,7 +323,7 @@ def main():
             hotname = x.combo_df.loc[hotidx, ['Co_name']][0]
             print ( " " )       # empty list[] = no stock found yet (prob very early in trading morning)
             recommended['3'] = ('Hottest:', hotsym.rstrip(), '$'+str(hotp), hotname.rstrip(), '+%'+str(x.combo_df.loc[hotidx, ['Pct_change']][0]) )
-            print ( f">>Lowest price<< **Hot** stock: {hotsym.rstrip()} {'$'+str(hotp)} {hotname.rstrip()} {'+%'+str(x.combo_df.loc[hotidx, ['Pct_change']][0])} " )
+            print ( f">>Lowest price<< **Hot** stock: {hotsym.rstrip()} / {'$'+str(hotp)} {hotname.rstrip()} / {'+%'+str(x.combo_df.loc[hotidx, ['Pct_change']][0])} gain" )
             print ( " " )
             print ( f"=====================================================================================================" )
             print ( " " )
@@ -366,7 +366,7 @@ def main():
         print ( " " )
         print ( averages )
         print ( " " )
-        print ( f"Current day % gain agerage: %{averages.iloc[-1]['Pct_change'].round(2)}" )
+        print ( f"Current day % gain average: %{averages.iloc[-1]['Pct_change'].round(2)}" )
 
 # Machine Learning dev code ####################################
 # News Sentiment AI
