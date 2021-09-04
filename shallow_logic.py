@@ -16,8 +16,10 @@ logging.basicConfig(level=logging.INFO)
 #####################################################
 
 class shallow_combo:
-    """Class to do deeper logic thinking across multiple dataframes"""
-    """Although this is not considerd DEEP Logic, Machine Learning, or Ai logic."""
+    """
+    Do deeper logic data cleaning & thinking across multiple dataframes.
+    Although this is not considerd DEEP Logic, Machine Learning, or AI.
+    """
     deep_1 = ""
     deep_2 = ""
     deep_3 = ""
@@ -47,16 +49,15 @@ class shallow_combo:
         self.deep_3 = d3.up_df0.drop(columns=[ 'Row', 'Time', 'Vol', 'Vol_pct']).sort_values(by='Pct_change', ascending=False )
         self.inst_uid = i
         return
-        
-        # self.dataset_1 = d1     # med_large_mega_gainers inst -> y_topgainers.tg_df1
-        # self.dataset_2 = d2     # small_cap_gainers inst -> screener_dg1.dg1_df1
-        # self.dataset_3 = d3     # unusual_vol_activity inst -> unusual_vol.up_df0
 
     def __repr__(self):
         return ( f'{self.__class__.__name__}(' f'{self.inst_uid!r})' )
 
 # method #1
     def prepare_combo_df(self):
+        """
+        combo_df will become the Single Source of Truth dataset.
+        """
         cmi_debug = __name__+"::"+self.prepare_combo_df.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
         temp_df = pd.concat( [ self.deep_1, self.deep_2, self.deep_3], sort=False, ignore_index=True ).sort_values(by=['Pct_change', 'M_B', 'Mkt_cap'], ascending=False, na_position='last')
@@ -65,34 +66,12 @@ class shallow_combo:
         self.combo_dupes = self.combo_df.duplicated(['Symbol']).to_frame()         # convert Bool SERIES > DF & make avail as class global attr DF
         return
 
-        # deep_1 = self.dataset_1.tg_df1.drop(columns=[ 'ERank', 'Time' ]).sort_values(by='Pct_change', ascending=False )
-        # deep_2 = self.dataset_2.dg1_df1.drop(columns=[ 'Row', 'Time' ] )
-        # deep_3 = self.dataset_3.up_df0.drop(columns=[ 'Row', 'Time', 'Vol', 'Vol_pct']).sort_values(by='Pct_change', ascending=False )
-
-        # combine all DFs...
-        # prescribed concoluted Pandas logic b/c problematic & error-prone when done as a pandas 1-liner
-        # temp_df = pd.concat( [ deep_1, deep_2, deep_3], sort=False, ignore_index=True ).sort_values(by=['Pct_change', 'M_B', 'Mkt_cap'], ascending=False, na_position='last')
-
-        #deep_5 = temp_df.sort_values(by=['Pct_change'], ascending=False )    # prepare a sorted df
-        #combo_dupes = deep_5.duplicated(['Symbol']).to_frame()                # pd.duplicated outputs a SERIES
-
-        # possible logic...
-        # scan Nan rows DataFrame
-        # does each item in duplicates DataFrame exists in NaN DataFrame - !!! also need symbol here
-            # YES = guaranteed to have originated from Unusual List table_section
-            # NO = bad data0 maybe?
-        # on YES...
-            # scan full deep combo DataFrame
-            # drop row identified dupe row from deep combo DataFrame
-            # search deep combo DataFrame (by symbol) of dupe item
-                # add column info == "Unusual volume by xxx%"
-                # add colum info == "Small, medium. large, mega - cap company"
-
 # method #2
     def tag_dupes(self):
-        """Find & Tag the *duplicate* entries in the combo matrix dataset."""
-        """This is important b/c dupes mean these stocks are HOT and appearing in multiple dataframes."""
-
+        """
+        Find & Tag the *duplicate* entries in the combo_df matrix dataset, which is important b/c dupes
+        here means these stocks are HOT and appearing across multiple dataframes.
+        """
         cmi_debug = __name__+"::"+self.tag_dupes.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
         self.combo_df = self.combo_df.assign(Hot="", Insights="" )     # pre-insert 2 new columns
@@ -107,15 +86,9 @@ class shallow_combo:
                 if pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == False and pd.isna(self.combo_df.loc[row_idx].M_B) == False:
                     self.combo_df.loc[row_idx,'Hot'] = "*Hot*"      # Tag as a **HOT** stock
                     self.combo_df.loc[row_idx,'Insights'] = self.cx.get(scale) + " + Unu vol"     # Annotate why...
-                    #np.array2string(np.char.ljust(self.cx.get(scale), 20) )
-                    #annotation = "+ % gainer " + self.cx.get(scale)
-                    #self.combo_df.loc[row_idx,'Insights'] = annotation.lstrip()     # Annotate why...
                     mpt = ( row_idx, sym, price )     # pack a tuple - for min_price analysis later
                     min_price.update({row_idx: mpt})
                 elif pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == True and pd.isna(self.combo_df.loc[row_idx].M_B) == True:
-                     #self.combo_df.loc[row_idx].Mkt_cap = 0
-                     #self.combo_df.loc[row_idx].M_B = 'UZ'
-                     #x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = i[0]
                      self.combo_df.drop([row_idx], inplace=True)
                 else:
                     print ( f"WARNING: Don't know what to do for: {sym} / Mkt_cap: {cap} / M_B: {scale}" )
@@ -139,10 +112,11 @@ class shallow_combo:
 
 # method #3
     def tag_uniques(self):
-        """Find & Tag unique untagged entries in the combo matrix dataset."""
-        """ONLY do this after the tag_dupes, because its cleaner to eliminate & tage dupes first"""
-        """When you get to this, the entire dataframe should now contain UNQIUES only"""
-
+        """
+        Find & Tag unique untagged entries in the combo_df dataset.
+        ONLY do this after the tag_dupes, because its cleaner to eliminate & tage dupes first
+        When you get to this phase, combo_df should now contain UNQIUES only
+        """
         cmi_debug = __name__+"::"+self.tag_uniques.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
 
@@ -154,10 +128,7 @@ class shallow_combo:
 
             if pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == False and pd.isna(self.combo_df.loc[row_idx].M_B) == False:
                 self.combo_df.loc[row_idx,'Insights'] = self.cx.get(scale)
-                #
             elif pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == True and pd.isna(self.combo_df.loc[row_idx].M_B) == True:
-                #self.combo_df.loc[row_idx].Mkt_cap = 0
-                #self.combo_df.loc[row_idx].M_B = 'UZ'
                 logging.info('%s - Apply NaN/NaN inferrence logic' % cmi_debug )
                 self.combo_df.loc[row_idx,'Insights'] = "^ Unusual vol only"
             else:
@@ -175,8 +146,9 @@ class shallow_combo:
 
         cmi_debug = __name__+"::"+self.tag_naans.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
-
         print ( f"{self.combo_df[self.combo_df.isna().any(axis=1)]}" )
+        return
+
         """
         for row_idx in self.combo_df.loc[self.combo_df['Insights'] == "" ].index:
             logging.info('%s - Cycle over list of symbols' % cmi_debug )
@@ -197,8 +169,6 @@ class shallow_combo:
                 self.combo_df.loc[row_idx,'Insights'] = "!No logic!"
         logging.info('%s - Exit tag uniques cycle' % cmi_debug )
         """
-        return
-
 
 
     def rank_hot(self):
