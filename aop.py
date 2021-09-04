@@ -228,7 +228,6 @@ def main():
         up_symbols = up_symbols['Symbol'].tolist()
         nq = nquote(3, args)                             # setup an emphemerial dict
         nq.init_dummy_session()                          # note: will set nasdaq magic cookie
-
         total_wrangle_errors = 0
         unfixable_errors = 0
         cleansed_errors = 0
