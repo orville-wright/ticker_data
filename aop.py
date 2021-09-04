@@ -323,9 +323,8 @@ def main():
             hotname = x.combo_df.loc[hotidx, ['Co_name']][0]
             print ( " " )       # empty list[] = no stock found yet (prob very early in trading morning)
             recommended['3'] = ('Hottest:', hotsym.rstrip(), '$'+str(hotp), hotname.rstrip(), '+%'+str(x.combo_df.loc[hotidx, ['Pct_change']][0]) )
-            print ( f">>Lowest price<< **Hot** stock: {hotsym.rstrip()} / {'$'+str(hotp)} {hotname.rstrip()} / {'+%'+str(x.combo_df.loc[hotidx, ['Pct_change']][0])} gain" )
+            print ( f">>Lowest price<< **Hot** stock: {hotsym.rstrip()} - {hotname.rstrip()} / {'$'+str(hotp)} / {'+%'+str(x.combo_df.loc[hotidx, ['Pct_change']][0])} gain" )
             print ( " " )
-            print ( f"=====================================================================================================" )
             print ( " " )
 
         # lowest priced stock
@@ -353,7 +352,7 @@ def main():
         # todo: we should do a linear regression on the price curve for each item
 
         print ( " " )
-        print ( f"=============== >> Lowest buy price << with greatest % gain recommendations ================" )
+        print ( f"============ recommendations >>Lowest buy price<< stocks with greatest % gain  =============" )
         print ( " " )
         for k, v in recommended.items():
             print ( f"{k:3}: {v[0]:21} {v[1]:6} {v[3]:28} {v[2]:8} /  {v[4]}" )
