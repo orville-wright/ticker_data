@@ -285,7 +285,7 @@ def main():
                 wrangle_errors += 1     # regular symbol with ZERO ($0) market cap is a bad data error
                 print ( f"/ Mkt cap scale: UZ ($0) - Data issues: {wrangle_errors}" )
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = "UZ"
-                x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = range(float(0), 3)
+                x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = float(0)
                 cleansed_errors += 1
 
             logging.info("main::x.combo ======================= End : %s ===========================" % loop_count )
