@@ -210,7 +210,7 @@ def main():
         print ( f"{un_vol_activity.up_unvol_listall()} " )
         print ( " ")
         print ( "========== Unusually high Volume ** DOWN ** =====================================================" )
-        un_vol_activity.down_unvol_listall()
+        print ( f"{un_vol_activity.down_unvol_listall()} " )
         print ( " ")
         # Add unusual vol into recommendations list []
         recommended['2'] = ('Unusual vol:', ulsym.rstrip(), '$'+str(ulp), ulname.rstrip(), '+%'+str(un_vol_activity.up_df0.loc[uminv, ['Pct_change']][0]) )
