@@ -282,8 +282,12 @@ class nquote:
                 prev_close_cl = (re.sub('[ $,]', '', prev_close))            # remove $ sign
 
             if mkt_cap == "N/A":
-                mkt_cap_cl = 0
+                mkt_cap_cl = float(0)
                 logging.info('%s - Mkt cap is bad, found N/A data' % cmi_debug )
+                wrangle_errors += 1
+            elif mkt_cap == 0:
+                mkt_cap_cl = float(0)
+                logging.info('%s - Mkt cap is ZERO, found N/A data' % cmi_debug )
                 wrangle_errors += 1
             else:
                 mkt_cap_cl = np.float(re.sub('[,]', '', mkt_cap))            # remove ,

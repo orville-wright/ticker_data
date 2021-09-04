@@ -106,9 +106,13 @@ class shallow_combo:
                     mpt = ( row_idx, sym, price )     # pack a tuple - for min_price analysis later
                     min_price.update({row_idx: mpt})
                 elif pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == True and pd.isna(self.combo_df.loc[row_idx].M_B) == True:
-                    self.combo_df.drop([row_idx], inplace=True)
+                     #self.combo_df.loc[row_idx].Mkt_cap = 0
+                     #self.combo_df.loc[row_idx].M_B = 'UZ'
+                     #x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = i[0]
+                     self.combo_df.drop([row_idx], inplace=True)
                 else:
-                    Print ( "WARNING: Don't know what to do !!" )
+                    print ( f"WARNING: Don't know what to do for: {sym} / Mkt_cap: {cap} / M_B: {scale}" )
+                    break
 
         # TODO: ** This logix test is BUGGY & possible faills at Market open when many things are empty & unpopulated...
         if not bool(min_price):         # is empty?
@@ -143,14 +147,52 @@ class shallow_combo:
 
             if pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == False and pd.isna(self.combo_df.loc[row_idx].M_B) == False:
                 self.combo_df.loc[row_idx,'Insights'] = self.cx.get(scale)
+                #
             elif pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == True and pd.isna(self.combo_df.loc[row_idx].M_B) == True:
+                #self.combo_df.loc[row_idx].Mkt_cap = 0
+                #self.combo_df.loc[row_idx].M_B = 'UZ'
                 logging.info('%s - Apply NaN/NaN inferrence logic' % cmi_debug )
                 self.combo_df.loc[row_idx,'Insights'] = "^ Unusual vol only"
             else:
                 logging.info('%s - Unknown logic discovered' % cmi_debug )
                 self.combo_df.loc[row_idx,'Insights'] = "!No logic!"
-        logging.info('%s - Exit tagging cycle' % cmi_debug )
+        logging.info('%s - Exit tag uniques cycle' % cmi_debug )
         return
+
+# method 4
+# a safety catch-all to scan for any NaaN's lying arround that wern't caught
+    def tag_naans(self):
+        """
+        Hunt down and loose NaaN entries left lying arround
+        """
+
+        cmi_debug = __name__+"::"+self.tag_naans.__name__+".#"+str(self.inst_uid)
+        logging.info('%s - IN' % cmi_debug )
+
+        print ( f"{self.combo_df[self.combo_df.isna().any(axis=1)]}" )
+        """
+        for row_idx in self.combo_df.loc[self.combo_df['Insights'] == "" ].index:
+            logging.info('%s - Cycle over list of symbols' % cmi_debug )
+            sym = self.combo_df.loc[row_idx].Symbol
+            cap = self.combo_df.loc[row_idx].Mkt_cap
+            scale = self.combo_df.loc[row_idx].M_B
+
+            if pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == False and pd.isna(self.combo_df.loc[row_idx].M_B) == False:
+                self.combo_df.loc[row_idx,'Insights'] = self.cx.get(scale)
+                #
+            elif pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == True and pd.isna(self.combo_df.loc[row_idx].M_B) == True:
+                self.combo_df.loc[row_idx].Mkt_cap = 0
+                self.combo_df.loc[row_idx].M_B = 'UZ'
+                logging.info('%s - Apply NaN/NaN inferrence logic' % cmi_debug )
+                self.combo_df.loc[row_idx,'Insights'] = "^ Unusual vol only"
+            else:
+                logging.info('%s - Unknown logic discovered' % cmi_debug )
+                self.combo_df.loc[row_idx,'Insights'] = "!No logic!"
+        logging.info('%s - Exit tag uniques cycle' % cmi_debug )
+        """
+        return
+
+
 
     def rank_hot(self):
         """isolate all *Hot* tagged stocks and rank them by price, lowest=1 to highest=n."""
