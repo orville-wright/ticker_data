@@ -350,11 +350,13 @@ def main():
         #oa = averages[['Insights'] == 'Average_overall']    # = averages.Pct_change - averages.Average_overall.
         #oa = averages['Pct_change'] where average["Insights"] = Average_overall
         #just get the average["Pct_change"] columns value of average["Insights"] row
-        averages.loc[1, ]
+        #averages.loc[1,]
+        print ( " " )
         print ( averages )
-        print ( f"PCT Change: {averages['Pct_change']} )
+        #print ( f"PCT Change: {averages['Pct_change']}" )
         #print ( f"{averages[['Insights'] == 'Average_overall']} )
         print ( " " )
+        print ( f"The markets Current running average % gain is: %{averages.iloc[-1]['Pct_change'].round(2)}" )
         """
                 ulp = un_vol_activity.up_df0['Cur_price'].min()                  # find lowest price row in DF column Cur_price
                 uminv = un_vol_activity.up_df0['Cur_price'].idxmin()             # get index ID of that lowest price row
