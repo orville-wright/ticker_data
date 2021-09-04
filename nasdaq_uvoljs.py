@@ -187,7 +187,7 @@ class un_volumes:
                 logging.info('%s - append DOWN Volume data into DataFrame' % cmi_debug )
                 self.temp_df1 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', "Pct_change", "Vol", 'Vol_pct', 'Time' ], index=[x] )
                 self.down_df1 = self.down_df1.append(self.temp_df1, sort=False)    # append this ROW of data into the REAL DataFrame
-                self.up_df1.reset_index(inplace=True, drop=True)                   # reset index each time so its guaranteed sequential
+                self.down_df1.reset_index(inplace=True, drop=True)                   # reset index each time so its guaranteed sequential
 
             x += 1
 
