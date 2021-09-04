@@ -213,13 +213,17 @@ def main():
         un_vol_activity.down_unvol_listall()
         print ( " ")
         # Add unusual vol into recommendations list []
+        #  key    recomendation data     - (example output shown)
+        # =====================================================================
+        #   1:    Small cap % gainer: TXMD $0.818 TherapeuticsMD, Inc. +%7.12
+        #   2:    Unusual vol: SPRT $11.17 support.com, Inc. +%26.79
+        #   3:    Hottest: AUPH $17.93 Aurinia Pharmaceuticals I +%9.06
+        #   4:    Large cap: PHJMF $0.07 PT Hanjaya Mandala Sampoe +%9.2
+        #   5:    Top % gainer: SPRT $19.7 support.com, Inc. +%41.12
+        # todo: we should do a linear regression on the price curve for each item
         recommended['2'] = ('Unusual vol:', ulsym.rstrip(), '$'+str(ulp), ulname.rstrip(), '+%'+str(un_vol_activity.up_df0.loc[uminv, ['Pct_change']][0]) )
 
 # generate INITIAL combo list ######################################################
-    # NOTE: we do all this data testing/wrangeling/cleaning here becuase...
-    #       the final combo DF isn't available until now, very late in the final
-    #       data collention run.
-
     if args['bool_deep'] is True and args['bool_scr'] is True and args['bool_uvol'] is True:
 
         # first combine Small_cap + med + large + mega into a single dataframe
@@ -228,8 +232,7 @@ def main():
         # now Hunt down missing data fields in nasdaq.com unusual volume data as it does *NOT*have market_cap info
         # note: we're now doing a *lot* of data wrangeling & cleansing
         print ( f"Prepare final combo data list..." )    # list of symbols with missing data (i.e mkt_cap NaaN rows)
-        #up_symbols = x.combo_df[x.combo_df['Mkt_cap'].isna()]
-        up_symbols = x.combo_df[x.combo_df.isna().any(axis=1)]    # this is a more definative NaaN capture
+        up_symbols = x.combo_df[x.combo_df['Mkt_cap'].isna()]
         up_symbols = up_symbols['Symbol'].tolist()
         nq = nquote(3, args)                             # setup an emphemerial dict
         nq.init_dummy_session()                          # note: will set nasdaq magic cookie
@@ -241,51 +244,40 @@ def main():
         logging.info('main::x.combo - %s' % up_symbols )
         loop_count = 1
 
-        # tidy up UP volume dirty data & clean
-        for qsymbol in up_symbols:             # iterate over list of symbols with missing data (Naan) & get a live quote for each one
+        for qsymbol in up_symbols:             # iterate over symbols & get a live quote for each one
             xsymbol = qsymbol                  # raw field from df to match df insert column test - sloppy hack
             qsymbol = qsymbol.rstrip()         # same data but cleand/striped of trailing spaces
             logging.info( "main::x.combo ====================== Begin : %s ==========================" % loop_count )
             logging.info( "main::x.combo - examine quote data for: %s" % qsymbol )
             nq.update_headers(qsymbol)         # set path: header object. doesnt touch secret nasdaq cookies
             nq.form_api_endpoint(qsymbol)      # set API endpoint url
-            nq.get_nquote(qsymbol)             # get a live quote with company info
+            nq.get_nquote(qsymbol)             # get a live quote
             wrangle_errors = nq.build_data()   # wrangle & cleanse the data - lots done in here
 
-            # first, check the validity of the ticker symbol
             if wrangle_errors == -1:           # bad symbol (not a regular stock)
                 logging.info( "main::x.combo - symbol is BAD/not regular company: %s" % qsymbol )
                 nq.quote.clear()               # make sure ephemerial quote{} is always empty before bailing out
                 wrangle_errors = 1
                 unfixable_errors += 1
-                print ( f"Ticker: {qsymbol} - UNFIXABLE data issue / NOT regular stock / Data issues: {wrangle_errors}" )
+                print ( f"main::x.combo - UNFIXABLE data problem: {qsymbol} - not a regular stock - Data issues: {wrangle_errors}" )
+                # set default data for non-regualr stocks
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = 'EF'
-                break
             else:
-                # Good ticker symbol, insert missing market cap data from live quote
-                print ( f"Ticker: {qsymbol} - INSERT missing data / Market cap: {nq.quote['mkt_cap']} ", end='', flush=True )
-                x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = nq.quote['mkt_cap']   #insert Mkt_cap @ row / column
+                # insert missing data into dataframe @ row / column
+                print ( f"INFO:root:main::x.combo - INSERT missing data: {qsymbol} - Market cap: {nq.quote['mkt_cap']} - Data issues: {wrangle_errors}" )
+                x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = nq.quote['mkt_cap']
                 cleansed_errors += 1
-                # compute Market_cap M_B scale indicator - (i.e. Unknown/Tiny/Small/Large/Millions/Billions/Trillions)
-                if nq.quote['mkt_cap'] != 0:            # catch zero mkt cap
-                    for i in (("MT", 999999.0), ("LB", 10000.0), ("SB", 2000.0), ("LM", 500.0), ("SM", 50.0), ("TM", 10.0), ("UZ", 0.0)):
-                        if i[1] >= nq.quote['mkt_cap']:
-                            pass
-                        else:
-                            # insert market cap scale into DF @ column M_B for this symbol
-                            wrangle_errors += 1
-                            x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = i[0]
-                            print ( f"/ Mkt cap scale {i[0]} - Data issues: {wrangle_errors}" )
-                            logging.info( "main::x.combo - Computed Market cap scale asL %s / DF updated!" % i[0] )
-                            cleansed_errors += 1
-                            break
-                else:
-                    wrangle_errors += 1     # regular symbol with ZERO ($0) market cap is a bad data error
-                    print ( f"/ Mkt cap scale: UZ ($0) - Data issues: {wrangle_errors}" )
-                    x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = "UZ"
-                    cleansed_errors += 1
-
+                # compute market cap scale indicator (Small/Large Millions/Billions/Trillions)
+                for i in (("MT", 999999), ("LB", 10000), ("SB", 2000), ("LM", 500), ("SM", 50), ("TM", 10)):
+                    if i[1] > nq.quote['mkt_cap']:
+                        pass
+                    else:
+                        # insert market cap sale into dataframe @ column M_B for this symbol
+                        x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = i[0]
+                        logging.info( "main::x.combo - INSERT missing data : Market cap scale: %s" % i[0] )
+                        cleansed_errors += 1
+                        break
 
             logging.info("main::x.combo ======================= End : %s ===========================" % loop_count )
             total_wrangle_errors = total_wrangle_errors + wrangle_errors
@@ -295,9 +287,8 @@ def main():
         print  ( f"main::x.combo - Symbols scanned: {loop_count-1} / Issues evaluated: {cleansed_errors} / Errors repaired: {total_wrangle_errors} / Unfixbale errors: {unfixable_errors}" )
 
 # generate FINAL combo list ################################################################################
-# Build a Single source of Truth DF
-# - combine all the findings into 1 place (combo_df)
-# - clean up all data, missing fields etc
+# combine all the findings into 1 place - single source of truth
+
         print ( " " )
         print ( f"================= >>COMBO<< Full list of intersting market observations ==================" )
         x.tag_dupes()
@@ -305,13 +296,10 @@ def main():
         x.rank_hot()
         x.rank_unvol()
         x.rank_caps()
-        print ( f"=============== NaaNs ==================" )
-        x.tag_naans()
-        print ( f"=============== NaaNs ==================" )
         x.combo_listall_ranked()
 
-# Summarize the combo DF & list key findings ##################################################################
-        # - 1 - Curious Outliers
+# Summarize combo list key findings ##################################################################
+        # Curious Outliers
         temp_1 = x.combo_df.sort_values(by=['Pct_change'], ascending=False)
         print ( " " )
         print ( "========== ** OUTLIERS ** : Unusual UP volume + Top Gainers by +5% ================================" )
@@ -333,31 +321,21 @@ def main():
             print ( f"=====================================================================================================" )
             print ( " " )
 
-        # - 2 Overall lowest priced stock
+        # lowest priced stock
         clp = x.combo_df['Cur_price'].min()
         cminv = x.combo_df['Cur_price'].idxmin()
         clsym = x.combo_df.loc[cminv, ['Symbol']][0]
         clname = x.combo_df.loc[cminv, ['Co_name']][0]
         recommended['4'] = ('Large cap:', clsym.rstrip(), '$'+str(clp), clname.rstrip(), '+%'+str(x.combo_df.loc[cminv, ['Pct_change']][0]) )
 
-        # - 3 - Overall Biggest % gainer stock
+        # Biggest % gainer stock
         cmax = x.combo_df['Pct_change'].idxmax()
         clp = x.combo_df.loc[cmax, 'Cur_price']
         clsym = x.combo_df.loc[cmax, ['Symbol']][0]
         clname = x.combo_df.loc[cmax, ['Co_name']][0]
         recommended['5'] = ('Top % gainer:', clsym.rstrip(), '$'+str(clp), clname.rstrip(), '+%'+str(x.combo_df.loc[cmax, ['Pct_change']][0]) )
 
-# Show RECOMMENDEDS table
-        # - 4 -  this is a Dict {} built up in various places, not a DF
-        #
-        #  key    recomendation data     - (example output shown)
-        # =====================================================================
-        #   1:    Small cap % gainer: TXMD $0.818 TherapeuticsMD, Inc. +%7.12
-        #   2:    Unusual vol: SPRT $11.17 support.com, Inc. +%26.79
-        #   3:    Hottest: AUPH $17.93 Aurinia Pharmaceuticals I +%9.06
-        #   4:    Large cap: PHJMF $0.07 PT Hanjaya Mandala Sampoe +%9.2
-        #   5:    Top % gainer: SPRT $19.7 support.com, Inc. +%41.12
-        #         TODO: we should compuet a linear regression on the price curve for each item
+        # Display recommendeds
         print ( " " )
         print ( f"=============== >> Lowest buy price with greatest % gain << recommendations ================" )
         print ( " " )
@@ -365,25 +343,25 @@ def main():
             print ( f"{k:3}: {v[0]:21} {v[1]:6} {v[3]:28} {v[2]:8} /  {v[4]}" )
             print ( "--------------------------------------------------------------------------------------------" )
 
-# Show Summary of AVERGAES
-        # - 5 - with some computed & inferred info
+        # Summary - AVERGAES and computed info
         print ( " " )
         print ( "============== High level Markat activity, inisghts & stats =================" )
         averages = x.combo_grouped()       # insights
+        #oa = averages[['Insights'] == 'Average_overall']    # = averages.Pct_change - averages.Average_overall.
+        #oa = averages['Pct_change'] where average["Insights"] = Average_overall
+        #just get the average["Pct_change"] columns value of average["Insights"] row
+        averages.loc[1, ]
         print ( averages )
+        print ( f"PCT Change: {averages['Pct_change']} )
+        #print ( f"{averages[['Insights'] == 'Average_overall']} )
         print ( " " )
-
-        #print ( f"{averages['Pct_change']}" )
-        print ( f"The markets Current running average % gain is: %{averages.iloc[-1]['Pct_change'].round(2)}" )
-        print ( " " )
-        #print ( f"{averages.iloc[0]}" )
-
         """
                 ulp = un_vol_activity.up_df0['Cur_price'].min()                  # find lowest price row in DF column Cur_price
                 uminv = un_vol_activity.up_df0['Cur_price'].idxmin()             # get index ID of that lowest price row
                 ulsym = un_vol_activity.up_df0.loc[uminv, ['Symbol']][0]         # get symbol of lowest price item
                 ulname = un_vol_activity.up_df0.loc[uminv, ['Co_name']][0]       # get name of lowest price item
         """
+
 
 
 # Machine Learning dev code ####################################

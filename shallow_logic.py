@@ -18,9 +18,9 @@ logging.basicConfig(level=logging.INFO)
 class shallow_combo:
     """Class to do deeper logic thinking across multiple dataframes"""
     """Although this is not considerd DEEP Logic, Machine Learning, or Ai logic."""
-    dataset_1 = ""
-    dataset_2 = ""
-    dataset_3 = ""
+    deep_1 = ""
+    deep_2 = ""
+    deep_3 = ""
     inst_uid = 0
     combo_df = ""
     combo_dupes = ""
@@ -42,10 +42,15 @@ class shallow_combo:
         cmi_debug = __name__+"::"+self.__init__.__name__
         logging.info('%s - INSTANTIATE' % cmi_debug )
         self.args = global_args
-        self.dataset_1 = d1     # med_large_mega_gainers inst -> y_topgainers.tg_df1
-        self.dataset_2 = d2     # small_cap_gainers inst -> screener_dg1.dg1_df1
-        self.dataset_3 = d3     # unusual_vol_activity inst -> unusual_vol.up_df0
+        deep_1 = d1.tg_df1.drop(columns=[ 'ERank', 'Time' ]).sort_values(by='Pct_change', ascending=False )
+        deep_2 = d2.dg1_df1.drop(columns=[ 'Row', 'Time' ] )
+        deep_3 = d3.up_df0.drop(columns=[ 'Row', 'Time', 'Vol', 'Vol_pct']).sort_values(by='Pct_change', ascending=False )
         self.inst_uid = i
+        return
+        
+        # self.dataset_1 = d1     # med_large_mega_gainers inst -> y_topgainers.tg_df1
+        # self.dataset_2 = d2     # small_cap_gainers inst -> screener_dg1.dg1_df1
+        # self.dataset_3 = d3     # unusual_vol_activity inst -> unusual_vol.up_df0
 
     def __repr__(self):
         return ( f'{self.__class__.__name__}(' f'{self.inst_uid!r})' )
@@ -54,20 +59,22 @@ class shallow_combo:
     def prepare_combo_df(self):
         cmi_debug = __name__+"::"+self.prepare_combo_df.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
-        deep_1 = self.dataset_1.tg_df1.drop(columns=[ 'ERank', 'Time' ]).sort_values(by='Pct_change', ascending=False )
-        deep_2 = self.dataset_2.dg1_df1.drop(columns=[ 'Row', 'Time' ] )
-        deep_3 = self.dataset_3.up_df0.drop(columns=[ 'Row', 'Time', 'Vol', 'Vol_pct']).sort_values(by='Pct_change', ascending=False )
-
-        # combine all dataframes...
-        # prescribed concoluted Pandas logic b/c problematic & error-prone when done as a pandas 1-liner
         temp_df = pd.concat( [ deep_1, deep_2, deep_3], sort=False, ignore_index=True ).sort_values(by=['Pct_change', 'M_B', 'Mkt_cap'], ascending=False, na_position='last')
         temp_df.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
-
-        #deep_5 = temp_df.sort_values(by=['Pct_change'], ascending=False )    # prepare a sorted df
-        #combo_dupes = deep_5.duplicated(['Symbol']).to_frame()                # pd.duplicated outputs a SERIES
         self.combo_df = temp_df.sort_values(by=['Pct_change'], ascending=False )   # ensure sorted combo DF is avail as class global attr
         self.combo_dupes = self.combo_df.duplicated(['Symbol']).to_frame()         # convert Bool SERIES > DF & make avail as class global attr DF
         return
+
+        # deep_1 = self.dataset_1.tg_df1.drop(columns=[ 'ERank', 'Time' ]).sort_values(by='Pct_change', ascending=False )
+        # deep_2 = self.dataset_2.dg1_df1.drop(columns=[ 'Row', 'Time' ] )
+        # deep_3 = self.dataset_3.up_df0.drop(columns=[ 'Row', 'Time', 'Vol', 'Vol_pct']).sort_values(by='Pct_change', ascending=False )
+
+        # combine all DFs...
+        # prescribed concoluted Pandas logic b/c problematic & error-prone when done as a pandas 1-liner
+        # temp_df = pd.concat( [ deep_1, deep_2, deep_3], sort=False, ignore_index=True ).sort_values(by=['Pct_change', 'M_B', 'Mkt_cap'], ascending=False, na_position='last')
+
+        #deep_5 = temp_df.sort_values(by=['Pct_change'], ascending=False )    # prepare a sorted df
+        #combo_dupes = deep_5.duplicated(['Symbol']).to_frame()                # pd.duplicated outputs a SERIES
 
         # possible logic...
         # scan Nan rows DataFrame
