@@ -282,8 +282,8 @@ def main():
                         cleansed_errors += 1
                         break
             else:
-                wrangle_errors += 1     # regular symbol with ZERO ($0) market cap is a bad data error
-                print ( f"/ Mkt cap scale: UZ ($0) - Data issues: {wrangle_errors}" )
+                wrangle_errors += 2     # regular symbol with ZERO ($0) market cap is a bad data error
+                print ( f"/ INSERT missing data / Market cap: 0 / Mkt cap scale: UZ - Data issues: {wrangle_errors}" )
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = "UZ"
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = float(0)
                 cleansed_errors += 1
