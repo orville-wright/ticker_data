@@ -213,14 +213,6 @@ def main():
         un_vol_activity.down_unvol_listall()
         print ( " ")
         # Add unusual vol into recommendations list []
-        #  key    recomendation data     - (example output shown)
-        # =====================================================================
-        #   1:    Small cap % gainer: TXMD $0.818 TherapeuticsMD, Inc. +%7.12
-        #   2:    Unusual vol: SPRT $11.17 support.com, Inc. +%26.79
-        #   3:    Hottest: AUPH $17.93 Aurinia Pharmaceuticals I +%9.06
-        #   4:    Large cap: PHJMF $0.07 PT Hanjaya Mandala Sampoe +%9.2
-        #   5:    Top % gainer: SPRT $19.7 support.com, Inc. +%41.12
-        # todo: we should do a linear regression on the price curve for each item
         recommended['2'] = ('Unusual vol:', ulsym.rstrip(), '$'+str(ulp), ulname.rstrip(), '+%'+str(un_vol_activity.up_df0.loc[uminv, ['Pct_change']][0]) )
 
 # generate INITIAL combo list ######################################################
@@ -274,8 +266,7 @@ def main():
                     if i[1] >= nq.quote['mkt_cap']:
                         pass
                     else:
-                        # insert market cap scale into DF @ column M_B for this symbol
-                        wrangle_errors += 1
+                        wrangle_errors += 1          # insert market cap scale into DF @ column M_B for this symbol
                         x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = i[0]
                         print ( f"/ Mkt cap scale {i[0]} - Data issues: {wrangle_errors}" )
                         logging.info( "main::x.combo - Computed Market cap scale as %s / DF updated!" % i[0] )
@@ -344,36 +335,31 @@ def main():
         clname = x.combo_df.loc[cmax, ['Co_name']][0]
         recommended['5'] = ('Top % gainer:', clsym.rstrip(), '$'+str(clp), clname.rstrip(), '+%'+str(x.combo_df.loc[cmax, ['Pct_change']][0]) )
 
-        # Display recommendeds
+# Recommendeds ###############################################################
+        #  key    recomendation data     - (example output shown)
+        # =====================================================================
+        #   1:    Small cap % gainer: TXMD $0.818 TherapeuticsMD, Inc. +%7.12
+        #   2:    Unusual vol: SPRT $11.17 support.com, Inc. +%26.79
+        #   3:    Hottest: AUPH $17.93 Aurinia Pharmaceuticals I +%9.06
+        #   4:    Large cap: PHJMF $0.07 PT Hanjaya Mandala Sampoe +%9.2
+        #   5:    Top % gainer: SPRT $19.7 support.com, Inc. +%41.12
+        # todo: we should do a linear regression on the price curve for each item
+
         print ( " " )
-        print ( f"=============== >> Lowest buy price with greatest % gain << recommendations ================" )
+        print ( f"=============== >> Lowest buy price << with greatest % gain recommendations ================" )
         print ( " " )
         for k, v in recommended.items():
             print ( f"{k:3}: {v[0]:21} {v[1]:6} {v[3]:28} {v[2]:8} /  {v[4]}" )
             print ( "--------------------------------------------------------------------------------------------" )
 
-        # Summary - AVERGAES and computed info
+# Summary ############### AVERGAES and computed info ##########################
         print ( " " )
-        print ( "============== High level Markat activity, inisghts & stats =================" )
+        print ( "============== Market activity overview, inisghts & stats =================" )
         averages = x.combo_grouped()       # insights
-        #oa = averages[['Insights'] == 'Average_overall']    # = averages.Pct_change - averages.Average_overall.
-        #oa = averages['Pct_change'] where average["Insights"] = Average_overall
-        #just get the average["Pct_change"] columns value of average["Insights"] row
-        #averages.loc[1,]
         print ( " " )
         print ( averages )
-        #print ( f"PCT Change: {averages['Pct_change']}" )
-        #print ( f"{averages[['Insights'] == 'Average_overall']} )
         print ( " " )
-        print ( f"The markets Current running average % gain is: %{averages.iloc[-1]['Pct_change'].round(2)}" )
-        """
-                ulp = un_vol_activity.up_df0['Cur_price'].min()                  # find lowest price row in DF column Cur_price
-                uminv = un_vol_activity.up_df0['Cur_price'].idxmin()             # get index ID of that lowest price row
-                ulsym = un_vol_activity.up_df0.loc[uminv, ['Symbol']][0]         # get symbol of lowest price item
-                ulname = un_vol_activity.up_df0.loc[uminv, ['Co_name']][0]       # get name of lowest price item
-        """
-
-
+        print ( f"Current day running % gain agerages: %{averages.iloc[-1]['Pct_change'].round(2)}" )
 
 # Machine Learning dev code ####################################
 # News Sentiment AI
