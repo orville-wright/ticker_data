@@ -206,7 +206,8 @@ def main():
         uminv = up_unvols['Cur_price'].idxmin()             # get index ID of lowest price row
         ulsym = up_unvols.loc[uminv, ['Symbol']][0]         # get symbol of lowest price item @ index_id
         ulname = up_unvols.loc[uminv, ['Co_name']][0]       # get name of lowest price item @ index_id
-        print ( f">>LOWEST<< price OPPTY is: #{uminv} - {ulname.rstrip()} ({ulsym.rstrip()}) @ ${ulp}" )
+        upct = up_unvols.loc[uminv, ['Pct_change']][0]      # get %change of lowest price item @ index_id
+        print ( f">>LOWEST<< buy price OPPTY is: #{uminv} - {ulname.rstrip()} ({ulsym.rstrip()}) @ ${ulp} / {upct}% gain" )
         print ( " " )
         print ( f"{un_vol_activity.up_unvol_listall()} " )
         print ( " ")
@@ -214,7 +215,8 @@ def main():
         print ( f"{un_vol_activity.down_unvol_listall()} " )
         print ( " ")
         # Add unusual vol into recommendations list []
-        recommended['2'] = ('Unusual vol:', ulsym.rstrip(), '$'+str(ulp), ulname.rstrip(), '+%'+str(un_vol_activity.up_df0.loc[uminv, ['Pct_change']][0]) )
+        #recommended['2'] = ('Unusual vol:', ulsym.rstrip(), '$'+str(ulp), ulname.rstrip(), '+%'+str(un_vol_activity.up_df0.loc[uminv, ['Pct_change']][0]) )
+        recommended['2'] = ('Unusual vol:', ulsym.rstrip(), '$'+str(ulp), ulname.rstrip(), '+%'+str(upct) )
 
 # generate INITIAL combo list ######################################################
     """
