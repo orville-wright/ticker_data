@@ -201,10 +201,11 @@ def main():
         un_vol_activity.build_df(1)           # 1 = DOWN unusual volume
 
         # find lowest price stock in unusuall UP volume list
-        ulp = un_vol_activity.up_df0['Cur_price'].min()                  # find lowest price row in DF
-        uminv = un_vol_activity.up_df0['Cur_price'].idxmin()             # get index ID of lowest price row
-        ulsym = un_vol_activity.up_df0.loc[uminv, ['Symbol']][0]         # get symbol of lowest price item @ index_id
-        ulname = un_vol_activity.up_df0.loc[uminv, ['Co_name']][0]       # get name of lowest price item @ index_id
+        up_unvols = un_vol_activity.up_unvol_listall()      # temp DF, nicely ordered & indexed of unusual UP vol activity
+        ulp = up_unvols['Cur_price'].min()                  # find lowest price row in DF
+        uminv = up_unvols['Cur_price'].idxmin()             # get index ID of lowest price row
+        ulsym = up_unvols.loc[uminv, ['Symbol']][0]         # get symbol of lowest price item @ index_id
+        ulname = up_unvols.loc[uminv, ['Co_name']][0]       # get name of lowest price item @ index_id
         print ( f">>LOWEST<< price OPPTY is: #{uminv} - {ulname.rstrip()} ({ulsym.rstrip()}) @ ${ulp}" )
         print ( " " )
         print ( f"{un_vol_activity.up_unvol_listall()} " )
