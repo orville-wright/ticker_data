@@ -205,8 +205,8 @@ class un_volumes:
         logging.info('ins.#%s.up_unvol_listall() - IN' % self.yti )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
-        list_up = self.up_df0.sort_values(by='Pct_change', ascending=False ).reset_index(inplace=True, drop=True) )
-        #print ( self.up_df0.sort_values(by='Pct_change', ascending=False ) )
+        list_up = self.up_df0.sort_values(by='Pct_change', ascending=False )
+        list_up.reset_index(inplace=True, drop=True)           # reset index each time so its guaranteed sequential
         logging.info('ins.#%s.up_unvol_listall() - DONE' % self.yti )
         return list_up
 
@@ -217,9 +217,10 @@ class un_volumes:
         logging.info('ins.#%s.down_unvol_listall() - IN' % self.yti )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
-        print ( self.down_df1.sort_values(by='Pct_change', ascending=False ) )
+        list_down = self.down_df1.sort_values(by='Pct_change', ascending=False )
+        list_down.reset_index(inplace=True, drop=True)           # reset index each time so its guaranteed sequential
         logging.info('ins.#%s.down_unvol_listall() - DONE' % self.yti )
-        return
+        return list_down
 
 # method 5
     def up_down_combo(self):
