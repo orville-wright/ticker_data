@@ -84,10 +84,9 @@ class un_volumes:
         with self.js_session.get("https://api.nasdaq.com/api/quote/list-type/unusual_volume", stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp2:
             # read the webpage with our Javascript engine processor
             logging.info('%s - Javascript engine processing...' % cmi_debug )
-            self.js_resp2.html.render()
+            self.js_resp2.html.render()    # might now even be needed now that nasdaq REST API get is working
             logging.info('%s - Javascript engine completed!' % cmi_debug )
 
-            # no BeautifulSoup scraping needed...
             # we can access pure 'Unusual VOlume' JSON data via an authenticated/valid REST API call
             logging.info('%s - json data extracted' % cmi_debug )
             logging.info('%s - store FULL json dataset' % cmi_debug )
@@ -97,7 +96,7 @@ class un_volumes:
             logging.info('%s - store DOWN data locale' % cmi_debug )
             self.uvol_down_data = self.uvol_all_data['data']['down']['table']['rows']
 
-         # Xray DEBUG 
+         # Xray DEBUG
         if self.args['bool_xray'] is True:
             print ( f"================================ {self.yti} ======================================" )
             print ( f"=== session cookies ===\n" )
@@ -109,15 +108,15 @@ class un_volumes:
 # method #2
 # New method to build a Pandas DataFrame from JSON data structure
     def build_df(self, ud):
-        """Build-out a fully populated Pandas DataFrame containg the"""
-        """key fields from the JSON dataset"""
-        """Wrangle, clean/convert/format the data correctly."""
-        """calling arg: ud  (up_volume = 0 / down_volume = 1)"""
+        """
+        Build-out a fully populated DF containg the fields if interest from the JSON dataset.
+        Wrangle, clean/convert/format & process the dirty data
+        NOTE:  args: ud  (0 = get up volume  / 1 = get down volume)
+        """
 
-        this_df = ""
+        #this_df = ""
         cmi_debug = __name__+"::"+self.build_df.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
-
         if ud == 0:
             logging.info('%s - build UP df' % cmi_debug )
             this_df = self.up_df0
@@ -133,9 +132,8 @@ class un_volumes:
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         logging.info('%s - Drop all rows from DF' % cmi_debug )
         this_df.drop(this_df.index, inplace=True)
-
         x = 1    # row counter Also leveraged for unique dataframe key
-        for json_data_row in dataset:     # genrator object
+        for json_data_row in dataset:
             co_sym = json_data_row['symbol']
             co_name = json_data_row['company']
             price = json_data_row['lastSale']
@@ -184,10 +182,12 @@ class un_volumes:
                 logging.info('%s - append UP Volume data into DataFrame' % cmi_debug )
                 self.temp_df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ], index=[x] )
                 self.up_df0 = self.up_df0.append(self.temp_df0, sort=False)    # append this ROW of data into the REAL DataFrame
+                self.up_df0.reset_index(inplace=True, drop=True)               # reset index each time so its guaranteed sequential
             else:
                 logging.info('%s - append DOWN Volume data into DataFrame' % cmi_debug )
                 self.temp_df1 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', "Pct_change", "Vol", 'Vol_pct', 'Time' ], index=[x] )
                 self.down_df1 = self.down_df1.append(self.temp_df1, sort=False)    # append this ROW of data into the REAL DataFrame
+                self.up_df1.reset_index(inplace=True, drop=True)                   # reset index each time so its guaranteed sequential
 
             x += 1
 

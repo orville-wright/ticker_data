@@ -61,7 +61,7 @@ class shallow_combo:
         cmi_debug = __name__+"::"+self.prepare_combo_df.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
         temp_df = pd.concat( [ self.deep_1, self.deep_2, self.deep_3], sort=False, ignore_index=True ).sort_values(by=['Pct_change', 'M_B', 'Mkt_cap'], ascending=False, na_position='last')
-        temp_df.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
+        temp_df.reset_index(inplace=True, drop=True)                               # reset index each time so its guaranteed sequential
         self.combo_df = temp_df.sort_values(by=['Pct_change'], ascending=False )   # ensure sorted combo DF is avail as class global attr
         self.combo_dupes = self.combo_df.duplicated(['Symbol']).to_frame()         # convert Bool SERIES > DF & make avail as class global attr DF
         return

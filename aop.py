@@ -203,8 +203,8 @@ def main():
         # find lowest price stock in unusuall UP volume list
         ulp = un_vol_activity.up_df0['Cur_price'].min()                  # find lowest price row in DF
         uminv = un_vol_activity.up_df0['Cur_price'].idxmin()             # get index ID of lowest price row
-        ulsym = un_vol_activity.up_df0.loc[uminv, ['Symbol']][0]         # get symbol of lowest price item
-        ulname = un_vol_activity.up_df0.loc[uminv, ['Co_name']][0]       # get name of lowest price item
+        ulsym = un_vol_activity.up_df0.loc[uminv, ['Symbol']][0]         # get symbol of lowest price item @ index_id
+        ulname = un_vol_activity.up_df0.loc[uminv, ['Co_name']][0]       # get name of lowest price item @ index_id
         print ( f">>LOWEST<< price OPPTY is: #{uminv} - {ulname.rstrip()} ({ulsym.rstrip()}) @ ${ulp}" )
         print ( " " )
         un_vol_activity.up_unvol_listall()
@@ -239,7 +239,6 @@ def main():
         unfixable_errors = 0
         cleansed_errors = 0
         logging.info('main::x.combo - find missing data for: %s symbols' % len(up_symbols) )
-        logging.info('main::x.combo - %s' % up_symbols )
         loop_count = 1
 
         for qsymbol in up_symbols:             # iterate over symbols & get a live quote for each one
