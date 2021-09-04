@@ -230,11 +230,9 @@ def main():
         # FIRST, merge Small_cap + med + large + mega into a single DF
         x = shallow_combo(1, med_large_mega_gainers, small_cap_dataset, un_vol_activity, args )
         x.prepare_combo_df()
-        # FIX missing fields in nasdaq.com unusual volume data - market_cap info is missing
-        # up_symbols = x.combo_df[x.combo_df['Mkt_cap'].isna()]
-        up_symbols = x.combo_df[x.combo_df[['Mkt_cap']['M_B']].isna()]    # This is a safe select
-        # x.combo_df[x.combo_df.isna().any(axis=1)]    # This is global NaaN anywhere in DF
-        up_symbols = up_symbols['Symbol'].tolist()
+        # Find/fix missing data in nasdaq.com unusual volume DF - i.e. market_cap info
+        uvol_badata = x.combo_df[x.combo_df['Mkt_cap'].isna()]
+        up_symbols = uvol_badata['Symbol'].tolist()
         nq = nquote(3, args)                   # setup an emphemerial dict
         nq.init_dummy_session()                # setup request session - note: will set nasdaq magic cookie
         total_wrangle_errors = 0               # usefull counters
@@ -247,8 +245,7 @@ def main():
         for qsymbol in up_symbols:             # iterate over symbols & get a live quote for each one
             xsymbol = qsymbol                  # raw field from df to match df insert column test - sloppy hack, it has trailing spaces
             qsymbol = qsymbol.rstrip()         # same data but cleand/striped of trailing spaces
-            logging.info( f"main::x.combo ================ Examine quote: {qsymbol} : %s ====================" % loop_count )
-            #logging.info( "main::x.combo - examine quote data for: %s" % qsymbol )
+            logging.info( f"main::x.combo ================ get quote: {qsymbol} : %s ====================" % loop_count )
             nq.update_headers(qsymbol)         # set path: header object. doesnt touch secret nasdaq cookies
             nq.form_api_endpoint(qsymbol)      # set API endpoint url
             nq.get_nquote(qsymbol)             # get a live quote
@@ -256,7 +253,7 @@ def main():
             print ( f"symbol: {qsymbol} ", end="", flush=True )
 
             if wrangle_errors == -1:           # bad symbol (not a regular stock)
-                logging.info( "main::x.combo - symbol is BAD/not regular company: %s" % qsymbol )
+                logging.info( f"main::x.combo - {qsymbol} bad / not regular ticker: %s" % qsymbol )
                 nq.quote.clear()               # make sure ephemerial quote{} is always empty before bailing out
                 wrangle_errors = 1
                 unfixable_errors += 1
@@ -287,7 +284,7 @@ def main():
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = float(0)
                 cleansed_errors += 1
 
-            logging.info("main::x.combo ======================= End : %s ===========================" % loop_count )
+            logging.info( f"main::x.combo ================ end quote: {qsymbol} : %s ====================" % loop_count )
             total_wrangle_errors = total_wrangle_errors + wrangle_errors
             wrangle_errors = 0
             loop_count += 1
