@@ -268,7 +268,7 @@ def main():
                     else:
                         wrangle_errors += 1          # insert market cap scale into DF @ column M_B for this symbol
                         x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = i[0]
-                        print ( f"/ Mkt cap scale {i[0]} - Data issues: {wrangle_errors}" )
+                        print ( f"/ Mkt cap scale: {i[0]} - Data issues: {wrangle_errors}" )
                         logging.info( "main::x.combo - Computed Market cap scale as %s / DF updated!" % i[0] )
                         cleansed_errors += 1
                         break
@@ -359,7 +359,7 @@ def main():
         print ( " " )
         print ( averages )
         print ( " " )
-        print ( f"Current day running % gain agerages: %{averages.iloc[-1]['Pct_change'].round(2)}" )
+        print ( f"Current day % gain agerage: %{averages.iloc[-1]['Pct_change'].round(2)}" )
 
 # Machine Learning dev code ####################################
 # News Sentiment AI
