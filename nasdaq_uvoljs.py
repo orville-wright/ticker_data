@@ -190,7 +190,7 @@ class un_volumes:
             x += 1
 
         if ud == 0: self.up_df0.reset_index(inplace=True, drop=True)           # reset index each time so its guaranteed sequential
-        if ud == 1: self.down_df0.reset_index(inplace=True, drop=True)         # reset index each time so its guaranteed sequential
+        if ud == 1: self.down_df1.reset_index(inplace=True, drop=True)         # reset index each time so its guaranteed sequential
         logging.info('%s - populated new DF' % cmi_debug )
         return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
                         # sucess = lobal class accessor (y_toplosers.df0) populated & updated
@@ -229,36 +229,4 @@ class un_volumes:
         self.df2.drop('Row', axis=1, inplace=True )
         logging.info('ins.#%s.up_down_combo() - DONE' % self.yti )
         print ( f"{self.df2}" )
-        return
-
-# method 6
-    def pop_mkt_cap(self):
-        """
-        nasdaq.com JSON payload has NO Market_Cap info. They just dont show
-        that info in the wbe page table. So we need to grab it from elsewhere now
-        now that we have the full list of unusual volume activity
-        note: This will cycle though ALL symbols in dataframe and populate
-        every row in the dataframe.
-        """
-
-        logging.info('ins.#%s.pop_mkt_cap() - IN' % self.yti )
-        logging.info('ins.#%s.pop_mkt_cap() - instantiate quote class' % self.yti )
-
-        # get the list of all symbols in this DF
-        # TODO: we dont need to list all symbols in DF, just the ones that have 'NaaN'
-        #       data in the mkt_cap collumn.
-        #       In this scenariom the (mkt_cap_s collumn will also be 'Naan' by association.
-        self.up_symbols = self.up_df0['Symbol'].tolist()
-        #self.up_symbols = self.up_df0[self.up_df0['Mkt_cap'].isna()]
-        #self.up_symbols = self.up_symbols['Symbol'].tolist()
-        #self.down_symbols = self.down_df1['Symbol'].tolist()
-
-        qp = bc_quote(2, self.args)       # setup an emphemerial dict
-        # loop from here
-        for qsymbol in self.up_symbols:
-            qp.get_basicquote(qsymbol.strip())
-            qp.get_quickquote(qsymbol.strip())
-            qp.q_polish()
-            print ( f"symbol: {qsymbol} - Mkt cap: {qp.quote['mkt_cap']} - Mktcap_scale: {qp.quote['mkt_cap_s']}" )
-
         return
