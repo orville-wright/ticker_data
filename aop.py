@@ -216,19 +216,28 @@ def main():
         recommended['2'] = ('Unusual vol:', ulsym.rstrip(), '$'+str(ulp), ulname.rstrip(), '+%'+str(un_vol_activity.up_df0.loc[uminv, ['Pct_change']][0]) )
 
 # generate INITIAL combo list ######################################################
+    """
+    DEEP amalysis means - try to understand & inferr plain language reasons as to why these stock are
+    appearing in the final 'Single Source of Truth' combo_df. Having a big list of top mover/highly active
+    stocks isn't meaningful unless you can understand (quickly in real-time) whats going on with each one.
+    From that pint, you can plan to do something... otherwise, this is just a meaningless list.
+    NOTE: Raw Data is never usable in its initial state. It allways has holes, is dirty & needs wrangeling.
+          Much of this code prepares & cleans the data into a perfect combo_df 'Single Source of Truth'.
+    """
+
     if args['bool_deep'] is True and args['bool_scr'] is True and args['bool_uvol'] is True:
 
-        # first combine Small_cap + med + large + mega into a single dataframe
+        # FIRST, merge Small_cap + med + large + mega into a single DF
         x = shallow_combo(1, med_large_mega_gainers, small_cap_dataset, un_vol_activity, args )
         x.prepare_combo_df()
-        # now Hunt down missing data fields in nasdaq.com unusual volume data as it does *NOT*have market_cap info
-        # note: we're now doing a *lot* of data wrangeling & cleansing
-        print ( f"Prepare final combo data list..." )    # list of symbols with missing data (i.e mkt_cap NaaN rows)
-        up_symbols = x.combo_df[x.combo_df['Mkt_cap'].isna()]
+        # FIX missing fields in nasdaq.com unusual volume data - market_cap info is missing
+        # up_symbols = x.combo_df[x.combo_df['Mkt_cap'].isna()]
+        up_symbols = x.combo_df[x.combo_df[['Mkt_cap']['M_B']].isna()]    # This is a safe select
+        # x.combo_df[x.combo_df.isna().any(axis=1)]    # This is global NaaN anywhere in DF
         up_symbols = up_symbols['Symbol'].tolist()
-        nq = nquote(3, args)                             # setup an emphemerial dict
-        nq.init_dummy_session()                          # note: will set nasdaq magic cookie
-        total_wrangle_errors = 0
+        nq = nquote(3, args)                   # setup an emphemerial dict
+        nq.init_dummy_session()                # setup request session - note: will set nasdaq magic cookie
+        total_wrangle_errors = 0               # usefull counters
         unfixable_errors = 0
         cleansed_errors = 0
         logging.info('main::x.combo - find missing data for: %s symbols' % len(up_symbols) )
@@ -236,10 +245,10 @@ def main():
         loop_count = 1
 
         for qsymbol in up_symbols:             # iterate over symbols & get a live quote for each one
-            xsymbol = qsymbol                  # raw field from df to match df insert column test - sloppy hack
+            xsymbol = qsymbol                  # raw field from df to match df insert column test - sloppy hack, it has trailing spaces
             qsymbol = qsymbol.rstrip()         # same data but cleand/striped of trailing spaces
-            logging.info( "main::x.combo ====================== Begin : %s ==========================" % loop_count )
-            logging.info( "main::x.combo - examine quote data for: %s" % qsymbol )
+            logging.info( f"main::x.combo ================ Examine quote: {qsymbol} : %s ====================" % loop_count )
+            #logging.info( "main::x.combo - examine quote data for: %s" % qsymbol )
             nq.update_headers(qsymbol)         # set path: header object. doesnt touch secret nasdaq cookies
             nq.form_api_endpoint(qsymbol)      # set API endpoint url
             nq.get_nquote(qsymbol)             # get a live quote
