@@ -189,11 +189,11 @@ class un_volumes:
 
             x += 1
 
-        this_df.reset_index(inplace=True, drop=True)               # reset index each time so its guaranteed sequential
+        if ud == 0: self.up_df0.reset_index(inplace=True, drop=True)           # reset index each time so its guaranteed sequential
+        if ud == 1: self.down_df0.reset_index(inplace=True, drop=True)         # reset index each time so its guaranteed sequential
         logging.info('%s - populated new DF' % cmi_debug )
         return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
                         # sucess = lobal class accessor (y_toplosers.df0) populated & updated
-
 
 # method #3
     def up_unvol_listall(self):
