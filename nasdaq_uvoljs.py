@@ -197,16 +197,18 @@ class un_volumes:
 
 # method #3
     def up_unvol_listall(self):
-        """Print the full DataFrame table list of NASDAQ unusual UP volumes"""
-        """Sorted by % Change"""
+        """
+        Prepare a list from this NASDAQ unusual UP volume stocks DF.
+        NOTE: This will sort by % Change & rest the index to match the new sort order.
+              but will return a temp DF (list_up). Not the orignal DF up_df0
+        """
         logging.info('ins.#%s.up_unvol_listall() - IN' % self.yti )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
-        # self.tg_df1.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
-        #print ( self.up_df0.sort_values(by='Pct_change', ascending=False ).reset_index(inplace=True, drop=True) )
-        print ( self.up_df0.sort_values(by='Pct_change', ascending=False ) )
+        list_up = self.up_df0.sort_values(by='Pct_change', ascending=False ).reset_index(inplace=True, drop=True) )
+        #print ( self.up_df0.sort_values(by='Pct_change', ascending=False ) )
         logging.info('ins.#%s.up_unvol_listall() - DONE' % self.yti )
-        return
+        return list_up
 
 # method #4
     def down_unvol_listall(self):

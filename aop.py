@@ -207,7 +207,7 @@ def main():
         ulname = un_vol_activity.up_df0.loc[uminv, ['Co_name']][0]       # get name of lowest price item @ index_id
         print ( f">>LOWEST<< price OPPTY is: #{uminv} - {ulname.rstrip()} ({ulsym.rstrip()}) @ ${ulp}" )
         print ( " " )
-        un_vol_activity.up_unvol_listall()
+        print ( f"{un_vol_activity.up_unvol_listall()} " )
         print ( " ")
         print ( "========== Unusually high Volume ** DOWN ** =====================================================" )
         un_vol_activity.down_unvol_listall()
