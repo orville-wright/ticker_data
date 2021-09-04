@@ -182,15 +182,14 @@ class un_volumes:
                 logging.info('%s - append UP Volume data into DataFrame' % cmi_debug )
                 self.temp_df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ], index=[x] )
                 self.up_df0 = self.up_df0.append(self.temp_df0, sort=False)    # append this ROW of data into the REAL DataFrame
-                self.up_df0.reset_index(inplace=True, drop=True)               # reset index each time so its guaranteed sequential
             else:
                 logging.info('%s - append DOWN Volume data into DataFrame' % cmi_debug )
                 self.temp_df1 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', "Pct_change", "Vol", 'Vol_pct', 'Time' ], index=[x] )
                 self.down_df1 = self.down_df1.append(self.temp_df1, sort=False)    # append this ROW of data into the REAL DataFrame
-                self.down_df1.reset_index(inplace=True, drop=True)                   # reset index each time so its guaranteed sequential
 
             x += 1
 
+        this_df.reset_index(inplace=True, drop=True)               # reset index each time so its guaranteed sequential
         logging.info('%s - populated new DF' % cmi_debug )
         return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
                         # sucess = lobal class accessor (y_toplosers.df0) populated & updated
