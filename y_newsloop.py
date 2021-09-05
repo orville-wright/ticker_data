@@ -20,7 +20,9 @@ logging.basicConfig(level=logging.INFO)
 #####################################################
 
 class y_newsfilter:
-    """Class to extract a specific stock's News from finance.yahoo.com"""
+    """
+    Class to extract a specific stock's News from finance.yahoo.com
+    """
 
     # global accessors
     soup = ""           # the entire HTML doc
@@ -41,10 +43,12 @@ class y_newsfilter:
 
 # method #1
     def scan_news_depth_0(self):
-        """Connect to finance.yahoo.com and process the raw news HTML data tables from"""
-        """the complex MAIN (highlevel) news parent webpage for an individual stcok [Stock:News ]."""
-        """Does not extract any news atricles, items or data fields. Just sets up the element extraction zone."""
-        """Returns a BS4 onbject handle pointing to correct news section for deep element extraction."""
+        """
+        Connect to finance.yahoo.com and process the raw news HTML data tables from
+        the complex MAIN (highlevel) news parent webpage for an individual stcok [Stock:News ].
+        Does not extract any news atricles, items or data fields. Just sets up the element extraction zone.
+        Returns a BS4 onbject handle pointing to correct news section for deep element extraction.
+        """
 
         cmi_debug = __name__+"::"+self.scan_news_depth_0.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
@@ -63,11 +67,13 @@ class y_newsfilter:
         return
 
     def news_article_depth_1(self, url):
-        """Analyze 1 (ONE) individual news article taken from the list of article within the MAIN news HTNML page"""
-        """and setup the data extractor to point into the KEY element zone within that news HTML dataset so that"""
-        """critical news elements, fields & data objects can be deeply extracted (from this 1 news article)."""
-        """Note: - This has to be called for each article showing in the MAIN news page"""
-        """Note: - Calling this recurisvely will be network expensive...but that is the plan"""
+        """
+        Analyze 1 (ONE) individual news article taken from the list of article within the MAIN news HTNML page
+        and setup the data extractor to point into the KEY element zone within that news HTML dataset so that
+        critical news elements, fields & data objects can be deeply extracted (from this 1 news article).
+        Note: - This has to be called for each article showing in the MAIN news page
+        Note: - Calling this recurisvely will be network expensive...but that is the plan
+        """
 
         cmi_debug = __name__+"::"+self.news_article_depth_1.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
@@ -89,10 +95,12 @@ class y_newsfilter:
 
 # method #2
     def read_allnews_depth_0(self):
-        """Cycle though the MAIN top-level NEWS page and prepare a nice list of ALL of the articles."""
-        """For each article, extract some KEY high-level news elements (i.e. Headline, Brief, URL to real article."""
-        """NOTE: This is main controller logic loop because we're at the TOP high-level news page for this stock."""
-        """Wrangle, clean/convert/format the data correctly"""
+        """
+        Cycle though the MAIN top-level NEWS page and prepare a nice list of ALL of the articles.
+        For each article, extract some KEY high-level news elements (i.e. Headline, Brief, URL to real article.
+        NOTE: This is main controller logic loop because we're at the TOP high-level news page for this stock.
+        Wrangle, clean/convert/format the data correctly
+        """
 
         # Data & Elements extrated and computed
         # 1. article url path
@@ -147,7 +155,7 @@ class y_newsfilter:
             # Short brief headline...
             # print ( f"News headline: {html_element.a.text}" )
             # print ( "Brief #: {} / News Short Brief: {:.400}".format(x, html_element.p.text) )    # truncate long Brief down to 400 chars
-            self.ml_brief.append(html_element.p.text)       # add Brief TXT into ML pre count vectorizer matrix 
+            self.ml_brief.append(html_element.p.text)       # add Brief TXT into ML pre count vectorizer matrix
 
             # URL unique hash
             url_prehash = html_element.a.get('href')        # generate unuque hash for each URL. For dupe tests & comparrisons etc
@@ -185,9 +193,11 @@ class y_newsfilter:
 
 # method 3
     def extract_article_data(self, news_article_url):
-        """A complex html DATA EXTRACTION. We are now getting into the dirty details"""
-        """and low-levl data components/elements within specific HTML news data page."""
-        """WARN: This is extremley specific to a single https://finance.yahoo.com news article."""
+        """
+        Complex html DATA EXTRACTION. We are now getting into the dirty details
+        and low-levl data components/elements within specific HTML news data page.
+        WARN: This is extremley specific to a single https://finance.yahoo.com news article.
+        """
 
         # data elements extracted & computed
         # Authour, Date posted, Time posted, Age of article

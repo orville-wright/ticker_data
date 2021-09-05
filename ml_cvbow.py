@@ -22,7 +22,10 @@ logging.basicConfig(level=logging.INFO)
 #####################################################
 
 class y_bow:
-    """Class for Bag of Words Count Vectorizer for finance.yahoo.com docs & text"""
+    """
+    Machine Learning Helper class for 'Bag of Words' Count Vectorizer that support reading
+    finance.yahoo.com docs & text
+    """
 
     # global accessors
     ft_tdmatrix = ""        # term-document matrix learnt from a FIT & TRANSFORM count vectorization
