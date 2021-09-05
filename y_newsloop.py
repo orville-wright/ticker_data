@@ -2,6 +2,7 @@
 
 from bs4 import BeautifulSoup
 import requests
+from requests_html import HTMLSession
 import urllib
 from urllib.parse import urlparse
 import re
@@ -41,6 +42,7 @@ class y_newsfilter:
         self.args = global_args
         self.inst_uid = i
         self.symbol = symbol
+        self.js_session = HTMLSession()                        # init JAVAScript processor early
         return
 
 # method #1
@@ -58,15 +60,19 @@ class y_newsfilter:
         print ( f">>DEBUG<<: NEWS URL: {news_url}" )
         logging.info( f'%s - URL: {news_url}' % (cmi_debug) )
         print ( f"Looking at news for: {self.symbol}" )
+        s = requests.get( f"{news_url}" )
+        """
         with urllib.request.urlopen( f"{news_url}" ) as url:
-            s = url.read()
+            # s = url.read()
             logging.info('%s - read html stream' % cmi_debug )
-            self.soup = BeautifulSoup(s, "html.parser")
+        """
+        self.soup = BeautifulSoup(s, "html.parser")
         logging.info('%s - save data object handle' % cmi_debug )
         self.ul_tag_dataset = self.soup.find(attrs={"class": "My(0) Ov(h) P(0) Wow(bw)"} )
         logging.info('%s - close main news page url handle' % cmi_debug )
         print ( f"Scanning {len(self.ul_tag_dataset)} news articles..." )
-        url.close()
+        # url.close()
+        s.close()
         return
 
     def news_article_depth_1(self, url):
