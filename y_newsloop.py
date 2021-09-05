@@ -1,8 +1,11 @@
 #!/usr/bin/python3
-import urllib
-import urllib.request
-from urllib.parse import urlparse
+
 from bs4 import BeautifulSoup
+import requests
+import urllib
+from urllib.parse import urlparse
+import re
+import logging
 import pandas as pd
 import numpy as np
 import re
@@ -12,7 +15,6 @@ import time
 from datetime import datetime, date
 import threading
 import hashlib
-
 
 # logging setup
 logging.basicConfig(level=logging.INFO)
