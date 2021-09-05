@@ -28,14 +28,15 @@ class yfnews_reader:
     symbol = ""             # Unique company symbol
     yfqnews_url = ""        # the URL that is being worked on
     js_session = ""         # main requests session
-    js_resp0 = ""           # session get() response handle
-    js_resp0 = ""           # session get() response handle
-    yfn_df0 = ""            # DataFrame 1
-    yfn_df1 = ""            # DataFrame 2
+    js_resp0 = ""           # HTML session get() - response handle
+    js_resp2 = ""           # JAVAScript session get() - response handle
     yfn_all_data =""        # JSON dataset contains ALL data
-    yfn_pridata = ""
+    yfn_htmldata = ""
+    yfn_jsdata = ""
     ml_brief = []           # ML TXT matrix for Naieve Bayes Classifier pre Count Vectorizer
     ul_tag_dataset = ""     # BS4 handle of the <tr> extracted data
+    yfn_df0 = ""            # DataFrame 1
+    yfn_df1 = ""            # DataFrame 2
     inst_uid = 0
     yti = 0                 # Unique instance identifier
     cycle = 0               # class thread loop counter
@@ -149,18 +150,6 @@ class yfnews_reader:
         return
 
 # method 5
-    def do_simple_get(self):
-        cmi_debug = __name__+"::"+self.init_blind_session.__name__+".#"+str(self.yti)
-        # note: we ping www.finance.yahoo.com. No need for a specific API url. That comes later.
-        #       Assumes the cookies have already been set up
-        #       NO cookie update done!!!
-        logging.info('%s - Blind request get() on base url' % cmi_debug )
-        with self.js_session.get('https://finance.yahoo.com', stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
-            logging.info('%s - Simple Request get() done' % cmi_debug )
-        # if the get() succeds, the response handle is automatically saved in Class Global accessor -> self.js_resp0
-        return
-
-# method 6
     def init_dummy_session(self):
         cmi_debug = __name__+"::"+self.init_dummy_session.__name__+".#"+str(self.yti)
         """
@@ -175,9 +164,39 @@ class yfnews_reader:
         # if the get() succeds, the response handle is automatically saved in Class Global accessor -> self.js_resp0
         return
 
+# method 6
+    def do_simple_get(self):
+        """
+        get simple raw HTML data structure (data not processed by JAVAScript engine)
+        NOTE: get URL is assumed to have allready been set (self.yfqnews_url)
+              Assumes cookies have already been set up. NO cookie update done here
+        """
+        cmi_debug = __name__+"::"+self.init_blind_session.__name__+".#"+str(self.yti)
+        logging.info( f'%s - Simple HTML request get() on URL: {self.yfqnews_url}' % cmi_debug )
+        with self.js_session.get(self.yfqnews_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
+            logging.info('%s - Simple HTML Request get() completed!- store HTML response dataset' % cmi_debug )
+            self.yfn_htmldata = self.js_resp0.text
+            # if the get() succeds, the response handle is automatically saved in Class Global accessor -> self.js_resp0
+            # TODO: should do some get() failure testing here
+            print ( f">>DEBUG<< ========================= HTML resp0.text =========================" )
+            print ( f"{self.yfn_htmldata}" )
+
+        # Xray DEBUG
+        if self.args['bool_xray'] is True:
+            print ( f"========================== {self.yti} / HTML get() session cookies ================================" )
+            for i in self.js_session.cookies.items():
+                print ( f"{i}" )
+            print ( f"========================== {self.yti} / HTML get() session cookies ================================" )
+
+        return
+
 # method 7
-    def get_js_nquote(self, symbol):
-        # currently a DEBUG method
+    def do_js_get(self):
+        """
+        get JAVAScript engine processed data structure
+        NOTE: get URL is assumed to have allready been set (self.yfqnews_url)
+              Assumes cookies have already been set up. NO cookie update done here
+        """
         cmi_debug = __name__+"::"+self.get_js_nquote.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         self.symbol = symbol
@@ -185,11 +204,11 @@ class yfnews_reader:
             # read the webpage with our Javascript engine processor
             logging.info('%s - Javascript engine processing...' % cmi_debug )
             self.js_resp2.html.render()    # this isn't needed for this URL becuase is a RAW JSON output page. NOT Javascript
-            logging.info('%s - Javascript engine completed!' % cmi_debug )
-            logging.info('%s - Store FULL Javascript response dataset' % cmi_debug )
-            self.yfn_pridata = self.js_resp2.text
-            print ( f">>DEBUG<< =========================== resp2.text =================" )
-            print ( f"{self.yfn_pridata}" )
+            # TODO: should do some get() failure testing here
+            logging.info('%s - Javascript engine completed! - store JS response dataset' % cmi_debug )
+            self.yfn_jsdata = self.js_resp2.text
+            print ( f">>DEBUG<< ======================== JS resp2.text ========================" )
+            print ( f"{self.yfn_jsdata}" )
 
         # Xray DEBUG
         if self.args['bool_xray'] is True:
@@ -197,6 +216,7 @@ class yfnews_reader:
             for i in self.js_session.cookies.items():
                 print ( f"{i}" )
             print ( f"========================== {self.yti} / JS get() session cookies ================================" )
+
         return
 
 # session data extraction methods ##############################################
