@@ -84,22 +84,22 @@ class yfnews_reader:
         self.js_session.cookies.update(self.yahoo_headers)    # redundent as it's done in INIT but I'm not sure its persisting from there
         with self.js_session.get("https://www.finance.yahoo.com", stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
             logging.info('%s - EXTRACT/INSERT 8 special cookies  ' % cmi_debug )
-            self.js_session.cookies.update({'APID': self.js_resp0.cookies['APID']} )    # NASDAQ cookie hack
-            self.js_session.cookies.update({'d': self.js_resp0.cookies['d']} )    # NASDAQ cookie hack
-            self.js_session.cookies.update({'v': self.js_resp0.cookies['v']} )    # NASDAQ cookie hack
-            self.js_session.cookies.update({'A1': self.js_resp0.cookies['A1']} )    # NASDAQ cookie hack
-            self.js_session.cookies.update({'A3': self.js_resp0.cookies['A3']} )    # NASDAQ cookie hack
-            self.js_session.cookies.update({'GUC': self.js_resp0.cookies['GUC']} )    # NASDAQ cookie hack
-            self.js_session.cookies.update({'t': self.js_resp0.cookies['t']} )    # NASDAQ cookie hack
-            self.js_session.cookies.update({'APIDTS': self.js_resp0.cookies['APIDTS']} )    # NASDAQ cookie hack
+            #self.js_session.cookies.update({'APID': self.js_resp0.cookies['APID']} )    # NASDAQ cookie hack
+            #self.js_session.cookies.update({'d': self.js_resp0.cookies['d']} )    # NASDAQ cookie hack
+            #self.js_session.cookies.update({'v': self.js_resp0.cookies['v']} )    # NASDAQ cookie hack
+            #self.js_session.cookies.update({'A1': self.js_resp0.cookies['A1']} )    # NASDAQ cookie hack
+            #self.js_session.cookies.update({'A3': self.js_resp0.cookies['A3']} )    # NASDAQ cookie hack
+            #self.js_session.cookies.update({'GUC': self.js_resp0.cookies['GUC']} )    # NASDAQ cookie hack
+            #self.js_session.cookies.update({'t': self.js_resp0.cookies['t']} )    # NASDAQ cookie hack
+            #self.js_session.cookies.update({'APIDTS': self.js_resp0.cookies['APIDTS']} )    # NASDAQ cookie hack
 
         # 2nd get with the secret yahoo.com cookie now inserted
         # NOTE: Just the finaince.Yahoo.com MAIN landing page - generic news
         logging.info('%s - rest API read json' % cmi_debug )
-        with self.js_session.get("https://www.finance.yahoo.com", stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp2:
+        with self.js_session.get("https://www.finance.yahoo.com", stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp2:
             # read the webpage with our Javascript engine processor
             logging.info('%s - Javascript engine processing...' % cmi_debug )
-            self.js_resp2.html.render()    # might now even be needed now that nasdaq REST API get is working
+            #self.js_resp2.html.render()    # render JS page
             logging.info('%s - Javascript engine completed!' % cmi_debug )
 
             # we can access pure 'Unusual VOlume' JSON data via an authenticated/valid REST API call
