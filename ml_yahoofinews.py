@@ -105,8 +105,7 @@ class yfnews_reader:
 
         # Xray DEBUG
         if self.args['bool_xray'] is True:
-            print ( f"================================ {self.yti} ======================================" )
-            print ( f"=== session cookies ===\n" )
+            print ( f"=========================== {self.yti} / session cookies ===========================" )
             for i in self.js_session.cookies.items():
                 print ( f"{i}" )
 
@@ -145,7 +144,7 @@ class yfnews_reader:
         cmi_debug = __name__+"::"+self.form_url_endpoint.__name__+".#"+str(self.yti)
         logging.info( f'%s - form URL endpoint for: {symbol}' % cmi_debug )
         self.yfqnews_url = 'https://finance.yahoo.com/' + self.path    # use global accessor (so all paths are consistent)
-        logging.info('finance.yahoo.com::form_api_endpoint.## - API endpoint URL: %s' % self.quote_url )
+        logging.info('finance.yahoo.com::form_api_endpoint.## - API endpoint URL: %s' % self.yfqnews_url )
         self.yfqnews_url = self.yfqnews_url
         return
 
@@ -176,8 +175,30 @@ class yfnews_reader:
         # if the get() succeds, the response handle is automatically saved in Class Global accessor -> self.js_resp0
         return
 
+# method 7
+    def get_js_nquote(self, symbol):
+        # currently a DEBUG method
+        cmi_debug = __name__+"::"+self.get_js_nquote.__name__+".#"+str(self.yti)
+        logging.info('%s - IN' % cmi_debug )
+        self.symbol = symbol
+        with self.js_session.get(self.quote_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp2:
+            # read the webpage with our Javascript engine processor
+            logging.info('%s - Javascript engine processing...' % cmi_debug )
+            self.js_resp2.html.render()    # this isn't needed for this URL becuase is a RAW JSON output page. NOT Javascript
+            logging.info('%s - Javascript engine completed!' % cmi_debug )
+            logging.info('%s - Store FULL Javascript response dataset' % cmi_debug )
+            self.yfn_pridata = self.js_resp2.text
+
+        # Xray DEBUG
+        if self.args['bool_xray'] is True:
+            print ( f"========================== {self.yti} / JS get() session cookies ================================" )
+            for i in self.js_session.cookies.items():
+                print ( f"{i}" )
+            print ( f"========================== {self.yti} / JS get() session cookies ================================" )
+        return
+
 # session data extraction methods ##############################################
-# method #7
+# method #8
     def scan_news_depth_0(self, symbol, depth):
         """
         TODO: add args - DEPTH (0, 1, 2) as opposed to multiple depth level methods
@@ -206,7 +227,7 @@ class yfnews_reader:
         # self.js_session.close()    # not sure we have to explicitly do this
         return
 
-# method #8
+# method #9
     def read_allnews_depth_0(self):
         """
         NOTE: assumes connection was previously setup
@@ -304,7 +325,7 @@ class yfnews_reader:
     # print ( f" / Date: {a_subset[erow].time.text}" )         # Pretty data
     # print ( f"== {erow}: == URL.div element: {a_subset[erow]}" )
 
-# method 9
+# method 10
     def extract_article_data(self, news_article_url):
         """
         Complex html data extraction. Now get into the low-levl data components/elements within specific HTML news page.
