@@ -26,7 +26,10 @@ class yfnews_reader:
 
     # global accessors
     symbol = ""             # Unique company symbol
+    yfqnews_url = ""        # the URL that is being worked on
     js_session = ""         # main requests session
+    js_resp0 = ""           # session get() response handle
+    js_resp0 = ""           # session get() response handle
     yfn_df0 = ""            # DataFrame 1
     yfn_df1 = ""            # DataFrame 2
     yfn_all_data =""        # JSON dataset contains ALL data
@@ -109,7 +112,65 @@ class yfnews_reader:
 
         return
 
-# method #2
+# method 2
+    def update_headers(self, symbol):
+        cmi_debug = __name__+"::"+self.update_headers.__name__+".#"+str(self.yti)
+        logging.info('%s - IN' % cmi_debug )
+
+        self.symbol = symbol
+        logging.info('%s - set cookies/headers path: object' % cmi_debug )
+        self.path = '/quote/' + self.symbol + '/news?p=' + self.symbol
+        self.js_session.cookies.update({'path': self.path} )
+        logging.info('finance.yahoo::update_headers.## - cookies/headers path: object: %s' % self.path )
+        return
+
+# method 3
+    def update_cookies(self):
+        # assumes that the requests session has already been established
+        cmi_debug = __name__+"::"+self.update_cookies.__name__+".#"+str(self.yti)
+        logging.info('%s - REDO the cookie extract & update  ' % cmi_debug )
+        self.js_session.cookies.update({'????': self.js_resp0.cookies['????']} )    # yahoo cookie hack
+        return
+
+# method 4
+    def form_api_endpoint(self, symbol):
+        # This is the explicit quote URL that is used for the req get()
+        cmi_debug = __name__+"::"+self.form_api_endpoint.__name__+".#"+str(self.yti)
+        logging.info('%s - form API endpoint URL' % cmi_debug )
+        self.yfqnews_url = 'https://finance.yahoo.com/' + self.path    # use global accessor (so all paths are consistent)
+        logging.info('finance.yahoo.com::form_api_endpoint.## - API endpoint URL: %s' % self.quote_url )
+        self.yfqnews_url = self.yfqnews_url
+        return
+
+# method 5
+    def do_simple_get(self):
+        cmi_debug = __name__+"::"+self.init_blind_session.__name__+".#"+str(self.yti)
+        # note: we ping www.finance.yahoo.com. No need for a specific API url. That comes later.
+        #       Assumes the cookies have already been set up
+        #       NO cookie update done!!!
+        logging.info('%s - Blind request get() on base url' % cmi_debug )
+        with self.js_session.get('https://finance.yahoo.com', stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
+            logging.info('%s - Simple Request get() done' % cmi_debug )
+        # if the get() succeds, the response handle is automatically saved in Class Global accessor -> self.js_resp0
+        return
+
+# method 6
+    def init_dummy_session(self):
+        cmi_debug = __name__+"::"+self.init_dummy_session.__name__+".#"+str(self.yti)
+        """
+        NOTE: we ping finance.yahoo.com
+              No need for a API specific url, as this should be the FIRST get for this url. Goal is to find & extract secret cookies
+        Overwrites js_resp0 - initial session handle, *NOPT* the main data session handle (js_resp2)
+        """
+
+        with self.js_session.get('https://www.finance.yahoo.com', stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
+            logging.info('%s - extract & update GOOD cookie  ' % cmi_debug )
+            self.js_session.cookies.update({'?????': self.js_resp0.cookies['?????']} )    # NASDAQ cookie hack
+        # if the get() succeds, the response handle is automatically saved in Class Global accessor -> self.js_resp0
+        return
+
+# session data extraction methods ##############################################
+# method #7
     def scan_news_depth_0(self, symbol, depth):
         """
         TODO: add args - DEPTH (0, 1, 2) as opposed to multiple depth level methods
@@ -138,7 +199,7 @@ class yfnews_reader:
         # self.js_session.close()    # not sure we have to explicitly do this
         return
 
-# method #2
+# method #8
     def read_allnews_depth_0(self):
         """
         NOTE: assumes connection was previously setup
@@ -236,7 +297,7 @@ class yfnews_reader:
     # print ( f" / Date: {a_subset[erow].time.text}" )         # Pretty data
     # print ( f"== {erow}: == URL.div element: {a_subset[erow]}" )
 
-# method 4
+# method 9
     def extract_article_data(self, news_article_url):
         """
         Complex html data extraction. Now get into the low-levl data components/elements within specific HTML news page.
