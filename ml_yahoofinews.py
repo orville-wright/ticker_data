@@ -124,7 +124,7 @@ class yfnews_reader:
         logging.info('finance.yahoo::update_headers.## - cookies/headers path: object: %s' % self.path )
 
         if self.args['bool_xray'] is True:
-            print ( f"=========================== {self.yti / session cookies} =================================" )
+            print ( f"=========================== {self.yti} / session cookies ===========================" )
             for i in self.js_session.cookies.items():
                 print ( f"{i}" )
 
