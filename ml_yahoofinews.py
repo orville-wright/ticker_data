@@ -81,14 +81,12 @@ class yfnews_reader:
         cmi_debug = __name__+"::"+self.yfn_bintro.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
 
-        # Initial blind get
-        # present ourself to yahoo.com so we can extract critical cookies
+        # Initial blind get - present ourself to yahoo.com so we can extract critical cookies
         logging.info('%s - blind intro get()' % cmi_debug )
         self.js_session.cookies.update(self.yahoo_headers)    # redundent as it's done in INIT but I'm not sure its persisting from there
         with self.js_session.get("https://www.finance.yahoo.com", stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
             logging.info('%s - EXTRACT/INSERT 8 special cookies  ' % cmi_debug )
-            # set secret cookie here
-            # self.js_session.cookies.update({'APID': self.js_resp0.cookies['APID']} )    # yahoo cookie hack
+            self.js_session.cookies.update({'B': self.js_resp0.cookies['B']} )    # yahoo cookie hack
 
         # 2nd get with the secret yahoo.com cookies now inserted
         # NOTE: Just the finaince.Yahoo.com MAIN landing page - generic news
@@ -135,7 +133,7 @@ class yfnews_reader:
         # assumes that the requests session has already been established
         cmi_debug = __name__+"::"+self.update_cookies.__name__+".#"+str(self.yti)
         logging.info('%s - REDO the cookie extract & update  ' % cmi_debug )
-        self.js_session.cookies.update({'????': self.js_resp0.cookies['????']} )    # yahoo cookie hack
+        self.js_session.cookies.update({'B': self.js_resp0.cookies['B']} )    # yahoo cookie hack
         return
 
 # method 4
@@ -155,13 +153,13 @@ class yfnews_reader:
         """
         NOTE: we ping finance.yahoo.com
               No need for a API specific url, as this should be the FIRST get for this url. Goal is to find & extract secret cookies
-        Overwrites js_resp0 - initial session handle, *NOPT* the main data session handle (js_resp2)
+        Overwrites js_resp0 - initial session handle, *NOT* the main data session handle (js_resp2)
         """
 
         with self.js_session.get('https://www.finance.yahoo.com', stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
             logging.info('%s - extract & update GOOD cookie  ' % cmi_debug )
-            self.js_session.cookies.update({'?????': self.js_resp0.cookies['?????']} )    # yahoo cookie hack
-        # if the get() succeds, the response handle is automatically saved in Class Global accessor -> self.js_resp0
+            self.js_session.cookies.update({'B': self.js_resp0.cookies['B']} )    # yahoo cookie hack
+            # if the get() succeds, the response handle is automatically saved in Class Global accessor -> self.js_resp0
         return
 
 # method 6
@@ -171,15 +169,13 @@ class yfnews_reader:
         NOTE: get URL is assumed to have allready been set (self.yfqnews_url)
               Assumes cookies have already been set up. NO cookie update done here
         """
-        cmi_debug = __name__+"::"+self.init_blind_session.__name__+".#"+str(self.yti)
+        cmi_debug = __name__+"::"+self.do_simple_get.__name__+".#"+str(self.yti)
         logging.info( f'%s - Simple HTML request get() on URL: {self.yfqnews_url}' % cmi_debug )
         with self.js_session.get(self.yfqnews_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
             logging.info('%s - Simple HTML Request get() completed!- store HTML response dataset' % cmi_debug )
             self.yfn_htmldata = self.js_resp0.text
-            # if the get() succeds, the response handle is automatically saved in Class Global accessor -> self.js_resp0
+            # if get() succeds, the response is automatically saved in Class Global accessor -> self.js_resp0
             # TODO: should do some get() failure testing here
-            print ( f">>DEBUG<< ========================= HTML resp0.text =========================" )
-            print ( f"{self.yfn_htmldata}" )
 
         # Xray DEBUG
         if self.args['bool_xray'] is True:
@@ -199,16 +195,13 @@ class yfnews_reader:
         """
         cmi_debug = __name__+"::"+self.do_js_get.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
-        self.symbol = symbol
         with self.js_session.get(self.yfqnews_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp2:
-            # read the webpage with our Javascript engine processor
             logging.info('%s - Javascript engine processing...' % cmi_debug )
-            self.js_resp2.html.render()    # this isn't needed for this URL becuase is a RAW JSON output page. NOT Javascript
+            # if get() succeds, raw HTML (non-JS) response is automatically saved in Class Global accessor -> self.js_resp2
+            self.js_resp2.html.render()
             # TODO: should do some get() failure testing here
             logging.info('%s - Javascript engine completed! - store JS response dataset' % cmi_debug )
-            self.yfn_jsdata = self.js_resp2.text
-            print ( f">>DEBUG<< ======================== JS resp2.text ========================" )
-            print ( f"{self.yfn_jsdata}" )
+            self.yfn_jsdata = self.js_resp2.text    # store Full JAVAScript dataset handle
 
         # Xray DEBUG
         if self.args['bool_xray'] is True:
@@ -235,7 +228,6 @@ class yfnews_reader:
 
         symbol = symbol.upper()
         depth = int(depth)
-        #news_url = "https://www.whatismybrowser.com/detect/is-javascript-enabled"
         news_url = "https://finance.yahoo.com/quote/" + symbol + "/news?p=" + symbol      # form the correct URL
         logging.info( f'%s - Scan news for: {self.symbol} / {news_url}' % cmi_debug )
         logging.info('%s - Read html/json data using warm JS session' % cmi_debug )

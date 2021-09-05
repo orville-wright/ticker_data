@@ -380,11 +380,12 @@ def main():
         print ( "========== ** HACKING ** : Yahoo Finance News Sentiment AI =========================" )
         news_symbol = str(args['newsymbol'])            # symbol provided on CMDLine
         yfn = yfnews_reader(1, news_symbol, args )
-        yfn.yfn_bintro()
+        yfn.init_dummy_session()
+        #yfn.yfn_bintro()
         yfn.update_headers(news_symbol)
         yfn.form_url_endpoint(news_symbol)
-        yfn.do_js_get()
         yfn.do_simple_get()
+        #yfn.do_js_get()
         #yfn.scan_news_depth_0()
         #z.read_allnews_depth_0()                        # if bool_deep is not set, this does shallow extraction
 
