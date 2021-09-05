@@ -27,6 +27,7 @@ class y_newsfilter:
 
     # global accessors
     js_session = ""         # main requests session
+    self.news_pridata = ""
     soup = ""           # the entire HTML doc
     ul_tag_dataset = ""      # BS4 handle of the <tr> extracted data
     inst_uid = 0
@@ -62,22 +63,30 @@ class y_newsfilter:
         with self.js_session.get(news_url, stream=True, timeout=5 ) as self.js_resp0:
             logging.info('%s - JS_Request get() done' % cmi_debug )
 
+        self.js_resp0.html.render()
+        logging.info('%s - Javascript engine completed!' % cmi_debug )
+        logging.info('%s - Javascript quote : store FULL json dataset' % cmi_debug )
+        self.news_pridata = json.loads(self.js_resp0.text)
+        print ( f"{self.news_pridata}" ")
+        return
+
         """
         # s = requests.get( f"{news_url}", stream=True, timeout=5 )
         with urllib.request.urlopen( f"{news_url}" ) as url:
             # s = url.read()
             logging.info('%s - read html stream' % cmi_debug )
-        """
+
         self.soup = BeautifulSoup(self.js_resp0, "html.parser")
         logging.info('%s - save data object handle' % cmi_debug )
         self.ul_tag_dataset = self.soup.find(attrs={"class": "My(0) Ov(h) P(0) Wow(bw)"} )
         logging.info('%s - close main news page url handle' % cmi_debug )
         print ( f"Scanning {len(self.ul_tag_dataset)} news articles..." )
         return
-        
+
         # url.close()
         # s.close()
         #return
+        """
 
     def news_article_depth_1(self, url):
         """
