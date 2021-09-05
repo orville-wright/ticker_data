@@ -30,6 +30,7 @@ from y_newsloop import y_newsfilter
 from ml_cvbow import y_bow
 from bigcharts_md import bc_quote
 from marketwatch_md import mw_quote
+from ml_yahoofinews import yfnews_reader
 
 # Globals
 work_inst = 0
@@ -381,7 +382,7 @@ def main():
         yfn = yfnews_reader(1, news_symbol, args )
         #yfn.scan_news_depth_0()
         #z.read_allnews_depth_0()                        # if bool_deep is not set, this does shallow extraction
-    
+
     """
     if args['newsymbol'] is not False:
         print ( " " )
