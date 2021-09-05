@@ -5,8 +5,6 @@ import requests
 from requests_html import HTMLSession
 import urllib
 from urllib.parse import urlparse
-import re
-import logging
 import pandas as pd
 import numpy as np
 import re
@@ -54,15 +52,15 @@ class y_newsfilter:
         Returns a BS4 onbject handle pointing to correct news section for deep element extraction.
         """
         cmi_debug = __name__+"::"+self.scan_news_depth_0.__name__+".#"+str(self.inst_uid)
-        logging.info('%s - form API endpoint URL' % cmi_debug )
-
-        cmi_debug = __name__+"::"+self.scan_news_depth_0.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
         news_url = "https://finance.yahoo.com/quote/" + self.symbol + "/news?p=" + self.symbol      # form the correct URL
         print ( f"Looking at news for: {self.symbol}" )
         print ( f">>DEBUG<<: NEWS URL: {news_url}" )
         logging.info( f'%s - News URL: {news_url}' % cmi_debug )
-        s = requests.get( f"{news_url}", stream-True, timeout=5 )
+        with self.js_session.get(news_url, stream=True, timeout=5 ) as self.js_resp0:
+        logging.info('%s - JS_Request get() done' % cmi_debug )
+
+        # s = requests.get( f"{news_url}", stream=True, timeout=5 )
         """
         with urllib.request.urlopen( f"{news_url}" ) as url:
             # s = url.read()
