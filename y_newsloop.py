@@ -1,10 +1,9 @@
 #!/usr/bin/python3
-
-from bs4 import BeautifulSoup
 import requests
+from requests import Request, Session
 from requests_html import HTMLSession
-import urllib
 from urllib.parse import urlparse
+from bs4 import BeautifulSoup
 import pandas as pd
 import numpy as np
 import re
@@ -14,6 +13,7 @@ import time
 from datetime import datetime, date
 import threading
 import hashlib
+import json
 
 # logging setup
 logging.basicConfig(level=logging.INFO)
@@ -27,7 +27,7 @@ class y_newsfilter:
 
     # global accessors
     js_session = ""         # main requests session
-    self.news_pridata = ""
+    news_pridata = ""
     soup = ""           # the entire HTML doc
     ul_tag_dataset = ""      # BS4 handle of the <tr> extracted data
     inst_uid = 0
@@ -36,7 +36,6 @@ class y_newsfilter:
     ml_brief = []       # ML TXT matrix for Naieve Bayes Classifier pre Count Vectorizer
 
     def __init__(self, i, symbol, global_args):
-        # WARNING: There is/can-be NO checking to ensure this is a valid/real symbol
         cmi_debug = __name__+"::"+self.__init__.__name__
         logging.info('%s - INIT inst' % cmi_debug )
         self.args = global_args
@@ -56,19 +55,23 @@ class y_newsfilter:
 
         cmi_debug = __name__+"::"+self.scan_news_depth_0.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
-        news_url = "https://finance.yahoo.com/quote/" + self.symbol + "/news?p=" + self.symbol      # form the correct URL
+        news_url = "https://www.whatismybrowser.com/detect/is-javascript-enabled"
+        #news_url = "https://finance.yahoo.com/quote/" + self.symbol + "/news?p=" + self.symbol      # form the correct URL
+
         print ( f"Looking at news for: {self.symbol}" )
         print ( f">>DEBUG<<: NEWS URL: {news_url}" )
         logging.info( f'%s - News URL: {news_url}' % cmi_debug )
-        with self.js_session.get(news_url, stream=True, timeout=5 ) as self.js_resp0:
+        with self.js_session.get( f'{news_url}', stream=True, timeout=5 ) as self.js_resp0:
             logging.info('%s - JS_Request get() done' % cmi_debug )
 
         self.js_resp0.html.render()
         logging.info('%s - Javascript engine completed!' % cmi_debug )
         logging.info('%s - Javascript quote : store FULL json dataset' % cmi_debug )
-        self.news_pridata = json.loads(self.js_resp0.text)
-        print ( f"{self.news_pridata}" ")
+        self.news_pridata = json.loads(self.js_resp0)
+        #print ( f"{self.news_pridata} " )
+        print ( f">>DEBUG<< done!" )
         return
+
 
         """
         # s = requests.get( f"{news_url}", stream=True, timeout=5 )
