@@ -67,51 +67,40 @@ class yfnews_reader:
         return
 
 # method #1
-    def yfn_getdata(self):
+    def yfn_bintro(self):
         """
         Initial blind intro to yahoo.com/news JAVASCRIPT page
-        BeautifulSoup scraping requires on JS processed page.
-        note: Javascript engine is required, Cant process/read a JS page via requests().
+        NOTE: BeautifulSoup scraping required as no REST API endpoint is available.
+              Javascript engine processing may be required to process/read rich meida JS page data
         """
 
-        cmi_debug = __name__+"::"+self.yfn_getdata.__name__+".#"+str(self.yti)
+        cmi_debug = __name__+"::"+self.yfn_bintro.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
 
         # Initial blind get
-        # present ourself to NASDAQ.com so we can extract the critical cookie -> ak_bmsc
-        # be nice and set a healthy cookie package
+        # present ourself to yahoo.com so we can extract critical cookies
         logging.info('%s - blind intro get()' % cmi_debug )
         self.js_session.cookies.update(self.yahoo_headers)    # redundent as it's done in INIT but I'm not sure its persisting from there
         with self.js_session.get("https://www.finance.yahoo.com", stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
             logging.info('%s - EXTRACT/INSERT 8 special cookies  ' % cmi_debug )
-            #self.js_session.cookies.update({'APID': self.js_resp0.cookies['APID']} )    # NASDAQ cookie hack
-            #self.js_session.cookies.update({'d': self.js_resp0.cookies['d']} )    # NASDAQ cookie hack
-            #self.js_session.cookies.update({'v': self.js_resp0.cookies['v']} )    # NASDAQ cookie hack
-            #self.js_session.cookies.update({'A1': self.js_resp0.cookies['A1']} )    # NASDAQ cookie hack
-            #self.js_session.cookies.update({'A3': self.js_resp0.cookies['A3']} )    # NASDAQ cookie hack
-            #self.js_session.cookies.update({'GUC': self.js_resp0.cookies['GUC']} )    # NASDAQ cookie hack
-            #self.js_session.cookies.update({'t': self.js_resp0.cookies['t']} )    # NASDAQ cookie hack
-            #self.js_session.cookies.update({'APIDTS': self.js_resp0.cookies['APIDTS']} )    # NASDAQ cookie hack
+            # set secret cookie here
+            # self.js_session.cookies.update({'APID': self.js_resp0.cookies['APID']} )    # NASDAQ cookie hack
 
-        # 2nd get with the secret yahoo.com cookie now inserted
+        # 2nd get with the secret yahoo.com cookies now inserted
         # NOTE: Just the finaince.Yahoo.com MAIN landing page - generic news
         logging.info('%s - rest API read json' % cmi_debug )
         with self.js_session.get("https://www.finance.yahoo.com", stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp2:
             # read the webpage with our Javascript engine processor
-            logging.info('%s - Javascript engine processing...' % cmi_debug )
+            logging.info('%s - Javascript engine processing disabled...' % cmi_debug )
             #self.js_resp2.html.render()    # render JS page
             logging.info('%s - Javascript engine completed!' % cmi_debug )
 
-            # we can access pure 'Unusual VOlume' JSON data via an authenticated/valid REST API call
-            logging.info('%s - json data extracted' % cmi_debug )
+            # Setup some initial data structures via an authenticated/valid connection
             logging.info('%s - store FULL json dataset' % cmi_debug )
             # self.uvol_all_data = json.loads(self.js_resp2.text)
             logging.info('%s - store data 1' % cmi_debug )
-            # self.uvol_up_data =  self.uvol_all_data['data']['up']['table']['rows']
-            logging.info('%s - store data 2' % cmi_debug )
-            # self.uvol_down_data = self.uvol_all_data['data']['down']['table']['rows']
 
-         # Xray DEBUG
+        # Xray DEBUG
         if self.args['bool_xray'] is True:
             print ( f"================================ {self.yti} ======================================" )
             print ( f"=== session cookies ===\n" )
@@ -119,3 +108,170 @@ class yfnews_reader:
                 print ( f"{i}" )
 
         return
+
+# method #2
+    def scan_news_depth_0(self, symbol, depth):
+        """
+        TODO: add args - DEPTH (0, 1, 2) as opposed to multiple depth level methods
+              add args - symbol
+        Assumes connect setup/cookies/headers have all been previously setup
+        Read & process the raw news HTML data tables from a complex rich meida (highlevel) news parent webpage for an individual stock [Stock:News ].
+        Does not extract any news atricles, items or data fields. Just sets up the element extraction zone.
+        Returns a BS4 onbject handle pointing to correct news section for deep element extraction.
+        """
+        cmi_debug = __name__+"::"+self.scan_news_depth_0.__name__+".#"+str(self.yti)
+        logging.info('%s - IN' % cmi_debug )
+
+        symbol = symbol.upper()
+        depth = int(depth)
+        #news_url = "https://www.whatismybrowser.com/detect/is-javascript-enabled"
+        news_url = "https://finance.yahoo.com/quote/" + symbol + "/news?p=" + symbol      # form the correct URL
+        logging.info( f'%s - Scan news for: {self.symbol} / {news_url}' % cmi_debug )
+        logging.info('%s - Read html/json data using warm JS session' % cmi_debug )
+        # self.js_resp0.html.render()    # if we need to work on a Javascript page
+        self.yfn_all_data = json.loads(self.js_resp2)    # js_resp2 holds the page data
+        self.soup = BeautifulSoup(self.js_resp2, "html.parser")
+        logging.info('%s - save html/json BS4 data handle' % cmi_debug )
+        self.ul_tag_dataset = self.soup.find(attrs={"class": "My(0) Ov(h) P(0) Wow(bw)"} )
+        logging.info('%s - close main news page url handle' % cmi_debug )
+        logging.info('%s - Scanning {len(self.ul_tag_dataset)} news articles...' % cmi_debug )
+        # self.js_session.close()    # not sure we have to explicitly do this
+        return
+
+# method #2
+    def read_allnews_depth_0(self):
+        """
+        NOTE: assumes connection was previously setup
+              uses default JS session/request handles
+              This is main logic loop because we're at the TOP-level news page for this stock
+        1. cycle though the top-level NEWS page for this stock
+        2. prepare a list of ALL of the articles
+        3. For each article, extract some KEY high-level news elements (i.e. Headline, Brief, URL to real article
+        4. Wrangle, clean/convert/format the data correctly
+        """
+
+        # Data & Elements extrated and computed
+        # 1. article url path
+        # 2. Is news article url local (on Yahoo.com) or remotely hosted
+        # 3. Unique Sha256 Hash of URL
+        # 4. Brief (short article headline)
+        cmi_debug = __name__+"::"+self.read_allnews_depth_0.__name__+".#"+str(self.yti)
+        logging.info('%s - IN' % cmi_debug )
+        time_now = time.strftime("%H:%M:%S", time.localtime() )
+        x = 0    # num of new articiels read counter
+
+        # element zones from main dataset @ depth_0
+        li_superclass = self.ul_tag_dataset.find_all(attrs={"class": "js-stream-content Pos(r)"} )
+        li_subset = self.ul_tag_dataset.find_all('li')
+        mini_headline = self.ul_tag_dataset.div.find_all(attrs={'class': 'C(#959595)'})
+        #micro_headline = self.soup.find_all("i") #attrs={'class': 'Mx(4px)'})
+
+        mtd_0 = self.ul_tag_dataset.find_all('li')
+        #mtd_1 = self.ul_tag_dataset[1].find_all('li')
+        #mtd_2 = self.ul_tag_dataset[2].find_all('li')
+
+        r_url = l_url = 0
+        ml_ingest = {}
+        for datarow in range(len(mtd_0)):
+            html_element = mtd_0[datarow]
+            x += 1
+            # print ( f"====== News item: #{x} ===============" )     # DEBUG
+            # print ( f"News outlet: {html_element.div.find(attrs={'class': 'C(#959595)'}).string }" )     # DEBUG
+            data_parent = str( "{:.15}".format(html_element.div.find(attrs={'class': 'C(#959595)'}).string) )
+            #shorten down the above data element for the pandas DataFrame insert that happens later...
+
+            # FRUSTRATING element that cant be locally extracted from High-level page
+            # TODO: Figure out WHY? - getting this from main page would increase speed by 10x
+
+            # Identify Local or Remote news article
+            # An href that begins with http:// is link to external news outlet, otherwise it found a local Rescource Path /..../..../
+            rhl_url = False     # safety pre-set
+            url_p = urlparse(html_element.a.get('href'))
+            if url_p.scheme == "https" or url_p.scheme == "http":    # check URL scheme specifier
+                # print ( f"Remote news URL: {url_p.netloc}  - Artcile path: {url_p.path}" )     # DEBUG
+                data_outlet = url_p.netloc
+                data_path = url_p.path
+                rhl_url = True    # This URL is remote
+                r_url += 1        # count remote URLs
+            else:
+                # print ( f"Local news URL:  finance.yahoo.com  - Article path: {html_element.a.get('href')}" )     # DEBUG
+                l_url += 1        # count local URLs
+                data_outlet = 'finance.yahoo.com'
+                data_path = html_element.a.get('href')
+
+            # Short brief headline...
+            # print ( f"News headline: {html_element.a.text}" )
+            # print ( "Brief #: {} / News Short Brief: {:.400}".format(x, html_element.p.text) )    # truncate long Brief down to 400 chars
+            self.ml_brief.append(html_element.p.text)       # add Brief TXT into ML pre count vectorizer matrix
+
+            # URL unique hash
+            url_prehash = html_element.a.get('href')        # generate unuque hash for each URL. For dupe tests & comparrisons etc
+            result = hashlib.sha256(url_prehash.encode())
+            data_urlhash = result.hexdigest()
+            # print ( f"Hash encoded URL: {result.hexdigest()}" )     # DEBUG
+
+            # BIG logic decision here...!!!
+            if self.args['bool_deep'] is True:        # go DEEP & process each news article deeply?
+                if rhl_url == False:                  # yahoo,com local? or remote hosted non-yahoo.com article?
+                    a_deep_link = 'https://finance.yahoo.com' + url_prehash
+                    #
+                    deep_data = self.extract_article_data(a_deep_link)      # extract extra data from news article. Returned as list []
+                    #
+                    ml_inlist = [data_parent, data_outlet, url_prehash, deep_data[0], deep_data[3] ]
+                    ml_ingest[x] = ml_inlist        # add this data set to dict{}
+                    print ( "\r{} processed...".format(x), end='', flush=True )
+                    logging.info('%s - DEEP news article extratcion of 1 article...' % cmi_debug )
+                else:
+                    logging.info('%s - REMOTE Hard-linked URL - NOT Extracting NEWS from article...' % cmi_debug )
+            else:
+                logging.info('%s - Not DEEP processing NEWS articles' % cmi_debug )
+
+        print ( " " )
+        print ( f"Top level news articles evaluated: {x}")
+        print ( f"Local URLs: {l_url} / Remote URLs: {r_url}" )
+        print ( " " )
+        return ml_ingest        # returns a dict{} ready for ML pre-processing
+
+    # print ( f"== {erow}: == URL.div element: {a_subset[erow].name}" )
+    # print ( f" / Date: {a_subset[erow].time.text}" )         # Pretty data
+    # print ( f"== {erow}: == URL.div element: {a_subset[erow]}" )
+
+# method 4
+    def extract_article_data(self, news_article_url):
+        """
+        Complex html data extraction. Now get into the low-levl data components/elements within specific HTML news page.
+        WARN: This is extremley specific to a single https://finance.yahoo.com news article.
+        """
+
+        # data elements extracted & computed
+        # Authour, Date posted, Time posted, Age of article
+        cmi_debug = __name__+"::"+self.extract_article_data.__name__+".#"+str(self.yti)
+        logging.info('%s - IN' % cmi_debug )
+        right_now = date.today()
+
+        a_subset = self.news_article_depth_1(news_article_url)      # go DEEP into this 1 news HTML page & setup data extraction zones
+        # print ( f"Tag sections in news page: {len(a_subset)}" )   # DEBUG
+        for erow in range(len(a_subset)):       # cycyle through tag sections in this dataset (not predictible or consistent)
+            if a_subset[erow].time:     # if this element rown has a <time> tag...
+                nztime = a_subset[erow].time['datetime']
+                ndate = a_subset[erow].time.text
+                dt_ISO8601 = datetime.strptime(nztime, "%Y-%m-%dT%H:%M:%S.%fz")
+                if a_subset[erow].div:  # if this element row has a sub <div>
+                    nauthor = str( "{:.15}".format(a_subset[erow].div.find(attrs={'itemprop': 'name'}).text) )
+                    # nauthor = a_subset[erow].div.find(attrs={'itemprop': 'name'}).text
+                    #shorten down the above data element for the pandas DataFrame insert that happens later...
+
+            if self.args['bool_xray'] is True:        # DEBUG Xray
+                taglist = []
+                for tag in a_subset[erow].find_all(True):
+                    taglist.append(tag.name)
+                print ( "Unique tags:", set(taglist) )
+
+            logging.info('%s - Cycle: Follow News deep URL extratcion' % cmi_debug )
+
+        # print ( f"Details: {ndate} / Time: {dt_ISO8601} / Author: {nauthor}" )        # DEBUG
+        days_old = (dt_ISO8601.date() - right_now)
+        date_posted = str(dt_ISO8601.date())
+        time_posted = str(dt_ISO8601.time())
+        # print ( f"News article age: DATE: {date_posted} / TIME: {time_posted} / AGE: {abs(days_old.days)}" )  # DEBUG
+        return ( [nauthor, date_posted, time_posted, abs(days_old.days)] )  # return a list []

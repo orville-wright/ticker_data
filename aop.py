@@ -26,11 +26,11 @@ from screener_dg1 import screener_dg1
 from nasdaq_uvoljs import un_volumes
 from nasdaq_quotes import nquote
 from shallow_logic import shallow_combo
-from y_newsloop import y_newsfilter
 from ml_cvbow import y_bow
 from bigcharts_md import bc_quote
 from marketwatch_md import mw_quote
 from ml_yahoofinews import yfnews_reader
+#from y_newsloop import y_newsfilter
 
 # Globals
 work_inst = 0
