@@ -56,7 +56,7 @@ class y_newsfilter:
         print ( f">>DEBUG<<: NEWS URL: {news_url}" )
         logging.info( f'%s - URL: {news_url}' % (cmi_debug) )
         print ( f"Looking at news for: {self.symbol}" )
-        with urllib.request.urlopen(news_url) as url:
+        with urllib.request.urlopen( f"{news_url}" ) as url:
             s = url.read()
             logging.info('%s - read html stream' % cmi_debug )
             self.soup = BeautifulSoup(s, "html.parser")
