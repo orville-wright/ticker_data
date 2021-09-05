@@ -143,7 +143,7 @@ class yfnews_reader:
         # NOTE: assumes that path header/cookie has been set first
         cmi_debug = __name__+"::"+self.form_url_endpoint.__name__+".#"+str(self.yti)
         logging.info( f'%s - form URL endpoint for: {symbol}' % cmi_debug )
-        self.yfqnews_url = 'https://finance.yahoo.com/' + self.path    # use global accessor (so all paths are consistent)
+        self.yfqnews_url = 'https://finance.yahoo.com' + self.path    # use global accessor (so all paths are consistent)
         logging.info('finance.yahoo.com::form_api_endpoint.## - API endpoint URL: %s' % self.yfqnews_url )
         self.yfqnews_url = self.yfqnews_url
         return
@@ -188,6 +188,8 @@ class yfnews_reader:
             logging.info('%s - Javascript engine completed!' % cmi_debug )
             logging.info('%s - Store FULL Javascript response dataset' % cmi_debug )
             self.yfn_pridata = self.js_resp2.text
+            print ( f">>DEBUG<< =========================== resp2.text =================" )
+            print ( f"{self.yfn_pridata}" )
 
         # Xray DEBUG
         if self.args['bool_xray'] is True:
