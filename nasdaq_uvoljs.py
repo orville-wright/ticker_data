@@ -62,10 +62,12 @@ class un_volumes:
 
 # method #1
     def get_un_vol_data(self):
-        """Access NEW nasdaq.com JAVASCRIPT page [unusual volume] and extract the native JSON dataset"""
-        """JSON dataset contains *BOTH* UP vol & DOWN vol for top 25 symbols, right now!"""
-        """NO BeautifulSOup scraping needed anymore. We access the pure JSON datset via native API rest call"""
-        """note: Javascript engine is required, Cant process/read a JS page via requests(). The get() hangs forever"""
+        """
+        Access NEW nasdaq.com JAVASCRIPT page [unusual volume] and extract the native JSON dataset
+        JSON dataset contains *BOTH* UP vol & DOWN vol for top 25 symbols, right now
+        NO BeautifulSOup scraping needed anymore. We access the pure JSON datset via native API rest call
+        note: Javascript engine is required, Cant process/read a JS page via requests(). The get() hangs forever
+        """
 
         cmi_debug = __name__+"::"+self.get_un_vol_data.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
