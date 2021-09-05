@@ -74,7 +74,7 @@ class yfnews_reader:
         note: Javascript engine is required, Cant process/read a JS page via requests().
         """
 
-        cmi_debug = __name__+"::"+self.yfn_bintro.__name__+".#"+str(self.yti)
+        cmi_debug = __name__+"::"+self.yfn_getdata.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
 
         # Initial blind get
