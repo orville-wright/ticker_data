@@ -232,13 +232,12 @@ class yfnews_reader:
         logging.info( f'%s - Scan news for: {symbol} / {self.yfqnews_url}' % cmi_debug )
         if scan_type == 0:    # Simple HTML BS4 scraper
             logging.info( '%s - Read HTML/json data using pre-init session: resp0' % cmi_debug )
-            self.soup = BeautifulSoup(self.yfn_all_data, "html.parser")
+            self.soup = BeautifulSoup(self.yfn_htmldata, "html.parser")
             self.ul_tag_dataset = self.soup.find(attrs={"class": "My(0) P(0) Wow(bw) Ov(h)"} )
         else:
             logging.info( '%s - Read JavaScript/json data using pre-init session: resp2' % cmi_debug )
             self.js_resp2.html.render()    # WARN: Assumes sucessfull JavaScript get was previously issued
-            self.yfn_all_data = json.loads(self.js_resp2)    # js_resp2 holds the page data
-            self.soup = BeautifulSoup(self.yfn_all_data, "html.parser")
+            self.soup = BeautifulSoup(self.yfn_jsdata, "html.parser")
             logging.info('%s - save JavaScript-engine/json BS4 data handle' % cmi_debug )
             self.ul_tag_dataset = self.soup.find(attrs={"class": "My(0) P(0) Wow(bw) Ov(h)"} )    # TODO: might be diff for JS engine output
             #self.ul_tag_dataset = self.soup.find(attrs={"class": "My(0) Ov(h) P(0) Wow(bw)"} )    # TODO: might be diff for JS engine output
