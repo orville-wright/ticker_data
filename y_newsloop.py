@@ -53,6 +53,7 @@ class y_newsfilter:
         cmi_debug = __name__+"::"+self.scan_news_depth_0.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
         news_url = "https://finance.yahoo.com/quote/" + self.symbol + "/news?p=" + self.symbol      # form the correct URL
+        print ( f">>DEBUG<<: NEWS URL: {news_url}" )
         logging.info( f'%s - URL: {news_url}' % (cmi_debug) )
         print ( f"Looking at news for: {self.symbol}" )
         with urllib.request.urlopen(news_url) as url:
