@@ -61,7 +61,6 @@ class y_newsfilter:
         logging.info( f'%s - News URL: {news_url}' % cmi_debug )
         with self.js_session.get(news_url, stream=True, timeout=5 ) as self.js_resp0:
             logging.info('%s - JS_Request get() done' % cmi_debug )
-        return
 
         """
         # s = requests.get( f"{news_url}", stream=True, timeout=5 )
@@ -69,15 +68,17 @@ class y_newsfilter:
             # s = url.read()
             logging.info('%s - read html stream' % cmi_debug )
         """
-        self.soup = BeautifulSoup(s, "html.parser")
+        self.soup = BeautifulSoup(self.js_resp0, "html.parser")
         logging.info('%s - save data object handle' % cmi_debug )
         self.ul_tag_dataset = self.soup.find(attrs={"class": "My(0) Ov(h) P(0) Wow(bw)"} )
         logging.info('%s - close main news page url handle' % cmi_debug )
         print ( f"Scanning {len(self.ul_tag_dataset)} news articles..." )
+        return
+        
         # url.close()
         # s.close()
         #return
-        
+
     def news_article_depth_1(self, url):
         """
         Analyze 1 (ONE) individual news article taken from the list of article within the MAIN news HTNML page
