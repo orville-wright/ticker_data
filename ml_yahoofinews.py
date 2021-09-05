@@ -52,11 +52,12 @@ class yfnews_reader:
                     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36' }
 
 
-    def __init__(self, yti, global_args):
+    def __init__(self, yti, symbol, global_args):
         cmi_debug = __name__+"::"+self.__init__.__name__
         logging.info('%s - INIT' % cmi_debug )
         # init empty DataFrame with preset colum names
-        self.args = global_args                                # Only set once per INIT. all methods are set globally
+        self.args = global_args
+        self.symbol = symbol
         #self.up_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ] )
         #self.down_df1 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ] )
         #self.df2 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ] )
