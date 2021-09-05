@@ -122,6 +122,12 @@ class yfnews_reader:
         self.path = '/quote/' + self.symbol + '/news?p=' + self.symbol
         self.js_session.cookies.update({'path': self.path} )
         logging.info('finance.yahoo::update_headers.## - cookies/headers path: object: %s' % self.path )
+
+        if self.args['bool_xray'] is True:
+            print ( f"=========================== {self.yti / session cookies} =================================" )
+            for i in self.js_session.cookies.items():
+                print ( f"{i}" )
+
         return
 
 # method 3
@@ -133,10 +139,11 @@ class yfnews_reader:
         return
 
 # method 4
-    def form_api_endpoint(self, symbol):
-        # This is the explicit quote URL that is used for the req get()
-        cmi_debug = __name__+"::"+self.form_api_endpoint.__name__+".#"+str(self.yti)
-        logging.info('%s - form API endpoint URL' % cmi_debug )
+    def form_url_endpoint(self, symbol):
+        # This is the explicit NEWS URL that is used for the request get()
+        # NOTE: assumes that path header/cookie has been set first
+        cmi_debug = __name__+"::"+self.form_url_endpoint.__name__+".#"+str(self.yti)
+        logging.info( f'%s - form URL endpoint for: {symbol}' % cmi_debug )
         self.yfqnews_url = 'https://finance.yahoo.com/' + self.path    # use global accessor (so all paths are consistent)
         logging.info('finance.yahoo.com::form_api_endpoint.## - API endpoint URL: %s' % self.quote_url )
         self.yfqnews_url = self.yfqnews_url
