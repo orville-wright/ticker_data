@@ -197,7 +197,7 @@ class yfnews_reader:
         NOTE: get URL is assumed to have allready been set (self.yfqnews_url)
               Assumes cookies have already been set up. NO cookie update done here
         """
-        cmi_debug = __name__+"::"+self.get_js_nquote.__name__+".#"+str(self.yti)
+        cmi_debug = __name__+"::"+self.do_js_get.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         self.symbol = symbol
         with self.js_session.get(self.yfqnews_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp2:
