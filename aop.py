@@ -376,6 +376,15 @@ def main():
 
     if args['newsymbol'] is not False:
         print ( " " )
+        print ( "========== ** HACKING ** : Yahoo Finance News Sentiment AI =========================" )
+        news_symbol = str(args['newsymbol'])            # symbol provided on CMDLine
+        yfn = yfnews_reader(1, news_symbol, args )
+        #yfn.scan_news_depth_0()
+        #z.read_allnews_depth_0()                        # if bool_deep is not set, this does shallow extraction
+    
+    """
+    if args['newsymbol'] is not False:
+        print ( " " )
         print ( "========== ** HACKING ** : News Sentiment Ai =======================================" )
         news_symbol = str(args['newsymbol'])            # symbol provided on CMDLine
         z = y_newsfilter(1, news_symbol, args )
@@ -391,6 +400,7 @@ def main():
             print ( " " )
         else:
             z.read_allnews_depth_0()                        # just do a shallow extraction for ML level 1 testing
+        """
 
 # 1-off quote - 3 differnt methods to get a quote ###############################
 # TODO: Add a 4th method - via alpaca live API
