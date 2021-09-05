@@ -87,7 +87,7 @@ class yfnews_reader:
         with self.js_session.get("https://www.finance.yahoo.com", stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
             logging.info('%s - EXTRACT/INSERT 8 special cookies  ' % cmi_debug )
             # set secret cookie here
-            # self.js_session.cookies.update({'APID': self.js_resp0.cookies['APID']} )    # NASDAQ cookie hack
+            # self.js_session.cookies.update({'APID': self.js_resp0.cookies['APID']} )    # yahoo cookie hack
 
         # 2nd get with the secret yahoo.com cookies now inserted
         # NOTE: Just the finaince.Yahoo.com MAIN landing page - generic news
@@ -171,7 +171,7 @@ class yfnews_reader:
 
         with self.js_session.get('https://www.finance.yahoo.com', stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
             logging.info('%s - extract & update GOOD cookie  ' % cmi_debug )
-            self.js_session.cookies.update({'?????': self.js_resp0.cookies['?????']} )    # NASDAQ cookie hack
+            self.js_session.cookies.update({'?????': self.js_resp0.cookies['?????']} )    # yahoo cookie hack
         # if the get() succeds, the response handle is automatically saved in Class Global accessor -> self.js_resp0
         return
 
@@ -181,7 +181,7 @@ class yfnews_reader:
         cmi_debug = __name__+"::"+self.get_js_nquote.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         self.symbol = symbol
-        with self.js_session.get(self.yfqnews_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp2:
+        with self.js_session.get(self.yfqnews_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp2:
             # read the webpage with our Javascript engine processor
             logging.info('%s - Javascript engine processing...' % cmi_debug )
             self.js_resp2.html.render()    # this isn't needed for this URL becuase is a RAW JSON output page. NOT Javascript
