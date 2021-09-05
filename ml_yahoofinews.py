@@ -62,17 +62,18 @@ class yfnews_reader:
         # init empty DataFrame with preset colum names
         self.args = global_args
         self.symbol = symbol
-        #self.up_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ] )
-        #self.down_df1 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ] )
-        #self.df2 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ] )
         self.yti = yti
         self.js_session = HTMLSession()                        # init JAVAScript processor early
         self.js_session.cookies.update(self.yahoo_headers)     # load cookie/header hack data set into session
+        #self.up_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ] )
+        #self.down_df1 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ] )
+        #self.df2 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ] )
         return
 
 # method #1
     def yfn_bintro(self):
         """
+        DELETE ME - redundent
         Initial blind intro to yahoo.com/news JAVASCRIPT page
         NOTE: BeautifulSoup scraping required as no REST API endpoint is available.
               Javascript engine processing may be required to process/read rich meida JS page data
@@ -158,7 +159,7 @@ class yfnews_reader:
 
         with self.js_session.get('https://www.finance.yahoo.com', stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
             logging.info('%s - extract & update GOOD cookie  ' % cmi_debug )
-            self.js_session.cookies.update({'B': self.js_resp0.cookies['B']} )    # yahoo cookie hack
+            # self.js_session.cookies.update({'B': self.js_resp0.cookies['B']} )    # yahoo cookie hack
             # if the get() succeds, the response handle is automatically saved in Class Global accessor -> self.js_resp0
         return
 
@@ -214,10 +215,11 @@ class yfnews_reader:
 
 # session data extraction methods ##############################################
 # method #8
-    def scan_news_depth_0(self, symbol, depth):
+    def scan_news_depth_0(self, symbol, depth, scan_type):
         """
         TODO: add args - DEPTH (0, 1, 2) as opposed to multiple depth level methods
               add args - symbol
+              add arge - JavaScript or HTML processor logic
         Assumes connect setup/cookies/headers have all been previously setup
         Read & process the raw news HTML data tables from a complex rich meida (highlevel) news parent webpage for an individual stock [Stock:News ].
         Does not extract any news atricles, items or data fields. Just sets up the element extraction zone.
@@ -225,20 +227,25 @@ class yfnews_reader:
         """
         cmi_debug = __name__+"::"+self.scan_news_depth_0.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
-
         symbol = symbol.upper()
         depth = int(depth)
-        news_url = "https://finance.yahoo.com/quote/" + symbol + "/news?p=" + symbol      # form the correct URL
-        logging.info( f'%s - Scan news for: {self.symbol} / {news_url}' % cmi_debug )
-        logging.info('%s - Read html/json data using warm JS session' % cmi_debug )
-        # self.js_resp0.html.render()    # if we need to work on a Javascript page
-        self.yfn_all_data = json.loads(self.js_resp2)    # js_resp2 holds the page data
-        self.soup = BeautifulSoup(self.js_resp2, "html.parser")
-        logging.info('%s - save html/json BS4 data handle' % cmi_debug )
-        self.ul_tag_dataset = self.soup.find(attrs={"class": "My(0) Ov(h) P(0) Wow(bw)"} )
-        logging.info('%s - close main news page url handle' % cmi_debug )
-        logging.info('%s - Scanning {len(self.ul_tag_dataset)} news articles...' % cmi_debug )
-        # self.js_session.close()    # not sure we have to explicitly do this
+        logging.info( f'%s - Scan news for: {symbol} / {self.yfqnews_url}' % cmi_debug )
+        if scan_type == 0:    # Simple HTML BS4 scraper
+            logging.info( '%s - Read HTML/json data using pre-init session: resp0' % cmi_debug )
+            # self.js_resp0.html.render()    # if we need to work on a Javascript page
+            self.yfn_all_data = json.loads(self.js_resp0)    # js_resp2 holds the page data
+            logging.info('%s - save simple html/json BS4 data handle' % cmi_debug )
+            self.soup = BeautifulSoup(self.yfn_all_data, "html.parser")
+            self.ul_tag_dataset = self.soup.find(attrs={"class": "My(0) Ov(h) P(0) Wow(bw)"} )
+        else:
+            logging.info( '%s - Read JavaScript/json data using pre-init session: resp2' % cmi_debug )
+            self.js_resp2.html.render()    # WARN: Assumes sucessfull JavaScript get was previously issued
+            self.yfn_all_data = json.loads(self.js_resp2)    # js_resp2 holds the page data
+            self.soup = BeautifulSoup(self.yfn_all_data, "html.parser")
+            logging.info('%s - save JavaScript-engine/json BS4 data handle' % cmi_debug )
+            self.ul_tag_dataset = self.soup.find(attrs={"class": "My(0) Ov(h) P(0) Wow(bw)"} )    # TODO: might be diff for JS engine output
+        
+        logging.info('%s - Found {len(self.ul_tag_dataset)} news articles...' % cmi_debug )
         return
 
 # method #9
