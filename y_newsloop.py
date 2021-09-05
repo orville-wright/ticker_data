@@ -26,6 +26,7 @@ class y_newsfilter:
     """
 
     # global accessors
+    js_session = ""         # main requests session
     soup = ""           # the entire HTML doc
     ul_tag_dataset = ""      # BS4 handle of the <tr> extracted data
     inst_uid = 0
@@ -51,6 +52,7 @@ class y_newsfilter:
         Does not extract any news atricles, items or data fields. Just sets up the element extraction zone.
         Returns a BS4 onbject handle pointing to correct news section for deep element extraction.
         """
+
         cmi_debug = __name__+"::"+self.scan_news_depth_0.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
         news_url = "https://finance.yahoo.com/quote/" + self.symbol + "/news?p=" + self.symbol      # form the correct URL
@@ -58,10 +60,11 @@ class y_newsfilter:
         print ( f">>DEBUG<<: NEWS URL: {news_url}" )
         logging.info( f'%s - News URL: {news_url}' % cmi_debug )
         with self.js_session.get(news_url, stream=True, timeout=5 ) as self.js_resp0:
-        logging.info('%s - JS_Request get() done' % cmi_debug )
+            logging.info('%s - JS_Request get() done' % cmi_debug )
+        return
 
-        # s = requests.get( f"{news_url}", stream=True, timeout=5 )
         """
+        # s = requests.get( f"{news_url}", stream=True, timeout=5 )
         with urllib.request.urlopen( f"{news_url}" ) as url:
             # s = url.read()
             logging.info('%s - read html stream' % cmi_debug )
@@ -72,9 +75,9 @@ class y_newsfilter:
         logging.info('%s - close main news page url handle' % cmi_debug )
         print ( f"Scanning {len(self.ul_tag_dataset)} news articles..." )
         # url.close()
-        s.close()
-        return
-
+        # s.close()
+        #return
+        
     def news_article_depth_1(self, url):
         """
         Analyze 1 (ONE) individual news article taken from the list of article within the MAIN news HTNML page
