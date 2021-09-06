@@ -246,8 +246,9 @@ class yfnews_reader:
             self.ul_tag_dataset = self.soup.find(attrs={"class": "My(0) P(0) Wow(bw) Ov(h)"} )    # TODO: might be diff for JS engine output
             #self.ul_tag_dataset = self.soup.find(attrs={"class": "My(0) Ov(h) P(0) Wow(bw)"} )    # TODO: might be diff for JS engine output
 
-        logging.info( f'%s - Found: {len(self.ul_tag_dataset)} {symbol} news sections...' % cmi_debug )
-        logging.info( f'%s - Located: {len(list(self.ul_tag_dataset.children))} {symbol} zones / {len(list(li_superclass))} articles / {len(list(mini_headline))} Headlines' % cmi_debug )
+        logging.info( f'%s - Found: {symbol} / {len(self.ul_tag_dataset)} news sections...' % cmi_debug )
+        logging.info( f'%s - Located: {symbol} / {len(list(self.ul_tag_dataset.children))} children / {len(list(self.ul_tag_dataset.descendants))} descendants' % cmi_debug )
+        logging.info( f'%s - Discovered: {symbol} / {len(list(li_superclass))} articles / {len(list(mini_headline))} Headlines' % cmi_debug )
         #print ( f"{self.ul_tag_dataset.contents}" )
         return
 
