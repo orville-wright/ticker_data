@@ -387,9 +387,7 @@ def main():
         yfn.do_simple_get()
         yfn.scan_news_depth_0(news_symbol, 0, 0)
         #yfn.do_js_get()
-
-        #yfn.scan_news_depth_0()
-        #z.read_allnews_depth_0()                        # if bool_deep is not set, this does shallow extraction
+        yfn.read_allnews_depth_0()                        # if bool_deep is not set, this does shallow extraction
 
     """
     if args['newsymbol'] is not False:
