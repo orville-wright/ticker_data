@@ -305,12 +305,12 @@ class yfnews_reader:
         x = 0    # num of new articiels read counter
 
         # element zones from main dataset @ depth_0
-        li_superclass = self.ul_tag_dataset.find_all(attrs={"class": "js-stream-content Pos(r)"} )
+        li_superclass_all = self.ul_tag_dataset.find_all(attrs={"class": "js-stream-content Pos(r)"} )
         li_subset_all = self.ul_tag_dataset.find_all('li')
         mini_headline_all = self.ul_tag_dataset.div.find_all(attrs={'class': 'C(#959595)'})
         #micro_headline = self.soup.find_all("i") #attrs={'class': 'Mx(4px)'})
 
-        mtd_0 = self.ul_tag_dataset.find_all('li')
+        mtd_0 = li_subset_all    # self.ul_tag_dataset.find_all('li')
         #mtd_1 = self.ul_tag_dataset[1].find_all('li')
         #mtd_2 = self.ul_tag_dataset[2].find_all('li')
 
