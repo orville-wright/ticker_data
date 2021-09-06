@@ -139,8 +139,17 @@ class yfnews_reader:
 
 # method 4
     def form_url_endpoint(self, symbol):
-        # This is the explicit NEWS URL that is used for the request get()
-        # NOTE: assumes that path header/cookie has been set first
+        """
+        This is the explicit NEWS URL that is used for the request get()
+        NOTE: assumes that path header/cookie has been set first
+        #
+        URL endpoints available (examples)
+        All related news        - https://finance.yahoo.com/quote/IBM/?p=IBM
+        Symbol specific news    - https://finance.yahoo.com/quote/IBM/news?p=IBM
+        Symbol press releases   - https://finance.yahoo.com/quote/IBM/press-releases?p=IBM
+        Symbol research reports - https://finance.yahoo.com/quote/IBM/reports?p=IBM
+        """
+
         cmi_debug = __name__+"::"+self.form_url_endpoint.__name__+".#"+str(self.yti)
         logging.info( f'%s - form URL endpoint for: {symbol}' % cmi_debug )
         self.yfqnews_url = 'https://finance.yahoo.com' + self.path    # use global accessor (so all paths are consistent)
@@ -235,7 +244,8 @@ class yfnews_reader:
             self.soup = BeautifulSoup(self.yfn_htmldata, "html.parser")
             self.ul_tag_dataset = self.soup.find(attrs={"class": "My(0) P(0) Wow(bw) Ov(h)"} )
             # Depth 0 element zones
-            li_superclass = self.ul_tag_dataset.find_all(attrs={"class": "js-stream-content Pos(r)"} )
+            #li_superclass = self.ul_tag_dataset.find_all(attrs={"class": "js-stream-content Pos(r)"} )
+            li_superclass = self.ul_tag_dataset.find(attrs={"class": "js-stream-content Pos(r)"} )
             li_subset = self.ul_tag_dataset.find_all('li')
             mini_headline = self.ul_tag_dataset.div.find_all(attrs={'class': 'C(#959595)'})
         else:
@@ -251,9 +261,12 @@ class yfnews_reader:
         logging.info( f'%s - Discovered: {symbol} / {len(list(li_superclass))} articles / {len(list(mini_headline))} Headlines' % cmi_debug )
         #print ( f"{self.ul_tag_dataset.contents}" )
         #print ( f"{li_superclass}"
-        for child in li_subset.children:
+
+        #for child in li_superclass.descendants:
+        for child in self.ul_tag_dataset.children:
+            print ( f"==================== Top =========================" )
             print ( f"{child}" )
-            print ( f"============================================" )
+            print ( f"==================== End ========================" )
     
         return
 
