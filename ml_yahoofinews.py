@@ -234,6 +234,10 @@ class yfnews_reader:
             logging.info( '%s - Read HTML/json data using pre-init session: resp0' % cmi_debug )
             self.soup = BeautifulSoup(self.yfn_htmldata, "html.parser")
             self.ul_tag_dataset = self.soup.find(attrs={"class": "My(0) P(0) Wow(bw) Ov(h)"} )
+            # Depth 0 element zones
+            li_superclass = self.ul_tag_dataset.find_all(attrs={"class": "js-stream-content Pos(r)"} )
+            li_subset = self.ul_tag_dataset.find_all('li')
+            mini_headline = self.ul_tag_dataset.div.find_all(attrs={'class': 'C(#959595)'})
         else:
             logging.info( '%s - Read JavaScript/json data using pre-init session: resp2' % cmi_debug )
             self.js_resp2.html.render()    # WARN: Assumes sucessfull JavaScript get was previously issued
@@ -242,8 +246,8 @@ class yfnews_reader:
             self.ul_tag_dataset = self.soup.find(attrs={"class": "My(0) P(0) Wow(bw) Ov(h)"} )    # TODO: might be diff for JS engine output
             #self.ul_tag_dataset = self.soup.find(attrs={"class": "My(0) Ov(h) P(0) Wow(bw)"} )    # TODO: might be diff for JS engine output
 
-        logging.info( f'%s - Found {len(self.ul_tag_dataset)} {symbol} news sections...' % cmi_debug )
-        logging.info( f'%s - Found {len(list(self.ul_tag_dataset.children))} {symbol} news articles...' % cmi_debug )
+        logging.info( f'%s - Found: {len(self.ul_tag_dataset)} {symbol} news sections...' % cmi_debug )
+        logging.info( f'%s - Located: {len(list(self.ul_tag_dataset.children))} {symbol} zones / {len(list(li_superclass))} articles / {len(list(mini_headline))} Headlines' % cmi_debug )
         #print ( f"{self.ul_tag_dataset.contents}" )
         return
 
