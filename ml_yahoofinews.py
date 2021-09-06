@@ -3,6 +3,7 @@ import requests
 from requests import Request, Session
 from requests_html import HTMLSession
 from bs4 import BeautifulSoup
+from urllib.parse import urlparse
 import pandas as pd
 import numpy as np
 import re
