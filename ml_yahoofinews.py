@@ -250,6 +250,11 @@ class yfnews_reader:
         logging.info( f'%s - Located: {symbol} / {len(list(self.ul_tag_dataset.children))} children / {len(list(self.ul_tag_dataset.descendants))} descendants' % cmi_debug )
         logging.info( f'%s - Discovered: {symbol} / {len(list(li_superclass))} articles / {len(list(mini_headline))} Headlines' % cmi_debug )
         #print ( f"{self.ul_tag_dataset.contents}" )
+        #print ( f"{li_superclass}"
+        for child in li_subset.children:
+            print ( f"{child}" )
+            print ( f"============================================" )
+    
         return
 
 # method #9
