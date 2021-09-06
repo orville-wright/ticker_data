@@ -259,16 +259,16 @@ class yfnews_reader:
             self.ul_tag_dataset = self.soup.find(attrs={"class": "My(0) P(0) Wow(bw) Ov(h)"} )    # TODO: might be diff for JS engine output
             #self.ul_tag_dataset = self.soup.find(attrs={"class": "My(0) Ov(h) P(0) Wow(bw)"} )    # TODO: might be diff for JS engine output
 
-        logging.info( f'%s - Found: {symbol} / {len(self.ul_tag_dataset)} news sections...' % cmi_debug )
-        logging.info( f'%s - Located: {symbol} / {len(list(self.ul_tag_dataset.children))} children / {len(list(self.ul_tag_dataset.descendants))} descendants' % cmi_debug )
-        logging.info( f'%s - Discovered: {symbol} / {len(list(li_superclass_all))} articles / {len(list(mini_headline_all))} Headlines' % cmi_debug )
+        logging.info( f'%s - Found: dataset / {len(self.ul_tag_dataset)}' % cmi_debug )
+        logging.info( f'%s - dataset.children / {len(list(self.ul_tag_dataset.children))} / {len(list(self.ul_tag_dataset.descendants))} dataset descendants' % cmi_debug )
+        logging.info( f'%s - li_all: {symbol} / {len(list(li_superclass_all))} / {len(list(mini_headline_all))} headlines all' % cmi_debug )
         #print ( f"{self.ul_tag_dataset.contents}" )
         #print ( f"{li_superclass}"
 
 
         #for child in li_superclass.descendants:
 
-        for child in self.ul_tag_dataset.children:
+        for child in self.ul_tag_dataset.li:
             print ( f"==================== Top =========================" )
             print ( f"{child.name}" )
             for element in child.descendants:
