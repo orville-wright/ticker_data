@@ -268,7 +268,7 @@ class yfnews_reader:
 
         #for child in li_superclass.descendants:
 
-        for child in self.ul_tag_dataset.li:
+        for child in self.ul_tag_dataset:
             print ( f"==================== Top =========================" )
             print ( f"{child.name}" )
             for element in child.descendants:
