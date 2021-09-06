@@ -272,10 +272,12 @@ class yfnews_reader:
             print ( f"{child}" )
             print ( f"==================== End ========================" )
 
-        for element in li_subset_one.next_elements:
-            print ( f"==================== Top =========================" )
-            print(repr(element))
-            print ( f"==================== Top =========================" )
+        for element in self.ul_tag_dataset.children:
+            print ( f"==================== Start =========================" )
+            #print(repr(element))
+            print ( f"/, end='', stream=True" )
+            print ( f"\, end='', stream=True" )
+            print ( f"===================== End ==========================" )
 
         return
 
