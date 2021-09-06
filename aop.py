@@ -385,8 +385,8 @@ def main():
         yfn.update_headers(news_symbol)
         yfn.form_url_endpoint(news_symbol)
         yfn.do_simple_get()
-        yfn.scan_news_depth_0(news_symbol, 0, 0)
         #yfn.do_js_get()
+        yfn.scan_news_depth_0(news_symbol, 0, 0)
         yfn.read_allnews_depth_0()                        # if bool_deep is not set, this does shallow extraction
 
     """

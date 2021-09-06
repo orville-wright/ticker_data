@@ -34,8 +34,8 @@ class yfnews_reader:
     js_resp0 = ""           # HTML session get() - response handle
     js_resp2 = ""           # JAVAScript session get() - response handle
     yfn_all_data =""        # JSON dataset contains ALL data
-    yfn_htmldata = ""
-    yfn_jsdata = ""
+    yfn_htmldata = ""       # Page in HTML
+    yfn_jsdata = ""         # Page in JavaScript-HTML
     ml_brief = []           # ML TXT matrix for Naieve Bayes Classifier pre Count Vectorizer
     ul_tag_dataset = ""     # BS4 handle of the <tr> extracted data
     yfn_df0 = ""            # DataFrame 1
@@ -187,7 +187,7 @@ class yfnews_reader:
         with self.js_session.get(self.yfqnews_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
             logging.info('%s - Simple HTML Request get() completed!- store HTML response dataset' % cmi_debug )
             self.yfn_htmldata = self.js_resp0.text
-            # if get() succeds, the response is automatically saved in Class Global accessor -> self.js_resp0
+            # On success, HTML response is saved in Class Global accessor -> self.js_resp0
             # TODO: should do some get() failure testing here
 
         # Xray DEBUG
@@ -210,7 +210,7 @@ class yfnews_reader:
         logging.info('%s - IN' % cmi_debug )
         with self.js_session.get(self.yfqnews_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp2:
             logging.info('%s - Javascript engine processing...' % cmi_debug )
-            # if get() succeds, raw HTML (non-JS) response is automatically saved in Class Global accessor -> self.js_resp2
+            # on scussess, raw HTML (non-JS) response is saved in Class Global accessor -> self.js_resp2
             self.js_resp2.html.render()
             # TODO: should do some get() failure testing here
             logging.info('%s - Javascript engine completed! - store JS response dataset' % cmi_debug )
@@ -229,9 +229,10 @@ class yfnews_reader:
 # method #8
     def scan_news_depth_0(self, symbol, depth, scan_type):
         """
+        Evaluates the news items found. Prints stats, but doesnt create any usable structs
         TODO: add args - DEPTH (0, 1, 2) as opposed to multiple depth level methods
               add args - symbol
-              add arge - JavaScript or HTML processor logic
+              add arge - 0 = HTML processor logic / 1 = JavaScript processor logic
         Assumes connect setup/cookies/headers have all been previously setup
         Read & process the raw news HTML data tables from a complex rich meida (highlevel) news parent webpage for an individual stock [Stock:News ].
         Does not extract any news atricles, items or data fields. Just sets up the element extraction zone.
@@ -245,7 +246,7 @@ class yfnews_reader:
         if scan_type == 0:    # Simple HTML BS4 scraper
             logging.info( '%s - Read HTML/json data using pre-init session: resp0' % cmi_debug )
             self.soup = BeautifulSoup(self.yfn_htmldata, "html.parser")
-            self.ul_tag_dataset = self.soup.find(attrs={"class": "My(0) P(0) Wow(bw) Ov(h)"} )
+            self.ul_tag_dataset = self.soup.find(attrs={"class": "My(0) P(0) Wow(bw) Ov(h)"} )    # produces : list iterator
             # Depth 0 element zones
             #li class = where the data is hiding
             li_superclass_all = self.ul_tag_dataset.find_all(attrs={"class": "js-stream-content Pos(r)"} )
@@ -260,25 +261,24 @@ class yfnews_reader:
             self.soup = BeautifulSoup(self.yfn_jsdata, "html.parser")
             logging.info('%s - save JavaScript-engine/json BS4 data handle' % cmi_debug )
             self.ul_tag_dataset = self.soup.find(attrs={"class": "My(0) P(0) Wow(bw) Ov(h)"} )    # TODO: might be diff for JS engine output
-            #self.ul_tag_dataset = self.soup.find(attrs={"class": "My(0) Ov(h) P(0) Wow(bw)"} )    # TODO: might be diff for JS engine output
 
-        logging.info( f'%s - Found: dataset / {len(self.ul_tag_dataset)}' % cmi_debug )
-        logging.info( f'%s - dataset.children / {len(list(self.ul_tag_dataset.children))} / {len(list(self.ul_tag_dataset.descendants))} dataset descendants' % cmi_debug )
-        logging.info( f'%s - li_all: {symbol} / {len(list(li_superclass_all))} / {len(list(mini_headline_all))} headlines all' % cmi_debug )
-        #print ( f"{self.ul_tag_dataset.contents}" )
-        #print ( f"{li_superclass}"
+        logging.info( f'%s - Found: datasets: {len(self.ul_tag_dataset)}' % cmi_debug )
+        logging.info( f'%s - dataset.children: {len(list(self.ul_tag_dataset.children))} / childrens.descendants: {len(list(self.ul_tag_dataset.descendants))}' % cmi_debug )
 
-
-        #for child in li_superclass.descendants:
-
-        for child in self.ul_tag_dataset.children:
-            print ( f"==================== Top =========================" )
-            print ( f"{child.name}" )
-            for element in child.descendants:
-            #for element in self.ul_tag_dataset.descendants:
-                print ( f"{element.name} ", end="", flush=True )
-                print ( f".", end="" )
-            print ( f"==================== End ========================" )
+        # >>Xray DEBUG on<<
+        if self.args['bool_xray'] is True:
+            print ( f" " )
+            x = y = 1
+            print ( f"==================== Ins: {self.yti} / tag.children : {x} =========================" )
+            for child in self.ul_tag_dataset.children:
+                print ( f"{y}: {child.name}" )
+                y += 1
+                for element in child.descendants:
+                    print ( f"{y}: {element.name} ", end="" )
+                    y += 1
+                print ( f"\n==================== End : {x} =========================" )
+                x += 1
+        # >>Xray DEBUG off<<
 
         return
 
@@ -304,10 +304,14 @@ class yfnews_reader:
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         x = 0    # num of new articiels read counter
 
-        # element zones from main dataset @ depth_0
+        # Decoded element zones from page dataset (WARN: could change at any time)
+        # News : <div class="Py(14px) Pos(r)" data-test-locator="mega" data-reactid="5">
+        # Add  : <div class="controller gemini-ad native-ad-item Feedback Pos(r)" data-test-locator="react-gemini-feedback-container" data-beacon="" data-tp-beacon="" data-reactid="24">
+
         li_superclass_all = self.ul_tag_dataset.find_all(attrs={"class": "js-stream-content Pos(r)"} )
-        li_subset_all = self.ul_tag_dataset.find_all('li')
         mini_headline_all = self.ul_tag_dataset.div.find_all(attrs={'class': 'C(#959595)'})
+        li_subset_all = self.ul_tag_dataset.find_all('li')
+        # class="C(#959595) Fz(11px) D(ib) Mb(6px)
         #micro_headline = self.soup.find_all("i") #attrs={'class': 'Mx(4px)'})
 
         mtd_0 = li_subset_all    # self.ul_tag_dataset.find_all('li')
@@ -319,8 +323,8 @@ class yfnews_reader:
         for datarow in range(len(mtd_0)):
             html_element = mtd_0[datarow]
             x += 1
-            # print ( f"====== News item: #{x} ===============" )     # DEBUG
-            # print ( f"News outlet: {html_element.div.find(attrs={'class': 'C(#959595)'}).string }" )     # DEBUG
+            print ( f"====== News item: #{x} ===============" )     # DEBUG
+            print ( f"News outlet: {html_element.div.find(attrs={'class': 'C(#959595)'}).string }" )     # DEBUG
             data_parent = str( "{:.15}".format(html_element.div.find(attrs={'class': 'C(#959595)'}).string) )
             #shorten down the above data element for the pandas DataFrame insert that happens later...
 
@@ -332,20 +336,20 @@ class yfnews_reader:
             rhl_url = False     # safety pre-set
             url_p = urlparse(html_element.a.get('href'))
             if url_p.scheme == "https" or url_p.scheme == "http":    # check URL scheme specifier
-                # print ( f"Remote news URL: {url_p.netloc}  - Artcile path: {url_p.path}" )     # DEBUG
+                print ( f"Remote news URL: {url_p.netloc}  - Artcile path: {url_p.path}" )     # DEBUG
                 data_outlet = url_p.netloc
                 data_path = url_p.path
                 rhl_url = True    # This URL is remote
                 r_url += 1        # count remote URLs
             else:
-                # print ( f"Local news URL:  finance.yahoo.com  - Article path: {html_element.a.get('href')}" )     # DEBUG
+                print ( f"Local news URL:  finance.yahoo.com  - Article path: {html_element.a.get('href')}" )     # DEBUG
                 l_url += 1        # count local URLs
                 data_outlet = 'finance.yahoo.com'
                 data_path = html_element.a.get('href')
 
             # Short brief headline...
-            # print ( f"News headline: {html_element.a.text}" )
-            # print ( "Brief #: {} / News Short Brief: {:.400}".format(x, html_element.p.text) )    # truncate long Brief down to 400 chars
+            print ( f"News headline: {html_element.a.text}" )
+            print ( "Brief #: {} / News Short Brief: {:.400}".format(x, html_element.p.text) )    # truncate long Brief down to 400 chars
             self.ml_brief.append(html_element.p.text)       # add Brief TXT into ML pre count vectorizer matrix
 
             # URL unique hash
