@@ -401,7 +401,7 @@ class yfnews_reader:
         right_now = date.today()
 
         a_subset = self.news_article_depth_1(news_article_url)      # go DEEP into this 1 news HTML page & setup data extraction zones
-        # print ( f"Tag sections in news page: {len(a_subset)}" )   # DEBUG
+        #print ( f"Tag sections in news page: {len(a_subset)}" )   # DEBUG
         for erow in range(len(a_subset)):       # cycyle through tag sections in this dataset (not predictible or consistent)
             if a_subset[erow].time:     # if this element rown has a <time> tag...
                 nztime = a_subset[erow].time['datetime']
@@ -444,13 +444,25 @@ class yfnews_reader:
         logging.info( '%s - Open/get() article data' % cmi_debug )
         with requests.Session() as s:
             nr = s.get(deep_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
+            #nr = requests.get(deep_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
             logging.info( f'%s - Read full HTML data with BS4: {deep_url}' % cmi_debug )
             nsoup = BeautifulSoup(nr.text, 'html.parser')
-            logging.info( '%s - News article read complete!' % cmi_debug )
-            # fnl_tag_dataset = soup.find_all('a')
-            logging.info( '%s - Extract key elements/tags from HTML data' % cmi_debug )
-            tag_dataset = nsoup.div.find_all(attrs={'class': 'D(tbc)'} )
-            print ( f"{nr.text}" )
+            # check to see if this is a fake local finance.yahoo.com news artitle that is just a small dummy stubb 
+            # linking out to the real remote hosted article
+            logging.info( '%s - Analyize for fake stubbed linked remote article' % cmi_debug )
+            frl = nsoup.find(attrs={"class": "caas-readmore caas-readmore-collapse caas-readmore-outsidebody caas-readmore-asidepresent"})
+            #print ( f">>DEBUG<< href:  {frl.a.get('href')}" )
+            if frl.a.get('href') == 0:
+                logging.info( '%s - News article is locally hosted on finance.yahoo.com' % cmi_debug )
+                # fnl_tag_dataset = soup.find_all('a')
+                logging.info( '%s - Extract key elements/tags from HTML data' % cmi_debug )
+                tag_dataset = nsoup.div.find_all(attrs={'class': 'D(tbc)'} )
+            else:
+
+                logging.info( '%s - Fake remote new article stub discovered!' % cmi_debug )
+                logging.info( f"%s - remote URL: {frl.a.get('href')}" % cmi_debug )
+                tag_dataset = 0
+
             logging.info( f'%s - close news article: {deep_url}' % cmi_debug )
 
         return tag_dataset
