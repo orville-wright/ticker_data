@@ -450,6 +450,7 @@ class yfnews_reader:
             # fnl_tag_dataset = soup.find_all('a')
             logging.info( '%s - Extract key elements/tags from HTML data' % cmi_debug )
             tag_dataset = nsoup.div.find_all(attrs={'class': 'D(tbc)'} )
+            print ( f"{nr.text}" )
             logging.info( f'%s - close news article: {deep_url}' % cmi_debug )
 
         return tag_dataset
