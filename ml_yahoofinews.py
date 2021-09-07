@@ -446,8 +446,12 @@ class yfnews_reader:
             f = url.read()
             logging.info('%s - read html stream' % cmi_debug )
             soup = BeautifulSoup(f, "html.parser")
+           logging.info('%s - IN' % cmi_debug )
 
-        logging.info('%s - ' % cmi_debug )
+        nr = requests.get(deep_url, stream=True, timeout=5 )
+        logging.info( f'%s - read full news article: {deep_url}' % cmi_debug )
+        self.soup = BeautifulSoup(nr.text, 'html.parser')
+        logging.info('%s - News article read complete!' % cmi_debug )
         #
         # fnl_tag_dataset = soup.find_all('a')
         tag_dataset = soup.div.find_all(attrs={'class': 'D(tbc)'} )
