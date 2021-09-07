@@ -318,6 +318,8 @@ class yfnews_reader:
         #mtd_1 = self.ul_tag_dataset[1].find_all('li')
         #mtd_2 = self.ul_tag_dataset[2].find_all('li')
 
+        # TODO: possible better implimentation
+        #       for child in self.ul_tag_dataset.children:
         r_url = l_url = 0
         ml_ingest = {}
         for datarow in range(len(mtd_0)):
@@ -349,14 +351,14 @@ class yfnews_reader:
 
             # Short brief headline...
             print ( f"News headline: {html_element.a.text}" )
-            print ( "Brief #: {} / News Short Brief: {:.400}".format(x, html_element.p.text) )    # truncate long Brief down to 400 chars
+            print ( "Intro teaser #: {} {:.400}".format(x, html_element.p.text) )    # truncate long Brief down to 400 chars
             self.ml_brief.append(html_element.p.text)       # add Brief TXT into ML pre count vectorizer matrix
 
             # URL unique hash
             url_prehash = html_element.a.get('href')        # generate unuque hash for each URL. For dupe tests & comparrisons etc
             result = hashlib.sha256(url_prehash.encode())
             data_urlhash = result.hexdigest()
-            # print ( f"Hash encoded URL: {result.hexdigest()}" )     # DEBUG
+            print ( f"Hash encoded URL: {result.hexdigest()}" )     # DEBUG
 
             # BIG logic decision here...!!!
             if self.args['bool_deep'] is True:        # go DEEP & process each news article deeply?
@@ -387,8 +389,9 @@ class yfnews_reader:
 # method 10
     def extract_article_data(self, news_article_url):
         """
-        Complex html data extraction. Now get into the low-levl data components/elements within specific HTML news page.
-        WARN: This is extremley specific to a single https://finance.yahoo.com news article.
+        Complex html data extraction of the full news article. Go 1 level deeper to the final news article.
+        Read the low-levl data components/elements of the entire news article HTML news page.
+        WARN: Data extract may be very specific to a single type/style of finance.yahoo.com news article.
         """
 
         # data elements extracted & computed
@@ -423,3 +426,31 @@ class yfnews_reader:
         time_posted = str(dt_ISO8601.time())
         # print ( f"News article age: DATE: {date_posted} / TIME: {time_posted} / AGE: {abs(days_old.days)}" )  # DEBUG
         return ( [nauthor, date_posted, time_posted, abs(days_old.days)] )  # return a list []
+
+# method 11
+    def news_article_depth_1(self, url):
+        """
+        Analyze 1 (ONE) individual news article taken from the list of articles for this stock.
+        Set data extractor into KEY element zone within news article HTML dataset.
+        Extract critical news elements, fields & data objects are full news artcile.
+        Note: - called for each news article on the MAIN news page
+        Note: - doing this recurisvely will be network expensive...but that is the plan
+        """
+
+        cmi_debug = __name__+"::"+self.extract_article_data.__name__+".#"+str(self.yti)
+        logging.info('%s - IN' % cmi_debug )
+        deep_url = url      # pass in the url that we want to deeply analyze
+        logging.info('%s - Follow URL:' % (cmi_debug) )
+        logging.info('%s - read html stream' % cmi_debug )
+        with urllib.request.urlopen(deep_url) as url:
+            f = url.read()
+            logging.info('%s - read html stream' % cmi_debug )
+            soup = BeautifulSoup(f, "html.parser")
+
+        logging.info('%s - ' % cmi_debug )
+        #
+        # fnl_tag_dataset = soup.find_all('a')
+        tag_dataset = soup.div.find_all(attrs={'class': 'D(tbc)'} )
+        logging.info('%s - close news article url handle' % cmi_debug )
+        url.close()
+        return tag_dataset
