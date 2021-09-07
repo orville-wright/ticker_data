@@ -400,31 +400,34 @@ class yfnews_reader:
         logging.info('%s - IN' % cmi_debug )
         right_now = date.today()
 
-        a_subset = self.news_article_depth_1(news_article_url)      # go DEEP into this 1 news HTML page & setup data extraction zones
-        #print ( f"Tag sections in news page: {len(a_subset)}" )   # DEBUG
-        for erow in range(len(a_subset)):       # cycyle through tag sections in this dataset (not predictible or consistent)
-            if a_subset[erow].time:     # if this element rown has a <time> tag...
-                nztime = a_subset[erow].time['datetime']
-                ndate = a_subset[erow].time.text
-                dt_ISO8601 = datetime.strptime(nztime, "%Y-%m-%dT%H:%M:%S.%fz")
-                if a_subset[erow].div:  # if this element row has a sub <div>
-                    nauthor = str( "{:.15}".format(a_subset[erow].div.find(attrs={'itemprop': 'name'}).text) )
-                    # nauthor = a_subset[erow].div.find(attrs={'itemprop': 'name'}).text
-                    #shorten down the above data element for the pandas DataFrame insert that happens later...
+        a_subset, nurl = self.news_article_depth_1(news_article_url)      # go DEEP into this news HTML page & analyze
+        if a_subset == 0:    # discovered a fake remote stubbed news article that
+            print ( f"Fake remote stub discovered / Need to go even deeper to read this news article..." )
+        else:
+            #print ( f"Tag sections in news page: {len(a_subset)}" )   # DEBUG
+            for erow in range(len(a_subset)):       # cycyle through tag sections in this dataset (not predictible or consistent)
+                if a_subset[erow].time:             # if this element row has a <time> tag...
+                    nztime = a_subset[erow].time['datetime']
+                    ndate = a_subset[erow].time.text
+                    dt_ISO8601 = datetime.strptime(nztime, "%Y-%m-%dT%H:%M:%S.%fz")
+                    if a_subset[erow].div:  # if this element row has a sub <div>
+                        nauthor = str( "{:.15}".format(a_subset[erow].div.find(attrs={'itemprop': 'name'}).text) )
+                        # nauthor = a_subset[erow].div.find(attrs={'itemprop': 'name'}).text
+                        #shorten down the above data element for the pandas DataFrame insert that happens later...
 
-            if self.args['bool_xray'] is True:        # DEBUG Xray
-                taglist = []
-                for tag in a_subset[erow].find_all(True):
-                    taglist.append(tag.name)
-                print ( "Unique tags:", set(taglist) )
+                if self.args['bool_xray'] is True:        # DEBUG Xray
+                    taglist = []
+                    for tag in a_subset[erow].find_all(True):
+                        taglist.append(tag.name)
+                    print ( "Unique tags:", set(taglist) )
 
-            logging.info('%s - Cycle: Follow News deep URL extratcion' % cmi_debug )
+                logging.info('%s - Cycle: Follow News deep URL extratcion' % cmi_debug )
 
-        # print ( f"Details: {ndate} / Time: {dt_ISO8601} / Author: {nauthor}" )        # DEBUG
-        days_old = (dt_ISO8601.date() - right_now)
-        date_posted = str(dt_ISO8601.date())
-        time_posted = str(dt_ISO8601.time())
-        # print ( f"News article age: DATE: {date_posted} / TIME: {time_posted} / AGE: {abs(days_old.days)}" )  # DEBUG
+            # print ( f"Details: {ndate} / Time: {dt_ISO8601} / Author: {nauthor}" )        # DEBUG
+            days_old = (dt_ISO8601.date() - right_now)
+            date_posted = str(dt_ISO8601.date())
+            time_posted = str(dt_ISO8601.time())
+            # print ( f"News article age: DATE: {date_posted} / TIME: {time_posted} / AGE: {abs(days_old.days)}" )  # DEBUG
         return ( [nauthor, date_posted, time_posted, abs(days_old.days)] )  # return a list []
 
 # method 11
@@ -447,7 +450,7 @@ class yfnews_reader:
             #nr = requests.get(deep_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
             logging.info( f'%s - Read full HTML data with BS4: {deep_url}' % cmi_debug )
             nsoup = BeautifulSoup(nr.text, 'html.parser')
-            # check to see if this is a fake local finance.yahoo.com news artitle that is just a small dummy stubb 
+            # check to see if this is a fake local finance.yahoo.com news artitle that is just a small dummy stubb
             # linking out to the real remote hosted article
             logging.info( '%s - Analyize for fake stubbed linked remote article' % cmi_debug )
             frl = nsoup.find(attrs={"class": "caas-readmore caas-readmore-collapse caas-readmore-outsidebody caas-readmore-asidepresent"})
@@ -459,10 +462,10 @@ class yfnews_reader:
                 tag_dataset = nsoup.div.find_all(attrs={'class': 'D(tbc)'} )
             else:
 
-                logging.info( '%s - Fake remote new article stub discovered!' % cmi_debug )
+                logging.info( '%s - Fake remote news article stub discovered!' % cmi_debug )
                 logging.info( f"%s - remote URL: {frl.a.get('href')}" % cmi_debug )
                 tag_dataset = 0
 
             logging.info( f'%s - close news article: {deep_url}' % cmi_debug )
 
-        return tag_dataset
+        return tag_dataset, nurl
