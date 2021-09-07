@@ -369,12 +369,12 @@ class yfnews_reader:
                     #
                     ml_inlist = [data_parent, data_outlet, url_prehash, deep_data[0], deep_data[3] ]
                     ml_ingest[x] = ml_inlist        # add this data set to dict{}
-                    print ( "\r{} processed...".format(x), end='', flush=True )
-                    logging.info('%s - DEEP news article extratcion of 1 article...' % cmi_debug )
+                    print ( f"\rExtract data for News article: #{x} done!." )
+                    logging.info( '%s DONE - DEEP data extratcion / extract_article_data()' % cmi_debug )
                 else:
-                    logging.info('%s - REMOTE Hard-linked URL - NOT Extracting NEWS from article...' % cmi_debug )
+                    logging.info( f"%s - FOUND Direct remote URL - NOT Extracting data for article #{x}" % cmi_debug )
             else:
-                logging.info('%s - Not DEEP processing NEWS articles' % cmi_debug )
+                logging.info( "%s - Deep processing NEWS articles not enabled" % cmi_debug )
 
         print ( " " )
         print ( f"Top level news articles evaluated: {x}")
