@@ -402,7 +402,8 @@ class yfnews_reader:
 
         a_subset, nurl = self.news_article_depth_1(news_article_url)      # go DEEP into this news HTML page & analyze
         if a_subset == 0:    # discovered a fake remote stubbed news article that
-            print ( f"Fake remote stub discovered / Need to go even deeper to read this news article..." )
+            print ( f"ABORT reading article: Fake remote stub discovered! / deeper analysis needed..." )
+            return ( [0, 0, 0, 0] )
         else:
             #print ( f"Tag sections in news page: {len(a_subset)}" )   # DEBUG
             for erow in range(len(a_subset)):       # cycyle through tag sections in this dataset (not predictible or consistent)
@@ -414,20 +415,18 @@ class yfnews_reader:
                         nauthor = str( "{:.15}".format(a_subset[erow].div.find(attrs={'itemprop': 'name'}).text) )
                         # nauthor = a_subset[erow].div.find(attrs={'itemprop': 'name'}).text
                         #shorten down the above data element for the pandas DataFrame insert that happens later...
-
-                if self.args['bool_xray'] is True:        # DEBUG Xray
-                    taglist = []
-                    for tag in a_subset[erow].find_all(True):
-                        taglist.append(tag.name)
-                    print ( "Unique tags:", set(taglist) )
-
+                        # if self.args['bool_xray'] is True:        # DEBUG Xray
+                        #    taglist = []
+                        #    for tag in a_subset[erow].find_all(True):
+                        #        taglist.append(tag.name)
+                        #    print ( "Unique tags:", set(taglist) )
                 logging.info('%s - Cycle: Follow News deep URL extratcion' % cmi_debug )
+                # print ( f"Details: {ndate} / Time: {dt_ISO8601} / Author: {nauthor}" )        # DEBUG
+                days_old = (dt_ISO8601.date() - right_now)
+                date_posted = str(dt_ISO8601.date())
+                time_posted = str(dt_ISO8601.time())
+                # print ( f"News article age: DATE: {date_posted} / TIME: {time_posted} / AGE: {abs(days_old.days)}" )  # DEBUG
 
-            # print ( f"Details: {ndate} / Time: {dt_ISO8601} / Author: {nauthor}" )        # DEBUG
-            days_old = (dt_ISO8601.date() - right_now)
-            date_posted = str(dt_ISO8601.date())
-            time_posted = str(dt_ISO8601.time())
-            # print ( f"News article age: DATE: {date_posted} / TIME: {time_posted} / AGE: {abs(days_old.days)}" )  # DEBUG
         return ( [nauthor, date_posted, time_posted, abs(days_old.days)] )  # return a list []
 
 # method 11
@@ -465,7 +464,8 @@ class yfnews_reader:
                 logging.info( '%s - Fake remote news article stub discovered!' % cmi_debug )
                 logging.info( f"%s - remote URL: {frl.a.get('href')}" % cmi_debug )
                 tag_dataset = 0
+                real_nurl = frl.a.get('href')
 
             logging.info( f'%s - close news article: {deep_url}' % cmi_debug )
 
-        return tag_dataset, nurl
+        return tag_dataset, real_nurl
