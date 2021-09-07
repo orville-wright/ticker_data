@@ -437,19 +437,19 @@ class yfnews_reader:
         Note: - doing this recurisvely will be network expensive...but that is the plan
         """
 
-        cmi_debug = __name__+"::"+self.extract_article_data.__name__+".#"+str(self.yti)
+        cmi_debug = __name__+"::"+self.news_article_depth_1.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         deep_url = url      # pass in the url that we want to deeply analyze
-        logging.info('%s - Follow URL:' % (cmi_debug) )
-        logging.info('%s - Extract article data' % cmi_debug )
+        logging.info( f'%s - Follow URL: {deep_url}' % (cmi_debug) )
+        logging.info( '%s - Open/get() article data' % cmi_debug )
         nr = requests.get(deep_url, stream=True, timeout=5 )
         logging.info( f'%s - Read full HTML data: {deep_url}' % cmi_debug )
-        self.soup = BeautifulSoup(nr.text, 'html.parser')
-        logging.info('%s - News article read complete!' % cmi_debug )
+        nsoup = BeautifulSoup(nr.text, 'html.parser')
+        logging.info( '%s - News article read complete!' % cmi_debug )
         #
         # fnl_tag_dataset = soup.find_all('a')
-        logging.info('%s - Extract key elements from HTML data' % cmi_debug )
-        tag_dataset = soup.div.find_all(attrs={'class': 'D(tbc)'} )
-        logging.info('%s - close news article url handle' % cmi_debug )
+        logging.info( '%s - Extract key elements/tags from HTML data' % cmi_debug )
+        tag_dataset = nsoup.div.find_all(attrs={'class': 'D(tbc)'} )
+        logging.info( f'%s - close news article: {deep_url}' % cmi_debug )
         url.close()
         return tag_dataset
