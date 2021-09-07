@@ -454,12 +454,6 @@ class yfnews_reader:
             #if frl.a is not None:             # article seems mangeled/weird (i.e. n <a> or <href> tags)
             if frl.has_attr("a"):
                 print ( f">>DEBUG<< This article DOES have an <a> tag & MAYBE an <href> tag?" )
-            else:
-                print ( f">>DEBUG<< This article has NO <a> tag" )
-            #if not soup.find('h2'):
-            #print("didn't find h2")
-            # or
-            # tag.has_attr("alt")
                 if frl.a.get('href') == 0:    # we have a real href
                     logging.info( '%s - News article is locally hosted on finance.yahoo.com' % cmi_debug )
                     # fnl_tag_dataset = soup.find_all('a')
@@ -471,6 +465,7 @@ class yfnews_reader:
                     tag_dataset = 0
                     real_nurl = frl.a.get('href')
             else:
+                print ( f">>DEBUG<< This article has NO <a> tag" )
                 logging.info( '%s - News article data structure is UNKNOWN!' % cmi_debug )
 
             logging.info( f'%s - close news article: {deep_url}' % cmi_debug )
