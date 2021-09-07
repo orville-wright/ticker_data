@@ -454,17 +454,19 @@ class yfnews_reader:
             logging.info( '%s - Analyize for fake stubbed linked remote article' % cmi_debug )
             frl = nsoup.find(attrs={"class": "caas-readmore caas-readmore-collapse caas-readmore-outsidebody caas-readmore-asidepresent"})
             #print ( f">>DEBUG<< href:  {frl.a.get('href')}" )
-            if frl.a.get('href') == 0:
-                logging.info( '%s - News article is locally hosted on finance.yahoo.com' % cmi_debug )
-                # fnl_tag_dataset = soup.find_all('a')
-                logging.info( '%s - Extract key elements/tags from HTML data' % cmi_debug )
-                tag_dataset = nsoup.div.find_all(attrs={'class': 'D(tbc)'} )
+            if frl.a is not None:             # article seems mangeled/weird (i.e. n <a> or <href> tags)
+                if frl.a.get('href') == 0:    # we have a real href
+                    logging.info( '%s - News article is locally hosted on finance.yahoo.com' % cmi_debug )
+                    # fnl_tag_dataset = soup.find_all('a')
+                    logging.info( '%s - Extract key elements/tags from HTML data' % cmi_debug )
+                    tag_dataset = nsoup.div.find_all(attrs={'class': 'D(tbc)'} )
+                else:
+                    logging.info( '%s - Fake remote news article stub discovered!' % cmi_debug )
+                    logging.info( f"%s - remote URL: {frl.a.get('href')}" % cmi_debug )
+                    tag_dataset = 0
+                    real_nurl = frl.a.get('href')
             else:
-
-                logging.info( '%s - Fake remote news article stub discovered!' % cmi_debug )
-                logging.info( f"%s - remote URL: {frl.a.get('href')}" % cmi_debug )
-                tag_dataset = 0
-                real_nurl = frl.a.get('href')
+                logging.info( '%s - News article data structure is UNKNOWN!' % cmi_debug )
 
             logging.info( f'%s - close news article: {deep_url}' % cmi_debug )
 
