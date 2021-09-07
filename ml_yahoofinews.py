@@ -349,10 +349,9 @@ class yfnews_reader:
                 data_outlet = 'finance.yahoo.com'
                 data_path = html_element.a.get('href')
 
-            # Short brief headline...
-            print ( f"News headline: {html_element.a.text}" )
+            print ( f"News headline: {html_element.a.text}" )    # Short brief headline...
             print ( "Intro teaser #: {} {:.400}".format(x, html_element.p.text) )    # truncate long Brief down to 400 chars
-            self.ml_brief.append(html_element.p.text)       # add Brief TXT into ML pre count vectorizer matrix
+            self.ml_brief.append(html_element.p.text)            # add Brief TXT into ML pre count vectorizer matrix
 
             # URL unique hash
             url_prehash = html_element.a.get('href')        # generate unuque hash for each URL. For dupe tests & comparrisons etc
@@ -364,9 +363,7 @@ class yfnews_reader:
             if self.args['bool_deep'] is True:        # go DEEP & process each news article deeply?
                 if rhl_url == False:                  # yahoo,com local? or remote hosted non-yahoo.com article?
                     a_deep_link = 'https://finance.yahoo.com' + url_prehash
-                    #
                     deep_data = self.extract_article_data(a_deep_link)      # extract extra data from news article. Returned as list []
-                    #
                     ml_inlist = [data_parent, data_outlet, url_prehash, deep_data[0], deep_data[3] ]
                     ml_ingest[x] = ml_inlist        # add this data set to dict{}
                     print ( f"\rExtract data for News article: #{x} done!." )
@@ -454,7 +451,15 @@ class yfnews_reader:
             logging.info( '%s - Analyize for fake stubbed linked remote article' % cmi_debug )
             frl = nsoup.find(attrs={"class": "caas-readmore caas-readmore-collapse caas-readmore-outsidebody caas-readmore-asidepresent"})
             #print ( f">>DEBUG<< href:  {frl.a.get('href')}" )
-            if frl.a is not None:             # article seems mangeled/weird (i.e. n <a> or <href> tags)
+            #if frl.a is not None:             # article seems mangeled/weird (i.e. n <a> or <href> tags)
+            if frl.has_attr("a"):
+                print ( f">>DEBUG<< This article DOES have an <a> tag & MAYBE an <href> tag?" )
+            else:
+                print ( f">>DEBUG<< This article has NO <a> tag" )
+            #if not soup.find('h2'):
+            #print("didn't find h2")
+            # or
+            # tag.has_attr("alt")
                 if frl.a.get('href') == 0:    # we have a real href
                     logging.info( '%s - News article is locally hosted on finance.yahoo.com' % cmi_debug )
                     # fnl_tag_dataset = soup.find_all('a')
