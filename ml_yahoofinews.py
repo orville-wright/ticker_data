@@ -325,12 +325,20 @@ class yfnews_reader:
         ml_ingest = {}
         #for datarow in range(len(mtd_0)):    # all <li>, from the 1st one - a list
         y = z = 1
+        h3_counter = a_counter = 1
         # >>DEBUG<< enbale
         for li_tag in li_subset_all:
             print ( f"News item: {x} / Tag: {li_tag} {y}" )
             for element in li_tag.descendants:
+                if element.name == "a": a_counter += 1
+                if element.name == "h3": h3_counter += 1
                 print ( f"Tag: {z} {element.name} / ", end="" )
                 z += 1
+
+        if a_counter == 1: print ( f"This is a good NEWS article" )
+        if a_counter == 4: print ( f"This is a faked news article ADD" )
+        # Read News article     = 1 x <h3>, 1 x <a>
+        # Fake news article add = 3 x <a>, 1 x <h3>, 1 x <a>
 
         """
             html_element = mtd_0[datarow]
