@@ -323,23 +323,57 @@ class yfnews_reader:
         r_url = l_url = 0
         ml_ingest = {}
         #for datarow in range(len(mtd_0)):    # all <li>, from the 1st one - a list
-        y = z = 1
-        h3_counter = a_counter = 1
-        # >>DEBUG<< enbale
+
+        # Major sanity test on structure of news article
+        #     Too many <a> tags >= 4 means A fake news article+Advertsiment
+        #     One <a> tag = A real news article
+        h3_counter = a_counter = 0
         for li_tag in li_subset_all:
             x += 1
-            print ( f"News item: {x} / Tag: {li_tag.name} - {y}" )
-            y += 1
             for element in li_tag.descendants:
                 if element.name == "a": a_counter += 1
                 if element.name == "h3": h3_counter += 1
-                print ( f"{element.name} - {z} / ", end="" )
-                z += 1
-            print ( " " )
+
+            if a_counter == 1:
+                news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
+                article_url = li_tag.a.get("href")
+                article_headline = li_tag.a.text
+                article_teaser = li_tag.p.text
+                print ( f"================= Level 0 / {x} ==================" )
+                print ( f"New item:         {x} - GOOD news article" )
+                print ( f"News agency:      {news_agency}" )
+                print ( f"Local host:       finance.yahoo.com" )
+                print ( f"Article URL:      {article_url}" )
+                print ( f"Article headline: {article_headline}" )
+                print ( f"Article teaser:   {article_teaser}" )
+                self.ml_brief.append(article_teaser)           # add Article teaser long TXT into ML pre count vectorizer matrix
+                auh = hashlib.sha256(article_url.encode())
+                aurl_hash = auh.hexdigest()
+                print ( f"Unique url hash:  {aurl_hash}" )
+                #
+                # This is where we do deeper out to the remote linked news article
+                # Thats hosted out on a non-yahoo.com agency site
+                # we could do this asynchronusly and not wait (but that would be more complex)
+                #
+                # if href == https://finance.yahoo.com then article is possibly a fake stub article to an agency hosted article or paywall
+                # if href == https://******.yahoo.com then article is not a finaince article & possible a yahoo generated advertisment
+                # if href != https://*.yahoo.com the article is an Advertisment being served by a Yahoo Advetsiing partner
+                #
+                if self.args['bool_deep'] is True:                         # yex, do next level analysis
+                    target_url = 'https://finance.yahoo.com' + article_url
+                    print ( f"================= Level 1 / {x} ==================" )
+                    deep_data = self.extract_article_data(target_url)      # analyse target where news article URL points us to
+                    ml_datarow = [news_agency, "finance.yahoo.com", article_url, deep_data[0], deep_data[3] ]
+                    ml_ingest[x] = ml_datarow                              # add this dataset to ML dict{}
+                else:
+                    print ( f"Not processing level 1 remote URL data" )
+            elif a_counter >= 4:
+                print ( f"================= Level 0 / {x} ==================" )
+                print ( f"News item:        {x} - FAKE news article/Add" )
+
+            a_counter = h3_counter = 0
             z = 1
 
-        if a_counter == 1: print ( f"This is a good NEWS article" )
-        if a_counter == 4: print ( f"This is a faked news article ADD" )
         # Read News article     = 1 x <h3>, 1 x <a>
         # Fake news article add = 3 x <a>, 1 x <h3>, 1 x <a>
 
