@@ -283,7 +283,7 @@ class yfnews_reader:
         return
 
 # method #9
-    def read_allnews_depth_0(self):
+    def get_article_tags(self):
         """
         NOTE: assumes connection was previously setup
               uses default JS session/request handles
@@ -299,10 +299,9 @@ class yfnews_reader:
         # 2. Is news article url local (on Yahoo.com) or remotely hosted
         # 3. Unique Sha256 Hash of URL
         # 4. Brief (short article headline)
-        cmi_debug = __name__+"::"+self.read_allnews_depth_0.__name__+".#"+str(self.yti)
+        cmi_debug = __name__+"::"+self.get_article_tags.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
-        x = 0    # num of new articiels read counter
 
         # Decoded element zones from page dataset (WARN: could change at any time)
         # News : <div class="Py(14px) Pos(r)" data-test-locator="mega" data-reactid="5">
@@ -327,19 +326,24 @@ class yfnews_reader:
         # Major sanity test on structure of news article
         #     Too many <a> tags >= 4 means A fake news article+Advertsiment
         #     One <a> tag = A real news article
+
         h3_counter = a_counter = 0
+        x = y = 0
         for li_tag in li_subset_all:
             x += 1
             for element in li_tag.descendants:
-                if element.name == "a": a_counter += 1
-                if element.name == "h3": h3_counter += 1
-
-            if a_counter == 1:
+                y += 1
+                if element.name == "a":a_counter += 1
+            if a_counter <= 3:
                 news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
                 article_url = li_tag.a.get("href")
                 article_headline = li_tag.a.text
-                article_teaser = li_tag.p.text
-                print ( f"================= Level 0 / {x} ==================" )
+                if not li_tag.find('p'):
+                    article_teaser = "Micro advertisment"
+                else:
+                    article_teaser = li_tag.p.text
+
+                print ( f"================= Level 0 / Entity {x} ==================" )
                 print ( f"New item:         {x} - GOOD news article" )
                 print ( f"News agency:      {news_agency}" )
                 print ( f"Local host:       finance.yahoo.com" )
@@ -350,6 +354,23 @@ class yfnews_reader:
                 auh = hashlib.sha256(article_url.encode())
                 aurl_hash = auh.hexdigest()
                 print ( f"Unique url hash:  {aurl_hash}" )
+
+            else:
+                found_ad = li_tag.a.text
+                fa_0 = li_tag.div.find_all(attrs={'class': 'C(#959595)'})
+                fa_1 = fa_0[0].get('href')
+                fa_2 = fa_0[0].text
+                fa_3 = fa_0[1].get('href')
+                print ( f"================= Level 0 / Entity {x} ==================" )
+                print ( f"New item:         {x} - Add" )
+                print ( f"News agency:      {fa_2}" )
+                print ( f"Local host:       {fa_3:.30}" )
+                print ( f"Article URL:      {fa_1}" )
+            a_counter = h3_counter = 0
+
+        return
+
+        """
                 #
                 # This is where we do deeper out to the remote linked news article
                 # Thats hosted out on a non-yahoo.com agency site
@@ -361,18 +382,27 @@ class yfnews_reader:
                 #
                 if self.args['bool_deep'] is True:                         # yex, do next level analysis
                     target_url = 'https://finance.yahoo.com' + article_url
-                    print ( f"================= Level 1 / {x} ==================" )
-                    deep_data = self.extract_article_data(target_url)      # analyse target where news article URL points us to
-                    ml_datarow = [news_agency, "finance.yahoo.com", article_url, deep_data[0], deep_data[3] ]
-                    ml_ingest[x] = ml_datarow                              # add this dataset to ML dict{}
-                else:
-                    print ( f"Not processing level 1 remote URL data" )
-            elif a_counter >= 4:
-                print ( f"================= Level 0 / {x} ==================" )
+                    print ( f"================= Level 1 / Entity {x} ==================" )
+                    remote, r_target = self.test_remote(target_url)      # analyse target where news article URL points us to
+                    if remote == 0:
+                       remote_target = r_target 
+                       print ( f"Remote article is good @ URL: {remote_target}" )
+                    else:
+                       print ( f"ERROR - No remote article URL found!" )
+            elif a_counter == 2:
+                print ( f"a_count = 2" )
+            elif a_counter == 3:
+                print ( f"a_count = 3" )
+            elif a_counter == 4:
+                print ( f"================= Level 1/ Entiti {x} ==================" )
                 print ( f"News item:        {x} - FAKE news article/Add" )
-
+            else:
+                print ( f"a_counter is greater than 4" )
             a_counter = h3_counter = 0
             z = 1
+
+        return
+        """
 
         # Read News article     = 1 x <h3>, 1 x <a>
         # Fake news article add = 3 x <a>, 1 x <h3>, 1 x <a>
@@ -433,7 +463,6 @@ class yfnews_reader:
         print ( " " )
         """
 
-        return 0
         # return ml_ingest        # returns a dict{} ready for ML pre-processing
 
     # print ( f"== {erow}: == URL.div element: {a_subset[erow].name}" )
@@ -441,20 +470,50 @@ class yfnews_reader:
     # print ( f"== {erow}: == URL.div element: {a_subset[erow]}" )
 
 # method 10
-    def extract_article_data(self, news_article_url):
+    def test_remote(self, url):
         """
         Complex html data extraction of the full news article. Go 1 level deeper to the final news article.
         Read the low-levl data components/elements of the entire news article HTML news page.
         WARN: Data extract may be very specific to a single type/style of finance.yahoo.com news article.
+        #
+        This is a seperate methodfs, becasue we may need to build out many differnt types of tests inside
+        the testing logic.
         """
 
         # data elements extracted & computed
         # Authour, Date posted, Time posted, Age of article
-        cmi_debug = __name__+"::"+self.extract_article_data.__name__+".#"+str(self.yti)
+        cmi_debug = __name__+"::"+self.test_remote.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         right_now = date.today()
 
-        a_subset, nurl = self.news_article_depth_1(news_article_url)      # go DEEP into this news HTML page & analyze
+        this_article_url = url      # pass in the url that we want to deeply analyze
+        logging.info( f'%s - Follow URL: {this_article_url}' % (cmi_debug) )
+        logging.info( '%s - get() news article data' % cmi_debug )
+        with requests.Session() as s:
+            nr = s.get(url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
+            logging.info( f'%s - Read full HTML data with BS4: {url}' % cmi_debug )
+            nsoup = BeautifulSoup(nr.text, 'html.parser')
+            # check to see if this is a fake local finance.yahoo.com news artitle that is just a small dummy stubb
+            # linking out to the real remote hosted article
+            logging.info( '%s - Test for link > remote news agency hosted article' % cmi_debug )
+            #frl = nsoup.find(attrs={"class": "caas-readmore caas-readmore-collapse caas-readmore-outsidebody caas-readmore-asidepresent"})
+            frl = nsoup.find(attrs={"class": "caas-readmore"})
+            if not nsoup.find('a'):
+                logging.info ( f"%s - Level: 1 / Data page has no <hrerf> line url - ERROR" % cmi_debug )
+                return 1, 0    # can find a link. probably an advertisment
+            else:
+                rurl = frl.a.get("href")
+                logging.info ( f"%s - Level: 1 / Data page > remote news article: {rurl}" % cmi_debug )
+                return 0, rurl    # link points to valid remote hosted article
+
+        return 2, 0    # error unknown state
+
+
+
+
+        """
+        def read_article_data(self, url):
+        #a_subset, nurl = self.news_article_depth_1(news_article_url)      # go DEEP into this news HTML page & analyze
         if a_subset == 0:    # discovered a fake remote stubbed news article that
             print ( f"ABORT reading article: Fake remote stub discovered! / deeper analysis needed..." )
             return ( [0, 0, 0, 0] )
@@ -482,6 +541,7 @@ class yfnews_reader:
                 # print ( f"News article age: DATE: {date_posted} / TIME: {time_posted} / AGE: {abs(days_old.days)}" )  # DEBUG
 
         return ( [nauthor, date_posted, time_posted, abs(days_old.days)] )  # return a list []
+        """
 
 # method 11
     def news_article_depth_1(self, url):
