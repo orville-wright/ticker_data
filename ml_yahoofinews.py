@@ -311,6 +311,7 @@ class yfnews_reader:
         li_superclass_all = self.ul_tag_dataset.find_all(attrs={"class": "js-stream-content Pos(r)"} )
         mini_headline_all = self.ul_tag_dataset.div.find_all(attrs={'class': 'C(#959595)'})
         li_subset_all = self.ul_tag_dataset.find_all('li')
+        h3_inside_li =  li_subset_all.find("h3")
         # class="C(#959595) Fz(11px) D(ib) Mb(6px)
         #micro_headline = self.soup.find_all("i") #attrs={'class': 'Mx(4px)'})
 
@@ -322,11 +323,17 @@ class yfnews_reader:
         #       for child in self.ul_tag_dataset.children:
         r_url = l_url = 0
         ml_ingest = {}
-        for datarow in range(len(mtd_0)):
+        #for datarow in range(len(mtd_0)):    # all <li>, from the 1st one - a list
+        y = z = 1
+        for li_tag in li_subset_all:
+            print ( f"News item: {x} / Tag: {li_tag} {y}" )
+            for element in li_tag.descendants:
+                print ( f"Tag: {z} {element.name} / ", end="" )
+                z += 1
+
             html_element = mtd_0[datarow]
-            x += 1
             print ( f"====== News item: #{x} ===============" )     # DEBUG
-            print ( f"News outlet: {html_element.div.find(attrs={'class': 'C(#959595)'}).string }" )     # DEBUG
+            print ( f"News outlet:      {html_element.div.find(attrs={'class': 'C(#959595)'}).string }" )     # DEBUG
             data_parent = str( "{:.15}".format(html_element.div.find(attrs={'class': 'C(#959595)'}).string) )
             #shorten down the above data element for the pandas DataFrame insert that happens later...
 
@@ -344,13 +351,13 @@ class yfnews_reader:
                 rhl_url = True    # This URL is remote
                 r_url += 1        # count remote URLs
             else:
-                print ( f"Local news URL:  finance.yahoo.com  - Article path: {html_element.a.get('href')}" )     # DEBUG
+                print ( f"Local news URL:   finance.yahoo.com  - Article path: {html_element.a.get('href')}" )     # DEBUG
                 l_url += 1        # count local URLs
                 data_outlet = 'finance.yahoo.com'
                 data_path = html_element.a.get('href')
 
-            print ( f"News headline: {html_element.a.text}" )    # Short brief headline...
-            print ( "Intro teaser #: {} {:.400}".format(x, html_element.p.text) )    # truncate long Brief down to 400 chars
+            print ( f"News headline:    {html_element.a.text}" )    # Short brief headline...
+            print ( "Intro teaser #:{}  {:.400}".format(x, html_element.p.text) )    # truncate long Brief down to 400 chars
             self.ml_brief.append(html_element.p.text)            # add Brief TXT into ML pre count vectorizer matrix
 
             # URL unique hash
@@ -443,16 +450,23 @@ class yfnews_reader:
         logging.info( '%s - Open/get() article data' % cmi_debug )
         with requests.Session() as s:
             nr = s.get(deep_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
-            #nr = requests.get(deep_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
             logging.info( f'%s - Read full HTML data with BS4: {deep_url}' % cmi_debug )
             nsoup = BeautifulSoup(nr.text, 'html.parser')
             # check to see if this is a fake local finance.yahoo.com news artitle that is just a small dummy stubb
             # linking out to the real remote hosted article
-            logging.info( '%s - Analyize for fake stubbed linked remote article' % cmi_debug )
+            logging.info( '%s - Check for fake local URL/Remote article URL' % cmi_debug )
             frl = nsoup.find(attrs={"class": "caas-readmore caas-readmore-collapse caas-readmore-outsidebody caas-readmore-asidepresent"})
-            #print ( f">>DEBUG<< href:  {frl.a.get('href')}" )
+            print ( f"{frl}" )
             #if frl.a is not None:             # article seems mangeled/weird (i.e. n <a> or <href> tags)
-            if frl.has_attr("a") is True:
+            y = 1
+            for child in frl.children:
+                print ( f"{y}: {child.name}" )
+                y += 1
+                for element in child.descendants:
+                    print ( f"{y}: {element.name} ", end="" )
+                    y += 1
+
+            if frl.has_attr("a") is False:
                 logging.info( "%s - Article HAS an <a> tag & MAYBE an <href> tag?" )
                 if frl.a.get('href') == 0:    # we have a real href
                     logging.info( '%s - News article is locally hosted on finance.yahoo.com' % cmi_debug )
@@ -465,8 +479,8 @@ class yfnews_reader:
                     tag_dataset = 0
                     real_nurl = frl.a.get('href')
             else:
-                logging.info( "%s - Article has NO <a> or <href> tag. Structure is BAD!' % cmi_debug )
+                logging.info( "%s - Article has NO <a> or <href> tag. Structure is BAD!" % cmi_debug )
 
-            logging.info( f'%s - close news article: {deep_url}' % cmi_debug )
+            logging.info( f"%s - close news article: {deep_url}" % cmi_debug )
 
         return tag_dataset, real_nurl
