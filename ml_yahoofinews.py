@@ -14,6 +14,7 @@ import argparse
 import time
 import threading
 import json
+from rich import print
 
 from bigcharts_md import bc_quote
 
@@ -265,20 +266,20 @@ class yfnews_reader:
         logging.info( f'%s - Found: datasets: {len(self.ul_tag_dataset)}' % cmi_debug )
         logging.info( f'%s - dataset.children: {len(list(self.ul_tag_dataset.children))} / childrens.descendants: {len(list(self.ul_tag_dataset.descendants))}' % cmi_debug )
 
-        # >>Xray DEBUG on<<
+        # >>Xray DEBUG<<
         if self.args['bool_xray'] is True:
             print ( f" " )
             x = y = 1
-            print ( f"==================== Ins: {self.yti} / tag.children : {x} =========================" )
+            print ( f"=============== <li>.children / descendants ====================" )
             for child in self.ul_tag_dataset.children:
-                print ( f"{y}: {child.name}" )
+                print ( f"{x}: {child.name} / (potential good News article)" )
                 y += 1
                 for element in child.descendants:
                     print ( f"{y}: {element.name} ", end="" )
                     y += 1
-                print ( f"\n==================== End : {x} =========================" )
+                print ( f"\n==================== End <li> zone : {x} =========================" )
                 x += 1
-        # >>Xray DEBUG off<<
+        print ( " " )
 
         return
 
@@ -321,9 +322,11 @@ class yfnews_reader:
                 if not li_tag.find('p'):
                     article_type = f"Micro advertisment / not {symbol} news"
                     article_teaser = f"Not {symbol} news"
+                    ml_atype = "1"
                 else:
                     a_teaser = li_tag.p.text
                     article_teaser = f"{a_teaser:.170}" + " [...]"
+                    ml_atype = "0"
 
                 print ( f"================= Level 0 / Entity {x} ==================" )
                 print ( f"News item:        {x} - {article_type}" )
@@ -336,13 +339,16 @@ class yfnews_reader:
                 auh = hashlib.sha256(article_url.encode())
                 aurl_hash = auh.hexdigest()
                 print ( f"Unique url hash:  {aurl_hash}" )
-                x = { \
-            		"symbol:" "{symbol}", \
-            		"urlhash:" "{aurl_hash}", \
-            		"url:" "{article_url}", \
-            		"symbol:" "{symbol}" \
+
+                # build dict to pass off to Level 1 article processing
+                nd = { \
+                    "symbol" : symbol, \
+                    "urlhash" : aurl_hash, \
+                    "type" : ml_atype, \
+                    "url" : article_url, \
             		}
-                ml_ingest.append(x)
+                ml_ingest.update({x : nd})
+
             else:
                 found_ad = li_tag.a.text
                 fa_0 = li_tag.div.find_all(attrs={'class': 'C(#959595)'})
@@ -355,6 +361,11 @@ class yfnews_reader:
                 print ( f"Local host:       {fa_3:.30} [...]" )
                 print ( f"Article URL:      {fa_1}" )
             a_counter = h3_counter = 0
+
+        # >>Xray DEBUG<<
+        if self.args['bool_xray'] is True:
+            for k in ml_ingest.items():
+                print ( f"{k} " )
 
         return
 
