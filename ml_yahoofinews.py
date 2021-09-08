@@ -285,12 +285,12 @@ class yfnews_reader:
 # method #9
     def eval_article_tags(self, symbol):
         """
-        NOTE: assumes connection was previously setup
-              uses default JS session/request handles
-              This is main logic loop because we're at the TOP-level news page for this stock
+        NOTE: assumes connection was previously setup & html data structures are pre-loaded
+              leverages default JS session/request handle
+              Level 0 article logic loop- we're at the TOP-level news page for this stock
         1. cycle though the top-level NEWS page for this stock
         2. prepare a list of ALL of the articles
-        3. For each article, extract some KEY high-level news elements (i.e. Headline, Brief, URL to real article
+        3. For each article, extract KEY news elements (i.e. Headline, Brief, URL to real article)
         4. Wrangle, clean/convert/format the data correctly
         """
         cmi_debug = __name__+"::"+self.eval_article_tags.__name__+".#"+str(self.yti)
@@ -336,7 +336,13 @@ class yfnews_reader:
                 auh = hashlib.sha256(article_url.encode())
                 aurl_hash = auh.hexdigest()
                 print ( f"Unique url hash:  {aurl_hash}" )
-
+                x = { \
+            		"symbol:" "{symbol}", \
+            		"urlhash:" "{aurl_hash}", \
+            		"url:" "{article_url}", \
+            		"symbol:" "{symbol}" \
+            		}
+                ml_ingest.append(x)
             else:
                 found_ad = li_tag.a.text
                 fa_0 = li_tag.div.find_all(attrs={'class': 'C(#959595)'})
