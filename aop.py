@@ -378,7 +378,7 @@ def main():
     if args['newsymbol'] is not False:
         print ( " " )
         print ( "========== ** HACKING ** : Yahoo Finance News Sentiment AI =========================" )
-        news_symbol = str(args['newsymbol'])            # symbol provided on CMDLine
+        news_symbol = str(args['newsymbol'])         # symbol provided on CMDLine
         yfn = yfnews_reader(1, news_symbol, args )
         yfn.init_dummy_session()
         #yfn.yfn_bintro()
@@ -386,8 +386,8 @@ def main():
         yfn.form_url_endpoint(news_symbol)
         yfn.do_simple_get()
         #yfn.do_js_get()
-        yfn.scan_news_depth_0(news_symbol, 0, 0)
-        yfn.get_article_tags()                        # if bool_deep is not set, this does shallow extraction
+        yfn.scan_news_depth_0(news_symbol, 0, 0)    # 0 = HTML, 1 = JAVAScript
+        yfn.get_article_tags(news_symbol)            # if bool_deep is not set, this does shallow extraction
 
     """
     if args['newsymbol'] is not False:
