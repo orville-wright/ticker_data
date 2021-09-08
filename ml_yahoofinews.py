@@ -322,7 +322,7 @@ class yfnews_reader:
                     article_type = f"Micro advertisment / not {symbol} news"
                     article_teaser = f"Not {symbol} news"
                 else:
-                    article_teaser = li_tag.p.text
+                    article_teaser = f"{(li_tag.p.text):.170 [...]"}
 
                 print ( f"================= Level 0 / Entity {x} ==================" )
                 print ( f"News item:        {x} - {article_type}" )
@@ -330,7 +330,7 @@ class yfnews_reader:
                 print ( f"Local host:       finance.yahoo.com" )
                 print ( f"Article URL:      {article_url}" )
                 print ( f"Article headline: {article_headline}" )
-                print ( f"Article teaser:   {article_teaser:.170} [...]" )
+                print ( f"Article teaser:   {article_teaser}" )
                 self.ml_brief.append(article_teaser)           # add Article teaser long TXT into ML pre count vectorizer matrix
                 auh = hashlib.sha256(article_url.encode())
                 aurl_hash = auh.hexdigest()
