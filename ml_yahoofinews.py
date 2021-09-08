@@ -283,7 +283,7 @@ class yfnews_reader:
         return
 
 # method #9
-    def get_article_tags(self, symbol):
+    def eval_article_tags(self, symbol):
         """
         NOTE: assumes connection was previously setup
               uses default JS session/request handles
@@ -293,7 +293,7 @@ class yfnews_reader:
         3. For each article, extract some KEY high-level news elements (i.e. Headline, Brief, URL to real article
         4. Wrangle, clean/convert/format the data correctly
         """
-        cmi_debug = __name__+"::"+self.get_article_tags.__name__+".#"+str(self.yti)
+        cmi_debug = __name__+"::"+self.eval_article_tags.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         ml_ingest = {}
@@ -322,7 +322,8 @@ class yfnews_reader:
                     article_type = f"Micro advertisment / not {symbol} news"
                     article_teaser = f"Not {symbol} news"
                 else:
-                    article_teaser = f"{(li_tag.p.text):.170 [...]"}
+                    a_teaser = li_tag.p.text
+                    article_teaser = f"{a_teaser:.170}" + " [...]"
 
                 print ( f"================= Level 0 / Entity {x} ==================" )
                 print ( f"News item:        {x} - {article_type}" )
