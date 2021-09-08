@@ -297,7 +297,7 @@ class yfnews_reader:
         logging.info('%s - IN' % cmi_debug )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         ml_ingest = {}
-        symbol = upper(symbol)
+        symbol = symbol.upper()
         li_superclass_all = self.ul_tag_dataset.find_all(attrs={"class": "js-stream-content Pos(r)"} )
         mini_headline_all = self.ul_tag_dataset.div.find_all(attrs={'class': 'C(#959595)'})
         li_subset_all = self.ul_tag_dataset.find_all('li')
@@ -319,18 +319,18 @@ class yfnews_reader:
                 article_headline = li_tag.a.text
                 article_type = f"Good {symbol} news article"
                 if not li_tag.find('p'):
-                    article_teaser = "No teaser snippet"
-                    article_type = "Micro advertisment"
+                    article_type = f"Micro advertisment / not {symbol} news"
+                    article_teaser = f"Not {symbol} news"
                 else:
                     article_teaser = li_tag.p.text
 
                 print ( f"================= Level 0 / Entity {x} ==================" )
-                print ( f"New item:         {x} - {article_type}" )
+                print ( f"News item:        {x} - {article_type}" )
                 print ( f"News agency:      {news_agency}" )
                 print ( f"Local host:       finance.yahoo.com" )
                 print ( f"Article URL:      {article_url}" )
                 print ( f"Article headline: {article_headline}" )
-                print ( f"Article teaser:   {article_teaser}" )
+                print ( f"Article teaser:   {article_teaser:.170} [...]" )
                 self.ml_brief.append(article_teaser)           # add Article teaser long TXT into ML pre count vectorizer matrix
                 auh = hashlib.sha256(article_url.encode())
                 aurl_hash = auh.hexdigest()
@@ -345,7 +345,7 @@ class yfnews_reader:
                 print ( f"================= Level 0 / Entity {x} ==================" )
                 print ( f"New item:         {x} - Advertisment / not {symbol} news" )
                 print ( f"News agency:      {fa_2}" )
-                print ( f"Local host:       {fa_3:.30}" )
+                print ( f"Local host:       {fa_3:.30} [...]" )
                 print ( f"Article URL:      {fa_1}" )
             a_counter = h3_counter = 0
 
