@@ -325,12 +325,14 @@ class yfnews_reader:
         ml_ingest = {}
         #for datarow in range(len(mtd_0)):    # all <li>, from the 1st one - a list
         y = z = 1
+        # >>DEBUG<< enbale
         for li_tag in li_subset_all:
             print ( f"News item: {x} / Tag: {li_tag} {y}" )
             for element in li_tag.descendants:
                 print ( f"Tag: {z} {element.name} / ", end="" )
                 z += 1
 
+        """
             html_element = mtd_0[datarow]
             print ( f"====== News item: #{x} ===============" )     # DEBUG
             print ( f"News outlet:      {html_element.div.find(attrs={'class': 'C(#959595)'}).string }" )     # DEBUG
@@ -384,7 +386,10 @@ class yfnews_reader:
         print ( f"Top level news articles evaluated: {x}")
         print ( f"Local URLs: {l_url} / Remote URLs: {r_url}" )
         print ( " " )
-        return ml_ingest        # returns a dict{} ready for ML pre-processing
+        """"
+
+        return 0
+        # return ml_ingest        # returns a dict{} ready for ML pre-processing
 
     # print ( f"== {erow}: == URL.div element: {a_subset[erow].name}" )
     # print ( f" / Date: {a_subset[erow].time.text}" )         # Pretty data
