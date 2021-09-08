@@ -297,7 +297,7 @@ class yfnews_reader:
         logging.info('%s - IN' % cmi_debug )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         ml_ingest = {}
-        symbol = symbol
+        symbol = upper(symbol)
         li_superclass_all = self.ul_tag_dataset.find_all(attrs={"class": "js-stream-content Pos(r)"} )
         mini_headline_all = self.ul_tag_dataset.div.find_all(attrs={'class': 'C(#959595)'})
         li_subset_all = self.ul_tag_dataset.find_all('li')
@@ -317,7 +317,7 @@ class yfnews_reader:
                 news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
                 article_url = li_tag.a.get("href")
                 article_headline = li_tag.a.text
-                article_type = f"GOOD {symbol} news article"
+                article_type = f"Good {symbol} news article"
                 if not li_tag.find('p'):
                     article_teaser = "No teaser snippet"
                     article_type = "Micro advertisment"
@@ -343,7 +343,7 @@ class yfnews_reader:
                 fa_2 = fa_0[0].text
                 fa_3 = fa_0[1].get('href')
                 print ( f"================= Level 0 / Entity {x} ==================" )
-                print ( f"New item:         {x} - Advertisment / NOT {symbol} news" )
+                print ( f"New item:         {x} - Advertisment / not {symbol} news" )
                 print ( f"News agency:      {fa_2}" )
                 print ( f"Local host:       {fa_3:.30}" )
                 print ( f"Article URL:      {fa_1}" )
