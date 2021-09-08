@@ -311,7 +311,6 @@ class yfnews_reader:
         li_superclass_all = self.ul_tag_dataset.find_all(attrs={"class": "js-stream-content Pos(r)"} )
         mini_headline_all = self.ul_tag_dataset.div.find_all(attrs={'class': 'C(#959595)'})
         li_subset_all = self.ul_tag_dataset.find_all('li')
-        h3_inside_li =  li_subset_all.find("h3")
         # class="C(#959595) Fz(11px) D(ib) Mb(6px)
         #micro_headline = self.soup.find_all("i") #attrs={'class': 'Mx(4px)'})
 
@@ -328,12 +327,16 @@ class yfnews_reader:
         h3_counter = a_counter = 1
         # >>DEBUG<< enbale
         for li_tag in li_subset_all:
-            print ( f"News item: {x} / Tag: {li_tag} {y}" )
+            x += 1
+            print ( f"News item: {x} / Tag: {li_tag.name} - {y}" )
+            y += 1
             for element in li_tag.descendants:
                 if element.name == "a": a_counter += 1
                 if element.name == "h3": h3_counter += 1
-                print ( f"Tag: {z} {element.name} / ", end="" )
+                print ( f"{element.name} - {z} / ", end="" )
                 z += 1
+            print ( " " )
+            z = 1
 
         if a_counter == 1: print ( f"This is a good NEWS article" )
         if a_counter == 4: print ( f"This is a faked news article ADD" )
@@ -394,7 +397,7 @@ class yfnews_reader:
         print ( f"Top level news articles evaluated: {x}")
         print ( f"Local URLs: {l_url} / Remote URLs: {r_url}" )
         print ( " " )
-        """"
+        """
 
         return 0
         # return ml_ingest        # returns a dict{} ready for ML pre-processing
