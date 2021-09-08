@@ -340,7 +340,7 @@ class yfnews_reader:
                 aurl_hash = auh.hexdigest()
                 print ( f"Unique url hash:  {aurl_hash}" )
 
-                # build dict to pass off to Level 1 article processing
+                # build dict to pass off to Level 1 deeper article processing
                 nd = { \
                     "symbol" : symbol, \
                     "urlhash" : aurl_hash, \
@@ -367,19 +367,16 @@ class yfnews_reader:
             for k in ml_ingest.items():
                 print ( f"{k} " )
 
-        return
+        return ml_ingest
 
 # method 10
-    def test_remote(self, url):
+    def test_remote(self, symbol, url):
         """
-        Complex html data extraction of the full news article. Go 1 level deeper to the final news article.
-        Read the low-levl data components/elements of the entire news article HTML news page.
-        WARN: Data extract may be very specific to a single type/style of finance.yahoo.com news article.
-        #
-        This is a seperate methodfs, becasue we may need to build out many differnt types of tests inside
-        the testing logic.
+        Test the validity of a possible GOOD news article.
+        In the NEWs feed, the yahoo.com link to a news article is FAKE. It's an internal FAKE stub
+        article/page that links out to a paying yahoo Partner site hosting the REAL news article.
+        So we need to test URL link validity, extract it, pre-pare it & save it. SO mundane!!!
         """
-
         # data elements extracted & computed
         # Authour, Date posted, Time posted, Age of article
         cmi_debug = __name__+"::"+self.test_remote.__name__+".#"+str(self.yti)
@@ -387,24 +384,26 @@ class yfnews_reader:
         right_now = date.today()
 
         this_article_url = url      # pass in the url that we want to deeply analyze
-        logging.info( f'%s - Follow URL: {this_article_url}' % (cmi_debug) )
-        logging.info( '%s - get() news article data' % cmi_debug )
+        symbol = symbol.upper()
+        logging.info( f'%s - validate fake news article stub/page for: {symbol}' % (cmi_debug) )
+        logging.info( '%s - get() stub/page at URL: {this_article_url} ' % cmi_debug )
         with requests.Session() as s:
             nr = s.get(url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
-            logging.info( f'%s - Read full HTML data with BS4: {url}' % cmi_debug )
+            logging.info( f'%s - Assume sub/page is on https://finance.yahoo.com' % cmi_debug )
             nsoup = BeautifulSoup(nr.text, 'html.parser')
-            # check to see if this is a fake local finance.yahoo.com news artitle that is just a small dummy stubb
+            #
+            # is a fake local finance.yahoo.com news artitle 
             # linking out to the real remote hosted article
-            logging.info( '%s - Test for link > remote news agency hosted article' % cmi_debug )
-            #frl = nsoup.find(attrs={"class": "caas-readmore caas-readmore-collapse caas-readmore-outsidebody caas-readmore-asidepresent"})
-            frl = nsoup.find(attrs={"class": "caas-readmore"})
-            if not nsoup.find('a'):
-                logging.info ( f"%s - Level: 1 / Data page has no <hrerf> line url - ERROR" % cmi_debug )
+            logging.info( '%s - extract REAL remote news agency article URL' % cmi_debug )
+            #  = nsoup.find(attrs={"class": "caas-readmore caas-readmore-collapse caas-readmore-outsidebody caas-readmore-asidepresent"})
+            rem_news = nsoup.find(attrs={"class": "caas-readmore"})
+            if not rem_news.find('a'):
+                logging.info ( f"%s - Level: 1 / NO <hrerf> URL - ERROR" % cmi_debug )
                 return 1, 0    # can find a link. probably an advertisment
             else:
-                rurl = frl.a.get("href")
-                logging.info ( f"%s - Level: 1 / Data page > remote news article: {rurl}" % cmi_debug )
-                return 0, rurl    # link points to valid remote hosted article
+                rem_artile_url = rem_news.a.get("href")
+                logging.info ( f"%s - Level: 1 / News stub/page > remote article @: {rurl}" % cmi_debug )
+                return 0, rem_article_url    # link points to valid remote hosted article
 
         return 2, 0    # error unknown state
 
