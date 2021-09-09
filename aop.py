@@ -389,18 +389,16 @@ def main():
         yfn.scan_news_depth_0(news_symbol, 0, 0)            # 0 = HTML, 1 = JAVAScript
         symbol_news = yfn.eval_article_tags(news_symbol)    # ml_ingest{} returned
 
-        # process ml_ingest. get symbol, url. check symbol matches news_symbol, test_remote()
-        # >>Xray DEBUG<<
-        for k in symbol_news.items():
-            print ( f"{k['url']} " )
+        # process ml_ingest candidate new articles
+        # test for type 0 (good news article), get symbol, url, check symbol matches news_symbol, test_remote()
+        for sn_idx, sn_row in symbol_news.items():
+            print( f"\nNews article: {sn_idx} / Looks independant & intersting..." )
+            if sn_row['type'] == 0:
+                print ( f"Evaluating remote hosted article" )  # a real news article
+                yfn.find_rem_article(sn_row['symbol'], sn_row['url'])    # go deep, follow remote link, anlayze/extract
+            else:
+                print ( f"Skipping suspicious non-news item!" )
 
-
-        print ( f">>DEBUG<<" )
-        print ( f"{symbol_news[1]}" )
-        print ( f"{symbol_news[1]['symbol']}" )
-        print ( f"{symbol_news[1]['url']}" )
-
-        #yfn.find_rem_article(news_symbol, url)
         
     """
     if args['newsymbol'] is not False:

@@ -308,6 +308,13 @@ class yfnews_reader:
         # This isn't a guaranteed logic test but <a> tags signal KEY news article data zones.
         # INFO: Too many <a> tags >= 4 means A fake news article Advertsiment
         #       <= 3 <a> tags = A real news article (possibly)
+        # NOTE: Types of news elements
+        #       0 : Real independant news article - high quality
+        #       1 : Company paid adv masquerading as news - low quality
+        #       2 : Inserted advertisment not related to company at all - junk
+        #
+        # WARN: Its normal to see duplicate Type 1 news elemets repeated numerous times & locations within a page.
+
         h3_counter = a_counter = 0
         x = y = 0
         for li_tag in li_subset_all:               # <li> is where the new articels hide
@@ -320,13 +327,13 @@ class yfnews_reader:
                 article_headline = li_tag.a.text
                 article_type = f"Good {symbol} news article"
                 if not li_tag.find('p'):
-                    article_type = f"Micro advertisment / not {symbol} news"
-                    article_teaser = f"Not {symbol} news"
-                    ml_atype = "1"
+                    article_type = f"{symbol} sponsored micro adv news"
+                    article_teaser = f"Micro Advertisment"
+                    ml_atype = 1
                 else:
                     a_teaser = li_tag.p.text
                     article_teaser = f"{a_teaser:.170}" + " [...]"
-                    ml_atype = "0"
+                    ml_atype = 0
 
                 print ( f"================= Level 0 / Entity {x} ==================" )
                 print ( f"News item:        {x} - {article_type}" )
@@ -361,6 +368,9 @@ class yfnews_reader:
                 print ( f"Local host:       {fa_3:.30} [...]" )
                 print ( f"Article URL:      {fa_1}" )
             a_counter = h3_counter = 0
+
+        # need to capture junk adds here (very difficult as they're injected by add engine. Not hard page elements)
+        # type = 2 / ml_atype = 2
 
         # >>Xray DEBUG<<
         if self.args['bool_xray'] is True:
