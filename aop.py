@@ -395,7 +395,9 @@ def main():
             print( f"\nNews article: {sn_idx} / Looks independant & intersting..." )
             if sn_row['type'] == 0:
                 print ( f"Evaluating remote hosted article" )  # a real news article
-                yfn.find_rem_article(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now!
+                status, rem_url = yfn.find_rem_article(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now!
+                print ( f"Staus: {status}" )
+                print ( f"Remote URL: {remote_url}" )
             else:
                 print ( f"Skipping suspicious non-news item!" )
 
