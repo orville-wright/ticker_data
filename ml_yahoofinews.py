@@ -403,7 +403,6 @@ class yfnews_reader:
             logging.info( f'%s - Assume sub/page is on https://finance.yahoo.com' % cmi_debug )
             nsoup = BeautifulSoup(nr.text, 'html.parser')
             logging.info( '%s - Stub/page has been scraped...' % cmi_debug )
-            print ( f"================= Level 1 / Entity {id} ==================" )
             #  = nsoup.find(attrs={"class": "caas-readmore caas-readmore-collapse caas-readmore-outsidebody caas-readmore-asidepresent"})
             rem_news = nsoup.find(attrs={"class": "caas-readmore"})
             if not rem_news.find('a'):

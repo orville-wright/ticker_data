@@ -394,6 +394,7 @@ def main():
         for sn_idx, sn_row in symbol_news.items():
             print( f"\nNews article: {sn_idx} / avaluating..." )
             if sn_row['type'] == 0:
+                print ( f"================= Level 1 / Entity {id} / Type {sn_row['type']} ==================" )
                 status, rem_url = yfn.find_rem_article(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now!
                 print ( f"Staus: {status}" )
                 print ( f"Remote URL: {rem_url}" )
