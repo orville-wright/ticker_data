@@ -370,16 +370,16 @@ class yfnews_reader:
         return ml_ingest
 
 # method 10
-    def test_remote(self, symbol, url):
+    def find_rem_article(self, symbol, url):
         """
         Test the validity of a possible GOOD news article.
-        In the NEWs feed, the yahoo.com link to a news article is FAKE. It's an internal FAKE stub
+        In the NEWs feed, a yahoo.com news article is FAKE. It's an internal FAKE stub
         article/page that links out to a paying yahoo Partner site hosting the REAL news article.
-        So we need to test URL link validity, extract it, pre-pare it & save it. SO mundane!!!
+        We must test URL link validity, extract it, pre-pare it & save it.
         """
         # data elements extracted & computed
         # Authour, Date posted, Time posted, Age of article
-        cmi_debug = __name__+"::"+self.test_remote.__name__+".#"+str(self.yti)
+        cmi_debug = __name__+"::"+self.find_rem_article.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         right_now = date.today()
 
@@ -392,7 +392,7 @@ class yfnews_reader:
             logging.info( f'%s - Assume sub/page is on https://finance.yahoo.com' % cmi_debug )
             nsoup = BeautifulSoup(nr.text, 'html.parser')
             #
-            # is a fake local finance.yahoo.com news artitle 
+            # is a fake local finance.yahoo.com news artitle
             # linking out to the real remote hosted article
             logging.info( '%s - extract REAL remote news agency article URL' % cmi_debug )
             #  = nsoup.find(attrs={"class": "caas-readmore caas-readmore-collapse caas-readmore-outsidebody caas-readmore-asidepresent"})
@@ -402,8 +402,8 @@ class yfnews_reader:
                 return 1, 0    # can find a link. probably an advertisment
             else:
                 rem_artile_url = rem_news.a.get("href")
-                logging.info ( f"%s - Level: 1 / News stub/page > remote article @: {rurl}" % cmi_debug )
-                return 0, rem_article_url    # link points to valid remote hosted article
+                logging.info ( f"%s - Level: 1 / FOUND real article @: {rurl}" % cmi_debug )
+                return 0, rem_article_url    # 0 = success, rem_artile_url => remote news article NOT on yahoo.com
 
         return 2, 0    # error unknown state
 
