@@ -412,7 +412,7 @@ class yfnews_reader:
             else:
                 rem_url = rem_news.a.get("href")
                 logging.info ( f"%s - Level: 1 / FOUND real article @: {rem_url}" % cmi_debug )
-                return 0, rem_article_url    # 0 = success, rem_artile_url => remote news article NOT on yahoo.com
+                return 0, rem_url    # 0 = success, rem_url => remote news article NOT on yahoo.com
 
         return 2, 0    # error unknown state
 
