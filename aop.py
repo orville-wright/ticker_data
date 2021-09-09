@@ -392,35 +392,17 @@ def main():
         # process ml_ingest candidate new articles
         # test for type 0 (good news article), get symbol, url, check symbol matches news_symbol, test_remote()
         for sn_idx, sn_row in symbol_news.items():
-            print( f"\nNews article: {sn_idx} / avaluating..." )
+            print( f"\nNews article: {sn_idx} / evaluating..." )
             if sn_row['type'] == 0:
-                print ( f"================= Level 1 / Entity {id} / Type {sn_row['type']} ==================" )
+                print ( f"================= Level 1 / Entity {sn_idx} / Type {sn_row['type']} ==================" )
                 status, rem_url = yfn.find_rem_article(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now!
                 print ( f"Staus: {status}" )
+                print ( f"Local URL:  {sn_row['url']}" )
                 print ( f"Remote URL: {rem_url}" )
             else:
                 print ( f"Suspicious non-news item - skipping!" )
 
-    """
-    if args['newsymbol'] is not False:
-        print ( " " )
-        print ( "========== ** HACKING ** : News Sentiment Ai =======================================" )
-        news_symbol = str(args['newsymbol'])            # symbol provided on CMDLine
-        z = y_newsfilter(1, news_symbol, args )
-        z.scan_news_depth_0()
-        #z.read_allnews_depth_0()                        # if bool_deep is not set, this does shallow extraction
-
-        if args['bool_deep'] is True:
-            ml_prep = z.read_allnews_depth_0()
-            news_df = pd.DataFrame.from_dict(ml_prep, orient='index', \
-                        columns=['Source', 'Outet', 'url_link', 'Author', 'Age'])
-            print ( " " )
-            print ( news_df )
-            print ( " " )
-        else:
-            z.read_allnews_depth_0()                        # just do a shallow extraction for ML level 1 testing
-        """
-
+#################################################################################
 # 1-off quote - 3 differnt methods to get a quote ###############################
 # TODO: Add a 4th method - via alpaca live API
 
