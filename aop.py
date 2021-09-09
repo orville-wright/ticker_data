@@ -392,15 +392,13 @@ def main():
         # process ml_ingest candidate new articles
         # test for type 0 (good news article), get symbol, url, check symbol matches news_symbol, test_remote()
         for sn_idx, sn_row in symbol_news.items():
-            print( f"\nNews article: {sn_idx} / Looks independant & intersting..." )
+            print( f"\nNews article: {sn_idx} / avaluating..." )
             if sn_row['type'] == 0:
-                print ( f"Evaluating remote hosted article" )  # a real news article
                 status, rem_url = yfn.find_rem_article(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now!
                 print ( f"Staus: {status}" )
-                print ( f"Remote URL: {remote_url}" )
+                print ( f"Remote URL: {rem_url}" )
             else:
-                print ( f"Skipping suspicious non-news item!" )
-
+                print ( f"Suspicious non-news item - skipping!" )
 
     """
     if args['newsymbol'] is not False:
