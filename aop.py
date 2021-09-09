@@ -388,12 +388,19 @@ def main():
         #yfn.do_js_get()
         yfn.scan_news_depth_0(news_symbol, 0, 0)            # 0 = HTML, 1 = JAVAScript
         symbol_news = yfn.eval_article_tags(news_symbol)    # ml_ingest{} returned
-        yfn.find_rem_article(news_symbol, url)
 
         # process ml_ingest. get symbol, url. check symbol matches news_symbol, test_remote()
-        #for k in symbol_news:
-        print ( f"ml_ingest[1])
-        print ( f"ml_ingest[1][2])
+        # >>Xray DEBUG<<
+        for k in symbol_news.items():
+            print ( f"{k['url']} " )
+
+
+        print ( f">>DEBUG<<" )
+        print ( f"{symbol_news[1]}" )
+        print ( f"{symbol_news[1]['symbol']}" )
+        print ( f"{symbol_news[1]['url']}" )
+
+        #yfn.find_rem_article(news_symbol, url)
         
     """
     if args['newsymbol'] is not False:
