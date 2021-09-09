@@ -380,7 +380,7 @@ class yfnews_reader:
         return ml_ingest
 
 # method 10
-    def find_rem_article(self, symbol, url):
+    def find_rem_article(self, id, symbol, url):
         """
         Test the validity of a possible GOOD news article.
         In the NEWs feed, a yahoo.com news article is FAKE. It's an internal FAKE stub
@@ -402,18 +402,16 @@ class yfnews_reader:
             nr = s.get( full_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
             logging.info( f'%s - Assume sub/page is on https://finance.yahoo.com' % cmi_debug )
             nsoup = BeautifulSoup(nr.text, 'html.parser')
-            #
-            # is a fake local finance.yahoo.com news artitle
-            # linking out to the real remote hosted article
-            logging.info( '%s - extract REAL remote news agency article URL' % cmi_debug )
+            logging.info( '%s - Stub/page has been scraped...' % cmi_debug )
+            print ( f"================= Level 1 / Entity {id} ==================" )
             #  = nsoup.find(attrs={"class": "caas-readmore caas-readmore-collapse caas-readmore-outsidebody caas-readmore-asidepresent"})
             rem_news = nsoup.find(attrs={"class": "caas-readmore"})
             if not rem_news.find('a'):
                 logging.info ( f"%s - Level: 1 / NO <hrerf> URL - ERROR" % cmi_debug )
                 return 1, 0    # can find a link. probably an advertisment
             else:
-                rem_artile_url = rem_news.a.get("href")
-                logging.info ( f"%s - Level: 1 / FOUND real article @: {rurl}" % cmi_debug )
+                rem_url = rem_news.a.get("href")
+                logging.info ( f"%s - Level: 1 / FOUND real article @: {rem_url}" % cmi_debug )
                 return 0, rem_article_url    # 0 = success, rem_artile_url => remote news article NOT on yahoo.com
 
         return 2, 0    # error unknown state
