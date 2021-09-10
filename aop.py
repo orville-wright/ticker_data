@@ -391,16 +391,22 @@ def main():
 
         # process ml_ingest candidate new articles
         # test for type 0 (good news article), get symbol, url, check symbol matches news_symbol, test_remote()
+        print ( " ")
         for sn_idx, sn_row in symbol_news.items():
-            print( f"\nNews article: {sn_idx} / evaluating..." )
+            print( f"News article: {sn_idx} / eval... ", end="" )
             if sn_row['type'] == 0:
-                print ( f"================= Level 1 / Entity {sn_idx} / Type {sn_row['type']} ==================" )
+                print ( f"\n================= Level 1 / Entity {sn_idx} / Type {sn_row['type']} ==================" )
                 status, rem_url = yfn.find_rem_article(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now!
                 print ( f"Staus: {status}" )
                 print ( f"Local URL:  {sn_row['url']}" )
                 print ( f"Remote URL: {rem_url}" )
+            elif sn_row['type'] == 1:
+                print ( f"skip / Micro adv" )
+            elif sn_row['type'] == 2:
+                print ( f"skip / Advertisment" )
             else:
-                print ( f"Suspicious non-news item - skipping!" )
+                print ( f"skip / Unknown type" )
+
 
 #################################################################################
 # 1-off quote - 3 differnt methods to get a quote ###############################
