@@ -493,9 +493,9 @@ class yfnews_reader:
 
 # method 12
     def dump_ml_ingest(self):        # >>Xray DEBUG<<
-    """
-    Dump the contents of ml_ingest{}, which holds the NLP candidates
-    """
+        """
+        Dump the contents of ml_ingest{}, which holds the NLP candidates
+        """
         cmi_debug = __name__+"::"+self.dump_ml_ingest.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         print ( "================= ML Ingested Level 1 NLP candidates ==================" )
