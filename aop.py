@@ -387,7 +387,7 @@ def main():
         yfn.do_simple_get()
         #yfn.do_js_get()
         yfn.scan_news_depth_0(news_symbol, 0, 0)            # 0 = HTML, 1 = JAVAScript
-        symbol_news = yfn.eval_article_tags(news_symbol)    # ml_ingest{} returned
+        yfn.eval_article_tags(news_symbol)    # ml_ingest{} is built & now holds all NLP candidates
 
         # process ml_ingest candidate new articles
         # test for type 0 (good news article), get symbol, url, check symbol matches news_symbol, test_remote()

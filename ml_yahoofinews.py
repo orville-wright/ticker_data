@@ -38,6 +38,7 @@ class yfnews_reader:
     yfn_htmldata = ""       # Page in HTML
     yfn_jsdata = ""         # Page in JavaScript-HTML
     ml_brief = []           # ML TXT matrix for Naieve Bayes Classifier pre Count Vectorizer
+    ml_ingest = {}          # ML ingested NLP candidate articles
     ul_tag_dataset = ""     # BS4 handle of the <tr> extracted data
     yfn_df0 = ""            # DataFrame 1
     yfn_df1 = ""            # DataFrame 2
@@ -297,23 +298,21 @@ class yfnews_reader:
         cmi_debug = __name__+"::"+self.eval_article_tags.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
-        ml_ingest = {}
         symbol = symbol.upper()
         li_superclass_all = self.ul_tag_dataset.find_all(attrs={"class": "js-stream-content Pos(r)"} )
         mini_headline_all = self.ul_tag_dataset.div.find_all(attrs={'class': 'C(#959595)'})
         li_subset_all = self.ul_tag_dataset.find_all('li')
 
-        # Major sanity/logic test on <tag> tructure of news article
+        # Major sanity/logic tests on <tag> tructure of news article
         # <tag> structure is very unpredictible, so we count how many INTERESTING <a> tags exist.
         # This isn't a guaranteed logic test but <a> tags signal KEY news article data zones.
         # INFO: Too many <a> tags >= 4 means A fake news article Advertsiment
         #       <= 3 <a> tags = A real news article (possibly)
         # NOTE: Types of news elements
         #       0 : Real independant news article - high quality
-        #       1 : Company paid adv masquerading as news - low quality
-        #       2 : Inserted advertisment not related to company at all - junk
-        #
-        # WARN: Its normal to see duplicate Type 1 news elemets repeated numerous times & locations within a page.
+        #       1 : Company paid adv masquerading as news - Medium quality
+        #       2 : Injected advertisment not related to company at all - Low quality
+        # WARN: Its normal to see duplicate Type 0 & 1 news elemets repeated within a page.
 
         h3_counter = a_counter = 0
         x = y = 0
@@ -336,7 +335,7 @@ class yfnews_reader:
                     ml_atype = 0
 
                 print ( f"================= Level 0 / Entity {x} ==================" )
-                print ( f"News item:        {x} - {article_type}" )
+                print ( f"News item:        {x} / {article_type}" )
                 print ( f"News agency:      {news_agency}" )
                 print ( f"Local host:       finance.yahoo.com" )
                 print ( f"Article URL:      {article_url}" )
@@ -354,7 +353,7 @@ class yfnews_reader:
                     "type" : ml_atype, \
                     "url" : article_url, \
             		}
-                ml_ingest.update({x : nd})
+                self.ml_ingest.update({x : nd})
 
             else:
                 found_ad = li_tag.a.text
@@ -363,21 +362,14 @@ class yfnews_reader:
                 fa_2 = fa_0[0].text
                 fa_3 = fa_0[1].get('href')
                 print ( f"================= Level 0 / Entity {x} ==================" )
-                print ( f"New item:         {x} - Advertisment / not {symbol} news" )
+                print ( f"New item:         {x} / Advertisment / not {symbol} news" )
                 print ( f"News agency:      {fa_2}" )
                 print ( f"Local host:       {fa_3:.30} [...]" )
                 print ( f"Article URL:      {fa_1}" )
             a_counter = h3_counter = 0
-
         # need to capture junk adds here (very difficult as they're injected by add engine. Not hard page elements)
         # type = 2 / ml_atype = 2
-
-        # >>Xray DEBUG<<
-        if self.args['bool_xray'] is True:
-            for k in ml_ingest.items():
-                print ( f"{k} " )
-
-        return ml_ingest
+        return
 
 # method 10
     def find_rem_article(self, id, symbol, url):
@@ -414,9 +406,6 @@ class yfnews_reader:
                 return 0, rem_url    # 0 = success, rem_url => remote news article NOT on yahoo.com
 
         return 2, 0    # error unknown state
-
-
-
 
         """
         def read_article_data(self, url):
@@ -501,3 +490,16 @@ class yfnews_reader:
             logging.info( f"%s - close news article: {deep_url}" % cmi_debug )
 
         return tag_dataset, real_nurl
+
+# method 12
+    def dump_ml_ingest(self):        # >>Xray DEBUG<<
+    """
+    Dump the contents of ml_ingest{}, which holds the NLP candidates
+    """
+        cmi_debug = __name__+"::"+self.dump_ml_ingest.__name__+".#"+str(self.yti)
+        logging.info('%s - IN' % cmi_debug )
+        print ( "================= ML Ingested Level 1 NLP candidates ==================" )
+        for k in self.ml_ingest.items():
+            print ( f"{k} " )
+
+        return
