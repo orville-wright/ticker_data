@@ -323,6 +323,9 @@ class yfnews_reader:
             if a_counter <= 3:                     # good new zrticle found
                 news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
                 article_url = li_tag.a.get("href")
+                test_http_scheme = urlparse(article_url)
+                if test_http_scheme.scheme != "https" or test_http_scheme.scheme != "http":    # check URL scheme specifier
+                    article_url = "https://finance.yahoo.com" + article_url
                 article_headline = li_tag.a.text
                 article_type = f"Good {symbol} news article"
                 if not li_tag.find('p'):
