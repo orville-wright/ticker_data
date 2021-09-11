@@ -387,26 +387,28 @@ def main():
         yfn.do_simple_get()
         #yfn.do_js_get()
         yfn.scan_news_depth_0(news_symbol, 0, 0)            # 0 = HTML, 1 = JAVAScript
-        yfn.eval_article_tags(news_symbol)    # ml_ingest{} is built & now holds all NLP candidates
+        yfn.eval_article_tags(news_symbol)    # ml_ingest{} is built
+        print ( " " )
+        yfn.dump_ml_ingest()
 
         # process ml_ingest candidate new articles
-        # test for type 0 (good news article), get symbol, url, check symbol matches news_symbol, test_remote()
         print ( " ")
-        for sn_idx, sn_row in self.ml_ingest.items():
+        for sn_idx, sn_row in yfn.ml_ingest.items():
             print( f"News article: {sn_idx} / eval... ", end="" )
-            if sn_row['type'] == 0:
-                print ( f"\n================= Level 1 / Entity {sn_idx} / Type {sn_row['type']} ==================" )
+            if sn_row['type'] == 0:    # good high quality news article
+                print ( f"Good / News" )
+                print ( f"================= Level 1 / Entity {sn_idx} / Type {sn_row['type']} =================="
                 status, rem_url = yfn.find_rem_article(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now!
-                print ( f"Staus: {status}" )
+                print ( f"Staus:      {}{status}" )
                 print ( f"Local URL:  {sn_row['url']}" )
                 print ( f"Remote URL: {rem_url}" )
+                print ( f"================================================================" )
             elif sn_row['type'] == 1:
                 print ( f"skip / Micro adv" )
             elif sn_row['type'] == 2:
                 print ( f"skip / Advertisment" )
             else:
                 print ( f"skip / Unknown type" )
-
 
 #################################################################################
 # 1-off quote - 3 differnt methods to get a quote ###############################
