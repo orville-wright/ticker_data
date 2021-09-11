@@ -392,7 +392,7 @@ def main():
         # process ml_ingest candidate new articles
         # test for type 0 (good news article), get symbol, url, check symbol matches news_symbol, test_remote()
         print ( " ")
-        for sn_idx, sn_row in symbol_news.items():
+        for sn_idx, sn_row in self.ml_ingest.items():
             print( f"News article: {sn_idx} / eval... ", end="" )
             if sn_row['type'] == 0:
                 print ( f"\n================= Level 1 / Entity {sn_idx} / Type {sn_row['type']} ==================" )
