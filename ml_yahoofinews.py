@@ -399,8 +399,8 @@ class yfnews_reader:
             #  = nsoup.find(attrs={"class": "caas-readmore caas-readmore-collapse caas-readmore-outsidebody caas-readmore-asidepresent"})
             rem_news = nsoup.find(attrs={"class": "caas-readmore"})
             if not rem_news.find('a'):
-                logging.info ( f"%s - Level: 1 / NO <hrerf> URL - ERROR" % cmi_debug )
-                return 1, 0    # can find a link. probably an advertisment
+                logging.info ( f"%s - Level: 1 / NO <hrerf> discovered in page - BS4 Extract ERROR" % cmi_debug )
+                return 1, 'ERROR_NO_URL_EXTRACTED'    # can find a remote <href> URL. probably BS4 extract/find logic error
             else:
                 rem_url = rem_news.a.get("href")
                 logging.info ( f"%s - Level: 1 / FOUND real article @: {rem_url}" % cmi_debug )
