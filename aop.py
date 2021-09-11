@@ -399,7 +399,7 @@ def main():
                 print ( f"Good / News" )
                 print ( f"================= Level 1 / Entity {sn_idx} / Type {sn_row['type']} ==================" )
                 status, rem_url = yfn.find_rem_article(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now!
-                print ( f"Staus:      {}{status}" )
+                print ( f"Staus:      {status}" )
                 print ( f"Local URL:  {sn_row['url']}" )
                 print ( f"Remote URL: {rem_url}" )
                 print ( f"================================================================" )
