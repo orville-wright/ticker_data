@@ -391,11 +391,9 @@ class yfnews_reader:
         this_article_url = url      # pass in the url that we want to deeply analyze
         symbol = symbol.upper()
         logging.info( f'%s - validate fake news article stub/page for: {symbol}' % (cmi_debug) )
-        logging.info( '%s - get() stub/page at URL: {this_article_url} ' % cmi_debug )
-        full_url = "https://finance.yahoo.com" + url
+        logging.info( f'%s - get() stub/page at URL: {this_article_url} ' % cmi_debug )
         with requests.Session() as s:
-            nr = s.get( full_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
-            logging.info( f'%s - Assume sub/page is on https://finance.yahoo.com' % cmi_debug )
+            nr = s.get( this_article_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
             nsoup = BeautifulSoup(nr.text, 'html.parser')
             logging.info( '%s - Stub/page has been scraped...' % cmi_debug )
             #  = nsoup.find(attrs={"class": "caas-readmore caas-readmore-collapse caas-readmore-outsidebody caas-readmore-asidepresent"})
