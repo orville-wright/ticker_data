@@ -386,8 +386,8 @@ def main():
         yfn.form_url_endpoint(news_symbol)
         yfn.do_simple_get()
         #yfn.do_js_get()
-        yfn.scan_news_depth_0(news_symbol, 0, 0)            # 0 = HTML, 1 = JAVAScript
-        yfn.eval_article_tags(news_symbol)    # ml_ingest{} is built
+        yfn.scan_news_level_0(news_symbol, 0, 0)    # (params) #1: level, #2: 0=HTML / 1=JavaScript
+        yfn.eval_article_tags(news_symbol)          # ml_ingest{} is built
         print ( " " )
         yfn.dump_ml_ingest()
 

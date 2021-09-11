@@ -229,7 +229,7 @@ class yfnews_reader:
 
 # session data extraction methods ##############################################
 # method #8
-    def scan_news_depth_0(self, symbol, depth, scan_type):
+    def scan_news_level_0(self, symbol, depth, scan_type):
         """
         Evaluates the news items found. Prints stats, but doesnt create any usable structs
         TODO: add args - DEPTH (0, 1, 2) as opposed to multiple depth level methods - not yes implimented!
@@ -240,7 +240,7 @@ class yfnews_reader:
         Does not extract any news atricles, items or data fields. Just sets up the element extraction zone.
         Returns a BS4 onbject handle pointing to correct news section for deep element extraction.
         """
-        cmi_debug = __name__+"::"+self.scan_news_depth_0.__name__+".#"+str(self.yti)
+        cmi_debug = __name__+"::"+self.scan_news_level_0.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         symbol = symbol.upper()
         depth = int(depth)
@@ -409,11 +409,6 @@ class yfnews_reader:
         return 2, 0    # error unknown state
 
         """
-        def read_article_data(self, url):
-        #a_subset, nurl = self.news_article_depth_1(news_article_url)      # go DEEP into this news HTML page & analyze
-        if a_subset == 0:    # discovered a fake remote stubbed news article that
-            print ( f"ABORT reading article: Fake remote stub discovered! / deeper analysis needed..." )
-            return ( [0, 0, 0, 0] )
         else:
             #print ( f"Tag sections in news page: {len(a_subset)}" )   # DEBUG
             for erow in range(len(a_subset)):       # cycyle through tag sections in this dataset (not predictible or consistent)
@@ -459,12 +454,10 @@ class yfnews_reader:
             nr = s.get(deep_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
             logging.info( f'%s - Read full HTML data with BS4: {deep_url}' % cmi_debug )
             nsoup = BeautifulSoup(nr.text, 'html.parser')
-            # check to see if this is a fake local finance.yahoo.com news artitle that is just a small dummy stubb
-            # linking out to the real remote hosted article
+            # fake stub/page local finance.yahoo.com news artitle?
             logging.info( '%s - Check for fake local URL/Remote article URL' % cmi_debug )
             frl = nsoup.find(attrs={"class": "caas-readmore caas-readmore-collapse caas-readmore-outsidebody caas-readmore-asidepresent"})
             print ( f"{frl}" )
-            #if frl.a is not None:             # article seems mangeled/weird (i.e. n <a> or <href> tags)
             y = 1
             for child in frl.children:
                 print ( f"{y}: {child.name}" )
