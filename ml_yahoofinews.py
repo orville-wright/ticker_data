@@ -320,7 +320,8 @@ class yfnews_reader:
             x += 1                                 # counter = which article we are looking at
             for element in li_tag.descendants:     # walk the full tag tree recurisvely
                     if element.name == "a":a_counter += 1    # can do more logic tests in here if needed
-            if a_counter <= 3:                     # good new zrticle found
+            if a_counter <= 3:
+                logging.info( f'%s - li count: {a_counter}' % (cmi_debug) )                  # good new zrticle found
                 news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
                 article_url = li_tag.a.get("href")
                 test_http_scheme = urlparse(article_url)
