@@ -415,7 +415,7 @@ class yfnews_reader:
                 logging.info ( f"%s - Level: 1 / remote NO <hrerf> discovered - assume local" % cmi_debug )
                 local_button = rem_news.text
                 if local_button == "Story continues":
-                    return 1, f'{local_button}'    # locally hosted news article
+                    return 1, f'{this_article_url}'    # locally hosted news article
                 else:
                     logging.info ( f"%s - Level: 1 / Unknown page structure" % cmi_debug )
                     return 2, "ERROR_no_article_url"    # ERROR: cant find a URL to this article
