@@ -410,7 +410,7 @@ class yfnews_reader:
             #  = nsoup.find(attrs={"class": "caas-readmore caas-readmore-collapse caas-readmore-outsidebody caas-readmore-asidepresent"})
             rem_news = nsoup.find(attrs={"class": "caas-readmore"})                # stub news article, remotely hosted
             local_news = nsoup.find(attrs={"class": "caas-body"})                  # full news article, locally hosted
-            local_optrader = nsoup.div.find(attrs={"class": "caas-body-wrapper"})  # boring options trader bland article type
+            local_optrader = nsoup.find(attrs={"class": "caas-body-wrapper"})  # boring options trader bland article type
 
             print ( f">>DEBUG<< rem_news type:       {type(rem_news)}" )
             print ( f">>DEBUG<< local_news type:     {type(local_news)}" )
