@@ -362,11 +362,12 @@ def main():
 # Summary ############### AVERGAES and computed info ##########################
         print ( " " )
         print ( "============== Market activity overview, inisghts & stats =================" )
-        averages = x.combo_grouped()       # insights
+        averages = x.combo_grouped().round(2)       # insights
         print ( " " )
         print ( averages )
         print ( " " )
-        print ( f"Current day % gain average: %{averages.iloc[-1]['Pct_change'].round(2)}" )
+        print ( f"Current day average average $ gain: ${averages.iloc[-1]['Prc_change'].round(2)}" )
+        print ( f"Current day average percent gain:   %{averages.iloc[-1]['Pct_change'].round(2)}" )
 
 # Machine Learning dev code ####################################
 # News Sentiment AI

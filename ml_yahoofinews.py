@@ -378,9 +378,14 @@ class yfnews_reader:
     def find_rem_article(self, id, symbol, url):
         """
         Test the validity of a possible GOOD news article.
-        In the NEWs feed, a yahoo.com news article is FAKE. It's an internal FAKE stub
-        article/page that links out to a paying yahoo Partner site hosting the REAL news article.
-        We must test URL link validity, extract it, pre-pare it & save it.
+        In the NEWs feed, all news article are initially FAKE. They point to an internal stub/page
+        The stub/page can have miltple personas
+        1. A mini-stub, snippet of the article, "Continue" button links to a exteranly hosted article @ a partner site
+        2. An artcile @ finanice.yahoo.com, shows a smippet of articel, "Continue" button opens full article on yahoo.com
+        3. A fake add page on yahoo.com
+        4. A fake add # a partner site
+        5. other
+        We must test each person of a candidate good articles
         """
         # data elements extracted & computed
         # Authour, Date posted, Time posted, Age of article
@@ -398,9 +403,11 @@ class yfnews_reader:
             logging.info( '%s - Stub/page has been scraped...' % cmi_debug )
             #  = nsoup.find(attrs={"class": "caas-readmore caas-readmore-collapse caas-readmore-outsidebody caas-readmore-asidepresent"})
             rem_news = nsoup.find(attrs={"class": "caas-readmore"})
-            if not rem_news.find('a'):
-                logging.info ( f"%s - Level: 1 / NO <hrerf> discovered in page - BS4 Extract ERROR" % cmi_debug )
-                return 1, 'ERROR_NO_URL_EXTRACTED'    # can find a remote <href> URL. probably BS4 extract/find logic error
+            local_news = nsoup.find(attrs={"class": "caas-body"})
+            if not rem_news.find('a'):        # not a remote hosted article
+                logging.info ( f"%s - Level: 1 / remote NO <hrerf> discovered - assume local" % cmi_debug )
+                local_button = rem.news.text
+                return 1, 'ERROR_NO_URL_EXTRACTED: {local_button}'    # can find a remote <href> URL. probably BS4 extract/find logic error
             else:
                 rem_url = rem_news.a.get("href")
                 logging.info ( f"%s - Level: 1 / FOUND real article @: {rem_url}" % cmi_debug )
