@@ -415,9 +415,9 @@ class yfnews_reader:
             print ( f">>DEBUG<< 1. rem_news type:       {type(rem_news)}" )
             print ( f">>DEBUG<< 2. local_news type:     {type(local_news)}" )
             print ( f">>DEBUG<< 3. local_optrader type: {type(local_optrader)}" )
-            if type(rem_news) != type(None): print ( f"1. NO caas-readmore tag / not remote article" )
-            if type(local_news) != type(None): print ( f"2. caas-body tag: / not local article" )
-            if type(local_optrader) != type(None): print ( f"3. caas-button tag: / local opts-trader page / {local_optrader.button.text}" )
+            if type(rem_news) != type(None): print ( f"1. caas-readmore populated / could be a valid remote article" )
+            if type(local_news) != type(None): print ( f"2. caas-body populated / could be a locally hosted article" )
+            if type(local_optrader) != type(None): print ( f"3. caas-button populated / could be local opts-trader article / {local_optrader.button.text}" )
 
             #
             # sa far - 3 types of possible news artciels
