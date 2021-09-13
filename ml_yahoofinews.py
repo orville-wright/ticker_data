@@ -411,7 +411,8 @@ class yfnews_reader:
                 local_button = rem_news.text
                 if local_button = "Story continues"
                     return 1, f'{local_button}'    # locally hosted news article
-                    else:
+                else:
+                    logging.info ( f"%s - Level: 1 / Unknown page structure" % cmi_debug )
                     return 2, "ERROR_no_article_url"    # ERROR: cant find a URL to this article
             else:
                 rem_url = rem_news.a.get("href")    # a remotely hosted news article. Whats its real URL?
