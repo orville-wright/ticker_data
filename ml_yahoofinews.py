@@ -416,8 +416,8 @@ class yfnews_reader:
             print ( f">>DEBUG<< local_news type:     {type(local_news)}" )
             print ( f">>DEBUG<< local_optrader type: {type(local_optrader)} / {local_optrader}" )
             if type(rem_news) != type(None): print ( f"NO caas-readmore tag" )
-            if type(local_news) != type(None): print ( f"caas-body tag: {local_news.text}" )
-            if type(local_optrader) != type(None): print ( f"caas-button tag: {local_optrader.text}" )
+            if type(local_news) != type(None): print ( f"caas-body tag: {rem_news.text}" )
+            if type(local_optrader) != type(None): print ( f"caas-button tag: {local_optrader.div.text}" )
 
             #
             # sa far - 3 types of possible news artciels
