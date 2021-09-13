@@ -366,8 +366,8 @@ def main():
         print ( " " )
         print ( averages )
         print ( " " )
-        print ( f"Current day average average $ gain: ${averages.iloc[-1]['Prc_change'].round(2)}" )
-        print ( f"Current day average percent gain:   %{averages.iloc[-1]['Pct_change'].round(2)}" )
+        print ( f"Current day average $ gain: ${averages.iloc[-1]['Prc_change'].round(2)}" )
+        print ( f"Current day percent gain:   %{averages.iloc[-1]['Pct_change'].round(2)}" )
 
 # Machine Learning dev code ####################################
 # News Sentiment AI
