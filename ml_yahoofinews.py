@@ -407,7 +407,7 @@ class yfnews_reader:
             if not rem_news.find('a'):        # not a remote hosted article
                 logging.info ( f"%s - Level: 1 / remote NO <hrerf> discovered - assume local" % cmi_debug )
                 local_button = rem_news.text
-                return 1, 'ERROR_NO_URL_EXTRACTED: {local_button}'    # can find a remote <href> URL. probably BS4 extract/find logic error
+                return 1, f'ERROR_NO_URL: {local_button}'    # can find a remote <href> URL. probably BS4 extract/find logic error
             else:
                 rem_url = rem_news.a.get("href")
                 logging.info ( f"%s - Level: 1 / FOUND real article @: {rem_url}" % cmi_debug )
