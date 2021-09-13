@@ -404,16 +404,20 @@ class yfnews_reader:
             #  = nsoup.find(attrs={"class": "caas-readmore caas-readmore-collapse caas-readmore-outsidebody caas-readmore-asidepresent"})
             rem_news = nsoup.find(attrs={"class": "caas-readmore"})
             local_news = nsoup.find(attrs={"class": "caas-body"})
+            #
             if not rem_news.find('a'):        # not a remote hosted article
                 logging.info ( f"%s - Level: 1 / remote NO <hrerf> discovered - assume local" % cmi_debug )
                 local_button = rem_news.text
-                return 1, f'ERROR_NO_URL: {local_button}'    # can find a remote <href> URL. probably BS4 extract/find logic error
+                if local_button = "Story continues"
+                    return 1, f'{local_button}'    # locally hosted news article
+                    else:
+                    return 2, "ERROR_no_article_url"    # ERROR: cant find a URL to this article
             else:
-                rem_url = rem_news.a.get("href")
+                rem_url = rem_news.a.get("href")    # a remotely hosted news article. Whats its real URL?
                 logging.info ( f"%s - Level: 1 / FOUND real article @: {rem_url}" % cmi_debug )
                 return 0, rem_url    # 0 = success, rem_url => remote news article NOT on yahoo.com
 
-        return 2, 0    # error unknown state
+        return 3, "ERROR_unknown_state!"    # error unknown state
 
         """
         else:
