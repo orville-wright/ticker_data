@@ -392,7 +392,7 @@ def main():
         print ( " " )
         yfn.dump_ml_ingest()
 
-        # process ml_ingest candidate new articles
+        # process ml_ingest{} candidate new articles
         print ( " ")
         for sn_idx, sn_row in yfn.ml_ingest.items():
             print( f"News article: {sn_idx} / eval... ", end="" )
@@ -400,7 +400,8 @@ def main():
                 print ( f"Good / News" )
                 print ( f"================= Level 1 / Entity {sn_idx} / Type {sn_row['type']} ==================" )
                 status, rem_url = yfn.find_rem_article(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now!
-                print ( f"Staus:      {status}" )
+                if status == 0: print ( f"Staus:      0 / Remote hosted article" )
+                if status == 1: print ( f"Staus:      1 / Local article on finance.yahoo.com/news" )
                 print ( f"Local URL:  {sn_row['url']}" )
                 print ( f"Remote URL: {rem_url}" )
                 print ( f"================================================================" )
