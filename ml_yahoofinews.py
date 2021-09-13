@@ -411,6 +411,11 @@ class yfnews_reader:
             rem_news = nsoup.find(attrs={"class": "caas-readmore"})                # stub news article, remotely hosted
             local_news = nsoup.find(attrs={"class": "caas-body"})                  # full news article, locally hosted
             local_optrader = nsoup.button.find(attrs={"class": "caas-button"})     # boring options trader bland article type
+
+            if type(rem_news) == None: print ( f"NO caas-readmore tag" )
+            if type(local_news) == None: print ( f"NO caas-body tag" )
+            if type(local_optrader) == None: print ( f"NO caas-button tag" )
+
             #
             # sa far - 3 types of possible news artciels
             if not rem_news.find('a'):                  # not a remote hosted article
