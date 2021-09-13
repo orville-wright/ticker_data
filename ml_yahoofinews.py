@@ -409,7 +409,7 @@ class yfnews_reader:
             if not rem_news.find('a'):        # not a remote hosted article
                 logging.info ( f"%s - Level: 1 / remote NO <hrerf> discovered - assume local" % cmi_debug )
                 local_button = rem_news.text
-                if local_button = "Story continues"
+                if local_button == "Story continues":
                     return 1, f'{local_button}'    # locally hosted news article
                 else:
                     logging.info ( f"%s - Level: 1 / Unknown page structure" % cmi_debug )
