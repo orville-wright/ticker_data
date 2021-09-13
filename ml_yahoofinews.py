@@ -408,21 +408,23 @@ class yfnews_reader:
             nsoup = BeautifulSoup(nr.text, 'html.parser')
             logging.info( '%s - Stub/page has been scraped...' % cmi_debug )
             #  = nsoup.find(attrs={"class": "caas-readmore caas-readmore-collapse caas-readmore-outsidebody caas-readmore-asidepresent"})
-            rem_news = nsoup.find(attrs={"class": "caas-readmore"})
-            local_news = nsoup.find(attrs={"class": "caas-body"})
+            rem_news = nsoup.find(attrs={"class": "caas-readmore"})                # stub news article, remotely hosted
+            local_news = nsoup.find(attrs={"class": "caas-body"})                  # full news article, locally hosted
+            local_optrader = nsoup.button.find(attrs={"class": "caas-button"})     # boring options trader bland article type
             #
-            if not rem_news.find('a'):        # not a remote hosted article
+            # sa far - 3 types of possible news artciels
+            if not rem_news.find('a'):                  # not a remote hosted article
                 logging.info ( f"%s - Level: 1 / remote NO <hrerf> discovered - assume local" % cmi_debug )
                 local_button = rem_news.text
-                if local_button == "Story continues":
-                    return 1, f'{this_article_url}'    # locally hosted news article
+                if local_button == "Story continues":   # locally hosted article have a [continue...] button
+                    return 1, f'{this_article_url}'     # locally hosted news article
                 else:
                     logging.info ( f"%s - Level: 1 / Unknown page structure" % cmi_debug )
                     return 2, "ERROR_no_article_url"    # ERROR: cant find a URL to this article
             else:
-                rem_url = rem_news.a.get("href")    # a remotely hosted news article. Whats its real URL?
+                rem_url = rem_news.a.get("href")        # a remotely hosted news article. Whats its real URL?
                 logging.info ( f"%s - Level: 1 / FOUND real article @: {rem_url}" % cmi_debug )
-                return 0, rem_url    # 0 = success, rem_url => remote news article NOT on yahoo.com
+                return 0, rem_url
 
         return 3, "ERROR_unknown_state!"    # error unknown state
 
