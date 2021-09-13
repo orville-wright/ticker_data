@@ -412,12 +412,12 @@ class yfnews_reader:
             local_news = nsoup.find(attrs={"class": "caas-body"})                  # full news article, locally hosted
             local_optrader = nsoup.find(attrs={"class": "caas-body-wrapper"})  # boring options trader bland article type
 
-            print ( f">>DEBUG<< rem_news type:       {type(rem_news)}" )
-            print ( f">>DEBUG<< local_news type:     {type(local_news)}" )
-            print ( f">>DEBUG<< local_optrader type: {type(local_optrader)}" )
-            if type(rem_news) != type(None): print ( f"NO caas-readmore tag / not remote article" )
-            if type(local_news) != type(None): print ( f"caas-body tag: / not local article" )
-            if type(local_optrader) != type(None): print ( f"caas-button tag: {local_optrader.button.text}" )
+            print ( f">>DEBUG<< 1. rem_news type:       {type(rem_news)}" )
+            print ( f">>DEBUG<< 2. local_news type:     {type(local_news)}" )
+            print ( f">>DEBUG<< 3. local_optrader type: {type(local_optrader)}" )
+            if type(rem_news) != type(None): print ( f"1. NO caas-readmore tag / not remote article" )
+            if type(local_news) != type(None): print ( f"2. caas-body tag: / not local article" )
+            if type(local_optrader) != type(None): print ( f"3. caas-button tag: / local opts-trader page / {local_optrader.button.text}" )
 
             #
             # sa far - 3 types of possible news artciels
