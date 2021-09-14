@@ -11,6 +11,7 @@ import argparse
 import time
 import threading
 import random
+from urllib.parse import urlparse
 
 # ML capabilities
 from sklearn.feature_extraction.text import CountVectorizer
