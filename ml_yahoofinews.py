@@ -424,16 +424,19 @@ class yfnews_reader:
             if type(rem_news) != type(None):        # page has valid structure
                 if rem_news.find('a'):          # BAD, no <a> zone in page
                     rem_url = rem_news.a.get("href")        # a remotely hosted news article. Whats its real URL?
-                    logging.info ( f"%s - Level: 1 / FOUND real article @: {rem_url}" % cmi_debug )
+                    logging.info ( f"%s - Level: 1 / Found <a> zone / Remote article @: {rem_url}" % cmi_debug )
                     return 0, rem_url
-                else:
-                    logging.info ( f"%s - Level: 1 / NO <a> zone - assume local article..." % cmi_debug )
-                    opts_a = local_optrader.button.text
+                elif rem_news.text == "Story continues":   # locally article, with [continues...] button
+                    logging.info ( f"%s - Level: 1 / NO <a> zone / local article..." % cmi_debug )
                     local_a = rem_news.text
-                    print ( f">>DUBUG<< / 1: {opts_a}" )
-                    print ( f">>DUBUG<< / 2: {local_a}" )
-
-        return 4, "ERROR_unknown_state!"    # error unknown state
+                    print ( f">>DUBUG<< / {local_a}" )
+                    return 0, this_article_url
+                else:
+                    opts_a = local_optrader.button.text
+                    print ( f">>DUBUG<< / {opts_a}" )
+                    return 0, this_article_url
+                    
+        return 9, "ERROR_unknown_state!"    # error unknown state
 
         """
             if not rem_news.find('a'):                  # not a remote hosted article
