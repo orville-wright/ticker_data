@@ -403,14 +403,13 @@ def main():
                 status, rem_url = yfn.find_rem_article(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now!
             elif sn_row['type'] == 1:
                 t_url = urlparse(sn_row['url'])
-                t_nl = t_url.path.split('/', 1)    # e.g.  https://finance.yahoo.com/video/disney-release-rest-2021-films-210318469.html
+                t_nl = t_url.path.split('/', 2)    # e.g.  https://finance.yahoo.com/video/disney-release-rest-2021-films-210318469.html
                 print ( f"Micro adv / ", end="" )
-                if t_nl == "video":
+                if t_nl[1] == "video":
                     print ( f"video news / NLP candidate" )
                     status, rem_url = yfn.find_rem_article(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now!
                 else:
                     print ( f"no news / skip..." )
-                    print ( f">>DEBUG<< split piece: {t_nl}" )
             elif sn_row['type'] == 2:
                 print ( f"Advertisment / skip..." )
             else:
