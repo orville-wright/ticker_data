@@ -397,8 +397,8 @@ def main():
         for sn_idx, sn_row in yfn.ml_ingest.items():
             print( f"News article: {sn_idx} / eval... ", end="" )
             if sn_row['type'] == 0:    # good high quality news article
-                print ( f"Good / News" )
-                print ( f"================= Level 1 / Entity {sn_idx} / Type {sn_row['type']} ==================" )
+                print ( f"NLP candidate / News" )
+                #print ( f"================= Depth 1 / Article {sn_idx} / Type {sn_row['type']} ==================" )
                 status, rem_url = yfn.find_rem_article(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now!
                 if status == 0: print ( f"Locality:   0 / Remote news" )
                 if status == 1: print ( f"Locality:   1 / Local news" )
