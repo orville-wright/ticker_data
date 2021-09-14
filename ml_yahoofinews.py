@@ -412,15 +412,11 @@ class yfnews_reader:
             local_news = nsoup.find(attrs={"class": "caas-body"})                  # full news article, locally hosted
             local_story = nsoup.find(attrs={"class": "caas-body-wrapper"})  # boring options trader bland article type
 
-            #print ( f">>DEBUG<< 1. rem_news type:       {type(rem_news)}" )
-            #print ( f">>DEBUG<< 2. local_news type:     {type(local_news)}" )
-            #print ( f">>DEBUG<< 3. local_optrader type: {type(local_optrader)}" )
-
             # if type(rem_news) != type(None): print ( f"1. caas-readmore populated / could be a valid remote article" )
             # if type(local_news) != type(None): print ( f"2. caas-body populated / could be a locally hosted article" )
             # if type(local_optrader) != type(None): print ( f"3. caas-button populated / could be local opts-trader article / {local_optrader.button.text}" )
 
-            # test which pages have valid structures
+            # page type logic tests
             if type(rem_news) != type(None):        # page has valid structure
                 logging.info ( f"%s - Level: 1 / Stub-page is valid..." % cmi_debug )
                 if rem_news.find('a'):          # BAD, no <a> zone in page
@@ -429,15 +425,15 @@ class yfnews_reader:
                     return 0, rem_url
                 elif rem_news.text == "Story continues":   # locally article, with [continues...] button
                     logging.info ( f"%s - Level: 1 / NO <a> zone / local article..." % cmi_debug )
-                    print ( f">>DUBUG<< / {rem_news.text}" )
+                    #print ( f">>DUBUG<< / {rem_news.text}" )
                     return 1, this_article_url
                 else:
                     logging.info ( f"%s - Level: 1 / NO <a> zone / Local story..." % cmi_debug )
-                    print ( f">>DUBUG<< / {local_story.button.text}" )
+                    #print ( f">>DUBUG<< / {local_story.button.text}" )
                     return 2, this_article_url
             elif local_story.button.text == "Read full article":
                 logging.info ( f"%s - Level: 1 / Simple stub-page..." % cmi_debug )
-                print ( f">>DUBUG<< / {local_story.button.text}" )
+                #print ( f">>DUBUG<< / {local_story.button.text}" )
                 return 3, this_article_url
             else:
                 logging.info ( f"%s - Level: 1 / Basic page is BAD" % cmi_debug )
