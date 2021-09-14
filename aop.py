@@ -393,28 +393,21 @@ def main():
         print ( " " )
         yfn.dump_ml_ingest()
 
-        # process ml_ingest{} candidate new articles
+        # process ml_ingest{} candidate news articles
         print ( " ")
         for sn_idx, sn_row in yfn.ml_ingest.items():
             print( f"News article: {sn_idx} / eval... ", end="" )
             if sn_row['type'] == 0:    # good high quality news article
-                print ( f"NLP candidate / News" )
+                print ( f"News / NLP candidate" )
                 #print ( f"================= Depth 1 / Article {sn_idx} / Type {sn_row['type']} ==================" )
                 status, rem_url = yfn.find_rem_article(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now!
-                if status == 0: print ( f"Locality:   0 / Remote news" )
-                if status == 1: print ( f"Locality:   1 / Local news" )
-                if status == 2: print ( f"Locality:   2 / Local opinion" )
-                if status == 3: print ( f"Locality:   3 / Local story" )
-                if status > 3:  print ( f"Locality:   3 / Uncaptured state" )
-                print ( f"Local URL:  {sn_row['url']}" )
-                print ( f"Remote URL: {rem_url}" )
-                print ( f"================================================================" )
             elif sn_row['type'] == 1:
                 t_url = urlparse(sn_row['url'])
-                t_nl = t_url.path.split('/', 1)
+                t_nl = t_url.path.split('/', 1)    # e.g.  https://finance.yahoo.com/video/disney-release-rest-2021-films-210318469.html
                 print ( f"Micro adv / ", end="" )
                 if t_nl == "video":
-                    print ( f"video news story" )
+                    print ( f"video news / NLP candidate" )
+                    status, rem_url = yfn.find_rem_article(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now!
                 else:
                     print ( f"no news / skip..." )
                     print ( f">>DEBUG<< split piece: {t_nl}" )
@@ -422,6 +415,15 @@ def main():
                 print ( f"Advertisment / skip..." )
             else:
                 print ( f"Unknown type / skip..." )
+                if status == 0: print ( f"Locality:   0 / Remote news" )
+                if status == 1: print ( f"Locality:   1 / Local news" )
+                if status == 2: print ( f"Locality:   2 / Local opinion" )
+                if status == 3: print ( f"Locality:   3 / Local story" )
+                if status == 4: print ( f"Locality:   3 / Local video story" )
+                if status > 4:  print ( f"Locality:   3 / Uncaptured state" )
+                print ( f"Local URL:  {sn_row['url']}" )
+                print ( f"Remote URL: {rem_url}" )
+                print ( f"================================================================" )
 
 #################################################################################
 # 1-off quote - 3 differnt methods to get a quote ###############################
