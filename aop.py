@@ -400,8 +400,9 @@ def main():
                 print ( f"Good / News" )
                 print ( f"================= Level 1 / Entity {sn_idx} / Type {sn_row['type']} ==================" )
                 status, rem_url = yfn.find_rem_article(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now!
-                if status == 0: print ( f"Staus:      0 / Remote hosted article" )
-                if status == 1: print ( f"Staus:      1 / Local article on finance.yahoo.com/news" )
+                if status == 0: print ( f"Locality:   0 / Remote news" )
+                if status == 1: print ( f"Locality:   1 / Local news" )
+                if status == 2: print ( f"Locality:   1 / Local opinion" )
                 print ( f"Local URL:  {sn_row['url']}" )
                 print ( f"Remote URL: {rem_url}" )
                 print ( f"================================================================" )
