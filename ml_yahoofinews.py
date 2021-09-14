@@ -412,15 +412,48 @@ class yfnews_reader:
             local_news = nsoup.find(attrs={"class": "caas-body"})                  # full news article, locally hosted
             local_optrader = nsoup.find(attrs={"class": "caas-body-wrapper"})  # boring options trader bland article type
 
-            print ( f">>DEBUG<< 1. rem_news type:       {type(rem_news)}" )
-            print ( f">>DEBUG<< 2. local_news type:     {type(local_news)}" )
-            print ( f">>DEBUG<< 3. local_optrader type: {type(local_optrader)}" )
-            if type(rem_news) != type(None): print ( f"1. caas-readmore populated / could be a valid remote article" )
-            if type(local_news) != type(None): print ( f"2. caas-body populated / could be a locally hosted article" )
-            if type(local_optrader) != type(None): print ( f"3. caas-button populated / could be local opts-trader article / {local_optrader.button.text}" )
+            #print ( f">>DEBUG<< 1. rem_news type:       {type(rem_news)}" )
+            #print ( f">>DEBUG<< 2. local_news type:     {type(local_news)}" )
+            #print ( f">>DEBUG<< 3. local_optrader type: {type(local_optrader)}" )
 
+            # if type(rem_news) != type(None): print ( f"1. caas-readmore populated / could be a valid remote article" )
+            # if type(local_news) != type(None): print ( f"2. caas-body populated / could be a locally hosted article" )
+            # if type(local_optrader) != type(None): print ( f"3. caas-button populated / could be local opts-trader article / {local_optrader.button.text}" )
             #
             # sa far - 3 types of possible news artciels
+            def rem_newspage():
+                rem_url = rem_news.a.get("href")        # a remotely hosted news article. Whats its real URL?
+                logging.info ( f"%s - Level: 1 / FOUND rewmote article @: {rem_url}" % cmi_debug )
+                return 0, rem_url
+            def local_newspage():
+                logging.info ( f"%s - Level: 1 / NO <hrerf> discovered - possible local page" % cmi_debug )
+                local_button = rem_news.text
+                # if local_button == "Story continues":   # locally hosted article have a [continue...] button
+                return 1, f'{this_article_url}'     # locally hosted news article
+            def local_optspage():
+                logging.info ( f"%s - Level: 1 / NO <hrerf> discovered - possible local page" % cmi_debug )
+                local_button = local_optrader.button.text
+                # if local_button == "Story continues":   # locally hosted article have a [continue...] button
+                return 1, f'{this_article_url}'     # locally hosted news article
+            def rem_local_unknown():
+                logging.info ( f"%s - Level: 1 / NO <hrerf> discovered - possible local page" % cmi_debug )
+                local_button = rem_news.text
+                # if local_button == "Story continues":   # locally hosted article have a [continue...] button
+                return 3, f'UNKNOWN_page_type'     # locally hosted news article
+
+            # test which pages have valid structures
+            if type(rem_news) != type(None):
+                rem_newspage()
+            if type(local_news) != type(None):
+                local_newspage()
+            if type(local_optrader) != type(None):
+                local_optspage()
+            case_switch.get(3)
+            rem_local_unknown()
+
+        return 4, "ERROR_unknown_state!"    # error unknown state
+            
+        """
             if not rem_news.find('a'):                  # not a remote hosted article
                 logging.info ( f"%s - Level: 1 / remote NO <hrerf> discovered - assume local" % cmi_debug )
                 local_button = rem_news.text
@@ -433,8 +466,8 @@ class yfnews_reader:
                 rem_url = rem_news.a.get("href")        # a remotely hosted news article. Whats its real URL?
                 logging.info ( f"%s - Level: 1 / FOUND real article @: {rem_url}" % cmi_debug )
                 return 0, rem_url
+        """
 
-        return 3, "ERROR_unknown_state!"    # error unknown state
 
         """
         else:
