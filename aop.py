@@ -403,7 +403,7 @@ def main():
                 if status == 0: print ( f"Locality:   0 / Remote news" )
                 if status == 1: print ( f"Locality:   1 / Local news" )
                 if status == 2: print ( f"Locality:   2 / Local opinion" )
-                if status == 3: print ( f"Locality:   3 / Unknown page data" )
+                if status == 3: print ( f"Locality:   3 / No page logic" )
                 if status > 3:  print ( f"Locality:   3 / Uncaptured state" )
                 print ( f"Local URL:  {sn_row['url']}" )
                 print ( f"Remote URL: {rem_url}" )
