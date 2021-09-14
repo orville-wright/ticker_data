@@ -441,14 +441,14 @@ class yfnews_reader:
                 # if local_button == "Story continues":   # locally hosted article have a [continue...] button
                 return 3, f'UNKNOWN_page_type'     # locally hosted news article
 
-            # test which pages have valid structures
-            if type(rem_news) != type(None):
-                rem_newspage()
-            if type(local_news) != type(None):
-                local_newspage()
-            if type(local_optrader) != type(None):
-                local_optspage()
-            rem_local_unknown()
+        # test which pages have valid structures
+        if type(rem_news) != type(None):
+            rem_newspage()
+        if type(local_news) != type(None):
+            local_newspage()
+        if type(local_optrader) != type(None):
+            local_optspage()
+        rem_local_unknown()
 
         return 4, "ERROR_unknown_state!"    # error unknown state
 
