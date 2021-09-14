@@ -409,8 +409,7 @@ def main():
                 print ( f"Remote URL: {rem_url}" )
                 print ( f"================================================================" )
             elif sn_row['type'] == 1:
-                t_url = sn_row['url']
-                t_hs = t_url.scheme
+                t_url = urlparse(sn_row['url'])
                 t_nl = t__url.netloc.split('/', 1)
                 print ( f"Micro adv / analyzing...", end="" )
                 if t_nl == "video":
