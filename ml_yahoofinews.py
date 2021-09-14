@@ -410,7 +410,7 @@ class yfnews_reader:
             #  = nsoup.find(attrs={"class": "caas-readmore caas-readmore-collapse caas-readmore-outsidebody caas-readmore-asidepresent"})
             rem_news = nsoup.find(attrs={"class": "caas-readmore"})                # stub news article, remotely hosted
             local_news = nsoup.find(attrs={"class": "caas-body"})                  # full news article, locally hosted
-            local_optrader = nsoup.find(attrs={"class": "caas-body-wrapper"})  # boring options trader bland article type
+            local_story = nsoup.find(attrs={"class": "caas-body-wrapper"})  # boring options trader bland article type
 
             #print ( f">>DEBUG<< 1. rem_news type:       {type(rem_news)}" )
             #print ( f">>DEBUG<< 2. local_news type:     {type(local_news)}" )
@@ -422,7 +422,7 @@ class yfnews_reader:
 
             # test which pages have valid structures
             if type(rem_news) != type(None):        # page has valid structure
-                logging.info ( f"%s - Level: 1 / Basic page is valid..." % cmi_debug )
+                logging.info ( f"%s - Level: 1 / Stub-page is valid..." % cmi_debug )
                 if rem_news.find('a'):          # BAD, no <a> zone in page
                     rem_url = rem_news.a.get("href")        # a remotely hosted news article. Whats its real URL?
                     logging.info ( f"%s - Level: 1 / Found <a> zone / Remote article @: {rem_url}" % cmi_debug )
@@ -432,13 +432,16 @@ class yfnews_reader:
                     print ( f">>DUBUG<< / {rem_news.text}" )
                     return 1, this_article_url
                 else:
-                    logging.info ( f"%s - Level: 1 / NO <a> zone / Options Trader article..." % cmi_debug )
-                    print ( f">>DUBUG<< / {local_optrader.button.text}" )
+                    logging.info ( f"%s - Level: 1 / NO <a> zone / Local story..." % cmi_debug )
+                    print ( f">>DUBUG<< / {local_story.button.text}" )
                     return 2, this_article_url
+            elif local_story.button.text == "Read full article":
+                logging.info ( f"%s - Level: 1 / Basic page is BAD" % cmi_debug )
+                print ( f">>DUBUG<< / {local_story.button.text}" )
+                return 3, this_article_url
             else:
                 logging.info ( f"%s - Level: 1 / Basic page is BAD" % cmi_debug )
-                # need to figurre out what type of page atruct this is
-                return 3, "ERROR_bad_page_struct"
+                return 4, "ERROR_bad_page_struct"
 
         return 9, "ERROR_unknown_state!"    # error unknown state
 
