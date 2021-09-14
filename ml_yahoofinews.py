@@ -422,6 +422,7 @@ class yfnews_reader:
 
             # test which pages have valid structures
             if type(rem_news) != type(None):        # page has valid structure
+                logging.info ( f"%s - Level: 1 / Basic page is valid..." % cmi_debug )
                 if rem_news.find('a'):          # BAD, no <a> zone in page
                     rem_url = rem_news.a.get("href")        # a remotely hosted news article. Whats its real URL?
                     logging.info ( f"%s - Level: 1 / Found <a> zone / Remote article @: {rem_url}" % cmi_debug )
@@ -431,9 +432,13 @@ class yfnews_reader:
                     print ( f">>DUBUG<< / {rem_news.text}" )
                     return 1, this_article_url
                 else:
+                    logging.info ( f"%s - Level: 1 / NO <a> zone / Options Trader article..." % cmi_debug )
                     print ( f">>DUBUG<< / {local_optrader.button.text}" )
                     return 1, this_article_url
-                    
+            else:
+                logging.info ( f"%s - Level: 1 / Basic page is BAD" % cmi_debug )
+                return 2, "ERROR_bad_page_struct"
+                
         return 9, "ERROR_unknown_state!"    # error unknown state
 
         """
