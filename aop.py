@@ -409,11 +409,18 @@ def main():
                 print ( f"Remote URL: {rem_url}" )
                 print ( f"================================================================" )
             elif sn_row['type'] == 1:
-                print ( f"skip / Micro adv" )
+                t_url sn_row['url']
+                t_hs = t_url.scheme
+                t_nl = t__url.netloc.split('/', 1)
+                print ( f"Micro adv / analyzing...", end="" )
+                if t_nl == "video":
+                    print ( f"video news story" )
+                else:
+                    print ( f"no news / skip..." )
             elif sn_row['type'] == 2:
-                print ( f"skip / Advertisment" )
+                print ( f"Advertisment / skip..." )
             else:
-                print ( f"skip / Unknown type" )
+                print ( f"Unknown type / skip..." )
 
 #################################################################################
 # 1-off quote - 3 differnt methods to get a quote ###############################
