@@ -411,7 +411,7 @@ def main():
                 print ( f"================================================================" )
             elif sn_row['type'] == 1:
                 t_url = urlparse(sn_row['url'])
-                t_nl = t_url.netloc.split('/', 1)
+                t_nl = t_url.path.split('/', 1)
                 print ( f"Micro adv / ", end="" )
                 if t_nl == "video":
                     print ( f"video news story" )
