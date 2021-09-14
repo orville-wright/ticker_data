@@ -448,11 +448,10 @@ class yfnews_reader:
                 local_newspage()
             if type(local_optrader) != type(None):
                 local_optspage()
-            case_switch.get(3)
             rem_local_unknown()
 
         return 4, "ERROR_unknown_state!"    # error unknown state
-            
+
         """
             if not rem_news.find('a'):                  # not a remote hosted article
                 logging.info ( f"%s - Level: 1 / remote NO <hrerf> discovered - assume local" % cmi_debug )
