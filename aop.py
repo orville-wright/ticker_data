@@ -412,11 +412,12 @@ def main():
             elif sn_row['type'] == 1:
                 t_url = urlparse(sn_row['url'])
                 t_nl = t_url.netloc.split('/', 1)
-                print ( f"Micro adv / analyzing...", end="" )
+                print ( f"Micro adv / ", end="" )
                 if t_nl == "video":
                     print ( f"video news story" )
                 else:
                     print ( f"no news / skip..." )
+                    print ( f">>DEBUG<< split piece: {t_nl}" )
             elif sn_row['type'] == 2:
                 print ( f"Advertisment / skip..." )
             else:
