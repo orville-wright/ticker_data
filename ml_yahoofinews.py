@@ -428,13 +428,11 @@ class yfnews_reader:
                     return 0, rem_url
                 elif rem_news.text == "Story continues":   # locally article, with [continues...] button
                     logging.info ( f"%s - Level: 1 / NO <a> zone / local article..." % cmi_debug )
-                    local_a = rem_news.text
-                    print ( f">>DUBUG<< / {local_a}" )
-                    return 0, this_article_url
+                    print ( f">>DUBUG<< / {rem_news.text}" )
+                    return 1, this_article_url
                 else:
-                    opts_a = local_optrader.button.text
-                    print ( f">>DUBUG<< / {opts_a}" )
-                    return 0, this_article_url
+                    print ( f">>DUBUG<< / {local_optrader.button.text}" )
+                    return 1, this_article_url
                     
         return 9, "ERROR_unknown_state!"    # error unknown state
 
