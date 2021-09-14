@@ -437,24 +437,10 @@ class yfnews_reader:
                     return 1, this_article_url
             else:
                 logging.info ( f"%s - Level: 1 / Basic page is BAD" % cmi_debug )
+                # need to figurre out what type of page atruct this is
                 return 2, "ERROR_bad_page_struct"
-                
-        return 9, "ERROR_unknown_state!"    # error unknown state
 
-        """
-            if not rem_news.find('a'):                  # not a remote hosted article
-                logging.info ( f"%s - Level: 1 / remote NO <hrerf> discovered - assume local" % cmi_debug )
-                local_button = rem_news.text
-                if local_button == "Story continues":   # locally hosted article have a [continue...] button
-                    return 1, f'{this_article_url}'     # locally hosted news article
-                else:
-                    logging.info ( f"%s - Level: 1 / Unknown page structure" % cmi_debug )
-                    return 2, "ERROR_no_article_url"    # ERROR: cant find a URL to this article
-            else:
-                rem_url = rem_news.a.get("href")        # a remotely hosted news article. Whats its real URL?
-                logging.info ( f"%s - Level: 1 / FOUND real article @: {rem_url}" % cmi_debug )
-                return 0, rem_url
-        """
+        return 9, "ERROR_unknown_state!"    # error unknown state
 
 
         """
