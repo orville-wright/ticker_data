@@ -419,36 +419,19 @@ class yfnews_reader:
             # if type(rem_news) != type(None): print ( f"1. caas-readmore populated / could be a valid remote article" )
             # if type(local_news) != type(None): print ( f"2. caas-body populated / could be a locally hosted article" )
             # if type(local_optrader) != type(None): print ( f"3. caas-button populated / could be local opts-trader article / {local_optrader.button.text}" )
-            #
-            # sa far - 3 types of possible news artciels
-            def rem_newspage():
-                rem_url = rem_news.a.get("href")        # a remotely hosted news article. Whats its real URL?
-                logging.info ( f"%s - Level: 1 / FOUND rewmote article @: {rem_url}" % cmi_debug )
-                return 0, rem_url
-            def local_newspage():
-                logging.info ( f"%s - Level: 1 / NO <hrerf> discovered - possible local page" % cmi_debug )
-                local_button = rem_news.text
-                # if local_button == "Story continues":   # locally hosted article have a [continue...] button
-                return 1, f'{this_article_url}'     # locally hosted news article
-            def local_optspage():
-                logging.info ( f"%s - Level: 1 / NO <hrerf> discovered - possible local page" % cmi_debug )
-                local_button = local_optrader.button.text
-                # if local_button == "Story continues":   # locally hosted article have a [continue...] button
-                return 1, f'{this_article_url}'     # locally hosted news article
-            def rem_local_unknown():
-                logging.info ( f"%s - Level: 1 / NO <hrerf> discovered - possible local page" % cmi_debug )
-                local_button = rem_news.text
-                # if local_button == "Story continues":   # locally hosted article have a [continue...] button
-                return 3, f'UNKNOWN_page_type'     # locally hosted news article
 
-        # test which pages have valid structures
-        if type(rem_news) != type(None):
-            rem_newspage()
-        if type(local_news) != type(None):
-            local_newspage()
-        if type(local_optrader) != type(None):
-            local_optspage()
-        rem_local_unknown()
+            # test which pages have valid structures
+            if type(rem_news) != type(None):        # page has valid structure
+                if rem_news.find('a'):          # BAD, no <a> zone in page
+                    rem_url = rem_news.a.get("href")        # a remotely hosted news article. Whats its real URL?
+                    logging.info ( f"%s - Level: 1 / FOUND real article @: {rem_url}" % cmi_debug )
+                    return 0, rem_url
+                else:
+                    logging.info ( f"%s - Level: 1 / NO <a> zone - assume local article..." % cmi_debug )
+                    opts_a = local_optrader.button.text
+                    local_a = rem_news.text
+                    print ( f">>DUBUG<< / 1: {opts_a}" )
+                    print ( f">>DUBUG<< / 2: {local_a}" )
 
         return 4, "ERROR_unknown_state!"    # error unknown state
 
