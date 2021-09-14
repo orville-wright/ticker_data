@@ -436,7 +436,7 @@ class yfnews_reader:
                     print ( f">>DUBUG<< / {local_story.button.text}" )
                     return 2, this_article_url
             elif local_story.button.text == "Read full article":
-                logging.info ( f"%s - Level: 1 / Basic page is BAD" % cmi_debug )
+                logging.info ( f"%s - Level: 1 / Simple stub-page..." % cmi_debug )
                 print ( f">>DUBUG<< / {local_story.button.text}" )
                 return 3, this_article_url
             else:
