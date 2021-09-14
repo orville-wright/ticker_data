@@ -434,11 +434,11 @@ class yfnews_reader:
                 else:
                     logging.info ( f"%s - Level: 1 / NO <a> zone / Options Trader article..." % cmi_debug )
                     print ( f">>DUBUG<< / {local_optrader.button.text}" )
-                    return 1, this_article_url
+                    return 2, this_article_url
             else:
                 logging.info ( f"%s - Level: 1 / Basic page is BAD" % cmi_debug )
                 # need to figurre out what type of page atruct this is
-                return 2, "ERROR_bad_page_struct"
+                return 3, "ERROR_bad_page_struct"
 
         return 9, "ERROR_unknown_state!"    # error unknown state
 
