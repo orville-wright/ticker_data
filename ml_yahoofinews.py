@@ -294,6 +294,7 @@ class yfnews_reader:
         2. prepare a list of ALL of the articles
         3. For each article, extract KEY news elements (i.e. Headline, Brief, URL to real article)
         4. Wrangle, clean/convert/format the data correctly
+        Build out ml_ingest{} NLP candidate list
         """
         cmi_debug = __name__+"::"+self.eval_article_tags.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
@@ -343,7 +344,7 @@ class yfnews_reader:
                     article_teaser = f"{a_teaser:.170}" + " [...]"
                     ml_atype = 0
 
-                print ( f"================= Level 0 / Entity {x} ==================" )
+                print ( f"================= Depth 0 / Article {x} ==================" )
                 print ( f"News item:        {x} / {article_type}" )
                 print ( f"News agency:      {news_agency}" )
                 print ( f"Local host:       finance.yahoo.com" )
@@ -370,7 +371,7 @@ class yfnews_reader:
                 fa_1 = fa_0[0].get('href')
                 fa_2 = fa_0[0].text
                 fa_3 = fa_0[1].get('href')
-                print ( f"================= Level 0 / Entity {x} ==================" )
+                print ( f"================= Depth 0 / Article {x} ==================" )
                 print ( f"New item:         {x} / Advertisment / not {symbol} news" )
                 print ( f"News agency:      {fa_2}" )
                 print ( f"Local host:       {fa_3:.30} [...]" )
@@ -418,25 +419,25 @@ class yfnews_reader:
 
             # page type logic tests
             if type(rem_news) != type(None):        # page has valid structure
-                logging.info ( f"%s - Level: 1 / Stub-page is valid..." % cmi_debug )
+                logging.info ( f"%s - Depth: 1 / Stub-page is valid..." % cmi_debug )
                 if rem_news.find('a'):          # BAD, no <a> zone in page
                     rem_url = rem_news.a.get("href")        # a remotely hosted news article. Whats its real URL?
-                    logging.info ( f"%s - Level: 1 / Found <a> zone / Remote article @: {rem_url}" % cmi_debug )
+                    logging.info ( f"%s - Depth: 1 / Found <a> zone / Remote article @: {rem_url}" % cmi_debug )
                     return 0, rem_url
                 elif rem_news.text == "Story continues":   # locally article, with [continues...] button
-                    logging.info ( f"%s - Level: 1 / NO <a> zone / local article..." % cmi_debug )
+                    logging.info ( f"%s - Depth: 1 / NO <a> zone / local article..." % cmi_debug )
                     #print ( f">>DUBUG<< / {rem_news.text}" )
                     return 1, this_article_url
                 else:
-                    logging.info ( f"%s - Level: 1 / NO <a> zone / Local story..." % cmi_debug )
+                    logging.info ( f"%s - Depth: 1 / NO <a> zone / Local story..." % cmi_debug )
                     #print ( f">>DUBUG<< / {local_story.button.text}" )
                     return 2, this_article_url
             elif local_story.button.text == "Read full article":
-                logging.info ( f"%s - Level: 1 / Simple stub-page..." % cmi_debug )
+                logging.info ( f"%s - Depth: 1 / Simple stub-page..." % cmi_debug )
                 #print ( f">>DUBUG<< / {local_story.button.text}" )
                 return 3, this_article_url
             else:
-                logging.info ( f"%s - Level: 1 / Basic page is BAD" % cmi_debug )
+                logging.info ( f"%s - Depth: 1 / Basic page is BAD" % cmi_debug )
                 return 4, "ERROR_bad_page_struct"
 
         return 9, "ERROR_unknown_state!"    # error unknown state
@@ -526,7 +527,7 @@ class yfnews_reader:
         """
         cmi_debug = __name__+"::"+self.dump_ml_ingest.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
-        print ( "================= ML Ingested Level 1 NLP candidates ==================" )
+        print ( "================= ML Ingested Depth 1 NLP candidates ==================" )
         for k in self.ml_ingest.items():
             print ( f"{k} " )
 
