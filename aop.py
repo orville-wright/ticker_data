@@ -393,6 +393,21 @@ def main():
         print ( " " )
         yfn.dump_ml_ingest()
 
+        def article_header(st, ru, su):
+            """
+            Print some nicely formatted info about this discovered article
+            """
+            if st == 0: print ( f"Locality:   0 / Remote news" )
+            if st == 1: print ( f"Locality:   1 / Local news" )
+            if st == 2: print ( f"Locality:   2 / Local opinion" )
+            if st == 3: print ( f"Locality:   3 / Local story" )
+            if st == 4: print ( f"Locality:   3 / Local video story" )
+            if st > 4:  print ( f"Locality:   3 / Uncaptured state" )
+            print ( f"Local URL:  {su}" )
+            print ( f"Remote URL: {ru}" )
+            print ( f"================================================================" )
+            return
+
         # process ml_ingest{} candidate news articles
         print ( " ")
         for sn_idx, sn_row in yfn.ml_ingest.items():
@@ -416,21 +431,6 @@ def main():
                 print ( f"Advertisment / skip..." )
             else:
                 print ( f"Unknown type / skip..." )
-
-        def article_header(st, ru, su):
-            """
-            Print some nicely formatted info about this discovered article
-            """
-            if st == 0: print ( f"Locality:   0 / Remote news" )
-            if st == 1: print ( f"Locality:   1 / Local news" )
-            if st == 2: print ( f"Locality:   2 / Local opinion" )
-            if st == 3: print ( f"Locality:   3 / Local story" )
-            if st == 4: print ( f"Locality:   3 / Local video story" )
-            if st > 4:  print ( f"Locality:   3 / Uncaptured state" )
-            print ( f"Local URL:  {su}" )
-            print ( f"Remote URL: {ru}" )
-            print ( f"================================================================" )
-            return
 
 #################################################################################
 # 1-off quote - 3 differnt methods to get a quote ###############################
