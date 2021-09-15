@@ -408,15 +408,15 @@ def main():
             print ( f"================================================================" )
             return
 
-        nt_hint_code = { 'm': ('Remote News article', 0), 'news': ('Local news article', 1), 'video': ()'Local Video article', 2) }
+        nt_hint_code = { 'm': ('Remote News article', 0), 'news': ('Local news article', 1), 'video': ('Local Video article', 2) }
 
         def hint_decoder(url):
             t_url = urlparse(sn_row['url'])
             t_nl = t_url.path.split('/', 2)    # e.g.  https://finance.yahoo.com/video/disney-release-rest-2021-films-210318469.html
             hint = nt_hint_code.get(t_nl[1])
-            print ( f"{hint[1]} / ", end="" )
+            print ( f"{hint[0]} / ", end="" )
             #print ( f"================= Depth 1 / Article {sn_idx} / Type {sn_row['type']} ==================" )
-            return hint[2]
+            return hint[1]
 
         # process ml_ingest{} candidate news articles
         # WARNING: logic is buggy - types codes / status codes are not aligned!!! - FIX ME
@@ -424,39 +424,36 @@ def main():
         for sn_idx, sn_row in yfn.ml_ingest.items():
             print( f"News article: {sn_idx} / eval... ", end="" )
             if sn_row['type'] == 0:                # good high quality news article
-                hint = hint_decoder(sn_row['url'])
-                print ( f"/ NLP candidate" )
+                hint = hint_decoder(sn_row)
+                #hint = hint_decoder(sn_row['url'])
+                print ( f"NLP candidate" )
                 #print ( f"================= Depth 1 / Article {sn_idx} / Type {sn_row['type']} ==================" )
                 status, rem_url = yfn.find_rem_article(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now, with HINT
                 article_header(status, rem_url, sn_row['url'] )
-                break
             elif sn_row['type'] == 1:             # possibly not news?
-                hint = hint_decoder(sn_row['url'])
-                if hint == 0 or hint == 1 or hint == 2: print ( f"/ NLP candidate" )
+                hint = hint_decoder(sn_row)
+                if hint == 0 or hint == 1 or hint == 2:
+                    print ( f"NLP candidate" )
                     status, rem_url = yfn.find_rem_article(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now!
                     article_header(status, rem_url, sn_row['url'] )
-                    break
                 else:
                     print ( f"Advertisment / skip..." )
-                    break
             elif sn_row['type'] == 2:
                 hint = hint_decoder(sn_row['url'])
-                if hint == 0 or hint == 1 or hint == 2: print ( f"/ NLP candidate" )
+                if hint == 0 or hint == 1 or hint == 2:
+                    print ( f"/ NLP candidate" )
                     status, rem_url = yfn.find_rem_article(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now!
                     article_header(status, rem_url, sn_row['url'] )
-                    break
                 else:
                     print ( f"Advertisment / skip..." )
-                    break
             elif sn_row['type'] == 3:
                 hint = hint_decoder(sn_row['url'])
-                if hint == 0 or hint == 1 or hint == 2: print ( f"/ NLP candidate" )
+                if hint == 0 or hint == 1 or hint == 2:
+                    print ( f"/ NLP candidate" )
                     status, rem_url = yfn.find_rem_article(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now!
                     article_header(status, rem_url, sn_row['url'] )
-                    break
                 else:
                     print ( f"Advertisment / skip..." )
-                    break
             else:
                 print ( f"Unknown type / skip..." )
 
