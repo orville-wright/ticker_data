@@ -417,18 +417,18 @@ def main():
             else:
                 print ( f"Unknown type / skip..." )
 
-        def article_header(status, rem_url, sn_row['url']):
+        def article_header(st, ru, su):
             """
             Print some nicely formatted info about this discovered article
             """
-            if status == 0: print ( f"Locality:   0 / Remote news" )
-            if status == 1: print ( f"Locality:   1 / Local news" )
-            if status == 2: print ( f"Locality:   2 / Local opinion" )
-            if status == 3: print ( f"Locality:   3 / Local story" )
-            if status == 4: print ( f"Locality:   3 / Local video story" )
-            if status > 4:  print ( f"Locality:   3 / Uncaptured state" )
-            print ( f"Local URL:  {sn_row['url']}" )
-            print ( f"Remote URL: {rem_url}" )
+            if st == 0: print ( f"Locality:   0 / Remote news" )
+            if st == 1: print ( f"Locality:   1 / Local news" )
+            if st == 2: print ( f"Locality:   2 / Local opinion" )
+            if st == 3: print ( f"Locality:   3 / Local story" )
+            if st == 4: print ( f"Locality:   3 / Local video story" )
+            if st > 4:  print ( f"Locality:   3 / Uncaptured state" )
+            print ( f"Local URL:  {su}" )
+            print ( f"Remote URL: {ru}" )
             print ( f"================================================================" )
             return
 
