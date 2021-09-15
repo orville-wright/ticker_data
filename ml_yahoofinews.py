@@ -333,8 +333,9 @@ class yfnews_reader:
                 test_http_scheme = urlparse(article_url)
                 if test_http_scheme.scheme != "https" or test_http_scheme.scheme != "http":    # check URL scheme specifier
                     article_url = "https://finance.yahoo.com" + article_url
+
                 article_headline = li_tag.a.text
-                article_type = f"Good {symbol} news article"
+                article_type = f"Possible {symbol} news article..."
                 if not li_tag.find('p'):
                     article_type = f"{symbol} sponsored micro adv news"
                     article_teaser = f"Micro Advertisment"

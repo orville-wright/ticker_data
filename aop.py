@@ -397,14 +397,14 @@ def main():
             """
             Print some nicely formatted info about this discovered article
             """
-            if st == 0: print ( f"Locality:   0 / Remote news" )
-            if st == 1: print ( f"Locality:   1 / Local news" )
-            if st == 2: print ( f"Locality:   2 / Local opinion" )
-            if st == 3: print ( f"Locality:   3 / Local story" )
-            if st == 4: print ( f"Locality:   3 / Local video story" )
-            if st > 4:  print ( f"Locality:   3 / Uncaptured state" )
-            print ( f"Local URL:  {su}" )
-            print ( f"Remote URL: {ru}" )
+            if st == 0: print ( f"Locality:     0 / Remote article" )
+            if st == 1: print ( f"Locality:     1 / Local article" )
+            if st == 2: print ( f"Locality:     2 / Local opinion" )
+            if st == 3: print ( f"Locality:     3 / Local story" )
+            if st == 4: print ( f"Locality:     4 / Local video story" )
+            if st > 4:  print ( f"Locality:     ? / NO inferrence" )
+            print ( f"Local URL:    {su}" )
+            print ( f"Remote URL:   {ru}" )
             print ( f"================================================================" )
             return
 
@@ -412,7 +412,7 @@ def main():
         print ( " ")
         for sn_idx, sn_row in yfn.ml_ingest.items():
             print( f"News article: {sn_idx} / eval... ", end="" )
-            if sn_row['type'] == 0:    # good high quality news article
+            if sn_row['type'] == 0:                # good high quality news article
                 print ( f"News / NLP candidate" )
                 #print ( f"================= Depth 1 / Article {sn_idx} / Type {sn_row['type']} ==================" )
                 status, rem_url = yfn.find_rem_article(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now!
