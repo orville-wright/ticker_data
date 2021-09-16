@@ -406,7 +406,7 @@ def main():
             if st == 4: print ( f"Locality:     4 / Local / (video story)" )
             if st > 4 and st < 9:  print ( f"Locality:     ? / Unknown article type & quality" )
             if st == 9: print ( f"ERROR:        9 / ERROR / Cannot decode article page" )
-            if st >= 10: print ( f"ERROR:        10 / ERROR / Article URL is mangled" )
+            if st > 9: print ( f"ERROR:        10 / ERROR / Article URL is mangled" )
             print ( f"Local URL:    {su}" )
             print ( f"Remote URL:   {ru}" )
             print ( f"================================================================" )
@@ -424,7 +424,7 @@ def main():
                 print ( f"{hint[0]} / ", end="" )
                 return hint[1]
             else:
-                print ( f"{ERROR_url / ", end="" )
+                print ( f"ERROR_url / ", end="" )
                 return "Mangled url"
 
             #print ( f"================= Depth 1 / Article {sn_idx} / Type {sn_row['type']} ==================" )
