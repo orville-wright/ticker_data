@@ -430,12 +430,12 @@ def main():
         for sn_idx, sn_row in yfn.ml_ingest.items():
             print( f"News article: {sn_idx} / eval... ", end="" )
             if sn_row['type'] == 0:                # inferred from Depth 0
-                hint = hint_decoder(sn_row, default=10)        # get HINT from url found at depth 0
+                hint = hint_decoder(sn_row, 10)        # get HINT from url found at depth 0
                 print ( f"Real news NLP candidate" )         # all type 0 are assumed to be REAL news
                 status, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now, with HINT
                 article_header(status, rem_url, sn_row['url'] )
             elif sn_row['type'] == 1:             # possibly not news? (Micro Ad)
-                hint = hint_decoder(sn_row, default=10)       # get HINT from url found at depth 0
+                hint = hint_decoder(sn_row, 10)       # get HINT from url found at depth 0
                 if hint == 0 or hint == 1 or hint == 2:
                     print ( f"Micro ad NLP candidate" )
                     status, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now!
