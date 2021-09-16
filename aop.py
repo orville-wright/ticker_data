@@ -406,7 +406,7 @@ def main():
             if st == 4: print ( f"Locality:     4 / Local / (video story)" )
             if st > 4 and st < 9:  print ( f"Locality:     ? / Unknown article type & quality" )
             if st == 9: print ( f"ERROR:        9 / ERROR / Cannot decode article page" )
-            if st >= 10: print ( f"ERROR:        9 / ERROR / Article URL is mangled" )
+            if st >= 10: print ( f"ERROR:        10 / ERROR / Article URL is mangled" )
             print ( f"Local URL:    {su}" )
             print ( f"Remote URL:   {ru}" )
             print ( f"================================================================" )
@@ -414,12 +414,12 @@ def main():
 
         # hints are embeded in the yahoo.com URL path, but aren't authourtative or definative. They're just a HINT.
         # e.g.  https://finance.yahoo.com/video/disney-release-rest-2021-films-210318469.html
-        nt_hint_code = { 'm': ('Remote News article', 0), 'news': ('Local news article', 1), 'video': ('Local Video article', 2), 'ERROR': ('ERROR bad url', 10) }
+        nt_hint_code = { 'm': ('Remote News article', 0), 'news': ('Local news article', 1), 'video': ('Local Video article', 2), 'error': ('ERROR bad url', 10) }
 
         def hint_decoder(url):
             t_url = urlparse(sn_row['url'])
             t_nl = t_url.path.split('/', 2)    # e.g.  https://finance.yahoo.com/video/disney-release-rest-2021-films-210318469.html
-            hint = nt_hint_code.get(t_nl[1], 'ERROR')
+            hint = nt_hint_code.get(t_nl[1], "error")
             print ( f"{hint[0]} / ", end="" )
             #print ( f"================= Depth 1 / Article {sn_idx} / Type {sn_row['type']} ==================" )
             return hint[1]
@@ -442,6 +442,7 @@ def main():
                     status, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now!
                     article_header(status, rem_url, sn_row['url'] )
                 else:
+                    article_header(status, rem_url, sn_row['url'] )
                     print ( f"Unknown Micro Ad URL / skipping..." )
             else:
                 print ( f"Unknown article type / Error..." )
