@@ -372,6 +372,7 @@ class yfnews_reader:
                 fa_1 = fa_0[0].get('href')
                 fa_2 = fa_0[0].text
                 fa_3 = fa_0[1].get('href')
+                inf_type = "Bulk injected ad"
                 ml_atype = 2
                 print ( f"================= Depth 0 / Article {x} ==================" )
                 print ( f"New item:         {x} / {symbol} / Inferred type: {ml_atype}" )
