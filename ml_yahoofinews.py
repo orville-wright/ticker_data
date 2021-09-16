@@ -359,6 +359,7 @@ class yfnews_reader:
                 print ( f"Unique url hash:  {aurl_hash}" )
 
                 # build NLP candidate dict for deeper pre-NLP article analysis in Level 1
+                # ONLY insert type 0, 1 articels as NLP candidates. Bulk injected ads are excluded (pointless)
                 nd = { \
                     "symbol" : symbol, \
                     "urlhash" : aurl_hash, \
@@ -376,8 +377,8 @@ class yfnews_reader:
                 inf_type = "Bulk injected ad"
                 ml_atype = 2
                 print ( f"================= Depth 0 / Article {x} ==================" )
-                print ( f"New item:         {x} / {symbol} / Inferred type: {ml_atype} ({inf_type})" )
-                print ( f"News agency:      {fa_2} / not {symbol} news" )
+                print ( f"News item:        {x} / {symbol} / Inferred type: {ml_atype} ({inf_type})" )
+                print ( f"News agency:      {fa_2} / not {symbol} news / NOT an NLP candidate" )
                 print ( f"Adv injector:     {fa_3:.30} [...]" )
             a_counter = h3_counter = 0
 
