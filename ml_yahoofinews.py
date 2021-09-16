@@ -376,7 +376,7 @@ class yfnews_reader:
                 inf_type = "Bulk injected ad"
                 ml_atype = 2
                 print ( f"================= Depth 0 / Article {x} ==================" )
-                print ( f"New item:         {x} / {symbol} / Inferred type: {ml_atype}" )
+                print ( f"New item:         {x} / {symbol} / Inferred type: {ml_atype} ({inf_type})" )
                 print ( f"News agency:      {fa_2} / not {symbol} news" )
                 print ( f"Adv injector:     {fa_3:.30} [...]" )
             a_counter = h3_counter = 0
