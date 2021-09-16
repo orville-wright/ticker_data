@@ -329,19 +329,15 @@ class yfnews_reader:
             if a_counter > 0 and a_counter <= 3:
                 logging.info( f'%s - li count: {a_counter}' % (cmi_debug) )                  # good new zrticle found
                 news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
+
                 article_url = li_tag.a.get("href")
                 test_http_scheme = urlparse(article_url)
                 if test_http_scheme.scheme != "https" or test_http_scheme.scheme != "http":    # check URL scheme specifier
-                    print ( f">>DEBUG<< : NO http/https scheme found / assume finanice.yahoo.com..." )
                     article_url = "https://finance.yahoo.com" + article_url
-                else:
-                    print ( f">>DEBUG<< : url has FULL {test_http_scheme} scheme / leave as pure..." )
-                    # dont mess with the URL
+                    # else dont mess with the URL & leave it pure
 
                 article_headline = li_tag.a.text
-                article_type = f"Possible {symbol} news article..."
                 if not li_tag.find('p'):
-                    article_type = f"{symbol} sponsored micro adv news"
                     article_teaser = f"Micro Advertisment"
                     ml_atype = 1
                 else:
@@ -350,9 +346,8 @@ class yfnews_reader:
                     ml_atype = 0
 
                 print ( f"================= Depth 0 / Article {x} ==================" )
-                print ( f"News item:        {x} / {article_type}" )
-                print ( f"News agency:      {news_agency}" )
-                print ( f"Local host:       finance.yahoo.com" )
+                print ( f"News item:        {x} / {symbol} / Inferred type: {ml_atype}" )
+                print ( f"News agency:      {news_agency} / locality: finance.yahoo.com" )
                 print ( f"Article URL:      {article_url}" )
                 print ( f"Article headline: {article_headline}" )
                 print ( f"Article teaser:   {article_teaser}" )
@@ -360,8 +355,7 @@ class yfnews_reader:
                 auh = hashlib.sha256(article_url.encode())
                 aurl_hash = auh.hexdigest()
                 print ( f"Unique url hash:  {aurl_hash}" )
-
-                # build dict to pass off to Level 1 deeper article processing
+                # build NLP candidate dict for deeper Level 1 article pre-NLP analysis
                 nd = { \
                     "symbol" : symbol, \
                     "urlhash" : aurl_hash, \
@@ -374,14 +368,14 @@ class yfnews_reader:
                 found_ad = li_tag.a.text
                 fa_0 = li_tag.div.find_all(attrs={'class': 'C(#959595)'})
                 fa_1 = fa_0[0].get('href')
-                fa_2 = fa_0[0].text
-                fa_3 = fa_0[1].get('href')
+                fa_2 = fa_0[0].text    # note needed: fa_3 = fa_0[1].get('href')
+                ml_atype = 2
                 print ( f"================= Depth 0 / Article {x} ==================" )
-                print ( f"New item:         {x} / Advertisment / not {symbol} news" )
-                print ( f"News agency:      {fa_2}" )
-                print ( f"Local host:       {fa_3:.30} [...]" )
-                print ( f"Article URL:      {fa_1}" )
+                print ( f"New item:         {x} / {symbol} / Inferred type: {ml_atype}
+                print ( f"News agency:      {fa_2} / not {symbol} news" )
+                print ( f"Adv injector:     {fa_3:.30} [...]" )
             a_counter = h3_counter = 0
+
         # need to capture junk adds here (very difficult as they're injected by add engine. Not hard page elements)
         # type = 2 / ml_atype = 2
         return
