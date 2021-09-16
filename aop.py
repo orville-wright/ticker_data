@@ -399,11 +399,11 @@ def main():
             NOTE: Locality codes are inferred by decoding the page HTML structure
                   They do not match/align with the URL Hint code. Since that could be a 'fake out'
             """
-            if st == 0: print ( f"Locality:     0 / Remote / High quality (real news)" )
-            if st == 1: print ( f"Locality:     1 / Local / High quality (real news)" )
-            if st == 2: print ( f"Locality:     2 / Local / Medium quality (OP-Ed article)" )
-            if st == 3: print ( f"Locality:     3 / Local / Low quality (Curated guest piece)" )
-            if st == 4: print ( f"Locality:     4 / Local / Low quality (video story)" )
+            if st == 0: print ( f"Locality:     0 / Remote / (real news)" )
+            if st == 1: print ( f"Locality:     1 / Local / (real news)" )
+            if st == 2: print ( f"Locality:     2 / Local / (OP-Ed article)" )
+            if st == 3: print ( f"Locality:     3 / Local / (Curated guest piece)" )
+            if st == 4: print ( f"Locality:     4 / Local / (video story)" )
             if st > 4 and st < 9:  print ( f"Locality:     ? / Unknown article type & quality" )
             if st >= 9: print ( f"ERROR:        9 / ERROR / Cannot decode article page" )
             print ( f"Local URL:    {su}" )
@@ -423,42 +423,27 @@ def main():
             #print ( f"================= Depth 1 / Article {sn_idx} / Type {sn_row['type']} ==================" )
             return hint[1]
 
-        # process ml_ingest{} candidate news articles
-        # WARNING: logic is buggy - types codes / status codes are not aligned!!! - FIX ME
+        # process ml_ingest{} candidate news articles and figure out which one to NLP READ
+        # even at this level of depth, we cna still be dupped by the article.
+        # Especially a Micr Add, which could have NO news relating to do with this stock symbol. SO accuracy is unclear, STILL!!
         print ( " ")
         for sn_idx, sn_row in yfn.ml_ingest.items():
             print( f"News article: {sn_idx} / eval... ", end="" )
             if sn_row['type'] == 0:                # inferred from Depth 0
-                hint = hint_decoder(sn_row)        # hinted from url found at depth 0
-                print ( f"NLP candidate" )         # all type 0 are assumed to be REAL news
+                hint = hint_decoder(sn_row)        # get HINT from url found at depth 0
+                print ( f"Real news NLP candidate" )         # all type 0 are assumed to be REAL news
                 status, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now, with HINT
                 article_header(status, rem_url, sn_row['url'] )
-            elif sn_row['type'] == 1:             # possibly not news?
-                hint = hint_decoder(sn_row)
+            elif sn_row['type'] == 1:             # possibly not news? (Micro Ad)
+                hint = hint_decoder(sn_row)       # get HINT from url found at depth 0
                 if hint == 0 or hint == 1 or hint == 2:
-                    print ( f"NLP candidate" )
+                    print ( f"Micro ad NLP candidate" )
                     status, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now!
                     article_header(status, rem_url, sn_row['url'] )
                 else:
-                    print ( f"Advertisment / skip..." )
-            elif sn_row['type'] == 2:
-                hint = hint_decoder(sn_row['url'])
-                if hint == 0 or hint == 1 or hint == 2:
-                    print ( f"/ NLP candidate" )
-                    status, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now!
-                    article_header(status, rem_url, sn_row['url'] )
-                else:
-                    print ( f"Advertisment / skip..." )
-            elif sn_row['type'] == 3:
-                hint = hint_decoder(sn_row['url'])
-                if hint == 0 or hint == 1 or hint == 2:
-                    print ( f"/ NLP candidate" )
-                    status, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now!
-                    article_header(status, rem_url, sn_row['url'] )
-                else:
-                    print ( f"Advertisment / skip..." )
+                    print ( f"Unknown Micro Ad URL / skipping..." )
             else:
-                print ( f"Unknown type / skip..." )
+                print ( f"Unknown article type / Error..." )
 
 #################################################################################
 # 1-off quote - 3 differnt methods to get a quote ###############################
