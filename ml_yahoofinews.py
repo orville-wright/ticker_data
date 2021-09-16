@@ -357,7 +357,8 @@ class yfnews_reader:
                 auh = hashlib.sha256(article_url.encode())
                 aurl_hash = auh.hexdigest()
                 print ( f"Unique url hash:  {aurl_hash}" )
-                # build NLP candidate dict for deeper Level 1 article pre-NLP analysis
+
+                # build NLP candidate dict for deeper pre-NLP article analysis in Level 1
                 nd = { \
                     "symbol" : symbol, \
                     "urlhash" : aurl_hash, \
