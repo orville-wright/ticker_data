@@ -332,12 +332,11 @@ class yfnews_reader:
                 article_url = li_tag.a.get("href")
                 test_http_scheme = urlparse(article_url)
                 if test_http_scheme.scheme != "https" or test_http_scheme.scheme != "http":    # check URL scheme specifier
-                    print ( f">>DEBUG<< : url has FULL {test_http_scheme} scheme..." )
-                    # dont mess with the URL. Leave it alone
-                else:
-                    print ( f">>DEBUG<< : url has NO http/https scheme, assuming finanice.yahoo.com..." )
-                    # assume article is hosted on finance.yahoo.com
+                    print ( f">>DEBUG<< : NO http/https scheme found / assume finanice.yahoo.com..." )
                     article_url = "https://finance.yahoo.com" + article_url
+                else:
+                    print ( f">>DEBUG<< : url has FULL {test_http_scheme} scheme / leave as pure..." )
+                    # dont mess with the URL
 
                 article_headline = li_tag.a.text
                 article_type = f"Possible {symbol} news article..."
