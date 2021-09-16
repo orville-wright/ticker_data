@@ -338,15 +338,17 @@ class yfnews_reader:
 
                 article_headline = li_tag.a.text
                 if not li_tag.find('p'):
-                    article_teaser = f"Micro Advertisment"
+                    inf_type = "Micro Advertisment"
+                    article_teaser = "None"
                     ml_atype = 1
                 else:
+                    inf_type = "News"
                     a_teaser = li_tag.p.text
                     article_teaser = f"{a_teaser:.170}" + " [...]"
                     ml_atype = 0
 
                 print ( f"================= Depth 0 / Article {x} ==================" )
-                print ( f"News item:        {x} / {symbol} / Inferred type: {ml_atype}" )
+                print ( f"News item:        {x} / {symbol} / Inferred type: {ml_atype} ({inf_type})" )
                 print ( f"News agency:      {news_agency} / locality: finance.yahoo.com" )
                 print ( f"Article URL:      {article_url}" )
                 print ( f"Article headline: {article_headline}" )
