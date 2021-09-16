@@ -231,13 +231,12 @@ class yfnews_reader:
 # method #8
     def scan_news_level_0(self, symbol, depth, scan_type):
         """
-        Evaluates the news items found. Prints stats, but doesnt create any usable structs
-        TODO: add args - DEPTH (0, 1, 2) as opposed to multiple depth level methods - not yes implimented!
-              add args - symbol
-              add arge - 0 = HTML processor logic / 1 = JavaScript processor logic
-        Assumes connect setup/cookies/headers have all been previously setup
-        Read & process the raw news HTML data tables from a complex rich meida (highlevel) news parent webpage for an individual stock [Stock:News ].
-        Does not extract any news atricles, items or data fields. Just sets up the element extraction zone.
+        Evaluate the news items found. Prints stats, take a HIGH-LEVEL guess at type of artcile (i.e. internal HTML structure).
+        Populate an entry in ml_ingest{} for further deeper level 1 processing later.
+        TODO: add args - DEPTH (0, 1, 2) doesn't do anythig (yet)
+        Assumes connection/cookies/headers have previously been setup
+        Read & process the raw news HTML data tables from a complex rich meida (highlevel) parent newsfeed
+        Does not extract any news data, items or info. Just sets up the BS4 element extraction zone.
         Returns a BS4 onbject handle pointing to correct news section for deep element extraction.
         """
         cmi_debug = __name__+"::"+self.scan_news_level_0.__name__+".#"+str(self.yti)
@@ -323,7 +322,7 @@ class yfnews_reader:
                     if element.name == "a":a_counter += 1    # can do more logic tests in here if needed
             if a_counter == 0:
                 logging.info( f'%s - li count: {a_counter}' % (cmi_debug) )                  # good new zrticle found
-                print ( f"Empty news page - NO NEWS" )
+                print ( f"Empty news page - NO NEWS found" )
                 break
 
             if a_counter > 0 and a_counter <= 3:
@@ -332,7 +331,8 @@ class yfnews_reader:
                 article_url = li_tag.a.get("href")
                 test_http_scheme = urlparse(article_url)
                 if test_http_scheme.scheme != "https" or test_http_scheme.scheme != "http":    # check URL scheme specifier
-                    article_url = "https://finance.yahoo.com" + article_url
+                    article_url = test_http_scheme.netloc + article_url
+                    #article_url = "https://finance.yahoo.com" + article_url
 
                 article_headline = li_tag.a.text
                 article_type = f"Possible {symbol} news article..."

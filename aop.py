@@ -396,6 +396,8 @@ def main():
         def article_header(st, ru, su):
             """
             Print some nicely formatted info about this discovered article
+            NOTE: Locality codes are inferred by decoding the page HTML structure
+                  They do not match/align with the URL Hint code. Since that could be a 'fake out'
             """
             if st == 0: print ( f"Locality:     0 / Remote article" )
             if st == 1: print ( f"Locality:     1 / Local article" )
@@ -408,6 +410,8 @@ def main():
             print ( f"================================================================" )
             return
 
+        # hints are embeded in the yahoo.com URL path, but aren't authourtative or definative. They're just a HINT.
+        # e.g.  https://finance.yahoo.com/video/disney-release-rest-2021-films-210318469.html
         nt_hint_code = { 'm': ('Remote News article', 0), 'news': ('Local news article', 1), 'video': ('Local Video article', 2) }
 
         def hint_decoder(url):
@@ -423,11 +427,9 @@ def main():
         print ( " ")
         for sn_idx, sn_row in yfn.ml_ingest.items():
             print( f"News article: {sn_idx} / eval... ", end="" )
-            if sn_row['type'] == 0:                # good high quality news article
+            if sn_row['type'] == 0:                # possible high quality news article
                 hint = hint_decoder(sn_row)
-                #hint = hint_decoder(sn_row['url'])
                 print ( f"NLP candidate" )
-                #print ( f"================= Depth 1 / Article {sn_idx} / Type {sn_row['type']} ==================" )
                 status, rem_url = yfn.find_rem_article(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now, with HINT
                 article_header(status, rem_url, sn_row['url'] )
             elif sn_row['type'] == 1:             # possibly not news?
