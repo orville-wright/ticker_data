@@ -438,7 +438,7 @@ class yfnews_reader:
             elif local_story.button.text == "Read full article":
                 logging.info ( f"%s - Depth: 2 / Simple stub-page..." % cmi_debug )
                 #print ( f">>DUBUG<< / {local_story.button.text}" )
-                return 3, this_article_url        # Curated guest piece
+                return 3, this_article_url        # Curated guest piece or video article
             else:
                 logging.info ( f"%s - Depth: 2 / Basic page is BAD" % cmi_debug )
                 return 4, "ERROR_bad_page_struct"
