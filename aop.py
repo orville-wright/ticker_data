@@ -414,15 +414,20 @@ def main():
 
         # hints are embeded in the yahoo.com URL path, but aren't authourtative or definative. They're just a HINT.
         # e.g.  https://finance.yahoo.com/video/disney-release-rest-2021-films-210318469.html
-        nt_hint_code = { 'm': ('Remote News article', 0), 'news': ('Local news article', 1), 'video': ('Local Video article', 2), 'error': ('ERROR bad url', 10) }
+        nt_hint_code = { 'm': ('Remote News article', 0), 'news': ('Local news article', 1), 'video': ('Local Video article', 2) }
 
         def hint_decoder(url):
             t_url = urlparse(sn_row['url'])
             t_nl = t_url.path.split('/', 2)    # e.g.  https://finance.yahoo.com/video/disney-release-rest-2021-films-210318469.html
-            hint = nt_hint_code.get(t_nl[1], "error")
-            print ( f"{hint[0]} / ", end="" )
+            hint = nt_hint_code.get(t_nl[1])
+            if type(hint) != None:
+                print ( f"{hint[0]} / ", end="" )
+                return hint[1]
+            else:
+                print ( f"{ERROR_url / ", end="" )
+                return "Mangled url"
+
             #print ( f"================= Depth 1 / Article {sn_idx} / Type {sn_row['type']} ==================" )
-            return hint[1]
 
         # process ml_ingest{} candidate news articles and figure out which one to NLP READ
         # even at this level of depth, we cna still be dupped by the article.
