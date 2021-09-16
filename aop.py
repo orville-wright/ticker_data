@@ -388,7 +388,7 @@ def main():
         yfn.form_url_endpoint(news_symbol)
         yfn.do_simple_get()
         #yfn.do_js_get()
-        yfn.scan_news_level_0(news_symbol, 0, 0)    # (params) #1: level, #2: 0=HTML / 1=JavaScript
+        yfn.scan_news_feed(news_symbol, 0, 0)    # (params) #1: level, #2: 0=HTML / 1=JavaScript
         yfn.eval_article_tags(news_symbol)          # ml_ingest{} is built
         print ( " " )
         yfn.dump_ml_ingest()
@@ -399,12 +399,13 @@ def main():
             NOTE: Locality codes are inferred by decoding the page HTML structure
                   They do not match/align with the URL Hint code. Since that could be a 'fake out'
             """
-            if st == 0: print ( f"Locality:     0 / Remote article" )
-            if st == 1: print ( f"Locality:     1 / Local article" )
-            if st == 2: print ( f"Locality:     2 / Local opinion" )
-            if st == 3: print ( f"Locality:     3 / Local story" )
-            if st == 4: print ( f"Locality:     4 / Local video story" )
-            if st > 4:  print ( f"Locality:     ? / NO inferrence" )
+            if st == 0: print ( f"Locality:     0 / Remote / High quality (real news)" )
+            if st == 1: print ( f"Locality:     1 / Local / High quality (real news)" )
+            if st == 2: print ( f"Locality:     2 / Local / Medium quality (OP-Ed article)" )
+            if st == 3: print ( f"Locality:     3 / Local / Low quality (Curated guest piece)" )
+            if st == 4: print ( f"Locality:     4 / Local / Low quality (video story)" )
+            if st > 4 and st < 9:  print ( f"Locality:     ? / Unknown article type & quality" )
+            if st >= 9: print ( f"ERROR:        9 / ERROR / Cannot decode article page" )
             print ( f"Local URL:    {su}" )
             print ( f"Remote URL:   {ru}" )
             print ( f"================================================================" )
@@ -427,16 +428,16 @@ def main():
         print ( " ")
         for sn_idx, sn_row in yfn.ml_ingest.items():
             print( f"News article: {sn_idx} / eval... ", end="" )
-            if sn_row['type'] == 0:                # possible high quality news article
-                hint = hint_decoder(sn_row)
-                print ( f"NLP candidate" )
-                status, rem_url = yfn.find_rem_article(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now, with HINT
+            if sn_row['type'] == 0:                # inferred from Depth 0
+                hint = hint_decoder(sn_row)        # hinted from url found at depth 0
+                print ( f"NLP candidate" )         # all type 0 are assumed to be REAL news
+                status, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now, with HINT
                 article_header(status, rem_url, sn_row['url'] )
             elif sn_row['type'] == 1:             # possibly not news?
                 hint = hint_decoder(sn_row)
                 if hint == 0 or hint == 1 or hint == 2:
                     print ( f"NLP candidate" )
-                    status, rem_url = yfn.find_rem_article(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now!
+                    status, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now!
                     article_header(status, rem_url, sn_row['url'] )
                 else:
                     print ( f"Advertisment / skip..." )
@@ -444,7 +445,7 @@ def main():
                 hint = hint_decoder(sn_row['url'])
                 if hint == 0 or hint == 1 or hint == 2:
                     print ( f"/ NLP candidate" )
-                    status, rem_url = yfn.find_rem_article(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now!
+                    status, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now!
                     article_header(status, rem_url, sn_row['url'] )
                 else:
                     print ( f"Advertisment / skip..." )
@@ -452,7 +453,7 @@ def main():
                 hint = hint_decoder(sn_row['url'])
                 if hint == 0 or hint == 1 or hint == 2:
                     print ( f"/ NLP candidate" )
-                    status, rem_url = yfn.find_rem_article(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now!
+                    status, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now!
                     article_header(status, rem_url, sn_row['url'] )
                 else:
                     print ( f"Advertisment / skip..." )

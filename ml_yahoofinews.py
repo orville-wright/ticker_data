@@ -229,18 +229,16 @@ class yfnews_reader:
 
 # session data extraction methods ##############################################
 # method #8
-    def scan_news_level_0(self, symbol, depth, scan_type):
+    def scan_news_feed(self, symbol, depth, scan_type):
         """
-        Scan the NEW FEED for 1 sotck and look of news articles (e.g. https://finance.yahoo.com/quote/OTLY/news?p=OTLY )
-        Evaluate the news items found. Prints stats, take a HIGH-LEVEL guess at type of artcile (i.e. internal HTML structure).
-        Populate an entry in ml_ingest{} for further deeper level 1 processing later.
+        Depth 0
+        1. Scan a stock symbol NEWS FEED for articles (e.g. https://finance.yahoo.com/quote/OTLY/news?p=OTLY )
+        2. Evaluate the items found. Prints stats, take a HIGH-LEVEL guess at each article type (i.e. internal HTML structure).
+        3. Insert NLP candidates into ml_ingest{} for deeper level 1 analysis later.
         TODO: add args - DEPTH (0, 1, 2) doesn't do anythig (yet)
-        Assumes connection/cookies/headers have previously been setup
-        Read & process the raw news HTML data tables from a complex rich meida (highlevel) parent newsfeed
-        Does not extract any news data, items or info. Just sets up the BS4 element extraction zone.
-        Returns a BS4 onbject handle pointing to correct news section for deep element extraction.
+        NOTE: Assumes connection/cookies/headers have previously been setup
         """
-        cmi_debug = __name__+"::"+self.scan_news_level_0.__name__+".#"+str(self.yti)
+        cmi_debug = __name__+"::"+self.scan_news_feed.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         symbol = symbol.upper()
         depth = int(depth)
@@ -287,6 +285,7 @@ class yfnews_reader:
 # method #9
     def eval_article_tags(self, symbol):
         """
+        Depth 1
         NOTE: assumes connection was previously setup & html data structures are pre-loaded
               leverages default JS session/request handle
               Level 0 article logic loop- we're at the TOP-level news page for this stock
@@ -347,7 +346,7 @@ class yfnews_reader:
                     article_teaser = f"{a_teaser:.170}" + " [...]"
                     ml_atype = 0
 
-                print ( f"================= Depth 0 / Article {x} ==================" )
+                print ( f"================= Depth 1 / Article {x} ==================" )
                 print ( f"News item:        {x} / {symbol} / Inferred type: {ml_atype} ({inf_type})" )
                 print ( f"News agency:      {news_agency} / locality: finance.yahoo.com" )
                 print ( f"Article URL:      {article_url}" )
@@ -376,7 +375,7 @@ class yfnews_reader:
                 fa_3 = fa_0[1].get('href')
                 inf_type = "Bulk injected ad"
                 ml_atype = 2
-                print ( f"================= Depth 0 / Article {x} ==================" )
+                print ( f"================= Depth 1 / Article {x} ==================" )
                 print ( f"News item:        {x} / {symbol} / Inferred type: {ml_atype} ({inf_type})" )
                 print ( f"News agency:      {fa_2} / not {symbol} news / NOT an NLP candidate" )
                 print ( f"Adv injector:     {fa_3:.30} [...]" )
@@ -387,10 +386,11 @@ class yfnews_reader:
         return
 
 # method 10
-    def find_rem_article(self, id, symbol, url):
+    def get_locality(self, id, symbol, url):
         """
-        Test the validity of a possible GOOD news article.
-        In the NEWs feed, all news article are initially FAKE. They point to an internal stub/page
+        Depth 2
+        Test a possible GOOD news article & return it's REAL target URL
+        In the NEWs feed, all news article url's are initially FAKE. They point to an internal stub/page
         The stub/page can have miltple personas
         1. A mini-stub, snippet of the article, "Continue" button links to a exteranly hosted article @ a partner site
         2. An artcile @ finanice.yahoo.com, shows a smippet of articel, "Continue" button opens full article on yahoo.com
@@ -401,7 +401,7 @@ class yfnews_reader:
         """
         # data elements extracted & computed
         # Authour, Date posted, Time posted, Age of article
-        cmi_debug = __name__+"::"+self.find_rem_article.__name__+".#"+str(self.yti)
+        cmi_debug = __name__+"::"+self.get_locality().__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         right_now = date.today()
 
@@ -424,25 +424,23 @@ class yfnews_reader:
 
             # page type logic tests
             if type(rem_news) != type(None):        # page has valid structure
-                logging.info ( f"%s - Depth: 1 / Stub-page is valid..." % cmi_debug )
+                logging.info ( f"%s - Depth: 2 / Stub-page is valid..." % cmi_debug )
                 if rem_news.find('a'):          # BAD, no <a> zone in page
                     rem_url = rem_news.a.get("href")        # a remotely hosted news article. Whats its real URL?
-                    logging.info ( f"%s - Depth: 1 / Found <a> zone / Remote article @: {rem_url}" % cmi_debug )
-                    return 0, rem_url
+                    logging.info ( f"%s - Depth: 2 / Found <a> zone / Remote NEWS @: {rem_url}" % cmi_debug )
+                    return 0, rem_url             # REAL news
                 elif rem_news.text == "Story continues":   # locally article, with [continues...] button
-                    logging.info ( f"%s - Depth: 1 / NO <a> zone / local article..." % cmi_debug )
-                    #print ( f">>DUBUG<< / {rem_news.text}" )
-                    return 1, this_article_url
+                    logging.info ( f"%s - Depth: 2 / NO <a> zone / Local NEWS..." % cmi_debug )
+                    return 1, this_article_url    # REAL news
                 else:
-                    logging.info ( f"%s - Depth: 1 / NO <a> zone / Local story..." % cmi_debug )
-                    #print ( f">>DUBUG<< / {local_story.button.text}" )
-                    return 2, this_article_url
+                    logging.info ( f"%s - Depth: 2 / NO <a> zone / Local OP-ED..." % cmi_debug )
+                    return 2, this_article_url    # OP-ED story
             elif local_story.button.text == "Read full article":
-                logging.info ( f"%s - Depth: 1 / Simple stub-page..." % cmi_debug )
+                logging.info ( f"%s - Depth: 2 / Simple stub-page..." % cmi_debug )
                 #print ( f">>DUBUG<< / {local_story.button.text}" )
-                return 3, this_article_url
+                return 3, this_article_url        # Curated guest piece
             else:
-                logging.info ( f"%s - Depth: 1 / Basic page is BAD" % cmi_debug )
+                logging.info ( f"%s - Depth: 2 / Basic page is BAD" % cmi_debug )
                 return 4, "ERROR_bad_page_struct"
 
         return 9, "ERROR_unknown_state!"    # error unknown state
