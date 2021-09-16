@@ -401,7 +401,7 @@ class yfnews_reader:
         """
         # data elements extracted & computed
         # Authour, Date posted, Time posted, Age of article
-        cmi_debug = __name__+"::"+self.get_locality().__name__+".#"+str(self.yti)
+        cmi_debug = __name__+"::"+self.get_locality.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         right_now = date.today()
 
