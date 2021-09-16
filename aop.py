@@ -405,7 +405,7 @@ def main():
             if st == 3: print ( f"Locality:     3 / Local / (Curated report)" )
             if st == 4: print ( f"Locality:     4 / Local / (video story)" )
             if st > 4 and st < 9:  print ( f"Locality:     ? / Unknown article type & quality" )
-            if st = 9: print ( f"ERROR:        9 / ERROR / Cannot decode article page" )
+            if st == 9: print ( f"ERROR:        9 / ERROR / Cannot decode article page" )
             if st >= 10: print ( f"ERROR:        9 / ERROR / Article URL is mangled" )
             print ( f"Local URL:    {su}" )
             print ( f"Remote URL:   {ru}" )
