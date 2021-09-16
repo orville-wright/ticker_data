@@ -402,7 +402,7 @@ def main():
             if st == 0: print ( f"Locality:     0 / Remote / (real news)" )
             if st == 1: print ( f"Locality:     1 / Local / (real news)" )
             if st == 2: print ( f"Locality:     2 / Local / (OP-Ed article)" )
-            if st == 3: print ( f"Locality:     3 / Local / (Curated guest piece)" )
+            if st == 3: print ( f"Locality:     3 / Local / (Curated report)" )
             if st == 4: print ( f"Locality:     4 / Local / (video story)" )
             if st > 4 and st < 9:  print ( f"Locality:     ? / Unknown article type & quality" )
             if st >= 9: print ( f"ERROR:        9 / ERROR / Cannot decode article page" )
