@@ -419,7 +419,7 @@ def main():
         def hint_decoder(url):
             t_url = urlparse(sn_row['url'])
             t_nl = t_url.path.split('/', 2)    # e.g.  https://finance.yahoo.com/video/disney-release-rest-2021-films-210318469.html
-            hint = nt_hint_code.get(t_nl[1], default='ERROR')
+            hint = nt_hint_code.get(t_nl[1], 'ERROR')
             print ( f"{hint[0]} / ", end="" )
             #print ( f"================= Depth 1 / Article {sn_idx} / Type {sn_row['type']} ==================" )
             return hint[1]
