@@ -331,7 +331,7 @@ class yfnews_reader:
 
                 article_url = li_tag.a.get("href")
                 test_http_scheme = urlparse(article_url)
-                if test_http_scheme.scheme == "https" or test_http_scheme.scheme = "http":    # check URL scheme specifier
+                if test_http_scheme.scheme == "https" or test_http_scheme.scheme == "http":    # check URL scheme specifier
                     pass    # dont mess with the URL & leave it pure
                 else:
                     article_url = "https://finance.yahoo.com" + article_url
