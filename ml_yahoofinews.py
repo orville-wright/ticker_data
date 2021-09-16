@@ -368,7 +368,8 @@ class yfnews_reader:
                 found_ad = li_tag.a.text
                 fa_0 = li_tag.div.find_all(attrs={'class': 'C(#959595)'})
                 fa_1 = fa_0[0].get('href')
-                fa_2 = fa_0[0].text    # note needed: fa_3 = fa_0[1].get('href')
+                fa_2 = fa_0[0].text
+                fa_3 = fa_0[1].get('href')
                 ml_atype = 2
                 print ( f"================= Depth 0 / Article {x} ==================" )
                 print ( f"New item:         {x} / {symbol} / Inferred type: {ml_atype}" )
