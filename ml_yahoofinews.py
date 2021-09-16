@@ -231,6 +231,7 @@ class yfnews_reader:
 # method #8
     def scan_news_level_0(self, symbol, depth, scan_type):
         """
+        Scan the NEW FEED for 1 sotck and look of news articles (e.g. https://finance.yahoo.com/quote/OTLY/news?p=OTLY )
         Evaluate the news items found. Prints stats, take a HIGH-LEVEL guess at type of artcile (i.e. internal HTML structure).
         Populate an entry in ml_ingest{} for further deeper level 1 processing later.
         TODO: add args - DEPTH (0, 1, 2) doesn't do anythig (yet)
@@ -289,7 +290,7 @@ class yfnews_reader:
         NOTE: assumes connection was previously setup & html data structures are pre-loaded
               leverages default JS session/request handle
               Level 0 article logic loop- we're at the TOP-level news page for this stock
-        1. cycle though the top-level NEWS page for this stock
+        1. cycle though the top-level NEWS FEED page for this stock
         2. prepare a list of ALL of the articles
         3. For each article, extract KEY news elements (i.e. Headline, Brief, URL to real article)
         4. Wrangle, clean/convert/format the data correctly
@@ -331,6 +332,11 @@ class yfnews_reader:
                 article_url = li_tag.a.get("href")
                 test_http_scheme = urlparse(article_url)
                 if test_http_scheme.scheme != "https" or test_http_scheme.scheme != "http":    # check URL scheme specifier
+                    print ( f">>DEBUG<< : url has FULL {test_http_scheme} scheme..." )
+                    # dont mess with the URL. Leave it alone
+                else:
+                    print ( f">>DEBUG<< : url has NO http/https scheme, assuming finanice.yahoo.com..." )
+                    # assume article is hosted on finance.yahoo.com
                     article_url = "https://finance.yahoo.com" + article_url
 
                 article_headline = li_tag.a.text
