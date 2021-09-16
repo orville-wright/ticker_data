@@ -371,7 +371,7 @@ class yfnews_reader:
                 fa_2 = fa_0[0].text    # note needed: fa_3 = fa_0[1].get('href')
                 ml_atype = 2
                 print ( f"================= Depth 0 / Article {x} ==================" )
-                print ( f"New item:         {x} / {symbol} / Inferred type: {ml_atype}
+                print ( f"New item:         {x} / {symbol} / Inferred type: {ml_atype}" )
                 print ( f"News agency:      {fa_2} / not {symbol} news" )
                 print ( f"Adv injector:     {fa_3:.30} [...]" )
             a_counter = h3_counter = 0
