@@ -45,6 +45,7 @@ class yfnews_reader:
     inst_uid = 0
     yti = 0                 # Unique instance identifier
     cycle = 0               # class thread loop counter
+    nlp_x = 0
     soup = ""               # BS4 shared handle between UP & DOWN (1 URL, 2 embeded data sets in HTML doc)
     args = []               # class dict to hold global args being passed in from main() methods
 
@@ -68,6 +69,7 @@ class yfnews_reader:
         self.args = global_args
         self.symbol = symbol
         self.yti = yti
+        self.nlp_x = 0
         self.js_session = HTMLSession()                        # init JAVAScript processor early
         self.js_session.cookies.update(self.yahoo_headers)     # load cookie/header hack data set into session
         #self.up_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ] )
@@ -317,7 +319,7 @@ class yfnews_reader:
         h3_counter = a_counter = 0
         x = y = 0
         for li_tag in li_subset_all:               # <li> is where the new articels hide
-            x += 1                                 # counter = which article we are looking at
+            self.nlp_x += 1                                 # counter = which article we are looking at
             for element in li_tag.descendants:     # walk the full tag tree recurisvely
                     if element.name == "a":a_counter += 1    # can do more logic tests in here if needed
             if a_counter == 0:
@@ -367,7 +369,7 @@ class yfnews_reader:
                     "type" : ml_atype, \
                     "url" : article_url, \
             		}
-                self.ml_ingest.update({x : nd})
+                self.ml_ingest.update({self.nlp_x : nd})
 
             else:
                 found_ad = li_tag.a.text
