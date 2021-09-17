@@ -41,8 +41,8 @@ global parser
 parser = argparse.ArgumentParser(description="Entropy apperture engine")
 parser.add_argument('-c','--cycle', help='Ephemerial top 10 every 10 secs for 60 secs', action='store_true', dest='bool_tenten60', required=False, default=False)
 parser.add_argument('-d','--deep', help='Deep converged multi data list', action='store_true', dest='bool_deep', required=False, default=False)
-#parser.add_argument('-n','--newsai', help='News sentiment Ai', action='store_true', dest='bool_news', required=False, default=False)
-parser.add_argument('-n','--newsai', help='News sentiment Ai', action='store', dest='newsymbol', required=False, default=False)
+parser.add_argument('-a','--allnews', help='ML/NLP News sentiment AI for all stocks', action='store_true', dest='bool_news', required=False, default=False)
+parser.add_argument('-n','--newsai', help='ML/NLP News sentiment AI for 1 stock', action='store', dest='newsymbol', required=False, default=False)
 parser.add_argument('-q','--quote', help='Get ticker price action quote', action='store', dest='qsymbol', required=False, default=False)
 parser.add_argument('-s','--screen', help='Small cap screener logic', action='store_true', dest='bool_scr', required=False, default=False)
 parser.add_argument('-t','--tops', help='show top ganers/losers', action='store_true', dest='bool_tops', required=False, default=False)
@@ -377,29 +377,40 @@ def main():
     Read finance.yahoo.com / News 'Brief headlines' (i.e. short text docs) for a specific stock.
     """
 
-    if args['newsymbol'] is not False:
+    #if args['newsymbol'] is not False:
+    if args['bool_news'] is True:                   # read ALL news for top 10 gainers
         print ( " " )
-        print ( "========== ** HACKING ** : Yahoo Finance News Sentiment AI =========================" )
-        news_symbol = str(args['newsymbol'])         # symbol provided on CMDLine
-        yfn = yfnews_reader(1, news_symbol, args )
+        print ( "========================= ML (NLP) / Yahoo Finance News Sentiment AI =========================" )
+        print ( f"Build NLP test dataset / for Top Gainers..." )
+        newsai_test_dataset = y_topgainers(2)       # instantiate class
+        newsai_test_dataset.get_topg_data()         # extract data from finance.Yahoo.com
+        nx = newsai_test_dataset.build_tg_df0()     # build entire dataframe
+        newsai_test_dataset.build_top10()           # build top 10 gainers
+        print ( " " )
+        #news_symbol = str(args['newsymbol'])       # symbol provided on CMDLine
+        yfn = yfnews_reader(1, "IBM", args )        # dummy symbol just for instantiation
         yfn.init_dummy_session()
         #yfn.yfn_bintro()
+        count = 1
         print ( "============================== Build bulk NLPcandidate list =================================" )
-        for nlp_target in med_large_mega_gainers.tg_df1['Symbol'].tolist():
+        for nlp_target in newsai_test_dataset.tg_df1['Symbol'].tolist():
+            print ( f"{count}: {nlp_target}", end="" )
             yfn.update_headers(nlp_target)
+            print ( f".", end="" )
             yfn.form_url_endpoint(nlp_target)
+            print ( f".", end="" )
             yfn.do_simple_get()
+            print ( f". / Scan news feed...", end="" )
             yfn.scan_news_feed(nlp_target, 0, 0)    # (params) #1: level, #2: 0=HTML / 1=JavaScript
-            print ( " " )
+            print ( f" / Eval tags..." )
             yfn.eval_article_tags(nlp_target)          # ml_ingest{} is built
-            yfn.dump_ml_ingest()
             print ( "============================== Build bulk NLPcandidate list =================================" )
 
-
-
+        yfn.dump_ml_ingest()
 
         def article_header(st, ru, su):
             """
+            Support function
             Print some nicely formatted info about this discovered article
             NOTE: Locality codes are inferred by decoding the page HTML structure
                   They do not match/align with the URL Hint code. Since that could be a 'fake out'
@@ -422,6 +433,9 @@ def main():
         nt_hint_code = { 'm': ('Remote News article', 0), 'news': ('Local news article', 1), 'video': ('Local Video article', 2) }
 
         def hint_decoder(url):
+            """
+            Support function
+            """
             t_url = urlparse(sn_row['url'])
             t_nl = t_url.path.split('/', 2)    # e.g.  https://finance.yahoo.com/video/disney-release-rest-2021-films-210318469.html
             hint = nt_hint_code.get(t_nl[1])
