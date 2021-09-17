@@ -350,8 +350,8 @@ class yfnews_reader:
                     article_teaser = f"{a_teaser:.170}" + " [...]"
                     ml_atype = 0
 
-                print ( f"================= Depth 1 / Article {x} ==================" )
-                print ( f"News item:        {x} / {symbol} / Inferred type: {ml_atype} ({inf_type})" )
+                print ( f"================= Depth 1 / {symbol} Article {x} ==================" )
+                print ( f"News item:        {cycle} / Inferred type: {ml_atype} ({inf_type})" )
                 print ( f"News agency:      {news_agency} / locality: finance.yahoo.com" )
                 print ( f"Article URL:      {article_url}" )
                 print ( f"Article headline: {article_headline}" )
@@ -379,11 +379,12 @@ class yfnews_reader:
                 fa_3 = fa_0[1].get('href')
                 inf_type = "Bulk injected ad"
                 ml_atype = 2
-                print ( f"================= Depth 1 / Article {x} ==================" )
-                print ( f"News item:        {x} / {symbol} / Inferred type: {ml_atype} ({inf_type})" )
+                print ( f"================= Depth 1 / {symbol} Article {x} ==================" )
+                print ( f"News item:        {cycle} / Inferred type: {ml_atype} ({inf_type})" )
                 print ( f"News agency:      {fa_2} / not {symbol} news / NOT an NLP candidate" )
                 print ( f"Adv injector:     {fa_3:.30} [...]" )
             a_counter = h3_counter = 0
+            x += 1
 
         # need to capture junk adds here (very difficult as they're injected by add engine. Not hard page elements)
         # type = 2 / ml_atype = 2
