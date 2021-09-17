@@ -391,14 +391,11 @@ def main():
             yfn.do_simple_get()
             yfn.scan_news_feed(nlp_target, 0, 0)    # (params) #1: level, #2: 0=HTML / 1=JavaScript
             print ( " " )
-            yfn.dump_ml_ingest()
+            yfn.eval_article_tags(nlp_target)          # ml_ingest{} is built
             print ( "============================== Build bulk NLPcandidate list =================================" )
 
-        print ( "============================== Prepare NLP candidate list =================================" )
-        for nlp_target in med_large_mega_gainers.tg_df1['Symbol'].tolist():
-            yfn.eval_article_tags(nlp_target)          # ml_ingest{} is built
-            print ( "============================== Prepare NLP candidate list =================================" )
-
+        yfn.dump_ml_ingest()
+        
 
         def article_header(st, ru, su):
             """
