@@ -70,6 +70,7 @@ class yfnews_reader:
         self.symbol = symbol
         self.yti = yti
         self.nlp_x = 0
+        self.cycle = 0
         self.js_session = HTMLSession()                        # init JAVAScript processor early
         self.js_session.cookies.update(self.yahoo_headers)     # load cookie/header hack data set into session
         #self.up_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ] )
@@ -319,7 +320,7 @@ class yfnews_reader:
         h3_counter = a_counter = 0
         x = y = 0
         for li_tag in li_subset_all:               # <li> is where the new articels hide
-            self.nlp_x += 1                                 # counter = which article we are looking at
+            self.nlp_x += 1                        # counter = which article we are looking at
             for element in li_tag.descendants:     # walk the full tag tree recurisvely
                     if element.name == "a":a_counter += 1    # can do more logic tests in here if needed
             if a_counter == 0:
