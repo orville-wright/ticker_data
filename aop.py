@@ -390,8 +390,10 @@ def main():
         #yfn.do_js_get()
 
         print ( f"Target NLP list" )
-        print ( f"{med_large_mega_gainers['Symbol']}" )
-
+        print ( f"{med_large_mega_gainers.tg_df1['Symbol'].tolist()}" )
+        for nlp_target in med_large_mega_gainers.tg_df1['Symbol'].tolist()
+            print ( f"NLP target: {nlp_target}" ")
+            
         yfn.scan_news_feed(news_symbol, 0, 0)    # (params) #1: level, #2: 0=HTML / 1=JavaScript
         yfn.eval_article_tags(news_symbol)          # ml_ingest{} is built
         print ( " " )
