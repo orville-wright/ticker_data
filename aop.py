@@ -393,16 +393,12 @@ def main():
         #yfn.yfn_bintro()
         count = 1
         print ( "============================== Build bulk NLPcandidate list =================================" )
+        print ( f"ML - NLP candidate list: {newsai_test_dataset.tg_df1['Symbol'].tolist()}" )
         for nlp_target in newsai_test_dataset.tg_df1['Symbol'].tolist():
-            print ( f"{count}: {nlp_target}", end="" )
             yfn.update_headers(nlp_target)
-            print ( f".", end="" )
             yfn.form_url_endpoint(nlp_target)
-            print ( f".", end="" )
             yfn.do_simple_get()
-            print ( f". / Scan news feed...", end="" )
             yfn.scan_news_feed(nlp_target, 0, 0)    # (params) #1: level, #2: 0=HTML / 1=JavaScript
-            print ( f" / Eval tags..." )
             yfn.eval_article_tags(nlp_target)          # ml_ingest{} is built
             print ( "============================== Build bulk NLPcandidate list =================================" )
 
