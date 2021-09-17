@@ -484,7 +484,7 @@ def main():
         print ( "========================= ML (NLP) / Yahoo Finance News Sentiment AI =========================" )
         print ( f"Examine & Read news for 1 stock symbol..." )
         news_symbol = str(args['newsymbol'])       # symbol provided on CMDLine
-        yfn = yfnews_reader(1, newsymbol, args )   # dummy symbol just for instantiation
+        yfn = yfnews_reader(1, news_symbol, args )   # dummy symbol just for instantiation
         yfn.init_dummy_session()
         #yfn.yfn_bintro()
         yfn.update_headers(nlp_target)
