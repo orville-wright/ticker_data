@@ -392,10 +392,11 @@ def main():
             yfn.scan_news_feed(nlp_target, 0, 0)    # (params) #1: level, #2: 0=HTML / 1=JavaScript
             print ( " " )
             yfn.eval_article_tags(nlp_target)          # ml_ingest{} is built
+            yfn.dump_ml_ingest()
             print ( "============================== Build bulk NLPcandidate list =================================" )
 
-        yfn.dump_ml_ingest()
-        
+
+
 
         def article_header(st, ru, su):
             """
