@@ -372,10 +372,6 @@ def main():
 
 # Machine Learning dev code ####################################
 # News Sentiment AI
-    """
-    The machine will read now!
-    Read finance.yahoo.com / News 'Brief headlines' (i.e. short text docs) for a specific stock.
-    """
         def article_header(st, ru, su):
             """
             NLP Support function #1
@@ -451,7 +447,10 @@ def main():
                     print ( f"Unknown article type / Error..." )
             return
 
-    #if args['newsymbol'] is not False:
+    """
+    The machine will read now!
+    Read finance.yahoo.com / News 'Brief headlines' (i.e. short text docs) for a specific stock.
+    """
     if args['bool_news'] is True:                   # read ALL news for top 10 gainers
         print ( " " )
         print ( "========================= ML (NLP) / Yahoo Finance News Sentiment AI =========================" )
@@ -477,6 +476,8 @@ def main():
 
         yfn.dump_ml_ingest()
         nlp_final_prep()
+
+    #if args['newsymbol'] is not False:
 
 #################################################################################
 # 1-off quote - 3 differnt methods to get a quote ###############################
