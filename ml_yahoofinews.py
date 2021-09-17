@@ -351,7 +351,7 @@ class yfnews_reader:
                     ml_atype = 0
 
                 print ( f"================= Depth 1 / {symbol} Article {x} ==================" )
-                print ( f"News item:        {cycle} / Inferred type: {ml_atype} ({inf_type})" )
+                print ( f"News item:        {self.cycle} / Inferred type: {ml_atype} ({inf_type})" )
                 print ( f"News agency:      {news_agency} / locality: finance.yahoo.com" )
                 print ( f"Article URL:      {article_url}" )
                 print ( f"Article headline: {article_headline}" )
@@ -380,7 +380,7 @@ class yfnews_reader:
                 inf_type = "Bulk injected ad"
                 ml_atype = 2
                 print ( f"================= Depth 1 / {symbol} Article {x} ==================" )
-                print ( f"News item:        {cycle} / Inferred type: {ml_atype} ({inf_type})" )
+                print ( f"News item:        {self.cycle} / Inferred type: {ml_atype} ({inf_type})" )
                 print ( f"News agency:      {fa_2} / not {symbol} news / NOT an NLP candidate" )
                 print ( f"Adv injector:     {fa_3:.30} [...]" )
             a_counter = h3_counter = 0
