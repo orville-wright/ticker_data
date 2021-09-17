@@ -487,11 +487,11 @@ def main():
         yfn = yfnews_reader(1, news_symbol, args )   # dummy symbol just for instantiation
         yfn.init_dummy_session()
         #yfn.yfn_bintro()
-        yfn.update_headers(nlp_target)
-        yfn.form_url_endpoint(nlp_target)
+        yfn.update_headers(news_symbol)
+        yfn.form_url_endpoint(news_symbol)
         yfn.do_simple_get()
-        yfn.scan_news_feed(nlp_target, 0, 0)    # (params) #1: level, #2: 0=HTML / 1=JavaScript
-        yfn.eval_article_tags(nlp_target)          # ml_ingest{} is built
+        yfn.scan_news_feed(news_symbol, 0, 0)    # (params) #1: level, #2: 0=HTML / 1=JavaScript
+        yfn.eval_article_tags(news_symbol)          # ml_ingest{} is built
         print ( "============================== NLP News candidates are ready =================================" )
         yfn.dump_ml_ingest()
         nlp_final_prep()
