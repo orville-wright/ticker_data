@@ -370,7 +370,7 @@ def main():
         print ( f"Current day average $ gain: ${averages.iloc[-1]['Prc_change'].round(2)}" )
         print ( f"Current day percent gain:   %{averages.iloc[-1]['Pct_change'].round(2)}" )
 
-# Machine Learning dev code ####################################
+# Machine Learning NLP (Natural Language Processing) ####################################
 # News Sentiment AI
     def article_header(st, ru, su):
         """
@@ -446,7 +446,7 @@ def main():
 
     """
     The machine will read now!
-    Read finance.yahoo.com / News 'Brief headlines' (i.e. short text docs) for a specific stock.
+    Read finance.yahoo.com / News 'Brief headlines' (i.e. short text docs) for ALL Top Gainer stocks.
     """
     if args['bool_news'] is True:                   # read ALL news for top 10 gainers
         print ( " " )
@@ -474,7 +474,27 @@ def main():
         yfn.dump_ml_ingest()
         nlp_final_prep()
 
-    #if args['newsymbol'] is not False:
+# Rean the news for just 1 stock symbol
+    """
+    The machine will read now!
+    Read finance.yahoo.com / News 'Brief headlines' (i.e. short text docs) for ONE stock symbol.
+    """
+    if args['newsymbol'] is not False:
+        print ( " " )
+        print ( "========================= ML (NLP) / Yahoo Finance News Sentiment AI =========================" )
+        print ( f"Examine & Read news for 1 stock symbol..." )
+        news_symbol = str(args['newsymbol'])       # symbol provided on CMDLine
+        yfn = yfnews_reader(1, newsymbol, args )   # dummy symbol just for instantiation
+        yfn.init_dummy_session()
+        #yfn.yfn_bintro()
+        yfn.update_headers(nlp_target)
+        yfn.form_url_endpoint(nlp_target)
+        yfn.do_simple_get()
+        yfn.scan_news_feed(nlp_target, 0, 0)    # (params) #1: level, #2: 0=HTML / 1=JavaScript
+        yfn.eval_article_tags(nlp_target)          # ml_ingest{} is built
+        print ( "============================== NLP News candidates are ready =================================" )
+        yfn.dump_ml_ingest()
+        nlp_final_prep()
 
 #################################################################################
 # 1-off quote - 3 differnt methods to get a quote ###############################
