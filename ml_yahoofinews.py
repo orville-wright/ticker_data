@@ -386,6 +386,7 @@ class yfnews_reader:
                 print ( f"Adv injector:     {fa_3:.30} [...]" )
             a_counter = h3_counter = 0
             x += 1
+            self.cycle += 1
 
         # need to capture junk adds here (very difficult as they're injected by add engine. Not hard page elements)
         # type = 2 / ml_atype = 2

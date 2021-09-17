@@ -391,9 +391,8 @@ def main():
         yfn = yfnews_reader(1, "IBM", args )        # dummy symbol just for instantiation
         yfn.init_dummy_session()
         #yfn.yfn_bintro()
-        count = 1
-        print ( "============================== Build bulk NLPcandidate list =================================" )
-        print ( f"ML - NLP candidate list: {newsai_test_dataset.tg_df1['Symbol'].tolist()}" )
+        print ( "============================== Build bulk NLP candidate list =================================" )
+        print ( f"ML/NLP candidates: {newsai_test_dataset.tg_df1['Symbol'].tolist()}" )
         for nlp_target in newsai_test_dataset.tg_df1['Symbol'].tolist():
             yfn.update_headers(nlp_target)
             yfn.form_url_endpoint(nlp_target)
