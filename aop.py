@@ -388,6 +388,10 @@ def main():
         yfn.form_url_endpoint(news_symbol)
         yfn.do_simple_get()
         #yfn.do_js_get()
+
+        print ( f"Target NLP list" )
+        print ( f"{med_large_mega_gainers['Symbol']}" )
+
         yfn.scan_news_feed(news_symbol, 0, 0)    # (params) #1: level, #2: 0=HTML / 1=JavaScript
         yfn.eval_article_tags(news_symbol)          # ml_ingest{} is built
         print ( " " )
@@ -426,8 +430,6 @@ def main():
             else:
                 print ( f"ERROR_url / ", end="" )
                 return "Mangled url"
-
-            #print ( f"================= Depth 1 / Article {sn_idx} / Type {sn_row['type']} ==================" )
 
         # process ml_ingest{} candidate news articles and figure out which one to NLP READ
         # even at this level of depth, we cna still be dupped by the article.
