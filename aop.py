@@ -376,6 +376,80 @@ def main():
     The machine will read now!
     Read finance.yahoo.com / News 'Brief headlines' (i.e. short text docs) for a specific stock.
     """
+        def article_header(st, ru, su):
+            """
+            NLP Support function #1
+            st = status
+            ru = Real remote url (extracted)
+            su = Fake url from Depth 0 news feed
+            Print some nicely formatted info about this discovered article
+            NOTE: Locality codes are inferred by decoding the page HTML structure
+                  They do not match/align with the URL Hint code. Since that could be a 'fake out'
+            """
+            if st == 0: print ( f"Locality:     0 / Remote / (real news)" )
+            if st == 1: print ( f"Locality:     1 / Local / (real news)" )
+            if st == 2: print ( f"Locality:     2 / Local / (OP-Ed article)" )
+            if st == 3: print ( f"Locality:     3 / Local / (Curated report)" )
+            if st == 4: print ( f"Locality:     4 / Local / (video story)" )
+            if st > 4 and st < 9:  print ( f"Locality:     ? / Unknown article type & quality" )
+            if st == 9: print ( f"ERROR:        9 / ERROR / Cannot decode article page" )
+            if st > 9: print ( f"ERROR:        10 / ERROR / Article URL is mangled" )
+            print ( f"Local URL:    {su}" )
+            print ( f"Remote URL:   {ru}" )
+            print ( f"====================== Depth 2 ======================" )
+            return
+
+        # hints are embeded in the yahoo.com URL path, but aren't authourtative or definative. They're just a HINT.
+        # e.g.  https://finance.yahoo.com/video/disney-release-rest-2021-films-210318469.html
+
+        """
+        NLP Support dict
+        """
+        nt_hint_code = { 'm': ('Remote News article', 0), 'news': ('Local news article', 1), 'video': ('Local Video article', 2) }
+
+        def hint_decoder(url):
+            """
+            NLP Support function #2
+            """
+            t_url = urlparse(sn_row['url'])
+            t_nl = t_url.path.split('/', 2)    # e.g.  https://finance.yahoo.com/video/disney-release-rest-2021-films-210318469.html
+            hint = nt_hint_code.get(t_nl[1])
+            if type(hint) != None:
+                print ( f"{hint[0]} / ", end="" )
+                return hint[1]
+            else:
+                print ( f"ERROR_url / ", end="" )
+                return "Mangled url"
+
+
+        def nlp_final_prep():
+            """
+            NLP Support function #3
+            process ml_ingest{} candidate news articles
+            figure out which ones to NLP READ
+            NOTE: even at this level of depth, we can still be fooled by the article structure... especially a Micro Add,
+            which may/may-not have any news relating to this symbol. News agency's are sleazy & ML accuracy is difficult!
+            """
+            print ( " ")
+            for sn_idx, sn_row in yfn.ml_ingest.items():    # cycle thru the NLP candidate list
+                print( f"News article: {sn_idx} / eval... ", end="" )
+                if sn_row['type'] == 0:                     # inferred from Depth 0
+                    hint = hint_decoder(sn_row)             # get HINT from url found at depth 0
+                    print ( f"Real news NLP candidate" )    # all type 0 are assumed to be REAL news
+                    status, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep, with HINT
+                    article_header(status, rem_url, sn_row['url'] )
+                elif sn_row['type'] == 1:                   # possibly not news? (Micro Ad)
+                    hint = hint_decoder(sn_row)             # get HINT from url found at depth 0
+                    if hint == 0 or hint == 1 or hint == 2:
+                        print ( f"Micro ad NLP candidate" )
+                        status, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now!
+                        article_header(status, rem_url, sn_row['url'] )
+                    else:
+                        article_header(status, rem_url, sn_row['url'] )
+                        print ( f"Unknown Micro Ad URL / skipping..." )
+                else:
+                    print ( f"Unknown article type / Error..." )
+            return
 
     #if args['newsymbol'] is not False:
     if args['bool_news'] is True:                   # read ALL news for top 10 gainers
@@ -391,7 +465,7 @@ def main():
         yfn = yfnews_reader(1, "IBM", args )        # dummy symbol just for instantiation
         yfn.init_dummy_session()
         #yfn.yfn_bintro()
-        print ( "============================== Build bulk NLP candidate list =================================" )
+        print ( "============================== Prepare bulk NLP candidate list =================================" )
         print ( f"ML/NLP candidates: {newsai_test_dataset.tg_df1['Symbol'].tolist()}" )
         for nlp_target in newsai_test_dataset.tg_df1['Symbol'].tolist():
             yfn.update_headers(nlp_target)
@@ -399,70 +473,10 @@ def main():
             yfn.do_simple_get()
             yfn.scan_news_feed(nlp_target, 0, 0)    # (params) #1: level, #2: 0=HTML / 1=JavaScript
             yfn.eval_article_tags(nlp_target)          # ml_ingest{} is built
-            print ( "============================== Build bulk NLPcandidate list =================================" )
+            print ( "============================== NLP candidates are ready =================================" )
 
         yfn.dump_ml_ingest()
-
-        def article_header(st, ru, su):
-            """
-            Support function
-            Print some nicely formatted info about this discovered article
-            NOTE: Locality codes are inferred by decoding the page HTML structure
-                  They do not match/align with the URL Hint code. Since that could be a 'fake out'
-            """
-            if st == 0: print ( f"Locality:     0 / Remote / (real news)" )
-            if st == 1: print ( f"Locality:     1 / Local / (real news)" )
-            if st == 2: print ( f"Locality:     2 / Local / (OP-Ed article)" )
-            if st == 3: print ( f"Locality:     3 / Local / (Curated report)" )
-            if st == 4: print ( f"Locality:     4 / Local / (video story)" )
-            if st > 4 and st < 9:  print ( f"Locality:     ? / Unknown article type & quality" )
-            if st == 9: print ( f"ERROR:        9 / ERROR / Cannot decode article page" )
-            if st > 9: print ( f"ERROR:        10 / ERROR / Article URL is mangled" )
-            print ( f"Local URL:    {su}" )
-            print ( f"Remote URL:   {ru}" )
-            print ( f"================================================================" )
-            return
-
-        # hints are embeded in the yahoo.com URL path, but aren't authourtative or definative. They're just a HINT.
-        # e.g.  https://finance.yahoo.com/video/disney-release-rest-2021-films-210318469.html
-        nt_hint_code = { 'm': ('Remote News article', 0), 'news': ('Local news article', 1), 'video': ('Local Video article', 2) }
-
-        def hint_decoder(url):
-            """
-            Support function
-            """
-            t_url = urlparse(sn_row['url'])
-            t_nl = t_url.path.split('/', 2)    # e.g.  https://finance.yahoo.com/video/disney-release-rest-2021-films-210318469.html
-            hint = nt_hint_code.get(t_nl[1])
-            if type(hint) != None:
-                print ( f"{hint[0]} / ", end="" )
-                return hint[1]
-            else:
-                print ( f"ERROR_url / ", end="" )
-                return "Mangled url"
-
-        # process ml_ingest{} candidate news articles and figure out which one to NLP READ
-        # even at this level of depth, we cna still be dupped by the article.
-        # Especially a Micr Add, which could have NO news relating to do with this stock symbol. SO accuracy is unclear, STILL!!
-        print ( " ")
-        for sn_idx, sn_row in yfn.ml_ingest.items():
-            print( f"News article: {sn_idx} / eval... ", end="" )
-            if sn_row['type'] == 0:                # inferred from Depth 0
-                hint = hint_decoder(sn_row)        # get HINT from url found at depth 0
-                print ( f"Real news NLP candidate" )         # all type 0 are assumed to be REAL news
-                status, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now, with HINT
-                article_header(status, rem_url, sn_row['url'] )
-            elif sn_row['type'] == 1:             # possibly not news? (Micro Ad)
-                hint = hint_decoder(sn_row)       # get HINT from url found at depth 0
-                if hint == 0 or hint == 1 or hint == 2:
-                    print ( f"Micro ad NLP candidate" )
-                    status, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now!
-                    article_header(status, rem_url, sn_row['url'] )
-                else:
-                    article_header(status, rem_url, sn_row['url'] )
-                    print ( f"Unknown Micro Ad URL / skipping..." )
-            else:
-                print ( f"Unknown article type / Error..." )
+        nlp_final_prep()
 
 #################################################################################
 # 1-off quote - 3 differnt methods to get a quote ###############################
