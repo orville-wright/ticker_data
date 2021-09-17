@@ -384,16 +384,11 @@ def main():
         yfn = yfnews_reader(1, news_symbol, args )
         yfn.init_dummy_session()
         #yfn.yfn_bintro()
-        yfn.update_headers(news_symbol)
-        yfn.form_url_endpoint(news_symbol)
-        yfn.do_simple_get()
-        #yfn.do_js_get()
-
-        print ( f"Target NLP list" )
-        print ( f"{med_large_mega_gainers.tg_df1['Symbol'].tolist()}" )
         print ( "============================== NLP =================================" )
         for nlp_target in med_large_mega_gainers.tg_df1['Symbol'].tolist():
-            print ( f"NLP target: {nlp_target}" )
+            yfn.update_headers(nlp_target)
+            yfn.form_url_endpoint(nlp_target)
+            yfn.do_simple_get()
             yfn.scan_news_feed(nlp_target, 0, 0)    # (params) #1: level, #2: 0=HTML / 1=JavaScript
             yfn.eval_article_tags(nlp_target)          # ml_ingest{} is built
             print ( " " )
