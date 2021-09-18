@@ -510,7 +510,7 @@ def main():
     if args['qsymbol'] is not False:
         nq = nquote(4, args)                         # setup an emphemerial dict
         nq.init_dummy_session()                      # note: this will set nasdaq magic cookie
-        nq_symbol = args['qsymbol']
+        nq_symbol = args['qsymbol'].upper()
         logging.info('main::simple get_quote - for symbol: %s' % nq_symbol )
         nq.update_headers(nq_symbol.rstrip())        # set path: header. doesnt touch secret nasdaq cookies
         nq.form_api_endpoint(nq_symbol.rstrip())
@@ -541,7 +541,7 @@ def main():
     """
     if args['qsymbol'] is not False:
         bc = bc_quote(5, args)       # setup an emphemerial dict
-        bc_symbol = args['qsymbol']  # what symbol are we getting a quote for?
+        bc_symbol = args['qsymbol'].upper()  # what symbol are we getting a quote for?
         bc.get_basicquote(bc_symbol) # get the quote
         print ( " " )
         print ( f"Get BIGCharts.com basicquote for: {bc_symbol}" )
@@ -563,7 +563,7 @@ def main():
     """
     if args['qsymbol'] is not False:
         bc = bc_quote(5, args)       # setup an emphemerial dict
-        bc_symbol = args['qsymbol']  # what symbol are we getting a quote for?
+        bc_symbol = args['qsymbol'].upper()  # what symbol are we getting a quote for?
         bc.get_quickquote(bc_symbol) # get the quote
         bc.q_polish()                # wrangel the data elements
         print ( " " )
