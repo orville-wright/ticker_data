@@ -508,32 +508,30 @@ quote price data is 5 mins delayed
 10 data fields provided
 """
     if args['qsymbol'] is not False:
-        bq = nquote(4, args)                         # setup an emphemerial dict
-        bq.init_dummy_session()                      # note: this will set nasdaq magic cookie
-        bq_symbol = args['qsymbol']
-        logging.info('main::simple get_quote - for symbol: %s' % bq_symbol )
-        bq.update_headers(bq_symbol.rstrip())        # set path: header. doesnt touch secret nasdaq cookies
-        bq.form_api_endpoint(bq_symbol.rstrip())
-        bq.get_nquote(bq_symbol.rstrip())
-        wrangle_errors = bq.build_data()             # return num of data wrangeling errors we found & dealt with
-        bq.build_df()
+        nq = nquote(4, args)                         # setup an emphemerial dict
+        nq.init_dummy_session()                      # note: this will set nasdaq magic cookie
+        nq_symbol = args['qsymbol']
+        logging.info('main::simple get_quote - for symbol: %s' % nq_symbol )
+        nq.update_headers(nq_symbol.rstrip())        # set path: header. doesnt touch secret nasdaq cookies
+        nq.form_api_endpoint(nq_symbol.rstrip())
+        nq.get_nquote(nq_symbol.rstrip())
+        wrangle_errors = nq.build_data()             # return num of data wrangeling errors we found & dealt with
+        nq.build_df()
         print ( " " )
-        print ( f"Get Nasdaq.com quote for: {bq_symbol}" )
-        print ( f"================= quote json =======================" )
-        if bq.quote.get("symbol") is not None:
-            print ( f"{bq.quote}" )
-            print ( f"{bq.quote_df0}" )
-        else:
-            print ( f"Not a regular symbol - prob Trust, ETF etc" )
-
-        print ( f"================= quote data =======================" )
-        c = 1
-        for k, v in bq.quote.items():
-            print ( f"{c} - {k} : {v}" )
-            c += 1
-        print ( f"========================================================" )
-        print ( " " )
-        print ( "####### done #####")
+        print ( f"Get Nasdaq.com quote for: {nq_symbol}" )
+        #print ( f"================= quote json =======================" )
+        if nq.quote.get("symbol") is not None:
+            #print ( f"{nq.quote}" )                # >>DEBUG<< dump the quote dict{}
+            #print ( f"{nq.quote_df0}" )            # >>DEBUG<< dump the dataframe
+            print ( f"================= Nasdaq quote data =======================" )
+            c = 1
+            for k, v in nq.quote.items():
+                print ( f"{c} - {k} : {v}" )
+                c += 1
+            print ( f"===============================================================" )
+            print ( " " )
+    else:
+        print ( f"Not a regular symbol - prob Trust, ETF etc" )
 
 """
 EXAMPLE #2
@@ -547,8 +545,8 @@ quote price data is 15 mins delayed
         bc.get_basicquote(bc_symbol) # get the quote
         print ( " " )
         print ( f"Get BIGCharts.com basicquote for: {bc_symbol}" )
-        print ( f"================= quote json =======================" )
-        print ( f"{bc.quote}" )
+        #print ( f"================= quote json =======================" )
+        #print ( f"{bc.quote}" )    # >>DEBUG<< dump the quote dict{}
         print ( f"================= basicquote data =======================" )
         c = 1
         for k, v in bc.quote.items():
@@ -570,8 +568,8 @@ quote data is 15 mins delayed
         bc.q_polish()                # wrangel the data elements
         print ( " " )
         print ( f"Get BIGCharts.com quote for: {bc_symbol}" )
-        print ( f"================= quickquote json =======================" )
-        print ( f"{bc.quote}" )
+        #print ( f"================= quickquote json =======================" )
+        #print ( f"{bc.quote}" )     # >>DEBUG<< dump the quote dict{}
         print ( f"================= quickquote data =======================" )
         c = 1
         for k, v in bc.quote.items():
