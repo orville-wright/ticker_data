@@ -497,21 +497,25 @@ def main():
         nlp_final_prep()
 
 #################################################################################
-# 1-off quote - 3 differnt methods to get a quote ###############################
+# 3 differnt methods to get a live quote ########################################
+# NOTE: These 3 routines are *examples* of how to get quotes from the 3 live quote classes::
 # TODO: Add a 4th method - via alpaca live API
 
-    # method 1 : nasdaq.com - live quotes via native JSON API test GET
-    # 10 data fields provided
+"""
+EXAMPLE: #1
+nasdaq.com - live quotes via native JSON API test GET
+quote price data is 5 mins delayed
+10 data fields provided
+"""
     if args['qsymbol'] is not False:
-        """ #1 : nasdaq.com live real-time quote """
-        bq = nquote(4, args)       # setup an emphemerial dict
-        bq.init_dummy_session()    # note: this will set nasdaq magic cookie
+        bq = nquote(4, args)                         # setup an emphemerial dict
+        bq.init_dummy_session()                      # note: this will set nasdaq magic cookie
         bq_symbol = args['qsymbol']
         logging.info('main::simple get_quote - for symbol: %s' % bq_symbol )
         bq.update_headers(bq_symbol.rstrip())        # set path: header. doesnt touch secret nasdaq cookies
         bq.form_api_endpoint(bq_symbol.rstrip())
         bq.get_nquote(bq_symbol.rstrip())
-        wrangle_errors = bq.build_data()    # will reutn how man data wrangeling errors we found & dealt with
+        wrangle_errors = bq.build_data()             # return num of data wrangeling errors we found & dealt with
         bq.build_df()
         print ( " " )
         print ( f"Get Nasdaq.com quote for: {bq_symbol}" )
@@ -531,10 +535,13 @@ def main():
         print ( " " )
         print ( "####### done #####")
 
-    # method 2 : bigcharts.marketwatch.com - 15 mins delayed via BS4 scraped data
-    # 10 data fields provided
+"""
+EXAMPLE #2
+bigcharts.marketwatch.com - data via BS4 scraping
+quote price data is 15 mins delayed
+10 data fields provided
+"""
     if args['qsymbol'] is not False:
-        """ #2 : bigcharts.marketwatch.com delayed basic quote """
         bc = bc_quote(5, args)       # setup an emphemerial dict
         bc_symbol = args['qsymbol']  # what symbol are we getting a quote for?
         bc.get_basicquote(bc_symbol) # get the quote
@@ -550,10 +557,13 @@ def main():
         print ( f"========================================================" )
         print ( " " )
 
-    # method 3 : bigcharts.marketwatch.com - 15 mins delayed via BS4 scraped data
-    # 40 data fields provided
+"""
+EXAMPLE #3
+bigcharts.marketwatch.com - data via BS4 scraping
+quote data is 15 mins delayed
+40 data fields provided
+"""
     if args['qsymbol'] is not False:
-        """ #3 : bigcharts.marketwatch.com delayed detailed quote """
         bc = bc_quote(5, args)       # setup an emphemerial dict
         bc_symbol = args['qsymbol']  # what symbol are we getting a quote for?
         bc.get_quickquote(bc_symbol) # get the quote
