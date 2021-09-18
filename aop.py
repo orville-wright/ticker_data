@@ -544,7 +544,7 @@ def main():
         bc_symbol = args['qsymbol'].upper()  # what symbol are we getting a quote for?
         bc.get_basicquote(bc_symbol) # get the quote
         print ( " " )
-        print ( f"Get BIGCharts.com basicquote for: {bc_symbol}" )
+        print ( f"Get BIGCharts.com BasicQuote for: {bc_symbol}" )
         #print ( f"================= quote json =======================" )
         #print ( f"{bc.quote}" )    # >>DEBUG<< dump the quote dict{}
         print ( f"================= basicquote data =======================" )
@@ -567,7 +567,7 @@ def main():
         bc.get_quickquote(bc_symbol) # get the quote
         bc.q_polish()                # wrangel the data elements
         print ( " " )
-        print ( f"Get BIGCharts.com quote for: {bc_symbol}" )
+        print ( f"Get BIGCharts.com QuickQuote for: {bc_symbol}" )
         #print ( f"================= quickquote json =======================" )
         #print ( f"{bc.quote}" )     # >>DEBUG<< dump the quote dict{}
         print ( f"================= quickquote data =======================" )
