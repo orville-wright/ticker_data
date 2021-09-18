@@ -501,82 +501,82 @@ def main():
 # NOTE: These 3 routines are *examples* of how to get quotes from the 3 live quote classes::
 # TODO: Add a 4th method - via alpaca live API
 
-"""
-EXAMPLE: #1
-nasdaq.com - live quotes via native JSON API test GET
-quote price data is 5 mins delayed
-10 data fields provided
-"""
-if args['qsymbol'] is not False:
-    nq = nquote(4, args)                         # setup an emphemerial dict
-    nq.init_dummy_session()                      # note: this will set nasdaq magic cookie
-    nq_symbol = args['qsymbol']
-    logging.info('main::simple get_quote - for symbol: %s' % nq_symbol )
-    nq.update_headers(nq_symbol.rstrip())        # set path: header. doesnt touch secret nasdaq cookies
-    nq.form_api_endpoint(nq_symbol.rstrip())
-    nq.get_nquote(nq_symbol.rstrip())
-    wrangle_errors = nq.build_data()             # return num of data wrangeling errors we found & dealt with
-    nq.build_df()
-    print ( " " )
-    print ( f"Get Nasdaq.com quote for: {nq_symbol}" )
-    #print ( f"================= quote json =======================" )
-    if nq.quote.get("symbol") is not None:
-        #print ( f"{nq.quote}" )                # >>DEBUG<< dump the quote dict{}
-        #print ( f"{nq.quote_df0}" )            # >>DEBUG<< dump the dataframe
-        print ( f"================= Nasdaq quote data =======================" )
+    """
+    EXAMPLE: #1
+    nasdaq.com - live quotes via native JSON API test GET
+    quote price data is 5 mins delayed
+    10 data fields provided
+    """
+    if args['qsymbol'] is not False:
+        nq = nquote(4, args)                         # setup an emphemerial dict
+        nq.init_dummy_session()                      # note: this will set nasdaq magic cookie
+        nq_symbol = args['qsymbol']
+        logging.info('main::simple get_quote - for symbol: %s' % nq_symbol )
+        nq.update_headers(nq_symbol.rstrip())        # set path: header. doesnt touch secret nasdaq cookies
+        nq.form_api_endpoint(nq_symbol.rstrip())
+        nq.get_nquote(nq_symbol.rstrip())
+        wrangle_errors = nq.build_data()             # return num of data wrangeling errors we found & dealt with
+        nq.build_df()
+        print ( " " )
+        print ( f"Get Nasdaq.com quote for: {nq_symbol}" )
+        #print ( f"================= quote json =======================" )
+        if nq.quote.get("symbol") is not None:
+            #print ( f"{nq.quote}" )                # >>DEBUG<< dump the quote dict{}
+            #print ( f"{nq.quote_df0}" )            # >>DEBUG<< dump the dataframe
+            print ( f"================= Nasdaq quote data =======================" )
+            c = 1
+            for k, v in nq.quote.items():
+                print ( f"{c} - {k} : {v}" )
+                c += 1
+            print ( f"===============================================================" )
+            print ( " " )
+    else:
+        print ( f"Not a regular symbol - prob Trust, ETF etc" )
+
+    """
+    EXAMPLE #2
+    bigcharts.marketwatch.com - data via BS4 scraping
+    quote price data is 15 mins delayed
+    10 data fields provided
+    """
+    if args['qsymbol'] is not False:
+        bc = bc_quote(5, args)       # setup an emphemerial dict
+        bc_symbol = args['qsymbol']  # what symbol are we getting a quote for?
+        bc.get_basicquote(bc_symbol) # get the quote
+        print ( " " )
+        print ( f"Get BIGCharts.com basicquote for: {bc_symbol}" )
+        #print ( f"================= quote json =======================" )
+        #print ( f"{bc.quote}" )    # >>DEBUG<< dump the quote dict{}
+        print ( f"================= basicquote data =======================" )
         c = 1
-        for k, v in nq.quote.items():
+        for k, v in bc.quote.items():
             print ( f"{c} - {k} : {v}" )
             c += 1
-        print ( f"===============================================================" )
+        print ( f"========================================================" )
         print ( " " )
-else:
-    print ( f"Not a regular symbol - prob Trust, ETF etc" )
 
-"""
-EXAMPLE #2
-bigcharts.marketwatch.com - data via BS4 scraping
-quote price data is 15 mins delayed
-10 data fields provided
-"""
-if args['qsymbol'] is not False:
-    bc = bc_quote(5, args)       # setup an emphemerial dict
-    bc_symbol = args['qsymbol']  # what symbol are we getting a quote for?
-    bc.get_basicquote(bc_symbol) # get the quote
-    print ( " " )
-    print ( f"Get BIGCharts.com basicquote for: {bc_symbol}" )
-    #print ( f"================= quote json =======================" )
-    #print ( f"{bc.quote}" )    # >>DEBUG<< dump the quote dict{}
-    print ( f"================= basicquote data =======================" )
-    c = 1
-    for k, v in bc.quote.items():
-        print ( f"{c} - {k} : {v}" )
-        c += 1
-    print ( f"========================================================" )
-    print ( " " )
-
-"""
-EXAMPLE #3
-bigcharts.marketwatch.com - data via BS4 scraping
-quote data is 15 mins delayed
-40 data fields provided
-"""
-if args['qsymbol'] is not False:
-    bc = bc_quote(5, args)       # setup an emphemerial dict
-    bc_symbol = args['qsymbol']  # what symbol are we getting a quote for?
-    bc.get_quickquote(bc_symbol) # get the quote
-    bc.q_polish()                # wrangel the data elements
-    print ( " " )
-    print ( f"Get BIGCharts.com quote for: {bc_symbol}" )
-    #print ( f"================= quickquote json =======================" )
-    #print ( f"{bc.quote}" )     # >>DEBUG<< dump the quote dict{}
-    print ( f"================= quickquote data =======================" )
-    c = 1
-    for k, v in bc.quote.items():
-        print ( f"{c} - {k} : {v}" )
-        c += 1
-    print ( f"========================================================" )
-    print ( " " )
+    """
+    EXAMPLE #3
+    bigcharts.marketwatch.com - data via BS4 scraping
+    quote data is 15 mins delayed
+    40 data fields provided
+    """
+    if args['qsymbol'] is not False:
+        bc = bc_quote(5, args)       # setup an emphemerial dict
+        bc_symbol = args['qsymbol']  # what symbol are we getting a quote for?
+        bc.get_quickquote(bc_symbol) # get the quote
+        bc.q_polish()                # wrangel the data elements
+        print ( " " )
+        print ( f"Get BIGCharts.com quote for: {bc_symbol}" )
+        #print ( f"================= quickquote json =======================" )
+        #print ( f"{bc.quote}" )     # >>DEBUG<< dump the quote dict{}
+        print ( f"================= quickquote data =======================" )
+        c = 1
+        for k, v in bc.quote.items():
+            print ( f"{c} - {k} : {v}" )
+            c += 1
+        print ( f"========================================================" )
+        print ( " " )
 
 
 if __name__ == '__main__':
