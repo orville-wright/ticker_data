@@ -530,8 +530,8 @@ def main():
                 c += 1
             print ( f"===============================================================" )
             print ( " " )
-    else:
-        print ( f"Not a regular symbol - prob Trust, ETF etc" )
+        else:
+            print ( f"Not a regular symbol - prob Trust, ETF etc" )
 
     """
     EXAMPLE #2
