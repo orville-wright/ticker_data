@@ -538,7 +538,7 @@ class yfnews_reader:
         cmi_debug = __name__+"::"+self.dump_ml_ingest.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         print ( "================= ML Ingested Depth 1 NLP candidates ==================" )
-        for k in self.ml_ingest.items():
-            print ( f"{k} " )
+        for k, d in self.ml_ingest.items():
+            print ( f"{k:02} / {d[0]}" )
 
         return
