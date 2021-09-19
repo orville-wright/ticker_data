@@ -539,6 +539,5 @@ class yfnews_reader:
         logging.info('%s - IN' % cmi_debug )
         print ( "================= ML Ingested Depth 1 NLP candidates ==================" )
         for k, d in self.ml_ingest.items():
-            #print ( f"{k:02} / {d[symbol]} {d[urlhash]} / Type: {d[type]} {d[url]}" )
-            print ( f"{k:02} / ..." )
+            print ( f"{k:02} {d['symbol']:.6} / {d['urlhash']} Type [{d['type']}] {d['url']}" )
         return
