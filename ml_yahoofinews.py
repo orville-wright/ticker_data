@@ -291,12 +291,12 @@ class yfnews_reader:
         Depth 1
         NOTE: assumes connection was previously setup & html data structures are pre-loaded
               leverages default JS session/request handle
-              Level 0 article logic loop- we're at the TOP-level news page for this stock
+              Level 0 article logic loop - we're at the TOP-level news page for this stock
         1. cycle though the top-level NEWS FEED page for this stock
-        2. prepare a list of ALL of the articles
+        2. Scan & prepare a list of ALL of the articles we see
         3. For each article, extract KEY news elements (i.e. Headline, Brief, URL to real article)
-        4. Wrangle, clean/convert/format the data correctly
-        Build out ml_ingest{} NLP candidate list
+        4. Make a high level decision as to the TYPE of item (News, paid article, Injected ad)
+        5. Add articles into ml_ingest{} NLP candidate list (only types 0 & 1 are viable candidates)
         """
         cmi_debug = __name__+"::"+self.eval_article_tags.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
@@ -306,22 +306,22 @@ class yfnews_reader:
         mini_headline_all = self.ul_tag_dataset.div.find_all(attrs={'class': 'C(#959595)'})
         li_subset_all = self.ul_tag_dataset.find_all('li')
 
-        # Major sanity/logic tests on <tag> tructure of news article
-        # <tag> structure is very unpredictible, so we count how many INTERESTING <a> tags exist.
+        # Depth 1 : INITIAL high-level tests on <tag> tructure of news article
+        # <tag> structure is very unpredictible/diverse/unreliable, so we count how many INTERESTING <a> tags exist.
         # This isn't a guaranteed logic test but <a> tags signal KEY news article data zones.
         # INFO: Too many <a> tags >= 4 means A fake news article Advertsiment
         #       <= 3 <a> tags = A real news article (possibly)
         # NOTE: Types of news elements
-        #       0 : Real independant news article - high quality
-        #       1 : Company paid adv masquerading as news - Medium quality
-        #       2 : Injected advertisment not related to company at all - Low quality
+        #       0 : Feels like a REAL news article
+        #       1 : Feels like a paid article masquerading as news
+        #       2 : Looks like an injected advertisment
         # WARN: Its normal to see duplicate Type 0 & 1 news elemets repeated within a page.
 
         h3_counter = a_counter = 0
         x = y = 0
-        for li_tag in li_subset_all:               # <li> is where the new articels hide
-            self.nlp_x += 1                        # counter = which article we are looking at
-            for element in li_tag.descendants:     # walk the full tag tree recurisvely
+        for li_tag in li_subset_all:                         # <li> is where the new articels hide
+            self.nlp_x += 1                                  # counter = which article we are looking at
+            for element in li_tag.descendants:               # walk the full tag tree recurisvely
                     if element.name == "a":a_counter += 1    # can do more logic tests in here if needed
             if a_counter == 0:
                 logging.info( f'%s - li count: {a_counter}' % (cmi_debug) )                  # good new zrticle found
@@ -331,14 +331,13 @@ class yfnews_reader:
             if a_counter > 0 and a_counter <= 3:
                 logging.info( f'%s - li count: {a_counter}' % (cmi_debug) )                  # good new zrticle found
                 news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
-
                 article_url = li_tag.a.get("href")
                 test_http_scheme = urlparse(article_url)
                 if test_http_scheme.scheme == "https" or test_http_scheme.scheme == "http":    # check URL scheme specifier
-                    pass    # dont mess with the URL & leave it pure
+                    pass    # dont mess with the original FQDN URL & leave it pure
                 else:
                     article_url = "https://finance.yahoo.com" + article_url
-                    # assume article is hosted at finaince.yahoo.com
+                    # assume hosted at https://finaince.yahoo.com becasue it has no leading FQDN scheme (i.e. http/https)
 
                 article_headline = li_tag.a.text
                 if not li_tag.find('p'):
@@ -429,7 +428,7 @@ class yfnews_reader:
             # if type(local_news) != type(None): print ( f"2. caas-body populated / could be a locally hosted article" )
             # if type(local_optrader) != type(None): print ( f"3. caas-button populated / could be local opts-trader article / {local_optrader.button.text}" )
 
-            # page type logic tests
+            # page TYPE logic testing...
             if type(rem_news) != type(None):        # page has valid structure
                 logging.info ( f"%s - Depth: 2 / Stub-page is valid..." % cmi_debug )
                 if rem_news.find('a'):          # BAD, no <a> zone in page
@@ -454,6 +453,7 @@ class yfnews_reader:
 
 
         """
+        SAVE - good code. need to re-impliment soon - gets date/time of a good news article
         else:
             #print ( f"Tag sections in news page: {len(a_subset)}" )   # DEBUG
             for erow in range(len(a_subset)):       # cycyle through tag sections in this dataset (not predictible or consistent)
@@ -483,6 +483,7 @@ class yfnews_reader:
 # method 11
     def news_article_depth_1(self, url):
         """
+        DEPRECATED - will detele soon
         Analyze 1 (ONE) individual news article taken from the list of articles for this stock.
         Set data extractor into KEY element zone within news article HTML dataset.
         Extract critical news elements, fields & data objects are full news artcile.
@@ -513,18 +514,18 @@ class yfnews_reader:
 
             if frl.has_attr("a") is False:
                 logging.info( "%s - Article HAS an <a> tag & MAYBE an <href> tag?" )
-                if frl.a.get('href') == 0:    # we have a real href
-                    logging.info( '%s - News article is locally hosted on finance.yahoo.com' % cmi_debug )
+                if frl.a.get('href') == 0:    # we found a real href
+                    logging.info( '%s - News article is LOCAL at finance.yahoo.com' % cmi_debug )
                     # fnl_tag_dataset = soup.find_all('a')
                     logging.info( '%s - Extract key elements/tags from HTML data' % cmi_debug )
                     tag_dataset = nsoup.div.find_all(attrs={'class': 'D(tbc)'} )
                 else:
-                    logging.info( '%s - Fake remote news article stub discovered!' % cmi_debug )
+                    logging.info( '%s - Fake stub/page discovered / Article is REMOTE' % cmi_debug )
                     logging.info( f"%s - remote URL: {frl.a.get('href')}" % cmi_debug )
                     tag_dataset = 0
-                    real_nurl = frl.a.get('href')
+                    real_nurl = frl.a.get('href')    # article is REMOTE at this real location
             else:
-                logging.info( "%s - Article has NO <a> or <href> tag. Structure is BAD!" % cmi_debug )
+                logging.info( "%s - Article has NO <a> or <href> tags / structure is BAD!" % cmi_debug )
 
             logging.info( f"%s - close news article: {deep_url}" % cmi_debug )
 
@@ -539,5 +540,5 @@ class yfnews_reader:
         logging.info('%s - IN' % cmi_debug )
         print ( "================= ML Ingested Depth 1 NLP candidates ==================" )
         for k, d in self.ml_ingest.items():
-            print ( f"{k:03} {d['symbol']:.6} / {d['urlhash']} Type [{d['type']}] {d['url']}" )
+            print ( f"{k:03} {d['symbol']:.5} / {d['urlhash']} Type [{d['type']}] {d['url']}" )
         return

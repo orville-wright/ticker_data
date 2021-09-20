@@ -416,10 +416,12 @@ def main():
     def nlp_final_prep():
         """
         NLP Support function #3
-        process ml_ingest{} candidate news articles
-        figure out which ones to NLP READ
-        NOTE: even at this level of depth, we can still be fooled by the article structure... especially a Micro Add,
-        which may/may-not have any news relating to this symbol. News agency's are sleazy & ML accuracy is difficult!
+        process all taregt items in ml_ingest{} i.e. candidate NLP news articles
+        figure out which ones to commit to NLP READ
+        AWRN: even at this level of depth (2), where we've built up good confidence of which articles to read....
+              we can still be fooled by deceptive/fake articles inserted in the news feed & odd article structures...
+              especially Micro Adds & curated articles inserted in the news feed. (there are many artcile types)
+              Also, false positive articles that may-not have any news relating to this symbol. (News agency's are sleazy!).
         """
         print ( " ")
         for sn_idx, sn_row in yfn.ml_ingest.items():    # cycle thru the NLP candidate list
