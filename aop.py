@@ -442,11 +442,11 @@ def main():
         print ( " ")
         cmi_debug = __name__+"::"+nlp_final_prep.__init__.__name__
         for sn_idx, sn_row in yfn.ml_ingest.items():    # cycle thru the NLP candidate list
-            print( f"News article: {sn_idx} / eval... ", end="" )
+            print( f"News article:  {sn_idx} / eval... ", end="" )
             if sn_row['type'] == 0:                     # inferred from Depth 0
                 t_url = urlparse(sn_row['url'])
                 hint = hint_decoder(t_url)              # get HINT from url found at depth 0
-                print ( f"Real news NLP candidate" )    # all type 0 are assumed to be REAL news
+                print ( f"Real news > NLP candidate" )    # all type 0 are assumed to be REAL news
                 logging.info ( f"%s - #1 send hint code {hint} to get_locality()..." % cmi_debug )
                 local_conf, type_conf, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'], hint)    # go deep, with HINT
                 article_header(local_conf, type_conf, rem_url, sn_row['url'] )
@@ -454,15 +454,15 @@ def main():
                 t_url = urlparse(sn_row['url'])
                 hint = hint_decoder(t_url)              # get HINT from url found at depth 0
                 if hint == 0 or hint == 1 or hint == 2:
-                    print ( f"Micro ad NLP candidate" )
+                    print ( f"Micro ad > NLP candidate" )
                     logging.info ( f"%s - #2 Send hint code {hint} to get_locality()..." % cmi_debug )
                     local_conf, type_conf, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'], hint)    # go deep now!
                     article_header(local_conf, type_conf, rem_url, sn_row['url'] )
                 else:
                     article_header(local_conf, type_conf, rem_url, sn_row['url'] )
-                    print ( f"Unknown Micro Ad URL / skipping..." )
+                    print ( f"Unknown Micro Ad URL > skipping..." )
             else:
-                print ( f"Unknown article type / Error..." )
+                print ( f"Unknown article type > Error..." )
         return
 
     """
