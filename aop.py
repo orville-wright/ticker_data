@@ -372,26 +372,36 @@ def main():
 
 # Machine Learning NLP (Natural Language Processing) ####################################
 # News Sentiment AI
-    def article_header(st, ru, su):
+    def article_header(lc, tc, ru, su):
         """
         NLP Support function #1
-        st = status
+        lc = locality confidence code (0=remote, 1=local, 9=ERROR_bad_page_struct, 10=ERROR_unknown_state)
+        tc = type confidence code (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
         ru = Real remote url (extracted)
         su = Fake url from Depth 0 news feed
         Print some nicely formatted info about this discovered article
         NOTE: Locality codes are inferred by decoding the page HTML structure
               They do not match/align with the URL Hint code. Since that could be a 'fake out'
         """
-        if st == 0: print ( f"Locality:     0 / Remote / (real news)" )
-        if st == 1: print ( f"Locality:     1 / Local / (real news)" )
-        if st == 2: print ( f"Locality:     2 / Local / (OP-Ed article)" )
-        if st == 3: print ( f"Locality:     3 / Local / (Curated report)" )
-        if st == 4: print ( f"Locality:     4 / Local / (video story)" )
-        if st > 4 and st < 9:  print ( f"Locality:     ? / Unknown article type & quality" )
-        if st == 9: print ( f"ERROR:        9 / ERROR / Cannot decode article page" )
-        if st > 9: print ( f"ERROR:        10 / ERROR / Article URL is mangled" )
-        print ( f"Local URL:    {su}" )
-        print ( f"Remote URL:   {ru}" )
+        tcode = { '0': 'Real news',
+                '1': 'Real news',
+                '2': 'OP-Ed article',
+                '3': 'Curated report',
+                '4': 'Video story',
+                '5': 'Unknown type 5',
+                '6': 'Unknown type 6',
+                '7': 'Unknown type 7',
+                '8': 'Unknown type 9',
+                '9': 'Cannot decide page',
+                '10': 'Article URL mangled'
+                }
+        tc_descr = tcode.get(tc)
+        if lc == 0: print ( f"Locality:     Remote / {lc}.{tc_descr}" )
+        if lc == 1: print ( f"Locality:     Local / {lc}.{tc_descr}" )
+        if lc == 9: print ( f"Locality:     Bad Local page / {lc}.{tc_descr}" )
+        if lc == 10: print ( f"Locality:     Unknown state / {lc}.{tc_descr}" )
+        print ( f"News feed URL: {su}" )
+        print ( f"Real dest URL: {ru}" )
         print ( f"====================== Depth 2 ======================" )
         return
 
@@ -400,6 +410,8 @@ def main():
     def hint_decoder(url):
         """
         NLP Support function #2
+        interrogate the article URL and gets a hint from the structure as to what this article type is
+        WARN: this is just a hinter as the url structure offers NO guaranteed info about the article type
         """
         #t_url = urlparse(sn_row['url'])
         nt_hint_code = { 'm': ('Remote News article', 0), 'news': ('Local news article', 1), 'video': ('Local Video article', 2) }
@@ -430,17 +442,17 @@ def main():
                 t_url = urlparse(sn_row['url'])
                 hint = hint_decoder(t_url)              # get HINT from url found at depth 0
                 print ( f"Real news NLP candidate" )    # all type 0 are assumed to be REAL news
-                status, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'], hint)    # go deep, with HINT
-                article_header(status, rem_url, sn_row['url'] )
+                local_conf, type_conf, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'], hint)    # go deep, with HINT
+                article_header(local_conf, type_conf, rem_url, sn_row['url'] )
             elif sn_row['type'] == 1:                   # possibly not news? (Micro Ad)
                 t_url = urlparse(sn_row['url'])
                 hint = hint_decoder(t_url)              # get HINT from url found at depth 0
                 if hint == 0 or hint == 1 or hint == 2:
                     print ( f"Micro ad NLP candidate" )
-                    status, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'], hint)    # go deep now!
-                    article_header(status, rem_url, sn_row['url'] )
+                    local_conf, type_conf, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'], hint)    # go deep now!
+                    article_header(local_conf, type_conf, rem_url, sn_row['url'] )
                 else:
-                    article_header(status, rem_url, sn_row['url'] )
+                    article_header(local_conf, type_conf, rem_url, sn_row['url'] )
                     print ( f"Unknown Micro Ad URL / skipping..." )
             else:
                 print ( f"Unknown article type / Error..." )
