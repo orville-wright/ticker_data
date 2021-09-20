@@ -347,14 +347,14 @@ class yfnews_reader:
                 if not li_tag.find('p'):
                     inf_type = "Micro Advertisment"
                     article_teaser = "None"
-                    ml_atype = 9
+                    ml_atype = 9.9
                     if pure_url == 0: ml_atype = 0.5
                     if pure_url == 1: ml_atype = 1.5
                 else:
                     inf_type = "News"
                     a_teaser = li_tag.p.text
                     article_teaser = f"{a_teaser:.170}" + " [...]"
-                    ml_atype = 9
+                    ml_atype = 9.9
                     if pure_url == 0: ml_atype = 0.0
                     if pure_url == 1: ml_atype = 1.0
 

@@ -446,7 +446,7 @@ def main():
         cmi_debug = __name__+"::"+nlp_final_prep.__init__.__name__
         for sn_idx, sn_row in yfn.ml_ingest.items():    # cycle thru the NLP candidate list
             print( f"News article:  {sn_idx} / eval... ", end="" )
-            if sn_row['type'] == 0:                     # inferred from Depth 0
+            if sn_row['type'] == 0.0 :                     # inferred from Depth 0
                 t_url = urlparse(sn_row['url'])
                 hint = hint_decoder(t_url)              # get HINT from url found at depth 0
                 print ( f"Real news > NLP candidate" )    # all type 0 are assumed to be REAL news
