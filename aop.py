@@ -383,6 +383,7 @@ def main():
         NOTE: Locality codes are inferred by decoding the page HTML structure
               They do not match/align with the URL Hint code. Since that could be a 'fake out'
         """
+        cmi_debug = __name__+"::"+article_header.__name__
         tcode = { '0': 'Real news',
                 '1': 'Real news',
                 '2': 'OP-Ed article',
@@ -395,6 +396,7 @@ def main():
                 '9': 'Cannot decide page',
                 '10': 'Article URL mangled'
                 }
+        logging.info ( f"%s - hint code recieved {hint}" % cmi_debug )
         tc_descr = tcode.get(tc)
         if lc == 0: print ( f"Locality:     Remote / {lc}.{tc_descr}" )
         if lc == 1: print ( f"Locality:     Local / {lc}.{tc_descr}" )
