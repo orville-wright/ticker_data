@@ -396,12 +396,12 @@ def main():
                 9: 'Cannot decide page',
                 10: 'Article URL mangled'
                 }
-        logging.info ( f"%s - hint code recieved {tc} / {type(tc)}" % cmi_debug )
+        logging.info ( f"%s - hint code recieved {tc}" % cmi_debug )
         tc_descr = tcode.get(tc)
-        if lc == 0: print ( f"Locality:     Remote / {lc}.{tc_descr}" )
-        if lc == 1: print ( f"Locality:     Local / {lc}.{tc_descr}" )
-        if lc == 9: print ( f"Locality:     Bad Local page / {lc}.{tc_descr}" )
-        if lc == 10: print ( f"Locality:     Unknown state / {lc}.{tc_descr}" )
+        if lc == 0: print ( f"Locality:      Remote / {lc}.{tc} / {tc_descr}" )
+        if lc == 1: print ( f"Locality:      Local / {lc}.{tc}  / {tc_descr}" )
+        if lc == 9: print ( f"Locality:      Bad Local page / {lc}.{tc} / {tc_descr}" )
+        if lc == 10: print ( f"Locality:      Unknown state / {lc}.{tc} / {tc_descr}" )
         print ( f"News feed URL: {su}" )
         print ( f"Real dest URL: {ru}" )
         print ( f"====================== Depth 2 ======================" )
