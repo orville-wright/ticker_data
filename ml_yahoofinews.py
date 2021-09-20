@@ -346,7 +346,8 @@ class yfnews_reader:
                     inf_type = "Micro Advertisment"
                     article_teaser = "None"
                     ml_atype = 1
-                    if pure_url == 0: ml_atype = 0
+                    logging.info ( f"%s - Depth: 1 / Force NLP candidate to be remote 0.0" % cmi_debug )
+                    if pure_url == 0: ml_atype = 0.0
                 else:
                     inf_type = "News"
                     a_teaser = li_tag.p.text
