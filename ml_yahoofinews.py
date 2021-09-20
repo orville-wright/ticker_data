@@ -444,7 +444,8 @@ class yfnews_reader:
             # 2 = OP-ED article
             # 3 = Curated report
             # 4 = Video Story
-            # 5, 6, 7, 8 = (reserved and unknonw)
+            # 5 = Micro Ad
+            # 6, 7, 8 = (reserved and unknonw)
             # 9 = ERROR / cannot decode page structure
             # 10 = ERROR / Article URL is mangled
             #
@@ -474,11 +475,13 @@ class yfnews_reader:
                     logging.info ( f"%s - Depth: 2 / confidence level 1 / 2 " % cmi_debug )
                     return 1, 2, this_article_url          # OP-ED story (doesn't have [story continues...] button)
                     # could be buggy logic. need to analyze page struct of Local OP-ED article"
-            elif local_story.button.text == "Read full article":
+            elif hint == 1:    # still a local YFN page, but needs more analyzing...
+                local_story.button.text == "Read full article":
                 logging.info ( f"%s - Depth: 2 / Simple stub-page..." % cmi_debug )
                 logging.info ( f"%s - Depth: 2 / confidence level 1 / 3 " % cmi_debug )
                 return 1, 3, this_article_url              # Curated Report
-                # could be buggy logic, there cold be multiple types of type 3 curated articles
+            elif hint = 0:    # this is definatley a REMOTE article. Cant analyze any page/structure <tag> detals here
+                return 5, 0, this_article_url     # Micro Ad with pure URL pointing to physical remote article
             else:
                 logging.info ( f"%s - Depth: 2 / Basic page is BAD" % cmi_debug )
                 logging.info ( f"%s - Depth: 2 / confidence level 9 / -1 " % cmi_debug )
