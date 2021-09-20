@@ -70,7 +70,7 @@ class yfnews_reader:
         self.symbol = symbol
         self.yti = yti
         self.nlp_x = 0
-        self.cycle = 0
+        self.cycle = 1
         self.js_session = HTMLSession()                        # init JAVAScript processor early
         self.js_session.cookies.update(self.yahoo_headers)     # load cookie/header hack data set into session
         #self.up_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ] )
@@ -361,9 +361,9 @@ class yfnews_reader:
                 print ( f"================= Depth 1 / {symbol} Article {x} ==================" )
                 print ( f"News item:        {self.cycle} / Inferred type: {ml_atype} ({inf_type})" )
                 print ( f"News agency:      {news_agency} / locality: ", end="" )
-                if pure_url == 0: print ( f"Remote article")
-                if pure_url == 1: print ( f"finance.yahoo.com article" )
-                if pure_url == 9: print ( f"Unknown locality" )
+                if pure_url == 0: print ( f"@ Remote news site")
+                if pure_url == 1: print ( f"@ finance.yahoo.com" )
+                if pure_url == 9: print ( f"Unknown location" )
                 print ( f"Article URL:      {article_url}" )
                 print ( f"Article headline: {article_headline}" )
                 print ( f"Article teaser:   {article_teaser}" )
