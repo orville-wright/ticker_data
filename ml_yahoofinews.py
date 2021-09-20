@@ -334,7 +334,7 @@ class yfnews_reader:
                 article_url = li_tag.a.get("href")
                 test_http_scheme = urlparse(article_url)
                 if test_http_scheme.scheme == "https" or test_http_scheme.scheme == "http":    # check URL scheme specifier
-                    logging.info ( f"%s - Depth: 1 / No local page / Pure Remote URL  @: {rem_url}" % cmi_debug )
+                    logging.info ( f"%s - Depth: 1 / Pure Remote URL found!" % cmi_debug )
                     pure_url = 0
                     pass    # dont mess with the original FQDN URL & leave it pure
                 else:
