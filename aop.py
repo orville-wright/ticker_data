@@ -384,17 +384,17 @@ def main():
               They do not match/align with the URL Hint code. Since that could be a 'fake out'
         """
         cmi_debug = __name__+"::"+article_header.__name__
-        tcode = { '0': 'Real news',
-                '1': 'Real news',
-                '2': 'OP-Ed article',
-                '3': 'Curated report',
-                '4': 'Video story',
-                '5': 'Unknown type 5',
-                '6': 'Unknown type 6',
-                '7': 'Unknown type 7',
-                '8': 'Unknown type 9',
-                '9': 'Cannot decide page',
-                '10': 'Article URL mangled'
+        tcode = { 0: 'Real news',
+                1: 'Real news',
+                2: 'OP-Ed article',
+                3: 'Curated report',
+                4: 'Video story',
+                5: 'Unknown type 5',
+                6: 'Unknown type 6',
+                7: 'Unknown type 7',
+                8: 'Unknown type 9',
+                9: 'Cannot decide page',
+                10: 'Article URL mangled'
                 }
         logging.info ( f"%s - hint code recieved {tc} / {type(tc)}" % cmi_debug )
         tc_descr = tcode.get(tc)
