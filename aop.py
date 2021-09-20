@@ -416,12 +416,15 @@ def main():
         WARN: this is just a hinter as the url structure offers NO guaranteed info about the article type
         """
         cmi_debug = __name__+"::"+hint_decoder.__name__
-        nt_hint_code = { 'm': ('Remote News article', 0), 'news': ('Local news article', 1), 'video': ('Local Video article', 2) }
+        nt_hint_code = { 'm': ('Remote News article', 0),
+                    'news': ('Local news article', 1),
+                    'video': ('Local Video article', 2)
+                    }
         t_nl = url.path.split('/', 2)    # e.g.  https://finance.yahoo.com/video/disney-release-rest-2021-films-210318469.html
         hint = nt_hint_code.get(t_nl[1])
         if type(hint) != None:
             print ( f"{hint[0]} / ", end="" )
-            logging.info ( f"%s - Inferred hint from URL {hint[1]} [{url.netloc}] / {hint[0]}" % cmi_debug )
+            logging.info ( f"%s - Inferred hint from URL: {hint[1]} [{url.netloc}] / {hint[0]}" % cmi_debug )
             return hint[1]
         else:
             print ( f"ERROR_url / ", end="" )
