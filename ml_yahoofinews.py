@@ -360,7 +360,10 @@ class yfnews_reader:
 
                 print ( f"================= Depth 1 / {symbol} Article {x} ==================" )
                 print ( f"News item:        {self.cycle} / Inferred type: {ml_atype} ({inf_type})" )
-                print ( f"News agency:      {news_agency} / locality: finance.yahoo.com" )
+                print ( f"News agency:      {news_agency} / locality: ", end="" )
+                if pure_url == 0: print ( f"Remote article")
+                if pure_url == 1: print ( f"finance.yahoo.com article" )
+                if pure_url == 9: print ( f"Unknown locality" )
                 print ( f"Article URL:      {article_url}" )
                 print ( f"Article headline: {article_headline}" )
                 print ( f"Article teaser:   {article_teaser}" )
