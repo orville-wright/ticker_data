@@ -318,6 +318,7 @@ class yfnews_reader:
         # WARN: Its normal to see duplicate Type 0 & 1 news elemets repeated within a page.
 
         h3_counter = a_counter = 0
+        pure_url = 9
         x = y = 0
         for li_tag in li_subset_all:                         # <li> is where the new articels hide
             self.nlp_x += 1                                  # counter = which article we are looking at
@@ -339,20 +340,23 @@ class yfnews_reader:
                     pass    # dont mess with the original FQDN URL & leave it pure
                 else:
                     article_url = "https://finance.yahoo.com" + article_url
+                    pure_url = 1
                     # assume hosted at https://finaince.yahoo.com becasue it has no leading FQDN scheme (i.e. http/https)
 
                 article_headline = li_tag.a.text        # taken from YFN news feed thumbnail, not actual article page
                 if not li_tag.find('p'):
                     inf_type = "Micro Advertisment"
                     article_teaser = "None"
-                    ml_atype = 1
-                    logging.info ( f"%s - Depth: 1 / Force NLP candidate to be remote 0.0" % cmi_debug )
+                    ml_atype = 9
                     if pure_url == 0: ml_atype = 0.0
+                    if pure_url == 1: ml_atype = 1.0
                 else:
                     inf_type = "News"
                     a_teaser = li_tag.p.text
                     article_teaser = f"{a_teaser:.170}" + " [...]"
-                    ml_atype = 0
+                    ml_atype = 9
+                    if pure_url == 0: ml_atype = 0.0
+                    if pure_url == 1: ml_atype = 1.0
 
                 print ( f"================= Depth 1 / {symbol} Article {x} ==================" )
                 print ( f"News item:        {self.cycle} / Inferred type: {ml_atype} ({inf_type})" )
