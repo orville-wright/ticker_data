@@ -420,17 +420,16 @@ def main():
         2 = local full video - (URL starts with /video/... and has FQDN: https://finance.yahoo.com/
         3 = remote full article - (URL is a pure link to remote article (eg.g https://www.independent.co.uk/news/...)
         """
-        cmi_debug = __name__+"::"+"hint_decoder().#1"
-        nt_hint_code = { 'm': ('Remote YFN stub', 0),
-                    'news': ('Local full article', 1),
-                    'video': ('Local Video article', 2),
-                    'rfa': ('Remote pure article', 3)
+        cmi_debug = __name__+"::"+"hint_decoder().#1    "
+        nt_hint_code = { 'm': ('Remote stub', 0),
+                    'news': ('Local article', 1),
+                    'video': ('Local Video', 2),
+                    'rfa': ('Remote external', 3)
                     }
         t_nl = url.path.split('/', 2)       # e.g.  https://finance.yahoo.com/video/disney-release-rest-2021-films-210318469.html
-        hint = nt_hint_code.get(t_nl[1])    # lookup & retrieve hint code: 0, 1, 2, 3
-
-        if url.netloc == "finance.yahoo.com"
-            print ( f"{hint} / {hint[0]} - ", end="" )
+        hint = nt_hint_code.get(t_nl[1])    # retrieve hint code: 0, 1, 2, 3
+        if url.netloc == "finance.yahoo.com":
+            print ( f"{hint[1]} / {hint[0]} - ", end="" )
             logging.info ( f"%s - Inferred hint from URL: {hint[1]} [{url.netloc}] / {hint[0]}" % cmi_debug )
             return hint[1]
 
@@ -462,7 +461,7 @@ def main():
                 t_url = urlparse(sn_row['url'])
                 hint = hint_decoder(t_url)                # get HINT from url found at depth 0
                 print ( f"Real news > NLP candidate" )    # all type 0 are assumed to be REAL news
-                logging.info ( f"%s - #1 send hint code {hint} to get_locality()..." % cmi_debug )
+                logging.info ( f"%s - T1: send hint code {hint} to get_locality()" % cmi_debug )
                 local_conf, type_conf, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'], hint)    # go deep, with HINT
                 article_header(local_conf, type_conf, rem_url, sn_row['url'] )
             elif sn_row['type'] == 1:                   # possibly not news? (Micro Ad)
@@ -470,7 +469,7 @@ def main():
                 hint = hint_decoder(t_url)              # get HINT from url found at depth 0
                 if hint == 0 or hint == 1 or hint == 2:
                     print ( f"Micro ad > NLP candidate" )
-                    logging.info ( f"%s - #2 Send hint code {hint} to get_locality()..." % cmi_debug )
+                    logging.info ( f"%s - T2: Send hint code {hint} to get_locality()" % cmi_debug )
                     local_conf, type_conf, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'], hint)    # go deep now!
                     article_header(local_conf, type_conf, rem_url, sn_row['url'] )
                 else:
