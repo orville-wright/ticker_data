@@ -445,27 +445,35 @@ class yfnews_reader:
                     rem_url = rem_news.a.get("href")       # a remotely hosted news article. Whats its real URL?
                     logging.info ( f"%s - Depth: 2 / Found <a> zone / Remote NEWS @: {rem_url}" % cmi_debug )
                     if hint == 0:
+                        logging.info ( f"%s - Depth: 2 / confidence level 0 / 0 " % cmi_debug )
                         return 0, 0, rem_url               # 100% confidence that articel is REMOTE
                     else:
+                        logging.info ( f"%s - Depth: 2 / confidence level 0 / -1 " % cmi_debug )
                         return 0, -1, rem_url              # hint miss-match. Lower confidence
                 elif rem_news.text == "Story continues":   # certain local articles have a [story continues...] button
                     logging.info ( f"%s - Depth: 2 / NO <a> zone / Analyze local page..." % cmi_debug )
-                    if hint == 1:                          # vanilla local news TEXT article
+                    if hint == 1:
+                        logging.info ( f"%s - Depth: 2 / confidence level 1 / 1 " % cmi_debug )
                         return 1, 1, this_article_url      # REAL news
                     elif hint == 2:                        # video page, with supporting news TEXT artcile
+                        logging.info ( f"%s - Depth: 2 / confidence level 1 / 4 " % cmi_debug )
                         return 1, 4, this_article_url      # REAL news VIDEO artcile with supporting TEXT artcile
                 else:                                      # could be TYPE 2, 3, 4 article
                     logging.info ( f"%s - Depth: 2 / NO <a> zone / Local OP-ED..." % cmi_debug )
+                    logging.info ( f"%s - Depth: 2 / confidence level 1 / 2 " % cmi_debug )
                     return 1, 2, this_article_url          # OP-ED story (doesn't have [story continues...] button)
                     # could be buggy logic. need to analyze page struct of Local OP-ED article"
             elif local_story.button.text == "Read full article":
                 logging.info ( f"%s - Depth: 2 / Simple stub-page..." % cmi_debug )
+                logging.info ( f"%s - Depth: 2 / confidence level 1 / 3 " % cmi_debug )
                 return 1, 3, this_article_url              # Curated Report
                 # could be buggy logic, there cold be multiple types of type 3 curated articles
             else:
                 logging.info ( f"%s - Depth: 2 / Basic page is BAD" % cmi_debug )
+                logging.info ( f"%s - Depth: 2 / confidence level 9 / -1 " % cmi_debug )
                 return 9, -1, "ERROR_bad_page_struct"
 
+        logging.info ( f"%s - Depth: 2 / confidence level 10 / -1 " % cmi_debug )
         return 10, -1, "ERROR_unknown_state!"              # error unknown state
 
 
