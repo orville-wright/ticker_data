@@ -334,16 +334,19 @@ class yfnews_reader:
                 article_url = li_tag.a.get("href")
                 test_http_scheme = urlparse(article_url)
                 if test_http_scheme.scheme == "https" or test_http_scheme.scheme == "http":    # check URL scheme specifier
+                    logging.info ( f"%s - Depth: 1 / No local page / Pure Remote URL  @: {rem_url}" % cmi_debug )
+                    pure_url = 0
                     pass    # dont mess with the original FQDN URL & leave it pure
                 else:
                     article_url = "https://finance.yahoo.com" + article_url
                     # assume hosted at https://finaince.yahoo.com becasue it has no leading FQDN scheme (i.e. http/https)
 
-                article_headline = li_tag.a.text
+                article_headline = li_tag.a.text        # taken from YFN news feed thumbnail, not actual article page
                 if not li_tag.find('p'):
                     inf_type = "Micro Advertisment"
                     article_teaser = "None"
                     ml_atype = 1
+                    if pure_url == 0: ml_atype = 0
                 else:
                     inf_type = "News"
                     a_teaser = li_tag.p.text
@@ -441,7 +444,7 @@ class yfnews_reader:
             # locality with confidence, type with confidence, rem_url of the real/physical news article
             if type(rem_news) != type(None):               # page has valid structure
                 logging.info ( f"%s - Depth: 2 / Stub-page is valid..." % cmi_debug )
-                if rem_news.find('a'):                     # BAD, no <a> zone in page
+                if rem_news.find('a'):                     # BAD, no <a> zone in page or article is a REAL remote URL already
                     rem_url = rem_news.a.get("href")       # a remotely hosted news article. Whats its real URL?
                     logging.info ( f"%s - Depth: 2 / Found <a> zone / Remote NEWS @: {rem_url}" % cmi_debug )
                     if hint == 0:

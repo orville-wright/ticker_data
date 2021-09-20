@@ -489,7 +489,7 @@ def main():
             yfn.form_url_endpoint(nlp_target)
             yfn.do_simple_get()
             yfn.scan_news_feed(nlp_target, 0, 0)    # (params) #1: level, #2: 0=HTML / 1=JavaScript
-            yfn.eval_article_tags(nlp_target)          # ml_ingest{} is built
+            yfn.eval_article_tags(nlp_target)       # ml_ingest{} is built
             print ( "============================== NLP candidates are ready =================================" )
 
         yfn.dump_ml_ingest()
