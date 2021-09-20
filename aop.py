@@ -443,7 +443,7 @@ def main():
                 t_url = urlparse(sn_row['url'])
                 hint = hint_decoder(t_url)              # get HINT from url found at depth 0
                 print ( f"Real news NLP candidate" )    # all type 0 are assumed to be REAL news
-                logging.info ( f"%s - Send hint code {hint} to get_locality()..." % cmi_debug )
+                logging.info ( f"%s - >>>>>Send hint code {hint} to get_locality()..." % cmi_debug )
                 local_conf, type_conf, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'], hint)    # go deep, with HINT
                 article_header(local_conf, type_conf, rem_url, sn_row['url'] )
             elif sn_row['type'] == 1:                   # possibly not news? (Micro Ad)
