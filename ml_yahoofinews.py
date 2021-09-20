@@ -348,8 +348,8 @@ class yfnews_reader:
                     inf_type = "Micro Advertisment"
                     article_teaser = "None"
                     ml_atype = 9
-                    if pure_url == 0: ml_atype = 0.0
-                    if pure_url == 1: ml_atype = 1.0
+                    if pure_url == 0: ml_atype = 0.5
+                    if pure_url == 1: ml_atype = 1.5
                 else:
                     inf_type = "News"
                     a_teaser = li_tag.p.text
@@ -389,7 +389,7 @@ class yfnews_reader:
                 fa_2 = fa_0[0].text
                 fa_3 = fa_0[1].get('href')
                 inf_type = "Bulk injected ad"
-                ml_atype = 2
+                ml_atype = 2.6
                 print ( f"================= Depth 1 / {symbol} Article {x} ==================" )
                 print ( f"News item:        {self.cycle} / Inferred type: {ml_atype} ({inf_type})" )
                 print ( f"News agency:      {fa_2} / not {symbol} news / NOT an NLP candidate" )
@@ -445,7 +445,8 @@ class yfnews_reader:
             # 3 = Curated report
             # 4 = Video Story
             # 5 = Micro Ad
-            # 6, 7, 8 = (reserved and unknonw)
+            # 6 = Bulk Injected Ad
+            # 7, 8 = (reserved and unknonw)
             # 9 = ERROR / cannot decode page structure
             # 10 = ERROR / Article URL is mangled
             #
@@ -475,12 +476,12 @@ class yfnews_reader:
                     logging.info ( f"%s - Depth: 2 / confidence level 1 / 2 " % cmi_debug )
                     return 1, 2, this_article_url          # OP-ED story (doesn't have [story continues...] button)
                     # could be buggy logic. need to analyze page struct of Local OP-ED article"
-            elif hint == 1:    # still a local YFN page, but needs more analyzing...
-                local_story.button.text == "Read full article":
+            elif hint == 1:                                # a local YFN page, but a low quality article/report/story
+                local_story.button.text == "Read full article"    # test to make 100% sure its a low quality story
                 logging.info ( f"%s - Depth: 2 / Simple stub-page..." % cmi_debug )
                 logging.info ( f"%s - Depth: 2 / confidence level 1 / 3 " % cmi_debug )
                 return 1, 3, this_article_url              # Curated Report
-            elif hint = 0:    # this is definatley a REMOTE article. Cant analyze any page/structure <tag> detals here
+            elif hint == 0:                        # definatley a REMOTE article. Cant analyze page/structure <tag> detals from here
                 return 5, 0, this_article_url     # Micro Ad with pure URL pointing to physical remote article
             else:
                 logging.info ( f"%s - Depth: 2 / Basic page is BAD" % cmi_debug )
