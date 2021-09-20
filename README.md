@@ -1,10 +1,11 @@
 # ticker_data
 
-Date: 29 August 2021
+Date: 19 Sept 2021
 ** Major updates **
-- Lots of things were broken over the past 6 months. They are now all fixed.
-- JavaScript page data processing/scraping is now fully working.
-- Nasadaq.com has been added as a reliable data source (pure JSON API access & JavaScript scraping)
+- I am currently hacking on ML NLP (Natural Language Processing) code - to read 100's of news artciles for a stock and guess/inferr sentimnet
+- Major code added to prepare for ML/NLP news reading of 100's of news articles. ML/NLP reading code is not yet active, but...
+- the system now scans the news feed of multiple stocks and inferrs (with confidence) new articles that are fake/credible, their typ & thier locality
+
 
 
 **DISCLAIMER**: This code is still in heavy development & design. Much of it works well, but a few areas are still early in their prototyping phase (e.g. ML & A.I). Also, the overall strategy behind the design is subject to change as code in key areas becomes more functional.
