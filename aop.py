@@ -383,7 +383,7 @@ def main():
         NOTE: Locality codes are inferred by decoding the page HTML structure
               They do not match/align with the URL Hint code. Since that could be a 'fake out'
         """
-        cmi_debug = __name__+"::"+article_header.__name__
+        cmi_debug = __name__+"::"+"article_header().#1"
         tcode = { 0: 'Real news',
                 1: 'Real news',
                 2: 'OP-Ed article',
@@ -412,25 +412,37 @@ def main():
     def hint_decoder(url):
         """
         NLP Support function #2
-        interrogate the article URL and gets a hint from the structure as to what this article type is
+        parse the article URL and get a hint from the URL structure as to what this article type might be.
         WARN: this is just a hinter as the url structure offers NO guaranteed info about the article type
+        Only a few hint types are possible...
+        0 = remote stub article - (URL starts with /m/.... and has FQDN:  https://finance.yahoo.com/
+        1 = local full article - (URL starts with /news/... and has FQDN: https://finance.yahoo.com/
+        2 = local full video - (URL starts with /video/... and has FQDN: https://finance.yahoo.com/
+        3 = remote full article - (URL is a pure link to remote article (eg.g https://www.independent.co.uk/news/...)
         """
-        cmi_debug = __name__+"::"+hint_decoder.__name__
-        nt_hint_code = { 'm': ('Remote News article', 0),
-                    'news': ('Local news article', 1),
-                    'video': ('Local Video article', 2)
+        cmi_debug = __name__+"::"+"hint_decoder().#1"
+        nt_hint_code = { 'm': ('Remote YFN stub', 0),
+                    'news': ('Local full article', 1),
+                    'video': ('Local Video article', 2),
+                    'rfa': ('Remote pure article', 3)
                     }
-        t_nl = url.path.split('/', 2)    # e.g.  https://finance.yahoo.com/video/disney-release-rest-2021-films-210318469.html
-        hint = nt_hint_code.get(t_nl[1])
-        if type(hint) != None:
-            print ( f"{hint[0]} / ", end="" )
+        t_nl = url.path.split('/', 2)       # e.g.  https://finance.yahoo.com/video/disney-release-rest-2021-films-210318469.html
+        hint = nt_hint_code.get(t_nl[1])    # lookup & retrieve hint code: 0, 1, 2, 3
+
+        if url.netloc == "finance.yahoo.com"
+            print ( f"{hint} / {hint[0]} - ", end="" )
             logging.info ( f"%s - Inferred hint from URL: {hint[1]} [{url.netloc}] / {hint[0]}" % cmi_debug )
             return hint[1]
+
+        if url.scheme == "https" or url.scheme == "http":    # URL has valid scheme but isn NOT @ YFN
+            print ( f"3 / Remote pure url - ", end="" )
+            logging.info ( f"%s - Inferred hint from URL: 3 [{url.netloc}] / Remote pure article" % cmi_debug )
+            return 3
         else:
             print ( f"ERROR_url / ", end="" )
             logging.info ( f"%s - ERROR URL hint is -1 / Mangled URL" % cmi_debug )
-            return "Mangled url"
-
+            #return "Mangled url"
+            return 9
 
     def nlp_final_prep():
         """
@@ -443,12 +455,12 @@ def main():
               Also, false positive articles that may-not have any news relating to this symbol. (News agency's are sleazy!).
         """
         print ( " ")
-        cmi_debug = __name__+"::"+nlp_final_prep.__init__.__name__
+        cmi_debug = __name__+"::"+"nlp_final_prep().#1"
         for sn_idx, sn_row in yfn.ml_ingest.items():    # cycle thru the NLP candidate list
             print( f"News article:  {sn_idx} / eval... ", end="" )
-            if sn_row['type'] == 0.0 :                     # inferred from Depth 0
+            if sn_row['type'] == 0.0 :                    # inferred from Depth 0
                 t_url = urlparse(sn_row['url'])
-                hint = hint_decoder(t_url)              # get HINT from url found at depth 0
+                hint = hint_decoder(t_url)                # get HINT from url found at depth 0
                 print ( f"Real news > NLP candidate" )    # all type 0 are assumed to be REAL news
                 logging.info ( f"%s - #1 send hint code {hint} to get_locality()..." % cmi_debug )
                 local_conf, type_conf, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'], hint)    # go deep, with HINT
