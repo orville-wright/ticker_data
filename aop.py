@@ -421,7 +421,7 @@ def main():
         hint = nt_hint_code.get(t_nl[1])
         if type(hint) != None:
             print ( f"{hint[0]} / ", end="" )
-            logging.info ( f"%s - Inferred hint from URL {hint[1]} [{t_nl.netloc}] / {hint[0]}" % cmi_debug )
+            logging.info ( f"%s - Inferred hint from URL {hint[1]} [{url.netloc}] / {hint[0]}" % cmi_debug )
             return hint[1]
         else:
             print ( f"ERROR_url / ", end="" )
