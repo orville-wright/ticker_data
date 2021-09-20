@@ -413,15 +413,17 @@ def main():
         interrogate the article URL and gets a hint from the structure as to what this article type is
         WARN: this is just a hinter as the url structure offers NO guaranteed info about the article type
         """
-        #t_url = urlparse(sn_row['url'])
+        cmi_debug = __name__+"::"+hint_decoder.__name__
         nt_hint_code = { 'm': ('Remote News article', 0), 'news': ('Local news article', 1), 'video': ('Local Video article', 2) }
         t_nl = url.path.split('/', 2)    # e.g.  https://finance.yahoo.com/video/disney-release-rest-2021-films-210318469.html
         hint = nt_hint_code.get(t_nl[1])
         if type(hint) != None:
             print ( f"{hint[0]} / ", end="" )
+            logging.info ( f"%s - Inferred URL hint from URL {hint[1]} / {hint[0]}" % cmi_debug )
             return hint[1]
         else:
             print ( f"ERROR_url / ", end="" )
+            logging.info ( f"%s - ERROR URL hint is -1 / Mangled URL" % cmi_debug )
             return "Mangled url"
 
 
@@ -435,15 +437,15 @@ def main():
               especially Micro Adds & curated articles inserted in the news feed. (there are many artcile types)
               Also, false positive articles that may-not have any news relating to this symbol. (News agency's are sleazy!).
         """
-        cmi_debug = __name__+"::"+nlp_final_prep.__init__.__name__
         print ( " ")
+        cmi_debug = __name__+"::"+nlp_final_prep.__init__.__name__
         for sn_idx, sn_row in yfn.ml_ingest.items():    # cycle thru the NLP candidate list
             print( f"News article: {sn_idx} / eval... ", end="" )
             if sn_row['type'] == 0:                     # inferred from Depth 0
                 t_url = urlparse(sn_row['url'])
                 hint = hint_decoder(t_url)              # get HINT from url found at depth 0
                 print ( f"Real news NLP candidate" )    # all type 0 are assumed to be REAL news
-                logging.info ( f"%s - >>>>>Send hint code {hint} to get_locality()..." % cmi_debug )
+                logging.info ( f"%s - #1 send hint code {hint} to get_locality()..." % cmi_debug )
                 local_conf, type_conf, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'], hint)    # go deep, with HINT
                 article_header(local_conf, type_conf, rem_url, sn_row['url'] )
             elif sn_row['type'] == 1:                   # possibly not news? (Micro Ad)
@@ -451,7 +453,7 @@ def main():
                 hint = hint_decoder(t_url)              # get HINT from url found at depth 0
                 if hint == 0 or hint == 1 or hint == 2:
                     print ( f"Micro ad NLP candidate" )
-                    logging.info ( f"%s - Send hint code {hint} to get_locality()..." % cmi_debug )
+                    logging.info ( f"%s - #2 Send hint code {hint} to get_locality()..." % cmi_debug )
                     local_conf, type_conf, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'], hint)    # go deep now!
                     article_header(local_conf, type_conf, rem_url, sn_row['url'] )
                 else:
