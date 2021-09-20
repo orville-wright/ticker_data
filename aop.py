@@ -435,6 +435,7 @@ def main():
               especially Micro Adds & curated articles inserted in the news feed. (there are many artcile types)
               Also, false positive articles that may-not have any news relating to this symbol. (News agency's are sleazy!).
         """
+        cmi_debug = __name__+"::"+nlp_final_prep.__init__.__name__
         print ( " ")
         for sn_idx, sn_row in yfn.ml_ingest.items():    # cycle thru the NLP candidate list
             print( f"News article: {sn_idx} / eval... ", end="" )
