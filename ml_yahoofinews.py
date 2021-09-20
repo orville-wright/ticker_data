@@ -392,11 +392,11 @@ class yfnews_reader:
         return
 
 # method 10
-    def get_locality(self, id, symbol, url):
+    def get_locality(self, id, symbol, url, hint):
         """
         Depth 2
         Test a possible GOOD news article & return it's REAL target URL
-        In the NEWs feed, all news article url's are initially FAKE. They point to an internal stub/page
+        In the NEWs feed, 99% of news article url's are FAKE. They point to an internal stub/page
         The stub/page can have miltple personas
         1. A mini-stub, snippet of the article, "Continue" button links to a exteranly hosted article @ a partner site
         2. An artcile @ finanice.yahoo.com, shows a smippet of articel, "Continue" button opens full article on yahoo.com
@@ -411,7 +411,7 @@ class yfnews_reader:
         logging.info('%s - IN' % cmi_debug )
         right_now = date.today()
 
-        this_article_url = url      # pass in the url that we want to deeply analyze
+        this_article_url = url
         symbol = symbol.upper()
         logging.info( f'%s - validate fake news article stub/page for: {symbol}' % (cmi_debug) )
         logging.info( f'%s - get() stub/page at URL: {this_article_url} ' % cmi_debug )
@@ -419,37 +419,46 @@ class yfnews_reader:
             nr = s.get( this_article_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
             nsoup = BeautifulSoup(nr.text, 'html.parser')
             logging.info( '%s - Stub/page has been scraped...' % cmi_debug )
-            #  = nsoup.find(attrs={"class": "caas-readmore caas-readmore-collapse caas-readmore-outsidebody caas-readmore-asidepresent"})
-            rem_news = nsoup.find(attrs={"class": "caas-readmore"})                # stub news article, remotely hosted
-            local_news = nsoup.find(attrs={"class": "caas-body"})                  # full news article, locally hosted
-            local_story = nsoup.find(attrs={"class": "caas-body-wrapper"})  # boring options trader bland article type
-
-            # if type(rem_news) != type(None): print ( f"1. caas-readmore populated / could be a valid remote article" )
-            # if type(local_news) != type(None): print ( f"2. caas-body populated / could be a locally hosted article" )
-            # if type(local_optrader) != type(None): print ( f"3. caas-button populated / could be local opts-trader article / {local_optrader.button.text}" )
+            rem_news = nsoup.find(attrs={"class": "caas-readmore"})             # stub news article, remotely hosted
+            local_news = nsoup.find(attrs={"class": "caas-body"})               # full news article, locally hosted
+            local_story = nsoup.find(attrs={"class": "caas-body-wrapper"})      # boring options trader bland article type
 
             # page TYPE logic testing...
-            if type(rem_news) != type(None):        # page has valid structure
+            # we test against the folling HINT codes after analyzing deeply the page structure.
+            # 0 = Good news article (remote not on yahoo.com)
+            # 1 = Good news article (local, on yahoo.com)
+            # 2 = OP-ED article
+            # 3 = Curated report
+            # 4 = Video Story
+            # 5, 6, 7, 8 = (reserved and unknonw)
+            # 9 = ERROR / cannot decode page structure
+            # 10 = ERROR / Article URL is mangled
+            if type(rem_news) != type(None):               # page has valid structure
                 logging.info ( f"%s - Depth: 2 / Stub-page is valid..." % cmi_debug )
-                if rem_news.find('a'):          # BAD, no <a> zone in page
-                    rem_url = rem_news.a.get("href")        # a remotely hosted news article. Whats its real URL?
+                if rem_news.find('a'):                     # BAD, no <a> zone in page
+                    rem_url = rem_news.a.get("href")       # a remotely hosted news article. Whats its real URL?
                     logging.info ( f"%s - Depth: 2 / Found <a> zone / Remote NEWS @: {rem_url}" % cmi_debug )
-                    return 0, rem_url             # REAL news
+                    if hint == 0:
+                        return 0, 0, rem_url               # 100% confidence that articel is REMOTE
+                    else:
+                        return 0, -1, rem_url              # hint miss-match. Lower confidence
                 elif rem_news.text == "Story continues":   # locally article, with [continues...] button
                     logging.info ( f"%s - Depth: 2 / NO <a> zone / Local NEWS..." % cmi_debug )
-                    return 1, this_article_url    # REAL news
-                else:
+                    if hint == 1:
+                        return 1, 1, this_article_url      # REAL news
+                    elif hint == 4:                        # video articles have a "Story continues..." button
+                        return 1, 4, this_article_url      # REAL news
+                else:                                      # could be TYPE 2, 3, 4 article
                     logging.info ( f"%s - Depth: 2 / NO <a> zone / Local OP-ED..." % cmi_debug )
-                    return 2, this_article_url    # OP-ED story
+                    return 1, 2, this_article_url          # OP-ED story
             elif local_story.button.text == "Read full article":
                 logging.info ( f"%s - Depth: 2 / Simple stub-page..." % cmi_debug )
-                #print ( f">>DUBUG<< / {local_story.button.text}" )
-                return 3, this_article_url        # Curated guest piece or video article
+                return 1, 3, this_article_url              # Curated guest piece or video article
             else:
                 logging.info ( f"%s - Depth: 2 / Basic page is BAD" % cmi_debug )
-                return 4, "ERROR_bad_page_struct"
+                return 9, -1, "ERROR_bad_page_struct"
 
-        return 9, "ERROR_unknown_state!"    # error unknown state
+        return 10, -1, "ERROR_unknown_state!"              # error unknown state
 
 
         """

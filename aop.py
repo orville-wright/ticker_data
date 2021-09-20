@@ -416,7 +416,7 @@ def main():
     def nlp_final_prep():
         """
         NLP Support function #3
-        process all taregt items in ml_ingest{} i.e. candidate NLP news articles
+        process all target items in ml_ingest{} i.e. candidate NLP news articles
         figure out which ones to commit to NLP READ
         AWRN: even at this level of depth (2), where we've built up good confidence of which articles to read....
               we can still be fooled by deceptive/fake articles inserted in the news feed & odd article structures...
@@ -430,14 +430,14 @@ def main():
                 t_url = urlparse(sn_row['url'])
                 hint = hint_decoder(t_url)              # get HINT from url found at depth 0
                 print ( f"Real news NLP candidate" )    # all type 0 are assumed to be REAL news
-                status, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep, with HINT
+                status, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'], hint)    # go deep, with HINT
                 article_header(status, rem_url, sn_row['url'] )
             elif sn_row['type'] == 1:                   # possibly not news? (Micro Ad)
                 t_url = urlparse(sn_row['url'])
                 hint = hint_decoder(t_url)              # get HINT from url found at depth 0
                 if hint == 0 or hint == 1 or hint == 2:
                     print ( f"Micro ad NLP candidate" )
-                    status, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'])    # go deep now!
+                    status, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'], hint)    # go deep now!
                     article_header(status, rem_url, sn_row['url'] )
                 else:
                     article_header(status, rem_url, sn_row['url'] )
