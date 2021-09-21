@@ -398,8 +398,10 @@ def main():
                 }
         logging.info ( f"%s - hint code recieved {tc}" % cmi_debug )
         tc_descr = tcode.get(tc)
-        if lc == 0: print ( f"Locality:      Remote / {lc}.{tc} / {tc_descr}" )
-        if lc == 1: print ( f"Locality:      Local / {lc}.{tc}  / {tc_descr}" )
+        if lc == 0: print ( f"Locality:      Local / {lc}.{tc} / {tc_descr}" )
+        if lc == 1: print ( f"Locality:      Remote / {lc}.{tc}  / {tc_descr}" )
+        if lc == 2: print ( f"Locality:      Injected ad / {lc}.{tc}  / {tc_descr}" )
+        if lc == 3: print ( f"Locality:      Remote / {lc}.{tc}  / {tc_descr}" )
         if lc == 9: print ( f"Locality:      Bad Local page / {lc}.{tc} / {tc_descr}" )
         if lc == 10: print ( f"Locality:      Unknown state / {lc}.{tc} / {tc_descr}" )
         print ( f"News feed URL: {su}" )
@@ -421,7 +423,7 @@ def main():
         3 = remote full article - (URL is a pure link to remote article (eg.g https://www.independent.co.uk/news/...)
         """
         cmi_debug = __name__+"::"+"hint_decoder().#1    "
-        nt_hint_code = { 'm': ('Remote stub', 0),
+        nt_hint_code = { 'm': ('Local/remote stub', 0),
                     'news': ('Local article', 1),
                     'video': ('Local Video', 2),
                     'rfa': ('Remote external', 3)
@@ -446,6 +448,7 @@ def main():
     def nlp_final_prep():
         """
         NLP Support function #3
+        Assumes ml_ingest is allreay pre-built
         process all target items in ml_ingest{} i.e. candidate NLP news articles
         figure out which ones to commit to NLP READ
         AWRN: even at this level of depth (2), where we've built up good confidence of which articles to read....
@@ -454,12 +457,17 @@ def main():
               Also, false positive articles that may-not have any news relating to this symbol. (News agency's are sleazy!).
         """
         print ( " ")
-        cmi_debug = __name__+"::"+"nlp_final_prep().#1"
+        cmi_debug = __name__+"::"+"nlp_final_prep().#1 "
         for sn_idx, sn_row in yfn.ml_ingest.items():    # cycle thru the NLP candidate list
             print( f"News article:  {sn_idx} / eval... ", end="" )
-            if sn_row['type'] == 0.0 :                    # inferred from Depth 0
+            if sn_row['type'] == 0.0:                     # inferred from Depth 0
                 t_url = urlparse(sn_row['url'])
                 hint = hint_decoder(t_url)                # get HINT from url found at depth 0
+
+                if hint > 3:                             # explciity remote URL & remote artcile
+                >> we are done. this is an explicit remote artcile - fuck off now!
+                else:
+
                 print ( f"Real news > NLP candidate" )    # all type 0 are assumed to be REAL news
                 logging.info ( f"%s - T1: send hint code {hint} to get_locality()" % cmi_debug )
                 local_conf, type_conf, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'], hint)    # go deep, with HINT

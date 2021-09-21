@@ -336,11 +336,10 @@ class yfnews_reader:
                 test_http_scheme = urlparse(article_url)
                 if test_http_scheme.scheme == "https" or test_http_scheme.scheme == "http":    # check URL scheme specifier
                     logging.info ( f"%s - Depth: 1 / Pure Remote URL found!" % cmi_debug )
-                    pure_url = 0
-                    pass    # dont mess with the original FQDN URL & leave it pure
+                    pure_url = 1    # explicit pure URL to remote entity
                 else:
                     article_url = "https://finance.yahoo.com" + article_url
-                    pure_url = 1
+                    pure_url = 0   # locally hosted entity
                     # assume hosted at https://finaince.yahoo.com becasue it has no leading FQDN scheme (i.e. http/https)
 
                 article_headline = li_tag.a.text        # taken from YFN news feed thumbnail, not actual article page
@@ -348,8 +347,8 @@ class yfnews_reader:
                     inf_type = "Micro Advertisment"
                     article_teaser = "None"
                     ml_atype = 9.9
-                    if pure_url == 0: ml_atype = 0.5
-                    if pure_url == 1: ml_atype = 1.5
+                    if pure_url == 0: ml_atype = 5.0    # local entity
+                    if pure_url == 1: ml_atype = 5.1    # remote entity
                 else:
                     inf_type = "News"
                     a_teaser = li_tag.p.text
@@ -436,7 +435,10 @@ class yfnews_reader:
 
             # page TYPE logic testing...
             # we test against the folling HINT codes after analyzing deeply the page structure.
-            # 0 = Remote articels, 1 = locally hosted articels on yahoo.com, 2 locally hosted video article on yahoo.com
+            # 0 = Remote Stub
+            # 1 = locally articels on yahoo.com
+            # 2 = locally hosted video article on yahoo.com
+            # 3 = Remote article explcitly linked directly to remote partner site
             #
             # we send back explicit type codes to indicate our confidence level in the article type
             # 0 = Good news article (remote not on yahoo.com)
@@ -452,6 +454,12 @@ class yfnews_reader:
             #
             # return codes:
             # locality with confidence, type with confidence, rem_url of the real/physical news article
+            if hint == 3:
+                logging.info ( f"%s - Depth: 2 / Explcit Remote article" % cmi_debug )
+                logging.info ( f"%s - Depth: 2 / confidence level 1 / 1 " % cmi_debug )
+                return 1, 1, this_article_url              # Explicit remote article - can process any details from here
+            elif hint == 0:
+
             if type(rem_news) != type(None):               # page has valid structure
                 logging.info ( f"%s - Depth: 2 / Stub-page is valid..." % cmi_debug )
                 if rem_news.find('a'):                     # BAD, no <a> zone in page or article is a REAL remote URL already
@@ -476,6 +484,8 @@ class yfnews_reader:
                     logging.info ( f"%s - Depth: 2 / confidence level 1 / 2 " % cmi_debug )
                     return 1, 2, this_article_url          # OP-ED story (doesn't have [story continues...] button)
                     # could be buggy logic. need to analyze page struct of Local OP-ED article"
+
+
             elif hint == 1:                                # a local YFN page, but a low quality article/report/story
                 local_story.button.text == "Read full article"    # test to make 100% sure its a low quality story
                 logging.info ( f"%s - Depth: 2 / Simple stub-page..." % cmi_debug )
