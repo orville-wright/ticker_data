@@ -320,7 +320,7 @@ class yfnews_reader:
         h3_counter = a_counter = 0
         pure_url = 9
         thint = 99.9
-        uhint = 
+        uhint = 9                                            # saftey preset
         x = y = 0
         for li_tag in li_subset_all:                         # <li> is where the new articels hide
             self.nlp_x += 1                                  # counter = which article we are looking at
@@ -339,6 +339,7 @@ class yfnews_reader:
                 if test_http_scheme.scheme == "https" or test_http_scheme.scheme == "http":    # check URL scheme specifier
                     logging.info ( f"%s - Depth: 1 / Pure Remote URL found!" % cmi_debug )
                     pure_url = 1    # explicit pure URL to remote entity
+                    uhint = 3       # we can definatley set this here ONLY for this item type
                     url_netloc = article_url.netloc
                 else:
                     article_url = "https://finance.yahoo.com" + article_url
@@ -350,18 +351,18 @@ class yfnews_reader:
                     inf_type = "Micro Advertisment"
                     article_teaser = "None"
                     ml_atype = 1
-                    if pure_url == 0: hint = 5.0    # local entity
-                    if pure_url == 1: hint = 5.1    # remote entity
+                    if pure_url == 0: thint = 5.0    # local entity
+                    if pure_url == 1: thint = 5.1    # remote entity
                 else:
                     inf_type = "News"
                     a_teaser = li_tag.p.text
                     article_teaser = f"{a_teaser:.170}" + " [...]"
                     ml_atype = 0
-                    if pure_url == 0: hint = 0.0
-                    if pure_url == 1: hint = 1.0
+                    if pure_url == 0: thint = 0.0
+                    if pure_url == 1: thint = 1.0
 
                 print ( f"================= Depth 1 / {symbol} Article {x} ==================" )
-                print ( f"News item:        {self.cycle}: {inf_type} / Confidence: {ml_atype}/{hint}" )
+                print ( f"News item:        {self.cycle}: {inf_type} / Confidence: {ml_atype}/{thint}" )
                 print ( f"News agency:      {news_agency} / locality: ", end="" )
                 if pure_url == 0: print ( f"Remote [{url_netloc}]")
                 if pure_url == 1: print ( f"Local [finance.yahoo.com]" )
@@ -380,8 +381,8 @@ class yfnews_reader:
                     "symbol" : symbol,
                     "urlhash" : aurl_hash,
                     "type" : ml_atype,
-                    "thint" : hint,
-                    "uhint" : 99.9,
+                    "thint" : thint,
+                    "uhint" : uhint,
                     "url" : article_url,
             		}
                 self.ml_ingest.update({self.nlp_x : nd})
@@ -394,9 +395,9 @@ class yfnews_reader:
                 fa_3 = fa_0[1].get('href')
                 inf_type = "Bulk injected ad"
                 ml_atype = 2
-                hint = 6.0
+                thint = 6.0
                 print ( f"================= Depth 1 / {symbol} Article {x} ==================" )
-                print ( f"News item:        {self.cycle}: {inf_type} / Confidence: {ml_atype}/{hint}" )
+                print ( f"News item:        {self.cycle}: {inf_type} / Confidence: {ml_atype}/{thint}" )
                 print ( f"News agency:      {fa_2} / not {symbol} news / NOT an NLP candidate" )
                 print ( f"Adv injector:     {fa_3:.30} [...]" )
             a_counter = h3_counter = 0
@@ -420,7 +421,7 @@ class yfnews_reader:
         3. A fake add page on yahoo.com
         4. A fake add # a partner site
         5. other
-        We must test each person of a candidate good articles
+        We must test each persona candidate article
         """
         # data elements extracted & computed
         # Authour, Date posted, Time posted, Age of article
@@ -430,7 +431,9 @@ class yfnews_reader:
         id = item_idx
         symbol = data_row['symbol']
         type = data_row['type']
-        hint = data_row['hint']
+        thint = data_row['thint']
+        uhint = data_row['uhint']
+
         url = data_row['url']
         this_article_url = url
         symbol = symbol.upper()
@@ -465,38 +468,44 @@ class yfnews_reader:
             #
             # return codes:
             # locality with confidence, type with confidence, rem_url of the real/physical news article
-            if hint == 3:
-                logging.info ( f"%s - Depth: 2 / Explcit Remote article" % cmi_debug )
-                logging.info ( f"%s - Depth: 2 / confidence level 1 / 1 " % cmi_debug )
-                return 1, 1, this_article_url              # Explicit remote article - can process any details from here
-            elif hint == 0:
 
-            if type(rem_news) != type(None):               # page has valid structure
-                logging.info ( f"%s - Depth: 2 / Stub-page is valid..." % cmi_debug )
-                if rem_news.find('a'):                     # BAD, no <a> zone in page or article is a REAL remote URL already
-                    rem_url = rem_news.a.get("href")       # a remotely hosted news article. Whats its real URL?
-                    logging.info ( f"%s - Depth: 2 / Found <a> zone / Remote NEWS @: {rem_url}" % cmi_debug )
-                    if hint == 0:
-                        logging.info ( f"%s - Depth: 2 / confidence level 0 / 0 " % cmi_debug )
-                        return 0, 0, rem_url               # 100% confidence that articel is REMOTE
+            if uhint == 0 or uhint == 1:
+                if type(rem_news) != type(None):               # page has valid structure
+                    logging.info ( f"%s - Depth: 2 / Stub-page is valid..." % cmi_debug )
+                    if rem_news.find('a'):                     # BAD, no <a> zone in page or article is a REAL remote URL already
+                        rem_url = rem_news.a.get("href")       # a remotely hosted news article. Whats its real URL?
+                        logging.info ( f"%s - Depth: 2 / Good <a> / Remote-stub NEWS @: {rem_url}" % cmi_debug )
+                        # write the thint now
+                        logging.info ( f"%s - Depth: 2 / confidence level 0 / 1.0 " % cmi_debug )
+                        return uhint, 1.0, rem_url                 # 100% confidence that articel is REMOTE
+                    elif rem_news.text == "Story continues":   # local articles have a [story continues...] button
+                        logging.info ( f"%s - Depth: 2 / NO <a> / Good-stub [story continues...]" % cmi_debug )
+                        logging.info ( f"%s - Depth: 2 / confidence level {uhint} / 0.0 " % cmi_debug )
+                        return uhint, 0.0, this_article_url      # REAL news
+                    elif local_story.button.text == "Read full article"    # test to make 100% sure its a low quality story
+                        logging.info ( f"%s - Depth: 2 / Basic-stub [curated story]" % cmi_debug )
+                        logging.info ( f"%s - Depth: 2 / confidence level {uhint} / 2.0 " % cmi_debug )
+                        return uhint, 3.0, this_article_url              # Curated Report
                     else:
-                        logging.info ( f"%s - Depth: 2 / confidence level 0 / -1 " % cmi_debug )
-                        return 0, -1, rem_url              # hint miss-match. Lower confidence
-                elif rem_news.text == "Story continues":   # certain local articles have a [story continues...] button
-                    logging.info ( f"%s - Depth: 2 / NO <a> zone / Analyze local page..." % cmi_debug )
-                    if hint == 1:
-                        logging.info ( f"%s - Depth: 2 / confidence level 1 / 1 " % cmi_debug )
-                        return 1, 1, this_article_url      # REAL news
-                    elif hint == 2:                        # video page, with supporting news TEXT artcile
-                        logging.info ( f"%s - Depth: 2 / confidence level 1 / 4 " % cmi_debug )
-                        return 1, 4, this_article_url      # REAL news VIDEO artcile with supporting TEXT artcile
-                else:                                      # could be TYPE 2, 3, 4 article
-                    logging.info ( f"%s - Depth: 2 / NO <a> zone / Local OP-ED..." % cmi_debug )
-                    logging.info ( f"%s - Depth: 2 / confidence level 1 / 2 " % cmi_debug )
-                    return 1, 2, this_article_url          # OP-ED story (doesn't have [story continues...] button)
-                    # could be buggy logic. need to analyze page struct of Local OP-ED article"
+                        logging.info ( f"%s - Depth: 2 / NO <a> / Simple-stub [OP-ED]" % cmi_debug )
+                        logging.info ( f"%s - Depth: 2 / confidence level {uhint} / 2.0 " % cmi_debug )
+                        return uhint, 2.0, this_article_url          # OP-ED story (doesn't have [story continues...] button)
 
+            if uhint == 2:
+                        logging.info ( f"%s - Depth: 2 / NO <a> / Good-stub [Video report]" % cmi_debug )
+                        logging.info ( f"%s - Depth: 2 / confidence level 2 / 4.0 " % cmi_debug )
+                        # extract some info from the video page and do some stronger testing
+                        return uhint, 4.0, this_article_url          # OP-ED story (doesn't have [story continues...] button)
 
+            if uhint == 3:
+                logging.info ( f"%s - Depth: 2 / Explcit Remote article" % cmi_debug )
+                logging.info ( f"%s - Depth: 2 / confidence level 0 / 1.1 " % cmi_debug )
+                return 1, 1.1, this_article_url              # Explicit remote article - can process any details from here
+
+        logging.info ( f"%s - Depth: 2 / confidence level 9 / 10.0 " % cmi_debug )
+        return 10, , "ERROR_unknown_state!"              # error unknown state
+
+        """
             elif hint == 1:                                # a local YFN page, but a low quality article/report/story
                 local_story.button.text == "Read full article"    # test to make 100% sure its a low quality story
                 logging.info ( f"%s - Depth: 2 / Simple stub-page..." % cmi_debug )
@@ -508,9 +517,9 @@ class yfnews_reader:
                 logging.info ( f"%s - Depth: 2 / Basic page is BAD" % cmi_debug )
                 logging.info ( f"%s - Depth: 2 / confidence level 9 / -1 " % cmi_debug )
                 return 9, -1, "ERROR_bad_page_struct"
+        """
 
-        logging.info ( f"%s - Depth: 2 / confidence level 10 / -1 " % cmi_debug )
-        return 10, -1, "ERROR_unknown_state!"              # error unknown state
+
 
 
         """
