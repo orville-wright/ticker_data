@@ -460,31 +460,36 @@ def main():
         cmi_debug = __name__+"::"+"nlp_final_prep().#1 "
         for sn_idx, sn_row in yfn.ml_ingest.items():    # cycle thru the NLP candidate list
             print( f"News article:  {sn_idx} / eval... ", end="" )
-            if sn_row['type'] == 0.0:                     # inferred from Depth 0
-                t_url = urlparse(sn_row['url'])
-                hint = hint_decoder(t_url)                # get HINT from url found at depth 0
 
-                if hint > 3:                             # explciity remote URL & remote artcile
-                >> we are done. this is an explicit remote artcile - fuck off now!
+            >> hacking <<
+            if hint == 0:                                     # local entity
+                if sn_row['type'] == 0.0:                     # inferred from Depth 0
+                    t_url = urlparse(sn_row['url'])
+                    hint = hint_decoder(t_url)                # get HINT from url found at depth 0
+                    print ( f"Real news > NLP candidate" )    # all type 0 are assumed to be REAL news
+                    logging.info ( f"%s - T1: send hint code {hint} to get_locality()" % cmi_debug )
+                    local_conf, type_conf, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'], hint)    # go deep, with HINT
+                    article_header(local_conf, type_conf, rem_url, sn_row['url'] )
+                elif sn_row['type'] == 1:                   # possibly not news? (Micro Ad)
+                    t_url = urlparse(sn_row['url'])
+                    hint = hint_decoder(t_url)              # get HINT from url found at depth 0
+                    if hint == 0 or hint == 1 or hint == 2:
+                        print ( f"Micro ad > NLP candidate" )
+                        logging.info ( f"%s - T2: Send hint code {hint} to get_locality()" % cmi_debug )
+                        local_conf, type_conf, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'], hint)    # go deep now!
+                        article_header(local_conf, type_conf, rem_url, sn_row['url'] )
+                    else:
+                        article_header(local_conf, type_conf, rem_url, sn_row['url'] )
+                        print ( f"Unknown Micro Ad URL > skipping..." )
                 else:
+                    print ( f"Unknown article type > Error..." )
 
-                print ( f"Real news > NLP candidate" )    # all type 0 are assumed to be REAL news
-                logging.info ( f"%s - T1: send hint code {hint} to get_locality()" % cmi_debug )
-                local_conf, type_conf, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'], hint)    # go deep, with HINT
-                article_header(local_conf, type_conf, rem_url, sn_row['url'] )
-            elif sn_row['type'] == 1:                   # possibly not news? (Micro Ad)
-                t_url = urlparse(sn_row['url'])
-                hint = hint_decoder(t_url)              # get HINT from url found at depth 0
-                if hint == 0 or hint == 1 or hint == 2:
-                    print ( f"Micro ad > NLP candidate" )
-                    logging.info ( f"%s - T2: Send hint code {hint} to get_locality()" % cmi_debug )
-                    local_conf, type_conf, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'], hint)    # go deep now!
-                    article_header(local_conf, type_conf, rem_url, sn_row['url'] )
-                else:
-                    article_header(local_conf, type_conf, rem_url, sn_row['url'] )
-                    print ( f"Unknown Micro Ad URL > skipping..." )
+
+            >>all local articles
             else:
-                print ( f"Unknown article type > Error..." )
+            is an explicit remote artcile - fuck off now!
+
+
         return
 
     """
