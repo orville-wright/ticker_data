@@ -319,6 +319,8 @@ class yfnews_reader:
 
         h3_counter = a_counter = 0
         pure_url = 9
+        thint = 99.9
+        uhint = 
         x = y = 0
         for li_tag in li_subset_all:                         # <li> is where the new articels hide
             self.nlp_x += 1                                  # counter = which article we are looking at
@@ -337,6 +339,7 @@ class yfnews_reader:
                 if test_http_scheme.scheme == "https" or test_http_scheme.scheme == "http":    # check URL scheme specifier
                     logging.info ( f"%s - Depth: 1 / Pure Remote URL found!" % cmi_debug )
                     pure_url = 1    # explicit pure URL to remote entity
+                    url_netloc = article_url.netloc
                 else:
                     article_url = "https://finance.yahoo.com" + article_url
                     pure_url = 0   # locally hosted entity
@@ -346,23 +349,23 @@ class yfnews_reader:
                 if not li_tag.find('p'):
                     inf_type = "Micro Advertisment"
                     article_teaser = "None"
-                    ml_atype = 9.9
-                    if pure_url == 0: ml_atype = 5.0    # local entity
-                    if pure_url == 1: ml_atype = 5.1    # remote entity
+                    ml_atype = 1
+                    if pure_url == 0: hint = 5.0    # local entity
+                    if pure_url == 1: hint = 5.1    # remote entity
                 else:
                     inf_type = "News"
                     a_teaser = li_tag.p.text
                     article_teaser = f"{a_teaser:.170}" + " [...]"
-                    ml_atype = 9.9
-                    if pure_url == 0: ml_atype = 0.0
-                    if pure_url == 1: ml_atype = 1.0
+                    ml_atype = 0
+                    if pure_url == 0: hint = 0.0
+                    if pure_url == 1: hint = 1.0
 
                 print ( f"================= Depth 1 / {symbol} Article {x} ==================" )
-                print ( f"News item:        {self.cycle} / Inferred type: {ml_atype} ({inf_type})" )
+                print ( f"News item:        {self.cycle}: {inf_type} / Confidence: {ml_atype}/{hint}" )
                 print ( f"News agency:      {news_agency} / locality: ", end="" )
-                if pure_url == 0: print ( f"@ Remote news site")
-                if pure_url == 1: print ( f"@ finance.yahoo.com" )
-                if pure_url == 9: print ( f"Unknown location" )
+                if pure_url == 0: print ( f"Remote [{url_netloc}]")
+                if pure_url == 1: print ( f"Local [finance.yahoo.com]" )
+                if pure_url == 9: print ( f"Unknown [*bad url*]" )
                 print ( f"Article URL:      {article_url}" )
                 print ( f"Article headline: {article_headline}" )
                 print ( f"Article teaser:   {article_teaser}" )
@@ -374,10 +377,12 @@ class yfnews_reader:
                 # build NLP candidate dict for deeper pre-NLP article analysis in Level 1
                 # ONLY insert type 0, 1 articels as NLP candidates. Bulk injected ads are excluded (pointless)
                 nd = { \
-                    "symbol" : symbol, \
-                    "urlhash" : aurl_hash, \
-                    "type" : ml_atype, \
-                    "url" : article_url, \
+                    "symbol" : symbol,
+                    "urlhash" : aurl_hash,
+                    "type" : ml_atype,
+                    "thint" : hint,
+                    "uhint" : 99.9,
+                    "url" : article_url,
             		}
                 self.ml_ingest.update({self.nlp_x : nd})
 
@@ -388,9 +393,10 @@ class yfnews_reader:
                 fa_2 = fa_0[0].text
                 fa_3 = fa_0[1].get('href')
                 inf_type = "Bulk injected ad"
-                ml_atype = 2.6
+                ml_atype = 2
+                hint = 6.0
                 print ( f"================= Depth 1 / {symbol} Article {x} ==================" )
-                print ( f"News item:        {self.cycle} / Inferred type: {ml_atype} ({inf_type})" )
+                print ( f"News item:        {self.cycle}: {inf_type} / Confidence: {ml_atype}/{hint}" )
                 print ( f"News agency:      {fa_2} / not {symbol} news / NOT an NLP candidate" )
                 print ( f"Adv injector:     {fa_3:.30} [...]" )
             a_counter = h3_counter = 0
@@ -402,7 +408,8 @@ class yfnews_reader:
         return
 
 # method 10
-    def get_locality(self, id, symbol, url, hint):
+    #def get_locality(self, id, symbol, url, hint):
+    def get_locality(self, item_idx, data_row):
         """
         Depth 2
         Test a possible GOOD news article & return it's REAL target URL
@@ -420,7 +427,11 @@ class yfnews_reader:
         cmi_debug = __name__+"::"+self.get_locality.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         right_now = date.today()
-
+        id = item_idx
+        symbol = data_row['symbol']
+        type = data_row['type']
+        hint = data_row['hint']
+        url = data_row['url']
         this_article_url = url
         symbol = symbol.upper()
         logging.info( f'%s - validate fake news article stub/page for: {symbol}' % (cmi_debug) )
@@ -436,8 +447,8 @@ class yfnews_reader:
             # page TYPE logic testing...
             # we test against the folling HINT codes after analyzing deeply the page structure.
             # 0 = Remote Stub
-            # 1 = locally articels on yahoo.com
-            # 2 = locally hosted video article on yahoo.com
+            # 1 = locally TXT articels on yahoo.com
+            # 2 = locally video article on yahoo.com
             # 3 = Remote article explcitly linked directly to remote partner site
             #
             # we send back explicit type codes to indicate our confidence level in the article type

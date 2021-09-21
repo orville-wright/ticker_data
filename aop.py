@@ -411,7 +411,7 @@ def main():
 
     # hints are embeded in the yahoo.com URL path, but aren't authourtative or definative. They're just a HINT.
     # e.g.  https://finance.yahoo.com/video/disney-release-rest-2021-films-210318469.html
-    def hint_decoder(url):
+    def url_hinter(url):
         """
         NLP Support function #2
         parse the article URL and get a hint from the URL structure as to what this article type might be.
@@ -422,18 +422,19 @@ def main():
         2 = local full video - (URL starts with /video/... and has FQDN: https://finance.yahoo.com/
         3 = remote full article - (URL is a pure link to remote article (eg.g https://www.independent.co.uk/news/...)
         """
-        cmi_debug = __name__+"::"+"hint_decoder().#1    "
-        nt_hint_code = { 'm': ('Local/remote stub', 0),
+        cmi_debug = __name__+"::"+"url_hinter().#1    "
+        uhint_code = { 'm': ('Local/remote stub', 0),
                     'news': ('Local article', 1),
                     'video': ('Local Video', 2),
-                    'rfa': ('Remote external', 3)
+                    'rfa': ('Remote external', 3),
+                    'udef': ('Not yet defined', 9)
                     }
         t_nl = url.path.split('/', 2)       # e.g.  https://finance.yahoo.com/video/disney-release-rest-2021-films-210318469.html
-        hint = nt_hint_code.get(t_nl[1])    # retrieve hint code: 0, 1, 2, 3
+        uhint = uhint_code.get(t_nl[1])    # retrieve uhint code: 0, 1, 2, 3
         if url.netloc == "finance.yahoo.com":
-            print ( f"{hint[1]} / {hint[0]} - ", end="" )
-            logging.info ( f"%s - Inferred hint from URL: {hint[1]} [{url.netloc}] / {hint[0]}" % cmi_debug )
-            return hint[1]
+            print ( f"{uhint[1]} / {uhint[0]} - ", end="" )
+            logging.info ( f"%s - Inferred hint from URL: {uhint[1]} [{url.netloc}] / {uhint[0]}" % cmi_debug )
+            return uhint[1]
 
         if url.scheme == "https" or url.scheme == "http":    # URL has valid scheme but isn NOT @ YFN
             print ( f"3 / Remote pure url - ", end="" )
@@ -460,35 +461,30 @@ def main():
         cmi_debug = __name__+"::"+"nlp_final_prep().#1 "
         for sn_idx, sn_row in yfn.ml_ingest.items():    # cycle thru the NLP candidate list
             print( f"News article:  {sn_idx} / eval... ", end="" )
-
-            >> hacking <<
-            if hint == 0:                                     # local entity
-                if sn_row['type'] == 0.0:                     # inferred from Depth 0
-                    t_url = urlparse(sn_row['url'])
-                    hint = hint_decoder(t_url)                # get HINT from url found at depth 0
-                    print ( f"Real news > NLP candidate" )    # all type 0 are assumed to be REAL news
-                    logging.info ( f"%s - T1: send hint code {hint} to get_locality()" % cmi_debug )
-                    local_conf, type_conf, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'], hint)    # go deep, with HINT
-                    article_header(local_conf, type_conf, rem_url, sn_row['url'] )
-                elif sn_row['type'] == 1:                   # possibly not news? (Micro Ad)
-                    t_url = urlparse(sn_row['url'])
-                    hint = hint_decoder(t_url)              # get HINT from url found at depth 0
-                    if hint == 0 or hint == 1 or hint == 2:
-                        print ( f"Micro ad > NLP candidate" )
-                        logging.info ( f"%s - T2: Send hint code {hint} to get_locality()" % cmi_debug )
-                        local_conf, type_conf, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'], hint)    # go deep now!
-                        article_header(local_conf, type_conf, rem_url, sn_row['url'] )
-                    else:
-                        article_header(local_conf, type_conf, rem_url, sn_row['url'] )
-                        print ( f"Unknown Micro Ad URL > skipping..." )
+            if sn_row['type'] == 0:                       # REAL news, inferred from Depth 0
+                t_url = urlparse(sn_row['url'])
+                url_hint = url_hinter(t_url)              # get HINT from url found at depth 0
+                tag_hint = (sn_row['thint'])              # the hint we guess at while interrogating page <tags>
+                print ( f"Real news > NLP candidate" )    # all type 0 are assumed to be REAL news
+                logging.info ( f"%s - T1: get_locality > @hint: {url_hint}/{tag_hint}" % cmi_debug )
+                # l_conf, t_conf, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'], hint)    # go deep, with HINT
+                l_conf, t_conf, rem_url = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
+                article_header(l_conf, t_conf, rem_url, sn_row['url'] )
+            elif sn_row['type'] == 1:                     # possibly not news? (Micro Ad)
+                t_url = urlparse(sn_row['url'])
+                url_hint = url_hinter(t_url)             # get HINT from url found at depth 0
+                tag_hint = (sn_row['thint'])             # the hint we guess at while interrogating page <tags>
+                if url_hint >= 3:
+                    print ( f"Micro ad > NLP candidate" )
+                    logging.info ( f"%s - T2: get_locality > @hint {url_hint}/{tag_hint}" % cmi_debug )
+                    # l_conf, t_conf, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'], uhint)    # go deep now!
+                    l_conf, t_conf, rem_url = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
+                    article_header(l_conf, t_conf, rem_url, sn_row['url'] )
                 else:
-                    print ( f"Unknown article type > Error..." )
-
-
-            >>all local articles
+                    article_header(l_conf, t_conf, rem_url, sn_row['url'] )
+                    print ( f"Unknown Micro Ad URL > skipping..." )
             else:
-            is an explicit remote artcile - fuck off now!
-
+                print ( f"Unknown article type > Error..." )
 
         return
 
