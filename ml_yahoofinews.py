@@ -16,7 +16,9 @@ import threading
 import json
 from rich import print
 
+################## Proprietary App specific class/methods ###################
 from bigcharts_md import bc_quote
+from url_hinter import uhinter
 
 # logging setup
 logging.basicConfig(level=logging.INFO)
@@ -307,50 +309,7 @@ class yfnews_reader:
         mini_headline_all = self.ul_tag_dataset.div.find_all(attrs={'class': 'C(#959595)'})
         li_subset_all = self.ul_tag_dataset.find_all('li')
 
-        # method 13
-        def url_hinter(inst, url):
-            """
-            NLP Support function - Exact copy of main::url_hinter()
-            0 = remote stub article - (URL starts with /m/.... and has FQDN:  https://finance.yahoo.com/
-            1 = local full article - (URL starts with /news/... and has FQDN: https://finance.yahoo.com/
-            2 = local full video - (URL starts with /video/... and has FQDN: https://finance.yahoo.com/
-            3 = remote full article - (URL is a pure link to remote article (eg.g https://www.independent.co.uk/news/...)
-            """
-            cmi_debug = __name__+"::"+"url_hinter().#2."+str(inst)+"  "
-            uhint_code = { 'm': ('Local/remote stub', 0),
-                        'news': ('Local article', 1),
-                        'video': ('Local Video', 2),
-                        'rfa': ('Remote external', 3),
-                        'udef': ('Not yet defined', 9),
-                        'err': ('Error mangled url', 10)
-                        }
-            t_nl = url.path.split('/', 2)       # e.g.  https://finance.yahoo.com/video/disney-release-rest-2021-films-210318469.html
-            uhint = uhint_code.get(t_nl[1])     # retrieve uhint code: 0, 1, 2, 3
-            logging.info ( f"%s - Hinter logic: {uhint[1]} [{url.netloc}] / {uhint[0]}" % cmi_debug )
-            if url.netloc == "finance.yahoo.com":
-                logging.info ( f"%s - Inferred hint from URL: {uhint[1]} [{url.netloc}] / {uhint[0]}" % cmi_debug )
-                return uhint[1], uhint[0]
-
-            if url.scheme == "https" or url.scheme == "http":    # URL has valid scheme but isn NOT @ YFN
-                print ( f"3 / Remote pure url - ", end="" )
-                logging.info ( f"%s - Inferred hint from URL: 3 [{url.netloc}] / Remote pure article" % cmi_debug )
-                return 3, "Remote external"
-            else:
-                #print ( f"ERROR_url / ", end="" )
-                logging.info ( f"%s - ERROR URL hint is -1 / Mangled URL" % cmi_debug )
-                return 10, "Error mangled url"
-
-        # Depth 1 : INITIAL high-level tests on <tag> tructure of news article
-        # <tag> structure is very unpredictible/diverse/unreliable, so we count how many INTERESTING <a> tags exist.
-        # This isn't a guaranteed logic test but <a> tags signal KEY news article data zones.
-        # INFO: Too many <a> tags >= 4 means A fake news article Advertsiment
-        #       <= 3 <a> tags = A real news article (possibly)
-        # NOTE: Types of news elements
-        #       0 : Feels like a REAL news article
-        #       1 : Feels like a paid article masquerading as news
-        #       2 : Looks like an injected advertisment
-        # WARN: Its normal to see duplicate Type 0 & 1 news elemets repeated within a page.
-
+        uh = url_hinter(2)
         h3_counter = a_counter = 0
         x = y = 0
         pure_url = 9                                         # saftey preset
@@ -367,7 +326,7 @@ class yfnews_reader:
                 break
 
             if a_counter > 0 and a_counter <= 3:
-                logging.info( f'%s - li count: {a_counter}' % (cmi_debug) )                  # good new zrticle found
+                logging.info( f'%s - <li> count: {a_counter}' % (cmi_debug) )                  # good new zrticle found
                 news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
                 article_url = li_tag.a.get("href")
                 test_http_scheme = urlparse(article_url)
@@ -385,13 +344,13 @@ class yfnews_reader:
                     url_netloc = a_urlp.netloc      # FQDN
                     pure_url = 0                    # locally hosted entity
                     ml_atype = 0                    # Real news
-                    uhint, uhdescr = url_hinter({hcycle}, a_urlp)
+                    uhint, uhdescr = uh.uhinter(hcycle, test_url)
                     hcycle += 1
                     # assume hosted at https://finaince.yahoo.com becasue it has no leading FQDN scheme (i.e. http/https)
 
                 article_headline = li_tag.a.text        # taken from YFN news feed thumbnail, not actual article page
                 test_url = urlparse(article_url)
-                uhint, uhdescr = url_hinter({hcycle}, test_url)
+                uhint, uhdescr = uh.uhinter(hcycle, test_url)
                 hcycle += 1
                 inf_type = "Real news"
 
