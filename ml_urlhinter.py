@@ -75,4 +75,3 @@ def uhinter(yti, hcycle, url):
         return 10, "Error mangled url"
 
     return 11, "ERROR_Unknown state"
-

@@ -31,7 +31,7 @@ from ml_cvbow import y_bow
 from bigcharts_md import bc_quote
 from marketwatch_md import mw_quote
 from ml_yahoofinews import yfnews_reader
-from url_hinter import uhinter
+from ml_urlhinter import url_hinter
 
 #from y_newsloop import y_newsfilter
 
@@ -476,8 +476,8 @@ def main():
         #news_symbol = str(args['newsymbol'])       # symbol provided on CMDLine
         yfn = yfnews_reader(1, "IBM", args )        # dummy symbol just for instantiation
         yfn.init_dummy_session()
+        logging.info ( f"%s - Pass off URL hinter handle" % cmi_debug )
         uh = url_hinter(1)
-        print ( f">>>DEBUG<<< hinter inst: {uh} / hinter type: {type(uh)}" )
         yfn.share_hinter(uh)                        # share the url hinter available
         #yfn.yfn_bintro()
         print ( "============================== Prepare bulk NLP candidate list =================================" )
@@ -509,8 +509,8 @@ def main():
         yfn.update_headers(news_symbol)
         yfn.form_url_endpoint(news_symbol)
         yfn.do_simple_get()
-        uh = url_hinter(1)
-        print ( f">>>DEBUG<<< hinter inst: {uh} / hinter type: {type(uh)}" )
+        logging.info ( f"%s - Pass off URL hinter handle" % cmi_debug )
+        uh = url_hinter(2)
         yfn.share_hinter(uh)
         yfn.scan_news_feed(news_symbol, 0, 0)    # (params) #1: level, #2: 0=HTML / 1=JavaScript
         yfn.eval_article_tags(news_symbol)          # ml_ingest{} is built
