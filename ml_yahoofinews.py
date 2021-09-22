@@ -49,7 +49,7 @@ class yfnews_reader:
     nlp_x = 0
     soup = ""               # BS4 shared handle between UP & DOWN (1 URL, 2 embeded data sets in HTML doc)
     args = []               # class dict to hold global args being passed in from main() methods
-    uh = ""                 # global url hinter class
+    #uh = ""                 # global url hinter class
 
                             # yahoo.com header/cookie hack
     yahoo_headers = { \
