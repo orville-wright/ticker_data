@@ -333,7 +333,7 @@ class yfnews_reader:
                 print ( f"{uhint[1]} / {uhint[0]} - ", end="" )
                 logging.info ( f"%s - Inferred hint from URL: {uhint[1]} [{url.netloc}] / {uhint[0]}" % cmi_debug )
                 return uhint[1]
-    
+
             if url.scheme == "https" or url.scheme == "http":    # URL has valid scheme but isn NOT @ YFN
                 print ( f"3 / Remote pure url - ", end="" )
                 logging.info ( f"%s - Inferred hint from URL: 3 [{url.netloc}] / Remote pure article" % cmi_debug )
@@ -406,7 +406,7 @@ class yfnews_reader:
                     url_netloc = test_url.netloc
                     ml_atype = 0
                 else:
-                    #url_netloc = "finance.yahoo.com 2" 
+                    #url_netloc = "finance.yahoo.com 2"
                     url_netloc = test_url.netloc
                     a_teaser = li_tag.p.text
                     article_teaser = f"{a_teaser:.170}" + " [...]"
@@ -416,10 +416,10 @@ class yfnews_reader:
 
 
                 print ( f"================= Depth 1 / {symbol} Article {x} ==================" )
-                print ( f"News item:        {self.cycle}: {inf_type} / Confidence > M:{ml_atype} / T:{thint}" )
-                print ( f"News agency:      {news_agency} / locality: ", end="" )
+                print ( f"News item:        {self.cycle}: {inf_type} / Confidence Indicators m:{ml_atype} / t:{thint}" )
+                print ( f"News agency:      {news_agency} / ", end="" )
 
-                if pure_url == 0: print ( f"Remote-stub @ {url_netloc}" )
+                if pure_url == 0: print ( f"Remote-stub @ {[{url_netloc}]}" )
                 #if pure_url == 1: print ( f"Local-page  @ {url_netloc}" )
                 if pure_url == 1 and uhint == 3: print ( f"Remote-external  @ {url_netloc}" )
                 if uhint == 2 and thint == 4: print ( f"Local video @ {url_netloc}" )
@@ -668,7 +668,7 @@ class yfnews_reader:
         logging.info('%s - IN' % cmi_debug )
         print ( "================= ML Ingested Depth 1 NLP candidates ==================" )
         for k, d in self.ml_ingest.items():
-            print ( f"{k:03} {d['symbol']:.5} / {d['urlhash']} Type [{d['type']}] {d['url']}" )
+            print ( f"{k:03} {d['symbol']:.5} / {d['urlhash']} Type/Hint [{d['type']}:{d['thint']} {d['url']}" )
         return
 
 # method 14
