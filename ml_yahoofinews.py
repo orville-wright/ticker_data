@@ -356,6 +356,7 @@ class yfnews_reader:
         pure_url = 9                                         # saftey preset
         thint = 99.9                                         # saftey preset
         uhint = 9                                            # saftey preset
+        hcycle = 1
         for li_tag in li_subset_all:                         # <li> is where the new articels hide
             self.nlp_x += 1                                  # counter = which article we are looking at
             for element in li_tag.descendants:               # walk the full tag tree recurisvely
@@ -366,7 +367,6 @@ class yfnews_reader:
                 break
 
             if a_counter > 0 and a_counter <= 3:
-                hcycle = 1
                 logging.info( f'%s - li count: {a_counter}' % (cmi_debug) )                  # good new zrticle found
                 news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
                 article_url = li_tag.a.get("href")
