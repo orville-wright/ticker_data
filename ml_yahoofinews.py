@@ -316,7 +316,7 @@ class yfnews_reader:
             2 = local full video - (URL starts with /video/... and has FQDN: https://finance.yahoo.com/
             3 = remote full article - (URL is a pure link to remote article (eg.g https://www.independent.co.uk/news/...)
             """
-            cmi_debug = __name__+"::"+"url_hinter().#2."+inst+"  "
+            cmi_debug = __name__+"::"+"url_hinter().#2."+str(inst)+"  "
             uhint_code = { 'm': ('Local/remote stub', 0),
                         'news': ('Local article', 1),
                         'video': ('Local Video', 2),
