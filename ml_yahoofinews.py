@@ -316,7 +316,7 @@ class yfnews_reader:
             2 = local full video - (URL starts with /video/... and has FQDN: https://finance.yahoo.com/
             3 = remote full article - (URL is a pure link to remote article (eg.g https://www.independent.co.uk/news/...)
             """
-            cmi_debug = __name__+"::"+"url_hinter().#2"+inst+"  "
+            cmi_debug = __name__+"::"+"url_hinter().#2."+inst+"  "
             uhint_code = { 'm': ('Local/remote stub', 0),
                         'news': ('Local article', 1),
                         'video': ('Local Video', 2),
@@ -366,6 +366,7 @@ class yfnews_reader:
                 break
 
             if a_counter > 0 and a_counter <= 3:
+                hcycle = 1
                 logging.info( f'%s - li count: {a_counter}' % (cmi_debug) )                  # good new zrticle found
                 news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
                 article_url = li_tag.a.get("href")
@@ -384,12 +385,12 @@ class yfnews_reader:
                     url_netloc = a_urlp.netloc      # FQDN
                     pure_url = 0                    # locally hosted entity
                     ml_atype = 0                    # Real news
-                    uhint, uhdescr = url_hinter('01', a_urlp)
+                    uhint, uhdescr = url_hinter(hcycle:02, a_urlp)
                     # assume hosted at https://finaince.yahoo.com becasue it has no leading FQDN scheme (i.e. http/https)
 
                 article_headline = li_tag.a.text        # taken from YFN news feed thumbnail, not actual article page
                 test_url = urlparse(article_url)
-                uhint, uhdescr = url_hinter('02', test_url)
+                uhint, uhdescr = url_hinter({hcycle:02}, test_url)
                 inf_type = "Real news"
 
                 if not li_tag.find('p'):
