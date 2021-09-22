@@ -38,7 +38,7 @@ def uhinter(yti, hcycle, url):
     10 = Error mangled url
     """
 
-    cmi_debug = __name__+"::"+self.uhinter.__name__+".#"+str(self.yti)+.str(self.hcycle)
+    cmi_debug = __name__+"::"+self.uhinter.__name__+".#"+str(self.yti)+str(self.hcycle)
     logging.info('%s - INIT' % cmi_debug )
 
     uhint_code = { 'm': ('Local/remote stub', 0),
