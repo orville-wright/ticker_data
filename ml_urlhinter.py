@@ -46,8 +46,8 @@ class url_hinter:
         11 = Error state for method
         """
 
-        cmi_debug = __name__+"::"+self.status.__name__+".eng#"+str(self.yti)+"_cyc#"+str(self.hcycle)
-        logging.info('%s - INIT' % cmi_debug )
+        cmi_debug = __name__+"::"+self.uhinter.__name__+".eng#"+str(self.yti)+"_cyc#"+str(self.hcycle)
+        logging.info('%s - CALLED' % cmi_debug )
 
         uhint_code = { 'm': ('Local/remote stub', 0),
                     'news': ('Local article', 1),
