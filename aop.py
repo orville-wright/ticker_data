@@ -506,7 +506,7 @@ def main():
         yfn.update_headers(news_symbol)
         yfn.form_url_endpoint(news_symbol)
         yfn.do_simple_get()
-        logging.info ( f"%s - Pass off URL hinter handle" % cmi_debug )
+        logging.info ( f"%s - Pass off URL hinter handle" )
         uh = url_hinter(2)
         yfn.share_hinter(uh)
         yfn.scan_news_feed(news_symbol, 0, 0)    # (params) #1: level, #2: 0=HTML / 1=JavaScript
