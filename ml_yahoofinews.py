@@ -388,7 +388,7 @@ class yfnews_reader:
                 article_headline = li_tag.a.text        # taken from YFN news feed thumbnail, not actual article page
                 test_url = urlparse(article_url)
                 uhint, uhdescr = url_hinter(test_url)
-                inf_type = "News"
+                inf_type = "Real news"
                 if not li_tag.find('p'):
                     url_netloc = urlparse(article_url).netloc
                     inf_type = "Micro Advertisment"
@@ -412,11 +412,11 @@ class yfnews_reader:
 
 
                 print ( f"================= Depth 1 / {symbol} Article {x} ==================" )
-                print ( f"News item:        {self.cycle}: {inf_type} / Confidence Indicators m:{ml_atype} / t:{thint}" )
+                print ( f"News item:        {self.cycle}: {inf_type} / Confidence Indicators m:{ml_atype} = t:{thint}" )
                 print ( f"News agency:      {news_agency} / ", end="" )
 
                 if pure_url == 0: print ( f"Remote-stub @ [ {url_netloc} ]" )
-                #if pure_url == 1: print ( f"Local-page  @ {url_netloc}" )
+                if pure_url == 1: print ( f"Local-page  @ {url_netloc}" )
                 if pure_url == 1 and uhint == 3: print ( f"Remote-external  @ {url_netloc}" )
                 if uhint == 2 and thint == 4: print ( f"Local video @ {url_netloc}" )
                 if pure_url == 9: print ( f"Unknown     @ *bad url*" )
@@ -664,5 +664,5 @@ class yfnews_reader:
         logging.info('%s - IN' % cmi_debug )
         print ( "================= ML Ingested Depth 1 NLP candidates ==================" )
         for k, d in self.ml_ingest.items():
-            print ( f"{k:03} {d['symbol']:.5} / {d['urlhash']} Type/Hint [{d['type']} / {d['thint']} {d['url']}" )
+            print ( f"{k:03} {d['symbol']:.5} / {d['urlhash']} Type/Hint [{d['type']} / {d['thint']}] {d['url']}" )
         return
