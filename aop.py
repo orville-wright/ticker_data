@@ -474,6 +474,7 @@ def main():
         yfn = yfnews_reader(1, "IBM", args )        # dummy symbol just for instantiation
         yfn.init_dummy_session()
         uh = url_hinter(1)
+        yfn.share_hinter(uh)                        # share the url hinter available
         #yfn.yfn_bintro()
         print ( "============================== Prepare bulk NLP candidate list =================================" )
         print ( f"ML/NLP candidates: {newsai_test_dataset.tg_df1['Symbol'].tolist()}" )
@@ -485,7 +486,6 @@ def main():
             yfn.eval_article_tags(nlp_target)       # ml_ingest{} is built
             print ( "============================== NLP candidates are ready =================================" )
 
-        uh = url_hinter(1)
         yfn.dump_ml_ingest()
         nlp_final_prep(uh)
 
