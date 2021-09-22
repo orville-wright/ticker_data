@@ -49,6 +49,7 @@ class yfnews_reader:
     nlp_x = 0
     soup = ""               # BS4 shared handle between UP & DOWN (1 URL, 2 embeded data sets in HTML doc)
     args = []               # class dict to hold global args being passed in from main() methods
+    uh = ""                 # global url hinter class
 
                             # yahoo.com header/cookie hack
     yahoo_headers = { \
@@ -74,9 +75,7 @@ class yfnews_reader:
         self.cycle = 1
         self.js_session = HTMLSession()                        # init JAVAScript processor early
         self.js_session.cookies.update(self.yahoo_headers)     # load cookie/header hack data set into session
-        #self.up_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ] )
-        #self.down_df1 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ] )
-        #self.df2 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ] )
+        self.uh = url_hinter(2)
         return
 
 # method #1
@@ -287,7 +286,7 @@ class yfnews_reader:
         return
 
 # method #9
-    def eval_article_tags(self, symbol):
+    def eval_article_tags(self, symbol, hinter):
         """
         Depth 1
         NOTE: assumes connection was previously setup & html data structures are pre-loaded
@@ -308,7 +307,6 @@ class yfnews_reader:
         mini_headline_all = self.ul_tag_dataset.div.find_all(attrs={'class': 'C(#959595)'})
         li_subset_all = self.ul_tag_dataset.find_all('li')
 
-        uh = url_hinter(2)
         h3_counter = a_counter = 0
         x = y = 0
         pure_url = 9                                         # saftey preset

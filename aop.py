@@ -413,7 +413,7 @@ def main():
         return
 
 
-    def nlp_final_prep():
+    def nlp_final_prep(uh):
         """
         NLP Support function #3
         Assumes ml_ingest is allreay pre-built
@@ -440,7 +440,7 @@ def main():
                 article_header(l_conf, t_conf, rem_url, sn_row['url'] )
             elif sn_row['type'] == 1:                     # possibly not news? (Micro Ad)
                 t_url = urlparse(sn_row['url'])
-                uhint, uhdescr = uh.uhinter(1, t_url)
+                uhint, uhdescr = uh.uhinter(2, t_url)
                 #url_hint = url_hinter(t_url)             #  >>DELETE ME: !! redundament. already DONE get HINT from url found at depth 0
                 tag_hint = (sn_row['thint'])             # the hint we guess at while interrogating page <tags>
                 if url_hint >= 3:
@@ -485,9 +485,9 @@ def main():
             yfn.eval_article_tags(nlp_target)       # ml_ingest{} is built
             print ( "============================== NLP candidates are ready =================================" )
 
-        uhtest = url_hinter(3)
+        uh = url_hinter(1)
         yfn.dump_ml_ingest()
-        nlp_final_prep()
+        nlp_final_prep(uh)
 
 # Read the news for just 1 stock symbol
     """
