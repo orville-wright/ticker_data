@@ -415,7 +415,7 @@ def main():
         return
 
 
-    def nlp_final_prep(uh):
+    def nlp_final_prep():
         """
         NLP Support function #3
         Assumes ml_ingest is allreay pre-built
