@@ -56,9 +56,6 @@ parser.add_argument('-x','--xray', help='dump detailed debug data structures', a
 extract_done = threading.Event()
 yti = 1
 
-htest = ml_urlhinter(1)
-
-
 #######################################################################
 # Global method for __main__
 # thread function #1
