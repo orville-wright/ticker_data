@@ -485,6 +485,7 @@ def main():
             yfn.eval_article_tags(nlp_target)       # ml_ingest{} is built
             print ( "============================== NLP candidates are ready =================================" )
 
+        uhtest = url_hinter(3)
         yfn.dump_ml_ingest()
         nlp_final_prep()
 
