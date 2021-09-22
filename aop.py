@@ -17,9 +17,6 @@ from urllib.parse import urlparse
 from sklearn.feature_extraction.text import CountVectorizer
 from nltk.corpus import stopwords
 
-################## Proprietary App specific class/methods ###################
-from url_hinter import uhinter
-
 # logging setup
 logging.basicConfig(level=logging.INFO)
 
@@ -34,6 +31,7 @@ from ml_cvbow import y_bow
 from bigcharts_md import bc_quote
 from marketwatch_md import mw_quote
 from ml_yahoofinews import yfnews_reader
+from url_hinter import uhinter
 #from y_newsloop import y_newsfilter
 
 # Globals
