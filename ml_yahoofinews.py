@@ -75,7 +75,12 @@ class yfnews_reader:
         self.cycle = 1
         self.js_session = HTMLSession()                        # init JAVAScript processor early
         self.js_session.cookies.update(self.yahoo_headers)     # load cookie/header hack data set into session
-        self.uh = url_hinter.url_hinter(2)
+        return
+
+    def share_hinter(self, hinst):
+        cmi_debug = __name__+"::"+self.share_hinter.__name__+".#"+str(self.yti)
+        logging.info('%s - IN' % cmi_debug )
+        self.uh = hinst
         return
 
 # method #1
@@ -286,7 +291,7 @@ class yfnews_reader:
         return
 
 # method #9
-    def eval_article_tags(self, symbol, hinter):
+    def eval_article_tags(self, symbol):
         """
         Depth 1
         NOTE: assumes connection was previously setup & html data structures are pre-loaded
@@ -341,13 +346,13 @@ class yfnews_reader:
                     url_netloc = a_urlp.netloc      # FQDN
                     pure_url = 0                    # locally hosted entity
                     ml_atype = 0                    # Real news
-                    uhint, uhdescr = uh.uhinter(hcycle, test_url)
+                    uhint, uhdescr = self.uh.uhinter(hcycle, test_url)
                     hcycle += 1
                     # assume hosted at https://finaince.yahoo.com becasue it has no leading FQDN scheme (i.e. http/https)
 
                 article_headline = li_tag.a.text        # taken from YFN news feed thumbnail, not actual article page
                 test_url = urlparse(article_url)
-                uhint, uhdescr = uh.uhinter(hcycle, test_url)
+                uhint, uhdescr = self.uh.uhinter(hcycle, test_url)
                 hcycle += 1
                 inf_type = "Real news"
 
