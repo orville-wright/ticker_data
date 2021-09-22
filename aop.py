@@ -32,6 +32,7 @@ from bigcharts_md import bc_quote
 from marketwatch_md import mw_quote
 from ml_yahoofinews import yfnews_reader
 from url_hinter import uhinter
+
 #from y_newsloop import y_newsfilter
 
 # Globals
@@ -54,6 +55,8 @@ parser.add_argument('-x','--xray', help='dump detailed debug data structures', a
 # Threading globals
 extract_done = threading.Event()
 yti = 1
+
+uh = url_hinter(1)
 
 #######################################################################
 # Global method for __main__
@@ -460,8 +463,6 @@ def main():
     Read finance.yahoo.com / News 'Brief headlines' (i.e. short text docs) for ALL Top Gainer stocks.
     """
 
-    uh = url_hinter(1)
-    
     if args['bool_news'] is True:                   # read ALL news for top 10 gainers
         print ( " " )
         print ( "========================= ML (NLP) / Yahoo Finance News Sentiment AI =========================" )
