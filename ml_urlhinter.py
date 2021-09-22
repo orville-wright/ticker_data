@@ -74,11 +74,11 @@ class url_hinter:
 
         return 11, "ERROR_Unknown state"
 
-def status(self):
-    """
-    the engine reports it status
-    """
-    cmi_debug = __name__+"::"+self.status.__name__+".#"+str(self.yti)+str(self.hcycle)
-    logging.info('%s - INIT' % cmi_debug )
-    print ( f"Url hinter engine #{self.yti} / cycle #{self.hcycle}" )
-    return
+    def status(self):
+        """
+        the engine reports it status
+        """
+        cmi_debug = __name__+"::"+self.status.__name__+".#"+str(self.yti)+str(self.hcycle)
+        logging.info('%s - INIT' % cmi_debug )
+        print ( f"Url hinter engine #{self.yti} / cycle #{self.hcycle}" )
+        return
