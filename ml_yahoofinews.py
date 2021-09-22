@@ -308,7 +308,7 @@ class yfnews_reader:
         li_subset_all = self.ul_tag_dataset.find_all('li')
 
         # method 13
-        def url_hinter(url):
+        def url_hinter(inst, url):
             """
             NLP Support function - Exact copy of main::url_hinter()
             0 = remote stub article - (URL starts with /m/.... and has FQDN:  https://finance.yahoo.com/
@@ -316,7 +316,7 @@ class yfnews_reader:
             2 = local full video - (URL starts with /video/... and has FQDN: https://finance.yahoo.com/
             3 = remote full article - (URL is a pure link to remote article (eg.g https://www.independent.co.uk/news/...)
             """
-            cmi_debug = __name__+"::"+"url_hinter().#2    "
+            cmi_debug = __name__+"::"+"url_hinter().#2.{self.inst}  "
             uhint_code = { 'm': ('Local/remote stub', 0),
                         'news': ('Local article', 1),
                         'video': ('Local Video', 2),
@@ -326,8 +326,8 @@ class yfnews_reader:
                         }
             t_nl = url.path.split('/', 2)       # e.g.  https://finance.yahoo.com/video/disney-release-rest-2021-films-210318469.html
             uhint = uhint_code.get(t_nl[1])     # retrieve uhint code: 0, 1, 2, 3
+            logging.info ( f"%s - Hinter logic: {uhint[1]} [{url.netloc}] / {uhint[0]}" % cmi_debug )
             if url.netloc == "finance.yahoo.com":
-                #print ( f"{uhint[1]} / {uhint[0]} - ", end="" )
                 logging.info ( f"%s - Inferred hint from URL: {uhint[1]} [{url.netloc}] / {uhint[0]}" % cmi_debug )
                 return uhint[1], uhint[0]
 
@@ -378,17 +378,18 @@ class yfnews_reader:
                     ml_atype = 0
                     thint = 1.1
                 else:
-                    article_url = "https://finance.yahoo.com" + article_url
-                    url_netloc = "https://finance.yahoo.com"
-                    pure_url = 0   # locally hosted entity
-                    ml_atype = 0
-                    uhint, uhdescr = url_hinter(test_url)
-                    thint = 1.0
+                    a_url = f"https://finance.yahoo.com{article_url}"
+                    a_urlp = urlparse(a_url)
+                    print ( f">>>DEBUG<<< parsed url: {a_urlp}" )
+                    url_netloc = a_urlp.netloc      # FQDN
+                    pure_url = 0                    # locally hosted entity
+                    ml_atype = 0                    # Real news
+                    uhint, uhdescr = url_hinter(01, a_urlp)
                     # assume hosted at https://finaince.yahoo.com becasue it has no leading FQDN scheme (i.e. http/https)
 
                 article_headline = li_tag.a.text        # taken from YFN news feed thumbnail, not actual article page
                 test_url = urlparse(article_url)
-                uhint, uhdescr = url_hinter(test_url)
+                uhint, uhdescr = url_hinter(02, test_url)
                 inf_type = "Real news"
 
                 if not li_tag.find('p'):
