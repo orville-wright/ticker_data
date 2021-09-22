@@ -506,6 +506,9 @@ def main():
         yfn.update_headers(news_symbol)
         yfn.form_url_endpoint(news_symbol)
         yfn.do_simple_get()
+        uh = url_hinter(1)
+        print ( f">>>DEBUG<<< hinter inst: {uh} / hinter type: {type(uh)}" )
+        yfn.share_hinter(uh)
         yfn.scan_news_feed(news_symbol, 0, 0)    # (params) #1: level, #2: 0=HTML / 1=JavaScript
         yfn.eval_article_tags(news_symbol)          # ml_ingest{} is built
         print ( "============================== NLP News candidates are ready =================================" )

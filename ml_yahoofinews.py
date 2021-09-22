@@ -49,7 +49,7 @@ class yfnews_reader:
     nlp_x = 0
     soup = ""               # BS4 shared handle between UP & DOWN (1 URL, 2 embeded data sets in HTML doc)
     args = []               # class dict to hold global args being passed in from main() methods
-    #uh = ""                 # global url hinter class
+    uh = ""                 # global url hinter class
 
                             # yahoo.com header/cookie hack
     yahoo_headers = { \
@@ -64,7 +64,7 @@ class yfnews_reader:
                     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36' }
 
 
-    def __init__(self, yti, symbol, global_args):
+    def __init__(self, yti, symbol, global_args, hinst):
         cmi_debug = __name__+"::"+self.__init__.__name__
         logging.info('%s - INIT' % cmi_debug )
         # init empty DataFrame with preset colum names
