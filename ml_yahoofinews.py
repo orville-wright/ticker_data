@@ -16,9 +16,6 @@ import threading
 import json
 from rich import print
 
-################## Proprietary App specific class/methods ###################
-from url_hinter import uhinter
-
 # logging setup
 logging.basicConfig(level=logging.INFO)
 
