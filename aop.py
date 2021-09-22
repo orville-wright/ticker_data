@@ -17,6 +17,9 @@ from urllib.parse import urlparse
 from sklearn.feature_extraction.text import CountVectorizer
 from nltk.corpus import stopwords
 
+################## Proprietary App specific class/methods ###################
+from url_hinter import uhinter
+
 # logging setup
 logging.basicConfig(level=logging.INFO)
 
