@@ -474,7 +474,7 @@ def main():
         yfn = yfnews_reader(1, "IBM", args )        # dummy symbol just for instantiation
         yfn.init_dummy_session()
         uh = url_hinter(1)
-        print ( f"hinter inst: {uh} / hinter type: {type(uh)}" )
+        print ( f">>>DEBUG<<< hinter inst: {uh} / hinter type: {type(uh)}" )
         yfn.share_hinter(uh)                        # share the url hinter available
         #yfn.yfn_bintro()
         print ( "============================== Prepare bulk NLP candidate list =================================" )
