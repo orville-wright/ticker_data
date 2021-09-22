@@ -11,7 +11,16 @@ logging.basicConfig(level=logging.INFO)
 #####################################################
 
 class url_hinter:
-    """Class to provide useful hints from url structure """
+    """
+    Class to provide useful hints from url structure
+    """
+
+    # global accessors
+    yti = 0                 # Unique instance identifier
+    hcycle = 0              # method call  counter
+    soup = ""               # BS4 shared handle between UP & DOWN (1 URL, 2 embeded data sets in HTML doc)
+    args = []               # class dict to hold global args being passed in from main() methods
+
 
     # global accessors
     yti = 0                 # Unique instance identifier
@@ -36,6 +45,7 @@ def uhinter(yti, hcycle, url):
     3 = remote full article - (URL is a pure link to remote article (eg.g https://www.independent.co.uk/news/...)
     9 = Not yet defined
     10 = Error mangled url
+    11 = Error state for method
     """
 
     cmi_debug = __name__+"::"+self.uhinter.__name__+".#"+str(self.yti)+str(self.hcycle)
@@ -63,3 +73,6 @@ def uhinter(yti, hcycle, url):
         #print ( f"ERROR_url / ", end="" )
         logging.info ( f"%s - ERROR URL hint is -1 / Mangled URL" % cmi_debug )
         return 10, "Error mangled url"
+
+    return 11, "ERROR_Unknown state"
+
