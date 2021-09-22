@@ -78,7 +78,7 @@ class url_hinter:
         """
         the engine reports it status
         """
-        cmi_debug = __name__+"::"+self.status.__name__+".#"+str(self.yti)+str(self.hcycle)
-        logging.info('%s - INIT' % cmi_debug )
+        cmi_debug = __name__+"::"+self.status.__name__+".eng#"+str(self.yti)+"_cyc#"+str(self.hcycle)
+        logging.info('%s - CALLED' % cmi_debug )
         print ( f"Url hinter engine #{self.yti} / cycle #{self.hcycle}" )
         return
