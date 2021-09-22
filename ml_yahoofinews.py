@@ -75,7 +75,7 @@ class yfnews_reader:
         self.cycle = 1
         self.js_session = HTMLSession()                        # init JAVAScript processor early
         self.js_session.cookies.update(self.yahoo_headers)     # load cookie/header hack data set into session
-        self.uh = url_hinter(2)
+        self.uh = url_hinter.url_hinter(2)
         return
 
 # method #1
