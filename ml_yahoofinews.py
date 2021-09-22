@@ -76,7 +76,7 @@ class yfnews_reader:
 
     def share_hinter(self, hinst):
         cmi_debug = __name__+"::"+self.share_hinter.__name__+".#"+str(self.yti)
-        logging.info('%s - IN' % cmi_debug )
+        logging.info('%s - IN {type(hinst)}' % cmi_debug )
         self.uh = hinst
         return
 
