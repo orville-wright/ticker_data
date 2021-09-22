@@ -384,12 +384,12 @@ class yfnews_reader:
                     url_netloc = a_urlp.netloc      # FQDN
                     pure_url = 0                    # locally hosted entity
                     ml_atype = 0                    # Real news
-                    uhint, uhdescr = url_hinter(01, a_urlp)
+                    uhint, uhdescr = url_hinter('01', a_urlp)
                     # assume hosted at https://finaince.yahoo.com becasue it has no leading FQDN scheme (i.e. http/https)
 
                 article_headline = li_tag.a.text        # taken from YFN news feed thumbnail, not actual article page
                 test_url = urlparse(article_url)
-                uhint, uhdescr = url_hinter(02, test_url)
+                uhint, uhdescr = url_hinter('02', test_url)
                 inf_type = "Real news"
 
                 if not li_tag.find('p'):
