@@ -436,7 +436,7 @@ def main():
                 #url_hint = url_hinter(t_url)              # >>DELETE ME: !! redundament. already DONE get HINT from url found at depth 0
                 tag_hint = (sn_row['thint'])              # the hint we guess at while interrogating page <tags>
                 print ( f"Real news > NLP candidate" )    # all type 0 are assumed to be REAL news
-                logging.info ( f"%s - T1: get_locality > @hint: {url_hint}/{tag_hint}" % cmi_debug )
+                logging.info ( f"%s - T1: get_locality > @hint: {uhint}/{uhdescr}" % cmi_debug )
                 # l_conf, t_conf, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'], hint)    # go deep, with HINT
                 l_conf, t_conf, rem_url = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
                 article_header(l_conf, t_conf, rem_url, sn_row['url'] )
@@ -447,7 +447,7 @@ def main():
                 tag_hint = (sn_row['thint'])             # the hint we guess at while interrogating page <tags>
                 if url_hint >= 3:
                     print ( f"Micro ad > NLP candidate" )
-                    logging.info ( f"%s - T2: get_locality > @hint {url_hint}/{tag_hint}" % cmi_debug )
+                    logging.info ( f"%s - T2: get_locality > @hint {uhint}/{uhdescr}" % cmi_debug )
                     # l_conf, t_conf, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'], uhint)    # go deep now!
                     l_conf, t_conf, rem_url = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
                     article_header(l_conf, t_conf, rem_url, sn_row['url'] )
