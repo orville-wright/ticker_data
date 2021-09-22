@@ -298,6 +298,7 @@ class yfnews_reader:
         4. Make a high level decision as to the TYPE of item (News, paid article, Injected ad)
         5. Add articles into ml_ingest{} NLP candidate list (only types 0 & 1 are viable candidates)
         """
+
         cmi_debug = __name__+"::"+self.eval_article_tags.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
@@ -305,6 +306,43 @@ class yfnews_reader:
         li_superclass_all = self.ul_tag_dataset.find_all(attrs={"class": "js-stream-content Pos(r)"} )
         mini_headline_all = self.ul_tag_dataset.div.find_all(attrs={'class': 'C(#959595)'})
         li_subset_all = self.ul_tag_dataset.find_all('li')
+
+        # method 13
+        def url_hinter(url):
+            """
+            NLP Support function
+            Exact copy of main::url_hinter()
+            parse the article URL and get a hint from the URL structure as to what this article type might be.
+            WARN: this is just a hinter as the url structure offers NO guaranteed info about the article type
+            Only a few hint types are possible...
+            0 = remote stub article - (URL starts with /m/.... and has FQDN:  https://finance.yahoo.com/
+            1 = local full article - (URL starts with /news/... and has FQDN: https://finance.yahoo.com/
+            2 = local full video - (URL starts with /video/... and has FQDN: https://finance.yahoo.com/
+            3 = remote full article - (URL is a pure link to remote article (eg.g https://www.independent.co.uk/news/...)
+            """
+            cmi_debug = __name__+"::"+"url_hinter().#2    "
+            uhint_code = { 'm': ('Local/remote stub', 0),
+                        'news': ('Local article', 1),
+                        'video': ('Local Video', 2),
+                        'rfa': ('Remote external', 3),
+                        'udef': ('Not yet defined', 9)
+                        }
+            t_nl = url.path.split('/', 2)       # e.g.  https://finance.yahoo.com/video/disney-release-rest-2021-films-210318469.html
+            uhint = uhint_code.get(t_nl[1])     # retrieve uhint code: 0, 1, 2, 3
+            if url.netloc == "finance.yahoo.com":
+                print ( f"{uhint[1]} / {uhint[0]} - ", end="" )
+                logging.info ( f"%s - Inferred hint from URL: {uhint[1]} [{url.netloc}] / {uhint[0]}" % cmi_debug )
+                return uhint[1]
+    
+            if url.scheme == "https" or url.scheme == "http":    # URL has valid scheme but isn NOT @ YFN
+                print ( f"3 / Remote pure url - ", end="" )
+                logging.info ( f"%s - Inferred hint from URL: 3 [{url.netloc}] / Remote pure article" % cmi_debug )
+                return 3
+            else:
+                print ( f"ERROR_url / ", end="" )
+                logging.info ( f"%s - ERROR URL hint is -1 / Mangled URL" % cmi_debug )
+                return 9
+
 
         # Depth 1 : INITIAL high-level tests on <tag> tructure of news article
         # <tag> structure is very unpredictible/diverse/unreliable, so we count how many INTERESTING <a> tags exist.
@@ -341,32 +379,53 @@ class yfnews_reader:
                     pure_url = 1    # explicit pure URL to remote entity
                     uhint = 3       # we can definatley set this here ONLY for this item type
                     url_netloc = article_url.netloc
+                    ml_atype = 0
+                    thint = 1.1
                 else:
                     article_url = "https://finance.yahoo.com" + article_url
+                    url_netloc = "https://finance.yahoo.com"
                     pure_url = 0   # locally hosted entity
+                    ml_atype = 0
+                    thint = 1.0
                     # assume hosted at https://finaince.yahoo.com becasue it has no leading FQDN scheme (i.e. http/https)
 
                 article_headline = li_tag.a.text        # taken from YFN news feed thumbnail, not actual article page
+                test_url = urlparse(article_url)
+                uhint = url_hinter(test_url)
+                inf_type = "News"
                 if not li_tag.find('p'):
+                    url_netloc = "Unknown"
                     inf_type = "Micro Advertisment"
                     article_teaser = "None"
                     ml_atype = 1
                     if pure_url == 0: thint = 5.0    # local entity
                     if pure_url == 1: thint = 5.1    # remote entity
+                elif news_agency == "Yahoo Finance Video" and uhint == 2:
+                    thint = 4.0
+                    test_url = urlparse(article_url)
+                    url_netloc = test_url.netloc
+                    ml_atype = 0
                 else:
-                    inf_type = "News"
+                    #url_netloc = "finance.yahoo.com 2" 
+                    url_netloc = test_url.netloc
                     a_teaser = li_tag.p.text
                     article_teaser = f"{a_teaser:.170}" + " [...]"
                     ml_atype = 0
                     if pure_url == 0: thint = 0.0
                     if pure_url == 1: thint = 1.0
 
+
                 print ( f"================= Depth 1 / {symbol} Article {x} ==================" )
-                print ( f"News item:        {self.cycle}: {inf_type} / Confidence: {ml_atype}/{thint}" )
+                print ( f"News item:        {self.cycle}: {inf_type} / Confidence > M:{ml_atype} / T:{thint}" )
                 print ( f"News agency:      {news_agency} / locality: ", end="" )
-                if pure_url == 0: print ( f"Remote [{url_netloc}]")
-                if pure_url == 1: print ( f"Local [finance.yahoo.com]" )
-                if pure_url == 9: print ( f"Unknown [*bad url*]" )
+
+                if pure_url == 0: print ( f"Remote-stub @ {url_netloc}" )
+                #if pure_url == 1: print ( f"Local-page  @ {url_netloc}" )
+                if pure_url == 1 and uhint == 3: print ( f"Remote-external  @ {url_netloc}" )
+                if uhint == 2 and thint == 4: print ( f"Local video @ {url_netloc}" )
+                if pure_url == 9: print ( f"Unknown     @ *bad url*" )
+                if uhint == 9: print ( f"Not yet known @ {test_url.netloc}" )
+
                 print ( f"Article URL:      {article_url}" )
                 print ( f"Article headline: {article_headline}" )
                 print ( f"Article teaser:   {article_teaser}" )
@@ -397,9 +456,9 @@ class yfnews_reader:
                 ml_atype = 2
                 thint = 6.0
                 print ( f"================= Depth 1 / {symbol} Article {x} ==================" )
-                print ( f"News item:        {self.cycle}: {inf_type} / Confidence: {ml_atype}/{thint}" )
+                print ( f"News item:        {self.cycle}: {inf_type} / Confidence > M:{ml_atype} / T:{thint}" )
                 print ( f"News agency:      {fa_2} / not {symbol} news / NOT an NLP candidate" )
-                print ( f"Adv injector:     {fa_3:.30} [...]" )
+                print ( f"Adv injector:     {fa_3:.40} [...]" )
             a_counter = h3_counter = 0
             x += 1
             self.cycle += 1
@@ -409,7 +468,6 @@ class yfnews_reader:
         return
 
 # method 10
-    #def get_locality(self, id, symbol, url, hint):
     def get_locality(self, item_idx, data_row):
         """
         Depth 2
@@ -482,7 +540,7 @@ class yfnews_reader:
                         logging.info ( f"%s - Depth: 2 / NO <a> / Good-stub [story continues...]" % cmi_debug )
                         logging.info ( f"%s - Depth: 2 / confidence level {uhint} / 0.0 " % cmi_debug )
                         return uhint, 0.0, this_article_url      # REAL news
-                    elif local_story.button.text == "Read full article"    # test to make 100% sure its a low quality story
+                    elif local_story.button.text == "Read full article":    # test to make 100% sure its a low quality story
                         logging.info ( f"%s - Depth: 2 / Basic-stub [curated story]" % cmi_debug )
                         logging.info ( f"%s - Depth: 2 / confidence level {uhint} / 2.0 " % cmi_debug )
                         return uhint, 3.0, this_article_url              # Curated Report
@@ -502,8 +560,8 @@ class yfnews_reader:
                 logging.info ( f"%s - Depth: 2 / confidence level 0 / 1.1 " % cmi_debug )
                 return 1, 1.1, this_article_url              # Explicit remote article - can process any details from here
 
-        logging.info ( f"%s - Depth: 2 / confidence level 9 / 10.0 " % cmi_debug )
-        return 10, , "ERROR_unknown_state!"              # error unknown state
+        logging.info ( f"%s - Depth: 2 / confidence level 10 / 10.0 " % cmi_debug )
+        return 10, 10.0, "ERROR_unknown_state!"              # error unknown state
 
         """
             elif hint == 1:                                # a local YFN page, but a low quality article/report/story
@@ -612,3 +670,39 @@ class yfnews_reader:
         for k, d in self.ml_ingest.items():
             print ( f"{k:03} {d['symbol']:.5} / {d['urlhash']} Type [{d['type']}] {d['url']}" )
         return
+
+# method 14
+    def url_hinter_off(url):
+        """
+        NLP Support function
+        Exact copy of main::url_hinter()
+        parse the article URL and get a hint from the URL structure as to what this article type might be.
+        WARN: this is just a hinter as the url structure offers NO guaranteed info about the article type
+        Only a few hint types are possible...
+        0 = remote stub article - (URL starts with /m/.... and has FQDN:  https://finance.yahoo.com/
+        1 = local full article - (URL starts with /news/... and has FQDN: https://finance.yahoo.com/
+        2 = local full video - (URL starts with /video/... and has FQDN: https://finance.yahoo.com/
+        3 = remote full article - (URL is a pure link to remote article (eg.g https://www.independent.co.uk/news/...)
+        """
+        cmi_debug = __name__+"::"+"url_hinter().#2    "
+        uhint_code = { 'm': ('Local/remote stub', 0),
+                    'news': ('Local article', 1),
+                    'video': ('Local Video', 2),
+                    'rfa': ('Remote external', 3),
+                    'udef': ('Not yet defined', 9)
+                    }
+        t_nl = url.path.split('/', 2)       # e.g.  https://finance.yahoo.com/video/disney-release-rest-2021-films-210318469.html
+        uhint = uhint_code.get(t_nl[1])     # retrieve uhint code: 0, 1, 2, 3
+        if url.netloc == "finance.yahoo.com":
+            print ( f"{uhint[1]} / {uhint[0]} - ", end="" )
+            logging.info ( f"%s - Inferred hint from URL: {uhint[1]} [{url.netloc}] / {uhint[0]}" % cmi_debug )
+            return uhint[1]
+
+        if url.scheme == "https" or url.scheme == "http":    # URL has valid scheme but isn NOT @ YFN
+            print ( f"3 / Remote pure url - ", end="" )
+            logging.info ( f"%s - Inferred hint from URL: 3 [{url.netloc}] / Remote pure article" % cmi_debug )
+            return 3
+        else:
+            print ( f"ERROR_url / ", end="" )
+            logging.info ( f"%s - ERROR URL hint is -1 / Mangled URL" % cmi_debug )
+            return 9

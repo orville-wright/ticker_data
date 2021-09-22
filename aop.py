@@ -518,7 +518,7 @@ def main():
         yfn.dump_ml_ingest()
         nlp_final_prep()
 
-# Rean the news for just 1 stock symbol
+# Read the news for just 1 stock symbol
     """
     The machine will read now!
     Read finance.yahoo.com / News 'Brief headlines' (i.e. short text docs) for ONE stock symbol.
