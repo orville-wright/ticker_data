@@ -523,7 +523,7 @@ class yfnews_reader:
             # locality with confidence, type with confidence, rem_url of the real/physical news article
 
             if uhint == 0 or uhint == 1:
-                print ( f"URL hint says: {uhint} / Page Type hin says: {thint} )
+                print ( f">>DEBUG<< URL hint: {uhint} / Page Type hint: {thint}" )
                 if type(rem_news) != type(None):               # page has valid structure
                     logging.info ( f"%s - Depth: 2 / Stub-page is valid..." % cmi_debug )
                     if rem_news.find('a'):                     # BAD, no <a> zone in page or article is a REAL remote URL already
@@ -546,14 +546,14 @@ class yfnews_reader:
                         return uhint, 2.0, this_article_url          # OP-ED story (doesn't have [story continues...] button)
 
             if uhint == 2:
-                print ( f"URL hint says: {uhint} / Page Type hin says: {thint} )
+                print ( f">>DEBUG<< URL hint: {uhint} / Page Type hint: {thint}" )
                 logging.info ( f"%s - Depth: 2 / NO <a> / Good-stub [Video report]" % cmi_debug )
                 logging.info ( f"%s - Depth: 2 / confidence level 2 / 4.0 " % cmi_debug )
                 # extract some info from the video page and do some stronger testing
                 return uhint, 4.0, this_article_url          # OP-ED story (doesn't have [story continues...] button)
 
             if uhint == 3:
-                print ( f"URL hint says: {uhint} / Page Type hin says: {thint} )
+                print ( f">>DEBUG<< URL hint: {uhint} / Page Type hint: {thint}" )
                 logging.info ( f"%s - Depth: 2 / Explcit Remote article" % cmi_debug )
                 logging.info ( f"%s - Depth: 2 / confidence level 0 / 1.1 " % cmi_debug )
                 return 1, 1.1, this_article_url              # Explicit remote article - can process any details from here
