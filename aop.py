@@ -55,6 +55,7 @@ parser.add_argument('-x','--xray', help='dump detailed debug data structures', a
 # Threading globals
 extract_done = threading.Event()
 yti = 1
+uh = url_hinter(1)
 
 #######################################################################
 # Global method for __main__
@@ -120,6 +121,7 @@ def main():
     print ( " " )
 
     print ( "CMDLine args:", parser.parse_args() )
+    print ( f"Global url-hinter engine status: {type(uh)}" )
     # ARGS[] cmdline pre-processing
     if args['bool_verbose'] is True:        # Logging level
         print ( "Enabeling verbose info logging..." )
@@ -473,8 +475,7 @@ def main():
         #news_symbol = str(args['newsymbol'])       # symbol provided on CMDLine
         yfn = yfnews_reader(1, "IBM", args )        # dummy symbol just for instantiation
         yfn.init_dummy_session()
-        logging.info ( f"%s - Pass off URL hinter handle" % cmi_debug )
-        uh = url_hinter(1)
+        logging.info ( f"%s - Enable url hinter-engine: {type(uh)}" % cmi_debug )
         yfn.share_hinter(uh)                        # share the url hinter available
         #yfn.yfn_bintro()
         print ( "============================== Prepare bulk NLP candidate list =================================" )
@@ -506,8 +507,7 @@ def main():
         yfn.update_headers(news_symbol)
         yfn.form_url_endpoint(news_symbol)
         yfn.do_simple_get()
-        logging.info ( f"%s - Pass off URL hinter handle" )
-        uh = url_hinter(2)
+        logging.info ( f"%s - Enable url hinter-engine: {type(uh)}" )
         yfn.share_hinter(uh)
         yfn.scan_news_feed(news_symbol, 0, 0)    # (params) #1: level, #2: 0=HTML / 1=JavaScript
         yfn.eval_article_tags(news_symbol)          # ml_ingest{} is built
