@@ -310,11 +310,7 @@ class yfnews_reader:
         # method 13
         def url_hinter(url):
             """
-            NLP Support function
-            Exact copy of main::url_hinter()
-            parse the article URL and get a hint from the URL structure as to what this article type might be.
-            WARN: this is just a hinter as the url structure offers NO guaranteed info about the article type
-            Only a few hint types are possible...
+            NLP Support function - Exact copy of main::url_hinter()
             0 = remote stub article - (URL starts with /m/.... and has FQDN:  https://finance.yahoo.com/
             1 = local full article - (URL starts with /news/... and has FQDN: https://finance.yahoo.com/
             2 = local full video - (URL starts with /video/... and has FQDN: https://finance.yahoo.com/
@@ -325,24 +321,24 @@ class yfnews_reader:
                         'news': ('Local article', 1),
                         'video': ('Local Video', 2),
                         'rfa': ('Remote external', 3),
-                        'udef': ('Not yet defined', 9)
+                        'udef': ('Not yet defined', 9),
+                        'err': ('Error mangled url', 10)
                         }
             t_nl = url.path.split('/', 2)       # e.g.  https://finance.yahoo.com/video/disney-release-rest-2021-films-210318469.html
             uhint = uhint_code.get(t_nl[1])     # retrieve uhint code: 0, 1, 2, 3
             if url.netloc == "finance.yahoo.com":
-                print ( f"{uhint[1]} / {uhint[0]} - ", end="" )
+                #print ( f"{uhint[1]} / {uhint[0]} - ", end="" )
                 logging.info ( f"%s - Inferred hint from URL: {uhint[1]} [{url.netloc}] / {uhint[0]}" % cmi_debug )
-                return uhint[1]
+                return uhint[1], uhint[0]
 
             if url.scheme == "https" or url.scheme == "http":    # URL has valid scheme but isn NOT @ YFN
                 print ( f"3 / Remote pure url - ", end="" )
                 logging.info ( f"%s - Inferred hint from URL: 3 [{url.netloc}] / Remote pure article" % cmi_debug )
-                return 3
+                return 3, "Remote external"
             else:
-                print ( f"ERROR_url / ", end="" )
+                #print ( f"ERROR_url / ", end="" )
                 logging.info ( f"%s - ERROR URL hint is -1 / Mangled URL" % cmi_debug )
-                return 9
-
+                return 10, "Error mangled url"
 
         # Depth 1 : INITIAL high-level tests on <tag> tructure of news article
         # <tag> structure is very unpredictible/diverse/unreliable, so we count how many INTERESTING <a> tags exist.
@@ -391,10 +387,10 @@ class yfnews_reader:
 
                 article_headline = li_tag.a.text        # taken from YFN news feed thumbnail, not actual article page
                 test_url = urlparse(article_url)
-                uhint = url_hinter(test_url)
+                uhint, uhdescr = url_hinter(test_url)
                 inf_type = "News"
                 if not li_tag.find('p'):
-                    url_netloc = "Unknown"
+                    url_netloc = urlparse(article_url).netloc
                     inf_type = "Micro Advertisment"
                     article_teaser = "None"
                     ml_atype = 1
@@ -419,7 +415,7 @@ class yfnews_reader:
                 print ( f"News item:        {self.cycle}: {inf_type} / Confidence Indicators m:{ml_atype} / t:{thint}" )
                 print ( f"News agency:      {news_agency} / ", end="" )
 
-                if pure_url == 0: print ( f"Remote-stub @ {[{url_netloc}]}" )
+                if pure_url == 0: print ( f"Remote-stub @ [ {url_netloc} ]" )
                 #if pure_url == 1: print ( f"Local-page  @ {url_netloc}" )
                 if pure_url == 1 and uhint == 3: print ( f"Remote-external  @ {url_netloc}" )
                 if uhint == 2 and thint == 4: print ( f"Local video @ {url_netloc}" )
@@ -668,41 +664,5 @@ class yfnews_reader:
         logging.info('%s - IN' % cmi_debug )
         print ( "================= ML Ingested Depth 1 NLP candidates ==================" )
         for k, d in self.ml_ingest.items():
-            print ( f"{k:03} {d['symbol']:.5} / {d['urlhash']} Type/Hint [{d['type']}:{d['thint']} {d['url']}" )
+            print ( f"{k:03} {d['symbol']:.5} / {d['urlhash']} Type/Hint [{d['type']} / {d['thint']} {d['url']}" )
         return
-
-# method 14
-    def url_hinter_off(url):
-        """
-        NLP Support function
-        Exact copy of main::url_hinter()
-        parse the article URL and get a hint from the URL structure as to what this article type might be.
-        WARN: this is just a hinter as the url structure offers NO guaranteed info about the article type
-        Only a few hint types are possible...
-        0 = remote stub article - (URL starts with /m/.... and has FQDN:  https://finance.yahoo.com/
-        1 = local full article - (URL starts with /news/... and has FQDN: https://finance.yahoo.com/
-        2 = local full video - (URL starts with /video/... and has FQDN: https://finance.yahoo.com/
-        3 = remote full article - (URL is a pure link to remote article (eg.g https://www.independent.co.uk/news/...)
-        """
-        cmi_debug = __name__+"::"+"url_hinter().#2    "
-        uhint_code = { 'm': ('Local/remote stub', 0),
-                    'news': ('Local article', 1),
-                    'video': ('Local Video', 2),
-                    'rfa': ('Remote external', 3),
-                    'udef': ('Not yet defined', 9)
-                    }
-        t_nl = url.path.split('/', 2)       # e.g.  https://finance.yahoo.com/video/disney-release-rest-2021-films-210318469.html
-        uhint = uhint_code.get(t_nl[1])     # retrieve uhint code: 0, 1, 2, 3
-        if url.netloc == "finance.yahoo.com":
-            print ( f"{uhint[1]} / {uhint[0]} - ", end="" )
-            logging.info ( f"%s - Inferred hint from URL: {uhint[1]} [{url.netloc}] / {uhint[0]}" % cmi_debug )
-            return uhint[1]
-
-        if url.scheme == "https" or url.scheme == "http":    # URL has valid scheme but isn NOT @ YFN
-            print ( f"3 / Remote pure url - ", end="" )
-            logging.info ( f"%s - Inferred hint from URL: 3 [{url.netloc}] / Remote pure article" % cmi_debug )
-            return 3
-        else:
-            print ( f"ERROR_url / ", end="" )
-            logging.info ( f"%s - ERROR URL hint is -1 / Mangled URL" % cmi_debug )
-            return 9
