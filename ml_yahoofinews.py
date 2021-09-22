@@ -76,7 +76,7 @@ class yfnews_reader:
 
     def share_hinter(self, hinst):
         cmi_debug = __name__+"::"+self.share_hinter.__name__+".#"+str(self.yti)
-        logging.info( f'%s - IN {type(hinst)}' % cmi_debug )
+        logging.info( f'%s - CALLED {type(hinst)}' % cmi_debug )
         self.uh = hinst
         return
 
@@ -340,11 +340,11 @@ class yfnews_reader:
                 else:
                     a_url = f"https://finance.yahoo.com{article_url}"
                     a_urlp = urlparse(a_url)
-                    print ( f">>>DEBUG<<< parsed url: {a_urlp}" )
+                    #print ( f">>>DEBUG<<< parsed url: {a_urlp}" )
                     url_netloc = a_urlp.netloc      # FQDN
                     pure_url = 0                    # locally hosted entity
                     ml_atype = 0                    # Real news
-                    uhint, uhdescr = self.uh.uhinter(hcycle, test_url)
+                    uhint, uhdescr = self.uh.uhinter(hcycle, a_urlp)
                     hcycle += 1
                     # assume hosted at https://finaince.yahoo.com becasue it has no leading FQDN scheme (i.e. http/https)
 
