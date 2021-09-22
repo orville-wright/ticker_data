@@ -352,10 +352,10 @@ class yfnews_reader:
         # WARN: Its normal to see duplicate Type 0 & 1 news elemets repeated within a page.
 
         h3_counter = a_counter = 0
-        pure_url = 9
-        thint = 99.9
-        uhint = 9                                            # saftey preset
         x = y = 0
+        pure_url = 9                                         # saftey preset
+        thint = 99.9                                         # saftey preset
+        uhint = 9                                            # saftey preset
         for li_tag in li_subset_all:                         # <li> is where the new articels hide
             self.nlp_x += 1                                  # counter = which article we are looking at
             for element in li_tag.descendants:               # walk the full tag tree recurisvely
@@ -382,6 +382,7 @@ class yfnews_reader:
                     url_netloc = "https://finance.yahoo.com"
                     pure_url = 0   # locally hosted entity
                     ml_atype = 0
+                    uhint, uhdescr = url_hinter(test_url)
                     thint = 1.0
                     # assume hosted at https://finaince.yahoo.com becasue it has no leading FQDN scheme (i.e. http/https)
 
@@ -389,6 +390,7 @@ class yfnews_reader:
                 test_url = urlparse(article_url)
                 uhint, uhdescr = url_hinter(test_url)
                 inf_type = "Real news"
+
                 if not li_tag.find('p'):
                     url_netloc = urlparse(article_url).netloc
                     inf_type = "Micro Advertisment"
@@ -410,9 +412,8 @@ class yfnews_reader:
                     if pure_url == 0: thint = 0.0
                     if pure_url == 1: thint = 1.0
 
-
                 print ( f"================= Depth 1 / {symbol} Article {x} ==================" )
-                print ( f"News item:        {self.cycle}: {inf_type} / Confidence Indicators m:{ml_atype} = t:{thint}" )
+                print ( f"News item:        {self.cycle}: {inf_type} / Confidence Indicators t:{ml_atype}, u:{uhint}, t:{thint}" )
                 print ( f"News agency:      {news_agency} / ", end="" )
 
                 if pure_url == 0: print ( f"Remote-stub @ [ {url_netloc} ]" )
@@ -666,5 +667,5 @@ class yfnews_reader:
         logging.info('%s - IN' % cmi_debug )
         print ( "================= ML Ingested Depth 1 NLP candidates ==================" )
         for k, d in self.ml_ingest.items():
-            print ( f"{k:03} {d['symbol']:.5} / {d['urlhash']} Type/Hint [{d['type']} / {d['thint']}] {d['url']}" )
+            print ( f"{k:03} {d['symbol']:.5} / {d['urlhash']} Hints: [T:{d['type']} H:{d['thint']} U:{d['uhint']}] {d['url']}" )
         return
