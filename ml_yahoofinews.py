@@ -487,7 +487,6 @@ class yfnews_reader:
         type = data_row['type']
         thint = data_row['thint']
         uhint = data_row['uhint']
-
         url = data_row['url']
         this_article_url = url
         symbol = symbol.upper()
