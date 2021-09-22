@@ -17,7 +17,6 @@ import json
 from rich import print
 
 ################## Proprietary App specific class/methods ###################
-from bigcharts_md import bc_quote
 from url_hinter import uhinter
 
 # logging setup
@@ -309,7 +308,7 @@ class yfnews_reader:
         mini_headline_all = self.ul_tag_dataset.div.find_all(attrs={'class': 'C(#959595)'})
         li_subset_all = self.ul_tag_dataset.find_all('li')
 
-        uh = url_hinter(2)
+        uh = url_hinter.url_hinter(2)
         h3_counter = a_counter = 0
         x = y = 0
         pure_url = 9                                         # saftey preset
