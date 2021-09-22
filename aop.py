@@ -459,6 +459,9 @@ def main():
     The machine will read now!
     Read finance.yahoo.com / News 'Brief headlines' (i.e. short text docs) for ALL Top Gainer stocks.
     """
+
+    uh = url_hinter(1)
+    
     if args['bool_news'] is True:                   # read ALL news for top 10 gainers
         print ( " " )
         print ( "========================= ML (NLP) / Yahoo Finance News Sentiment AI =========================" )
