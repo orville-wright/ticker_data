@@ -248,7 +248,7 @@ class yfnews_reader:
         symbol = symbol.upper()
         depth = int(depth)
         logging.info( f'%s - Scan news for: {symbol} / {self.yfqnews_url}' % cmi_debug )
-        logging.info( f"%s - URL hinter engine state: {type(self.uh)} / {type(self.uh.uhinter)}" % cmi_debug )
+        logging.info( f"%s - URL hinter engine state: {type(self.uh)} " % cmi_debug )
         if scan_type == 0:    # Simple HTML BS4 scraper
             logging.info( '%s - Read HTML/json data using pre-init session: resp0' % cmi_debug )
             self.soup = BeautifulSoup(self.yfn_htmldata, "html.parser")
