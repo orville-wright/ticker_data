@@ -646,9 +646,9 @@ class yfnews_reader:
         for k, d in self.ml_ingest.items():
             print ( f"{k:03} {d['symbol']:.5} / {d['urlhash']} Hints: t:{d['type']} u:{d['uhint']} h:{d['thint']}]" )
             if 'exturl' in d.keys():
-                print ( f"          {d['symbol']:.5} / Local:    {d['url']}" )
-                print ( f"          {d['symbol']:.5} / External: {d['exturl']}" )
+                print ( f"          Local:    {d['url']}" )
+                print ( f"          External: {d['exturl']}" )
             else:
-                print ( f"          {d['symbol']:.5} / Local:    {d['url']}" )
+                print ( f"          Local:    {d['url']}" )
 
         return
