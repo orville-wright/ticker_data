@@ -377,10 +377,11 @@ def main():
 
 # Machine Learning NLP (Natural Language Processing) ####################################
 # News Sentiment AI
-    def article_header(lc, tc, ru, su):
+    #def article_header(r_uhint, tc, ru, su):
+    def article_header(r_uhint, r_thint, r_xturl, orig_url):
         """
         NLP Support function #1
-        lc = locality confidence code (0=remote, 1=local, 9=ERROR_bad_page_struct, 10=ERROR_unknown_state)
+        r_uhint = locality confidence code (0=remote, 1=local, 9=ERROR_bad_page_struct, 10=ERROR_unknown_state)
         tc = type confidence code (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
         ru = Real remote url (extracted)
         su = Fake url from Depth 0 news feed
@@ -402,15 +403,16 @@ def main():
                 10: 'Article URL mangled'
                 }
         logging.info ( f"%s - hint code recieved: {tc}" % cmi_debug )
-        tc_descr = tcode.get(tc)
-        if lc == 0: print ( f"Locality:      Local / {lc}.{tc} / {tc_descr}" )
-        if lc == 1: print ( f"Locality:      Remote / {lc}.{tc}  / {tc_descr}" )
-        if lc == 2: print ( f"Locality:      Injected ad / {lc}.{tc}  / {tc_descr}" )
-        if lc == 3: print ( f"Locality:      Remote / {lc}.{tc}  / {tc_descr}" )
-        if lc == 9: print ( f"Locality:      Bad Local page / {lc}.{tc} / {tc_descr}" )
-        if lc == 10: print ( f"Locality:      Unknown state / {lc}.{tc} / {tc_descr}" )
-        print ( f"News feed URL: {su}" )
-        print ( f"Real dest URL: {ru}" )
+        tc_descr = tcode.get(r_thint)
+        if r_uhint == 0: print ( f"Locality:      Local/Remote stub - ", end="" )
+        if r_uhint == 1: print ( f"Locality:      local article - ", end="" )
+        if r_uhint == 2: print ( f"Locality:      Injected ad - ", end="" )
+        if r_uhint == 3: print ( f"Locality:      Remote external - ", end="" )
+        if r_uhint == 9: print ( f"Locality:      Bad Local page - ", end="" )
+        if r_uhint == 10: print ( f"Locality:      Unknown state - ", end="" )
+        print ( f"- u:{r_uhint} t:{r_thint} / {tc_descr}" )
+        print ( f"News feed URL: {orig_url}" )
+        print ( f"Real dest URL: {rr_xturlu}" )
         print ( f"====================== Depth 2 ======================" )
         return
 
@@ -436,7 +438,8 @@ def main():
                 thint = (sn_row['thint'])              # the hint we guessed at while interrogating page <tags>
                 print ( f"Real news = NLP candidate" )    # all type 0 are assumed to be REAL news
                 logging.info ( f"%s - #1 get_locality hints: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
-                l_conf, t_conf, rem_url = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
+                r_uhint, r_thint, r_xturl = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
+                yfn.dump_ml_ingest()
                 article_header(l_conf, t_conf, rem_url, sn_row['url'] )
             elif sn_row['type'] == 1:                     # possibly not news? (Micro Ad)
                 t_url = urlparse(sn_row['url'])
