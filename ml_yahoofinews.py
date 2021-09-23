@@ -486,7 +486,7 @@ class yfnews_reader:
             local_news = nsoup.find(attrs={"class": "caas-body"})               # full news article, locally hosted
             local_story = nsoup.find(attrs={"class": "caas-body-wrapper"})      # boring options trader bland article type
             #if type(rem_news) != type(None):               # page has valid structure
-            logging.info( f"%s - Data row: {data_row}" )
+            logging.info( f"%s - Data row: {data_row}" % cmi_debug )
             if uhint == 0 or uhint == 1:                    # Local-remote stub or Local-local article
                 logging.info ( f"%s - Depth: 2 / Read Local-remote stub / u: {uhint} t: {thint}" % cmi_debug )
                 if rem_news.find('a'):                     # BAD, no <a> zone in page or article is a REAL remote URL already

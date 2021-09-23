@@ -435,7 +435,7 @@ def main():
                 uhint, uhdescr = uh.uhinter(1, t_url)
                 tag_hint = (sn_row['thint'])              # the hint we guessed at while interrogating page <tags>
                 print ( f"Real news = NLP candidate" )    # all type 0 are assumed to be REAL news
-                logging.info ( f"%s - get_locality t:0 / @hint: {uhint}/{uhdescr}" % cmi_debug )
+                logging.info ( f"%s - #1 get_locality hints: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
                 l_conf, t_conf, rem_url = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
                 article_header(l_conf, t_conf, rem_url, sn_row['url'] )
             elif sn_row['type'] == 1:                     # possibly not news? (Micro Ad)
@@ -444,7 +444,7 @@ def main():
                 tag_hint = (sn_row['thint'])             # the hint we guess at while interrogating page <tags>
                 if uhint >= 3:
                     print ( f"Micro ad > NLP candidate" )
-                    logging.info ( f"%s - get_locality t:1 / @hint {uhint}/{uhdescr}" % cmi_debug )
+                    logging.info ( f"%s - #2 get_locality hints: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
                     l_conf, t_conf, rem_url = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
                     article_header(l_conf, t_conf, rem_url, sn_row['url'] )
                 else:
