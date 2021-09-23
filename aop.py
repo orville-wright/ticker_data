@@ -433,7 +433,7 @@ def main():
             if sn_row['type'] == 0:                       # REAL news, inferred from Depth 0
                 t_url = urlparse(sn_row['url'])
                 uhint, uhdescr = uh.uhinter(1, t_url)
-                tag_hint = (sn_row['thint'])              # the hint we guessed at while interrogating page <tags>
+                thint = (sn_row['thint'])              # the hint we guessed at while interrogating page <tags>
                 print ( f"Real news = NLP candidate" )    # all type 0 are assumed to be REAL news
                 logging.info ( f"%s - #1 get_locality hints: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
                 l_conf, t_conf, rem_url = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
@@ -441,7 +441,7 @@ def main():
             elif sn_row['type'] == 1:                     # possibly not news? (Micro Ad)
                 t_url = urlparse(sn_row['url'])
                 uhint, uhdescr = uh.uhinter(2, t_url)
-                tag_hint = (sn_row['thint'])             # the hint we guess at while interrogating page <tags>
+                thint = (sn_row['thint'])             # the hint we guess at while interrogating page <tags>
                 if uhint >= 3:
                     print ( f"Micro ad > NLP candidate" )
                     logging.info ( f"%s - #2 get_locality hints: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
