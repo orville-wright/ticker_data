@@ -363,12 +363,12 @@ class yfnews_reader:
                     if pure_url == 1: thint = 5.1    # remote entity
                 elif news_agency == "Yahoo Finance Video" and uhint == 2:
                     thint = 4.0
-                    test_url = urlparse(article_url)
-                    url_netloc = test_url.netloc
+                    url_netloc = urlparse(article_url).netloc
                     ml_atype = 0
                 else:
-                    #url_netloc = "finance.yahoo.com 2"
-                    url_netloc = test_url.netloc
+                    # url_netloc = "finance.yahoo.com 2"
+                    # url_netloc = test_url.netloc
+                    url_netloc = urlparse(article_url).netloc
                     a_teaser = li_tag.p.text
                     article_teaser = f"{a_teaser:.170}" + " [...]"
                     ml_atype = 0
@@ -384,7 +384,7 @@ class yfnews_reader:
                 if pure_url == 1 and uhint == 3: print ( f"Remote-external  @ {url_netloc}" )
                 if uhint == 2 and thint == 4: print ( f"Local video @ {url_netloc}" )
                 if pure_url == 9: print ( f"Unknown     @ *bad url*" )
-                if uhint == 9: print ( f"Not yet known @ {test_url.netloc}" )
+                if uhint == 9: print ( f"Not yet known @ {url_netloc}" )
 
                 print ( f"Article URL:      {article_url}" )
                 print ( f"Article headline: {article_headline}" )
