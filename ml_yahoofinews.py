@@ -507,7 +507,8 @@ class yfnews_reader:
             #
             # return codes:
             # locality with confidence, type with confidence, rem_url of the real/physical news article
-
+            print ( f">>DEBUG<< data row: {data_row}" )
+            print ( f">>DEBUG<< URL hint: {uhint} / Page Type hint: {thint}" )
             if uhint == 0 or uhint == 1:
                 print ( f">>DEBUG<< URL hint: {uhint} / Page Type hint: {thint}" )
                 if type(rem_news) != type(None):               # page has valid structure
