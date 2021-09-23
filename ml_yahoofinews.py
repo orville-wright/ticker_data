@@ -344,6 +344,7 @@ class yfnews_reader:
                     #print ( f">>>DEBUG<<< parsed url: {a_urlp}" )
                     url_netloc = a_urlp.netloc      # FQDN
                     logging.info( f'%s - >>>DEBUG<<< url_netloc.#1 {url_netloc}' % (cmi_debug) )
+                    logging.info( f'%s - >>>DEBUG<<< url.#1 {a_urlp}' % (cmi_debug) )
                     pure_url = 0                    # locally hosted entity
                     ml_atype = 0                    # Real news
                     uhint, uhdescr = self.uh.uhinter(hcycle, a_urlp)
@@ -354,6 +355,7 @@ class yfnews_reader:
                 inf_type = "Real news"
                 url_netloc = urlparse(article_url).netloc
                 logging.info( f'%s - >>>DEBUG<<< url_netloc.#2 {url_netloc}' % (cmi_debug) )
+                logging.info( f'%s - >>>DEBUG<<< url.#2 {a_urlp}' % (cmi_debug) )
                 #test_url = urlparse(article_url)
                 #uhint, uhdescr = self.uh.uhinter(hcycle, test_url)
                 #hcycle += 1
@@ -361,6 +363,7 @@ class yfnews_reader:
                 if not li_tag.find('p'):
                     url_netloc = urlparse(article_url).netloc
                     logging.info( f'%s - >>>DEBUG<<< url_netloc.#3 {url_netloc}' % (cmi_debug) )
+                    logging.info( f'%s - >>>DEBUG<<< url.#3 {a_urlp}' % (cmi_debug) )
                     inf_type = "Micro Advertisment"
                     article_teaser = "None"
                     ml_atype = 1
@@ -370,12 +373,14 @@ class yfnews_reader:
                     thint = 4.0
                     url_netloc = urlparse(article_url).netloc
                     logging.info( f'%s - >>>DEBUG<<< url_netloc.#4 {url_netloc}' % (cmi_debug) )
+                    logging.info( f'%s - >>>DEBUG<<< url.#4 {a_urlp}' % (cmi_debug) )
                     ml_atype = 0
                 else:
                     # url_netloc = "finance.yahoo.com 2"
                     # url_netloc = test_url.netloc
                     url_netloc = urlparse(article_url).netloc
                     logging.info( f'%s - >>>DEBUG<<< url_netloc.#5 {url_netloc}' % (cmi_debug) )
+                    logging.info( f'%s - >>>DEBUG<<< url.#5 {a_urlp}' % (cmi_debug) )
                     a_teaser = li_tag.p.text
                     article_teaser = f"{a_teaser:.170}" + " [...]"
                     ml_atype = 0
