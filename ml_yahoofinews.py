@@ -74,6 +74,8 @@ class yfnews_reader:
         self.cycle = 1
         self.js_session = HTMLSession()                        # init JAVAScript processor early
         self.js_session.cookies.update(self.yahoo_headers)     # load cookie/header hack data set into session
+        self.a_urlp = urlparse(https://www.dummyurl.com)
+        self.url_netloc = self.a_urlp.netloc
         return
 
     def share_hinter(self, hinst):
@@ -319,8 +321,8 @@ class yfnews_reader:
         uhint = 9                                            # saftey preset
         thint = 99.9                                         # saftey preset
         article_url = ""
-        a_urlp = ""
-        url_netloc = ""
+        #a_urlp = ""
+        #url_netloc = ""
         ml_atype = 0
         for li_tag in li_subset_all:                         # <li> is where the new articels hide
             self.nlp_x += 1                                  # counter = which article we are looking at
