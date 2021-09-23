@@ -644,9 +644,11 @@ class yfnews_reader:
         logging.info('%s - IN' % cmi_debug )
         print ( "================= ML Ingested Depth 1 NLP candidates ==================" )
         for k, d in self.ml_ingest.items():
+            print ( f"{k:03} {d['symbol']:.5} / {d['urlhash']} Hints: t:{d['type']} u:{d['uhint']} h:{d['thint']}]" )
             if 'exturl' in d.keys():
-                print ( f"{k:03} {d['symbol']:.5} / {d['urlhash']} Hints: t:{d['type']} u:{d['uhint']} h:{d['thint']}] Local: {d['url']} Extrnl: {d['xturl']}" )
+                print ( f"{k:03} {d['symbol']:.5} / Local:    {d['url']}"
+                print ( f"{k:03} {d['symbol']:.5} / External: {d['exturl']}" )
             else:
-                print ( f"{k:03} {d['symbol']:.5} / {d['urlhash']} Hints: t:{d['type']} u:{d['uhint']} h:{d['thint']}] Local: {d['url']}" )
+                print ( f"{k:03} {d['symbol']:.5} / Local:    {d['url']}"
 
         return
