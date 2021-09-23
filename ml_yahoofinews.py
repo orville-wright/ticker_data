@@ -392,7 +392,7 @@ class yfnews_reader:
                     if pure_url == 1: thint = 1.0
 
                 print ( f"================= Depth 1 / {symbol} Article {x} ==================" )
-                print ( f"News item:        {self.cycle}: {inf_type} / Confidence Indicators t:{ml_atype}, u:{uhint}, t:{thint}" )
+                print ( f"News item:        {self.cycle}: {inf_type} / Confidence Indicators t:{ml_atype} / u:{uhint} / h:{thint}" )
                 print ( f"News agency:      {news_agency} / ", end="" )
 
                 if pure_url == 0: print ( f"Local-Remote stub @ [ {self.url_netloc} ]" )
@@ -434,7 +434,7 @@ class yfnews_reader:
                 ml_atype = 2
                 thint = 6.0
                 print ( f"================= Depth 1 / {symbol} Article {x} ==================" )
-                print ( f"News item:        {self.cycle}: {inf_type} / Confidence > M:{ml_atype} / T:{thint}" )
+                print ( f"News item:        {self.cycle}: {inf_type} / Confidence > t:{ml_atype} / u:[] / h:{thint}" )
                 print ( f"News agency:      {fa_2} / not {symbol} news / NOT an NLP candidate" )
                 print ( f"Adv injector:     {fa_3:.40} [...]" )
             a_counter = h3_counter = 0
