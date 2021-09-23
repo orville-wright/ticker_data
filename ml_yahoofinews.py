@@ -48,6 +48,7 @@ class yfnews_reader:
     args = []               # class dict to hold global args being passed in from main() methods
     uh = ""                 # global url hinter class
     url_netloc = ""
+    a_urlp = ""
 
                             # yahoo.com header/cookie hack
     yahoo_headers = { \
@@ -334,22 +335,22 @@ class yfnews_reader:
                 logging.info( f'%s - <li> count: {a_counter}' % (cmi_debug) )                  # good new zrticle found
                 news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
                 article_url = li_tag.a.get("href")
-                a_urlp = urlparse(article_url)
+                self.a_urlp = urlparse(article_url)
                 if a_urlp.scheme == "https" or a_urlp.scheme == "http":    # check URL scheme specifier
                     logging.info ( f"%s - Depth: 1 / Pure Remote URL found!" % cmi_debug )
                     pure_url = 1    # explicit pure URL to remote entity
                     uhint = 3       # we can definatley set this here ONLY for this item type
-                    url_netloc = a_urlp.netloc
+                    self.url_netloc = a_urlp.netloc
                     logging.info( f'%s - >>>DEBUG<<< pure url_netloc {url_netloc}' % (cmi_debug) )
                     ml_atype = 0
                     thint = 1.1
                 else:
                     a_url = f"https://finance.yahoo.com{article_url}"
-                    a_urlp = urlparse(a_url)
+                    self.a_urlp = urlparse(a_url)
                     #print ( f">>>DEBUG<<< parsed url: {a_urlp}" )
                     self.url_netloc = a_urlp.netloc      # FQDN
-                    logging.info( f'%s - >>>DEBUG<<< url_netloc.#1 {url_netloc}' % (cmi_debug) )
-                    logging.info( f'%s - >>>DEBUG<<< url.#1 {a_urlp}' % (cmi_debug) )
+                    logging.info( f'%s - >>>DEBUG<<< url_netloc.#1 {self.a_urlp.netloc}' % (cmi_debug) )
+                    logging.info( f'%s - >>>DEBUG<<< url.#1 {self.a_urlp}' % (cmi_debug) )
                     pure_url = 0                    # locally hosted entity
                     ml_atype = 0                    # Real news
                     uhint, uhdescr = self.uh.uhinter(hcycle, a_urlp)
