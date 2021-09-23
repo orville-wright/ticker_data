@@ -439,7 +439,8 @@ def main():
                 print ( f"Real news = NLP candidate" )    # all type 0 are assumed to be REAL news
                 logging.info ( f"%s - #1 get_locality hints: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
                 r_uhint, r_thint, r_xturl = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
-                yfn.dump_ml_ingest()
+                print ( f"{yfn.ml_ingest}" )
+                #yfn.dump_ml_ingest()
                 article_header(r_uhint, r_thint, r_xturl, sn_row['url'] )
             elif sn_row['type'] == 1:                     # possibly not news? (Micro Ad)
                 t_url = urlparse(sn_row['url'])
