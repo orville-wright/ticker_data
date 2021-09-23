@@ -369,8 +369,7 @@ class yfnews_reader:
 
                 if not li_tag.find('p'):
                     self.url_netloc = self.a_urlp.netloc
-                    logging.info( f'%s - >>>DEBUG<<< url_netloc.#3 {self.url_netloc}' % (cmi_debug) )
-                    logging.info( f'%s - >>>DEBUG<<< url.#3 {self.a_urlp}' % (cmi_debug) )
+                    logging.info( f'%s - url_netloc.#3 {self.url_netloc}' % (cmi_debug) )
                     inf_type = "Micro Advertisment"
                     article_teaser = "None"
                     ml_atype = 1
@@ -379,15 +378,13 @@ class yfnews_reader:
                 elif news_agency == "Yahoo Finance Video" and uhint == 2:
                     thint = 4.0
                     self.url_netloc = self.a_urlp.netloc
-                    logging.info( f'%s - >>>DEBUG<<< url_netloc.#4 {self.url_netloc}' % (cmi_debug) )
-                    logging.info( f'%s - >>>DEBUG<<< url.#4 {self.a_urlp}' % (cmi_debug) )
+                    logging.info( f'%s - url_netloc.#4 {self.url_netloc}' % (cmi_debug) )
                     ml_atype = 0
                 else:
                     # url_netloc = "finance.yahoo.com 2"
                     # url_netloc = test_url.netloc
                     self.url_netloc = self.a_urlp.netloc
-                    logging.info( f'%s - >>>DEBUG<<< url_netloc.#5 {self.url_netloc}' % (cmi_debug) )
-                    logging.info( f'%s - >>>DEBUG<<< url.#5 {self.a_urlp}' % (cmi_debug) )
+                    logging.info( f'%s - url_netloc.#5 {self.url_netloc}' % (cmi_debug) )
                     a_teaser = li_tag.p.text
                     article_teaser = f"{a_teaser:.170}" + " [...]"
                     ml_atype = 0
