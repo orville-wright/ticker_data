@@ -112,7 +112,7 @@ def bkgrnd_worker():
 #
 
 def main():
-    # setup valid cmdline args
+    cmi_debug = __name__+"::".__init__.__name__+"main()"
     global args
     args = vars(parser.parse_args())        # args as a dict []
 
@@ -121,7 +121,7 @@ def main():
     print ( " " )
 
     print ( "CMDLine args:", parser.parse_args() )
-    print ( f"Global url-hinter engine started: {type(uh)}" )
+    logging.info ( f"%s - url-hinter engine started: {type(uh)}" % cmi_debug )
     uh.status()
     # ARGS[] cmdline pre-processing
     if args['bool_verbose'] is True:        # Logging level
@@ -465,6 +465,7 @@ def main():
     """
 
     if args['bool_news'] is True:                   # read ALL news for top 10 gainers
+        cmi_debug = __name__+"::nlp_all.#1"
         print ( " " )
         print ( "========================= ML (NLP) / Yahoo Finance News Sentiment AI =========================" )
         print ( f"Build NLP test dataset / for Top Gainers..." )
@@ -476,7 +477,7 @@ def main():
         #news_symbol = str(args['newsymbol'])       # symbol provided on CMDLine
         yfn = yfnews_reader(1, "IBM", args )        # dummy symbol just for instantiation
         yfn.init_dummy_session()
-        logging.info ( f"%s - Enable url hinter-engine: {type(uh)}" % cmi_debug )
+        logging.info ( f"%s - >>>>>>>>>>>>>>>>>>>>>>>Enable url hinter-engine: {type(uh)}" % cmi_debug )
         uh.status()
         yfn.share_hinter(uh)                        # share the url hinter available
         #yfn.yfn_bintro()
@@ -499,6 +500,7 @@ def main():
     Read finance.yahoo.com / News 'Brief headlines' (i.e. short text docs) for ONE stock symbol.
     """
     if args['newsymbol'] is not False:
+        cmi_debug = __name__+"::nlp_one.#1"
         print ( " " )
         print ( "========================= ML (NLP) / Yahoo Finance News Sentiment AI =========================" )
         print ( f"Examine & Read news for 1 stock symbol..." )
@@ -509,7 +511,7 @@ def main():
         yfn.update_headers(news_symbol)
         yfn.form_url_endpoint(news_symbol)
         yfn.do_simple_get()
-        logging.info ( f"%s - Enable url hinter-engine: {type(uh)}" )
+        logging.info ( f"%s - Enable url hinter-engine: {type(uh)}" % cmi_debug )
         uh.status()
         yfn.share_hinter(uh)
         yfn.scan_news_feed(news_symbol, 0, 0)    # (params) #1: level, #2: 0=HTML / 1=JavaScript
