@@ -351,12 +351,14 @@ class yfnews_reader:
                 article_headline = li_tag.a.text        # taken from YFN news feed thumbnail, not actual article page
                 inf_type = "Real news"
                 url_netloc = urlparse(article_url).netloc
+                logging.info( f'%s - >>>DEBUG<<< url_netloc.#1 {url_netloc}' % (cmi_debug) )
                 #test_url = urlparse(article_url)
                 #uhint, uhdescr = self.uh.uhinter(hcycle, test_url)
                 #hcycle += 1
 
                 if not li_tag.find('p'):
                     url_netloc = urlparse(article_url).netloc
+                    logging.info( f'%s - >>>DEBUG<<< url_netloc.#2 {url_netloc}' % (cmi_debug) )
                     inf_type = "Micro Advertisment"
                     article_teaser = "None"
                     ml_atype = 1
@@ -365,11 +367,13 @@ class yfnews_reader:
                 elif news_agency == "Yahoo Finance Video" and uhint == 2:
                     thint = 4.0
                     url_netloc = urlparse(article_url).netloc
+                    logging.info( f'%s - >>>DEBUG<<< url_netloc.#3 {url_netloc}' % (cmi_debug) )
                     ml_atype = 0
                 else:
                     # url_netloc = "finance.yahoo.com 2"
                     # url_netloc = test_url.netloc
                     url_netloc = urlparse(article_url).netloc
+                    logging.info( f'%s - >>>DEBUG<<< url_netloc.#4 {url_netloc}' % (cmi_debug) )
                     a_teaser = li_tag.p.text
                     article_teaser = f"{a_teaser:.170}" + " [...]"
                     ml_atype = 0
