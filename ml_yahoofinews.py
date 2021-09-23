@@ -47,6 +47,7 @@ class yfnews_reader:
     soup = ""               # BS4 shared handle between UP & DOWN (1 URL, 2 embeded data sets in HTML doc)
     args = []               # class dict to hold global args being passed in from main() methods
     uh = ""                 # global url hinter class
+    url_netloc = ""
 
                             # yahoo.com header/cookie hack
     yahoo_headers = { \
@@ -346,7 +347,7 @@ class yfnews_reader:
                     a_url = f"https://finance.yahoo.com{article_url}"
                     a_urlp = urlparse(a_url)
                     #print ( f">>>DEBUG<<< parsed url: {a_urlp}" )
-                    url_netloc = a_urlp.netloc      # FQDN
+                    self.url_netloc = a_urlp.netloc      # FQDN
                     logging.info( f'%s - >>>DEBUG<<< url_netloc.#1 {url_netloc}' % (cmi_debug) )
                     logging.info( f'%s - >>>DEBUG<<< url.#1 {a_urlp}' % (cmi_debug) )
                     pure_url = 0                    # locally hosted entity
@@ -357,7 +358,7 @@ class yfnews_reader:
 
                 article_headline = li_tag.a.text        # taken from YFN news feed thumbnail, not actual article page
                 inf_type = "Real news"
-                url_netloc = urlparse(article_url).netloc
+                self.url_netloc = urlparse(article_url).netloc
                 logging.info( f'%s - >>>DEBUG<<< url_netloc.#2 {url_netloc}' % (cmi_debug) )
                 logging.info( f'%s - >>>DEBUG<<< url.#2 {a_urlp}' % (cmi_debug) )
                 #test_url = urlparse(article_url)
@@ -365,7 +366,7 @@ class yfnews_reader:
                 #hcycle += 1
 
                 if not li_tag.find('p'):
-                    url_netloc = urlparse(article_url).netloc
+                    self.url_netloc = urlparse(article_url).netloc
                     logging.info( f'%s - >>>DEBUG<<< url_netloc.#3 {url_netloc}' % (cmi_debug) )
                     logging.info( f'%s - >>>DEBUG<<< url.#3 {a_urlp}' % (cmi_debug) )
                     inf_type = "Micro Advertisment"
@@ -375,14 +376,14 @@ class yfnews_reader:
                     if pure_url == 1: thint = 5.1    # remote entity
                 elif news_agency == "Yahoo Finance Video" and uhint == 2:
                     thint = 4.0
-                    url_netloc = urlparse(article_url).netloc
+                    self.url_netloc = urlparse(article_url).netloc
                     logging.info( f'%s - >>>DEBUG<<< url_netloc.#4 {url_netloc}' % (cmi_debug) )
                     logging.info( f'%s - >>>DEBUG<<< url.#4 {a_urlp}' % (cmi_debug) )
                     ml_atype = 0
                 else:
                     # url_netloc = "finance.yahoo.com 2"
                     # url_netloc = test_url.netloc
-                    url_netloc = urlparse(article_url).netloc
+                    self.url_netloc = urlparse(article_url).netloc
                     logging.info( f'%s - >>>DEBUG<<< url_netloc.#5 {url_netloc}' % (cmi_debug) )
                     logging.info( f'%s - >>>DEBUG<<< url.#5 {a_urlp}' % (cmi_debug) )
                     a_teaser = li_tag.p.text
