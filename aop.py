@@ -602,4 +602,5 @@ def main():
 
 
 if __name__ == '__main__':
+    cmi_debug = __name__+"::"+self.__init__.__name__
     main()
