@@ -507,29 +507,29 @@ class yfnews_reader:
             #
             # return codes:
             # locality with confidence, type with confidence, rem_url of the real/physical news article
-            print ( f">>DEBUG<< data row: {data_row}" )
-            print ( f">>DEBUG<< URL hint: {uhint} / Page Type hint: {thint}" )
-            if uhint == 0 or uhint == 1.0:
-                print ( f">>DEBUG<< URL hint: {uhint} / Page Type hint: {thint}" )
-                if type(rem_news) != type(None):               # page has valid structure
-                    logging.info ( f"%s - Depth: 2 / Stub-page is valid..." % cmi_debug )
-                    if rem_news.find('a'):                     # BAD, no <a> zone in page or article is a REAL remote URL already
-                        rem_url = rem_news.a.get("href")       # a remotely hosted news article. Whats its real URL?
-                        logging.info ( f"%s - Depth: 2 / Good <a> / Remote-stub NEWS @: {rem_url}" % cmi_debug )
-                        # write the thint now
-                        logging.info ( f"%s - Depth: 2 / confidence level 0 / 1.0 " % cmi_debug )
-                        return uhint, 1.0, rem_url                 # 100% confidence that articel is REMOTE
-                    elif rem_news.text == "Story continues":   # local articles have a [story continues...] button
-                        logging.info ( f"%s - Depth: 2 / NO <a> / Good-stub [story continues...]" % cmi_debug )
-                        logging.info ( f"%s - Depth: 2 / confidence level {uhint} / 0.0 " % cmi_debug )
-                        return uhint, 0.0, this_article_url      # REAL news
-                    elif local_story.button.text == "Read full article":    # test to make 100% sure its a low quality story
-                        logging.info ( f"%s - Depth: 2 / Basic-stub [curated story]" % cmi_debug )
-                        logging.info ( f"%s - Depth: 2 / confidence level {uhint} / 2.0 " % cmi_debug )
-                        return uhint, 3.0, this_article_url              # Curated Report
-                    else:
-                        logging.info ( f"%s - Depth: 2 / NO <a> / Simple-stub [OP-ED]" % cmi_debug )
-                        logging.info ( f"%s - Depth: 2 / confidence level {uhint} / 2.0 " % cmi_debug )
+            #print ( f">>DEBUG<< data row: {data_row}" )
+            #print ( f">>DEBUG<< URL hint: {uhint} / Page Type hint: {thint}" )
+            #if uhint == 0 or uhint == 1.0:
+            #    print ( f">>DEBUG<< URL hint: {uhint} / Page Type hint: {thint}" )
+            if type(rem_news) != type(None):               # page has valid structure
+                logging.info ( f"%s - Depth: 2 / Stub-page is valid..." % cmi_debug )
+                if rem_news.find('a'):                     # BAD, no <a> zone in page or article is a REAL remote URL already
+                    rem_url = rem_news.a.get("href")       # a remotely hosted news article. Whats its real URL?
+                    logging.info ( f"%s - Depth: 2 / Good <a> / Remote-stub NEWS @: {rem_url}" % cmi_debug )
+                    # write the thint now
+                    logging.info ( f"%s - Depth: 2 / confidence level 0 / 1.0 " % cmi_debug )
+                    return uhint, 1.0, rem_url                 # 100% confidence that articel is REMOTE
+                elif rem_news.text == "Story continues":   # local articles have a [story continues...] button
+                    logging.info ( f"%s - Depth: 2 / NO <a> / Good-stub [story continues...]" % cmi_debug )
+                    logging.info ( f"%s - Depth: 2 / confidence level {uhint} / 0.0 " % cmi_debug )
+                    return uhint, 0.0, this_article_url      # REAL news
+                elif local_story.button.text == "Read full article":    # test to make 100% sure its a low quality story
+                    logging.info ( f"%s - Depth: 2 / Basic-stub [curated story]" % cmi_debug )
+                    logging.info ( f"%s - Depth: 2 / confidence level {uhint} / 2.0 " % cmi_debug )
+                    return uhint, 3.0, this_article_url              # Curated Report
+                else:
+                    logging.info ( f"%s - Depth: 2 / NO <a> / Simple-stub [OP-ED]" % cmi_debug )
+                    logging.info ( f"%s - Depth: 2 / confidence level {uhint} / 2.0 " % cmi_debug )
                         return uhint, 2.0, this_article_url          # OP-ED story (doesn't have [story continues...] button)
 
             if uhint == 2:
