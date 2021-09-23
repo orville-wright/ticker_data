@@ -536,7 +536,7 @@ class yfnews_reader:
                     return uhint, 2.0, self.this_article_url          # OP-ED story (doesn't have [story continues...] button)
             else:
                 logging.info ( f"%s - Depth: 2 / ERROR bad Local page / u: {uhint} t: {thint}" % cmi_debug )
-                return uhint, 10.0, self.this_article
+                return uhint, 10.0, self.this_article_url
 
             if uhint == 2:
                 print ( f">>DEBUG<< URL hint: {uhint} / Page Type hint: {thint}" )
