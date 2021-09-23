@@ -336,7 +336,7 @@ class yfnews_reader:
             if a_counter > 0 and a_counter <= 3:
                 logging.info( f'%s - <li> count: {a_counter}' % (cmi_debug) )                  # good new zrticle found
                 news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
-                article_url = li_tag.a.get("href")                              # url is path only in the page source, so needs careful treatment
+                self.article_url = li_tag.a.get("href")                              # url is path only in the page source, so needs careful treatment
                 self.a_urlp = urlparse(article_url)
                 if self.a_urlp.scheme == "https" or self.a_urlp.scheme == "http":    # check URL scheme specifier
                     logging.info ( f"%s - Depth: 1 / Pure Remote URL found!" % cmi_debug )
@@ -420,7 +420,7 @@ class yfnews_reader:
                     "type" : ml_atype,
                     "thint" : thint,
                     "uhint" : uhint,
-                    "url" : self.a_urlp
+                    "url" : self.article_url
             		}
                 self.ml_ingest.update({self.nlp_x : nd})
 
