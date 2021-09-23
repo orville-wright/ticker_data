@@ -62,12 +62,12 @@ class yfnews_reader:
 
 
     def __init__(self, yti, symbol, global_args):
-        cmi_debug = __name__+"::"+self.__init__.__name__
+        self.yti = yti
+        cmi_debug = __name__+"::"+self.__init__.__name__+".#"+str(self.yti)
         logging.info('%s - INIT' % cmi_debug )
         # init empty DataFrame with preset colum names
         self.args = global_args
         self.symbol = symbol
-        self.yti = yti
         self.nlp_x = 0
         self.cycle = 1
         self.js_session = HTMLSession()                        # init JAVAScript processor early
