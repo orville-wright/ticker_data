@@ -402,7 +402,7 @@ def main():
                 9: 'Cannot decide page',
                 10: 'Article URL mangled'
                 }
-        logging.info ( f"%s - hint code recieved: {tc}" % cmi_debug )
+        logging.info ( f"%s - hint code recieved: {r_thint}" % cmi_debug )
         tc_descr = tcode.get(r_thint)
         if r_uhint == 0: print ( f"Locality:      Local/Remote stub - ", end="" )
         if r_uhint == 1: print ( f"Locality:      local article - ", end="" )
