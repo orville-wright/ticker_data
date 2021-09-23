@@ -350,7 +350,7 @@ class yfnews_reader:
                     a_url = f"https://finance.yahoo.com{article_url}"
                     self.a_urlp = urlparse(a_url)
                     #print ( f">>>DEBUG<<< parsed url: {a_urlp}" )
-                    self.url_netloc = a_urlp.netloc      # FQDN
+                    self.url_netloc = self.a_urlp.netloc      # FQDN
                     logging.info( f'%s - >>>DEBUG<<< url_netloc.#1 {self.a_urlp.netloc}' % (cmi_debug) )
                     logging.info( f'%s - >>>DEBUG<<< url.#1 {self.a_urlp}' % (cmi_debug) )
                     pure_url = 0                    # locally hosted entity
