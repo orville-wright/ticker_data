@@ -419,7 +419,7 @@ class yfnews_reader:
 
                 # build NLP candidate dict for deeper pre-NLP article analysis in Level 1
                 # ONLY insert type 0, 1 articels as NLP candidates. Bulk injected ads are excluded (pointless)
-                nd = { \
+                nd = {
                     "symbol" : symbol,
                     "urlhash" : aurl_hash,
                     "type" : ml_atype,
@@ -464,6 +464,21 @@ class yfnews_reader:
         5. other
         We must test each persona candidate article
         """
+
+        def update_ml_ingest(self, rem_url):
+            """ helper method to update ml_ingest{} with extra data """
+            nd = {
+                "symbol" : symbol,
+                "urlhash" : aurl_hash,
+                "type" : ml_atype,
+                "thint" : thint,
+                "uhint" : uhint,
+                "url" : self.a_urlp.scheme+"://"+self.a_urlp.netloc+self.a_urlp.path
+        		}
+            self.ml_ingest.update({self.nlp_x : nd})
+            return
+
+
         # data elements extracted & computed
         # Authour, Date posted, Time posted, Age of article
         cmi_debug = __name__+"::"+self.get_locality.__name__+".#"+str(self.yti)
@@ -485,24 +500,32 @@ class yfnews_reader:
             rem_news = nsoup.find(attrs={"class": "caas-readmore"})             # stub news article, remotely hosted
             local_news = nsoup.find(attrs={"class": "caas-body"})               # full news article, locally hosted
             local_story = nsoup.find(attrs={"class": "caas-body-wrapper"})      # boring options trader bland article type
+
             #if type(rem_news) != type(None):               # page has valid structure
             logging.info( f"%s - Data row: {data_row}" % cmi_debug )
             if uhint == 0 or uhint == 1:                    # Local-remote stub or Local-local article
                 logging.info ( f"%s - Depth: 2 / Read Local-remote stub / u: {uhint} t: {thint}" % cmi_debug )
+                logging.info ( f"%s - Depth: 2 / Raw HTML data: {rem_news}" % cmi_debug )
                 if rem_news.find('a'):                     # BAD, no <a> zone in page or article is a REAL remote URL already
-                    rem_url = rem_news.a.get("href")       # a remotely hosted news article. Whats its real URL?
-                    logging.info ( f"%s - Depth: 2 / Good <a> / Remote-stub NEWS @: {rem_url}" % cmi_debug )
-                    # write the thint now
-                    logging.info ( f"%s - Depth: 2 / confidence level 0 / 1.0 " % cmi_debug )
-                    return uhint, 1.0, rem_url                 # 100% confidence that articel is REMOTE
-                elif rem_news.text == "Story continues":   # local articles have a [story continues...] button
-                    logging.info ( f"%s - Depth: 2 / NO <a> / Good-stub [story continues...]" % cmi_debug )
-                    logging.info ( f"%s - Depth: 2 / confidence level {uhint} / 0.0 " % cmi_debug )
-                    return uhint, 0.0, self.this_article_url      # REAL news
+                    rem_url = rem_news.a.get("href")
+                    # remotely hosted news article. with a real external URL, Also has [Continue reading] button TEXT
+                    logging.info ( f"%s - Depth: 2 / Good <a> Remote-stub / News article @: {rem_url}" % cmi_debug )
+                    logging.info ( f"%s - Depth: 2 / Insert ext url into ml_ingest" % cmi_debug )
+                    self.ml_ingest[id][exturl] = rem_url        # insert the real external url into ml_ingest
+                    return uhint, thint, rem_url
+                    logging.info ( f"%s - Depth: 2 / NLP candidate is ready" % cmi_debug )
+                    return uhint, thint, rem_url                 # 100% confidence that articel is REMOTE
+                    #
+                elif rem_news.text == "Story continues":         # local articles have a [story continues...] button
+                    logging.info ( f"%s - Depth: 2 / Good-stub founr [story continues...]" % cmi_debug )
+                    logging.info ( f"%s - Depth: 2 / confidence level / u: {uhint} t: {thint}" % cmi_debug )
+                    return uhint, thint, self.this_article_url      # REAL local news
+                    #
                 elif local_story.button.text == "Read full article":    # test to make 100% sure its a low quality story
                     logging.info ( f"%s - Depth: 2 / Basic-stub [curated story]" % cmi_debug )
-                    logging.info ( f"%s - Depth: 2 / confidence level {uhint} / 2.0 " % cmi_debug )
-                    return uhint, 3.0, self.this_article_url              # Curated Report
+                    logging.info ( f"%s - Depth: 2 / confidence level / u: {uhint} t: {thint}" % cmi_debug )
+                    return uhint, thint, self.this_article_url              # Curated Report
+                    #
                 else:
                     logging.info ( f"%s - Depth: 2 / NO <a> / Simple-stub [OP-ED]" % cmi_debug )
                     logging.info ( f"%s - Depth: 2 / confidence level {uhint} / 2.0 " % cmi_debug )
