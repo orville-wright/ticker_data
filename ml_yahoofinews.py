@@ -477,9 +477,9 @@ class yfnews_reader:
         self.this_article_url = url
         symbol = symbol.upper()
         logging.info( f'%s - validate fake news article stub/page for: {symbol}' % (cmi_debug) )
-        logging.info( f'%s - get() stub/page at URL: {this_article_url} ' % cmi_debug )
+        logging.info( f'%s - get() stub/page at URL: {self.this_article_url} ' % cmi_debug )
         with requests.Session() as s:
-            nr = s.get( this_article_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
+            nr = s.get( self.this_article_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
             nsoup = BeautifulSoup(nr.text, 'html.parser')
             logging.info( '%s - Stub/page has been scraped...' % cmi_debug )
             rem_news = nsoup.find(attrs={"class": "caas-readmore"})             # stub news article, remotely hosted
