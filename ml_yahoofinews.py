@@ -161,7 +161,7 @@ class yfnews_reader:
         """
 
         cmi_debug = __name__+"::"+self.form_url_endpoint.__name__+".#"+str(self.yti)
-        logging.info( f'%s - form URL endpoint for: {symbol}' % cmi_debug )
+        logging.info( f"%s - form URL endpoint for: {symbol}" % cmi_debug )
         self.yfqnews_url = 'https://finance.yahoo.com' + self.path    # use global accessor (so all paths are consistent)
         logging.info( f'%s - API endpoint URL: {self.yfqnews_url}" )
         self.yfqnews_url = self.yfqnews_url
