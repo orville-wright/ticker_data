@@ -509,7 +509,7 @@ class yfnews_reader:
             # locality with confidence, type with confidence, rem_url of the real/physical news article
             print ( f">>DEBUG<< data row: {data_row}" )
             print ( f">>DEBUG<< URL hint: {uhint} / Page Type hint: {thint}" )
-            if uhint == 0 or uhint == 1:
+            if uhint == 0 or uhint == 1.0:
                 print ( f">>DEBUG<< URL hint: {uhint} / Page Type hint: {thint}" )
                 if type(rem_news) != type(None):               # page has valid structure
                     logging.info ( f"%s - Depth: 2 / Stub-page is valid..." % cmi_debug )
