@@ -420,7 +420,7 @@ class yfnews_reader:
                     "type" : ml_atype,
                     "thint" : thint,
                     "uhint" : uhint,
-                    "url" : article_url,
+                    "url" : self.a_urlp
             		}
                 self.ml_ingest.update({self.nlp_x : nd})
 
