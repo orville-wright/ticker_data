@@ -55,7 +55,7 @@ parser.add_argument('-x','--xray', help='dump detailed debug data structures', a
 # Threading globals
 extract_done = threading.Event()
 yti = 1
-uh = url_hinter(1)
+uh = url_hinter(1, args)
 
 #######################################################################
 # Global method for __main__

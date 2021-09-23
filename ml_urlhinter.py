@@ -26,10 +26,10 @@ class url_hinter:
     hcycle = 0              # method call  counter
     args = []               # class dict to hold global args being passed in from main() methods
 
-    def __init__(self, yti):
+    def __init__(self, yti, global_args):
         cmi_debug = __name__+"::"+self.__init__.__name__+".#"+str(self.yti)
-        logging.info('%s - INIT' % cmi_debug )
-        #self.args = global_args    # Only set once per INIT. all methods are set globally
+        logging.info('%s - INIT<<<<<<<<<<<<<' % cmi_debug )
+        self.args = global_args
         self.yti = yti
         return
 
