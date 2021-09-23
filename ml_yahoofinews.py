@@ -465,15 +465,16 @@ class yfnews_reader:
         We must test each persona candidate article
         """
 
-        def update_ml_ingest(self, rem_url):
+        def update_ml_ingest(self, sym, hsh, typ, tht, uht, url, xurl):
             """ helper method to update ml_ingest{} with extra data """
             nd = {
                 "symbol" : symbol,
-                "urlhash" : aurl_hash,
-                "type" : ml_atype,
-                "thint" : thint,
-                "uhint" : uhint,
-                "url" : self.a_urlp.scheme+"://"+self.a_urlp.netloc+self.a_urlp.path
+                "urlhash" : hash,
+                "type" : typ,
+                "thint" : tht,
+                "uhint" : uht,
+                "url" : url,
+                "xturl" : xurl
         		}
             self.ml_ingest.update({self.nlp_x : nd})
             return
@@ -505,13 +506,15 @@ class yfnews_reader:
             logging.info( f"%s - Data row: {data_row}" % cmi_debug )
             if uhint == 0 or uhint == 1:                    # Local-remote stub or Local-local article
                 logging.info ( f"%s - Depth: 2 / Read Local-remote stub / u: {uhint} t: {thint}" % cmi_debug )
-                logging.info ( f"%s - Depth: 2 / Raw HTML data: {rem_news}" % cmi_debug )
+                #logging.info ( f"%s - Depth: 2 / Raw HTML data: {rem_news}" % cmi_debug )
                 if rem_news.find('a'):                     # BAD, no <a> zone in page or article is a REAL remote URL already
                     rem_url = rem_news.a.get("href")
                     # remotely hosted news article. with a real external URL, Also has [Continue reading] button TEXT
                     logging.info ( f"%s - Depth: 2 / Good <a> Remote-stub / News article @: {rem_url}" % cmi_debug )
                     logging.info ( f"%s - Depth: 2 / Insert ext url into ml_ingest" % cmi_debug )
-                    self.ml_ingest[id][exturl] = rem_url        # insert the real external url into ml_ingest
+                    ext_url_item = {'exturl': rem_url }
+                    self.data_row.update(ext_url_item )          # prepare to insert the external url into ml_ingest via an AUGMENTED data_row
+                    self.ml_ingest[id] = self.data_row           # now PERMENTALY update the ml_ingest record @ index = id
                     return uhint, thint, rem_url
                     logging.info ( f"%s - Depth: 2 / NLP candidate is ready" % cmi_debug )
                     return uhint, thint, rem_url                 # 100% confidence that articel is REMOTE
