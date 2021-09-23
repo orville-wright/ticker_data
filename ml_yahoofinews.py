@@ -336,14 +336,14 @@ class yfnews_reader:
             if a_counter > 0 and a_counter <= 3:
                 logging.info( f'%s - <li> count: {a_counter}' % (cmi_debug) )                  # good new zrticle found
                 news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
-                article_url = li_tag.a.get("href")
+                article_url = li_tag.a.get("href")                              # url is path only in the page source, so needs careful treatment
                 self.a_urlp = urlparse(article_url)
                 if self.a_urlp.scheme == "https" or self.a_urlp.scheme == "http":    # check URL scheme specifier
                     logging.info ( f"%s - Depth: 1 / Pure Remote URL found!" % cmi_debug )
                     pure_url = 1    # explicit pure URL to remote entity
                     uhint = 3       # we can definatley set this here ONLY for this item type
-                    self.url_netloc = a_urlp.netloc
-                    logging.info( f'%s - >>>DEBUG<<< pure url_netloc {url_netloc}' % (cmi_debug) )
+                    self.url_netloc = self.a_urlp.netloc
+                    logging.info( f'%s - pure url_netloc {self.url_netloc}' % (cmi_debug) )
                     ml_atype = 0
                     thint = 1.1
                 else:
@@ -351,27 +351,26 @@ class yfnews_reader:
                     self.a_urlp = urlparse(a_url)
                     #print ( f">>>DEBUG<<< parsed url: {a_urlp}" )
                     self.url_netloc = self.a_urlp.netloc      # FQDN
-                    logging.info( f'%s - >>>DEBUG<<< url_netloc.#1 {self.a_urlp.netloc}' % (cmi_debug) )
-                    logging.info( f'%s - >>>DEBUG<<< url.#1 {self.a_urlp}' % (cmi_debug) )
+                    logging.info( f'%s - url_netloc.#1 {self.a_urlp.netloc}' % (cmi_debug) )
                     pure_url = 0                    # locally hosted entity
                     ml_atype = 0                    # Real news
-                    uhint, uhdescr = self.uh.uhinter(hcycle, a_urlp)
+                    uhint, uhdescr = self.uh.uhinter(hcycle, self.a_urlp)
                     hcycle += 1
                     # assume hosted at https://finaince.yahoo.com becasue it has no leading FQDN scheme (i.e. http/https)
 
                 article_headline = li_tag.a.text        # taken from YFN news feed thumbnail, not actual article page
                 inf_type = "Real news"
                 self.url_netloc = urlparse(article_url).netloc
-                logging.info( f'%s - >>>DEBUG<<< url_netloc.#2 {url_netloc}' % (cmi_debug) )
-                logging.info( f'%s - >>>DEBUG<<< url.#2 {a_urlp}' % (cmi_debug) )
+                logging.info( f'%s - >>>DEBUG<<< url_netloc.#2 {self.url_netloc}' % (cmi_debug) )
+                logging.info( f'%s - >>>DEBUG<<< url.#2 {self.a_urlp}' % (cmi_debug) )
                 #test_url = urlparse(article_url)
                 #uhint, uhdescr = self.uh.uhinter(hcycle, test_url)
                 #hcycle += 1
 
                 if not li_tag.find('p'):
                     self.url_netloc = urlparse(article_url).netloc
-                    logging.info( f'%s - >>>DEBUG<<< url_netloc.#3 {url_netloc}' % (cmi_debug) )
-                    logging.info( f'%s - >>>DEBUG<<< url.#3 {a_urlp}' % (cmi_debug) )
+                    logging.info( f'%s - >>>DEBUG<<< url_netloc.#3 {self.url_netloc}' % (cmi_debug) )
+                    logging.info( f'%s - >>>DEBUG<<< url.#3 {self.a_urlp}' % (cmi_debug) )
                     inf_type = "Micro Advertisment"
                     article_teaser = "None"
                     ml_atype = 1
@@ -380,15 +379,15 @@ class yfnews_reader:
                 elif news_agency == "Yahoo Finance Video" and uhint == 2:
                     thint = 4.0
                     self.url_netloc = urlparse(article_url).netloc
-                    logging.info( f'%s - >>>DEBUG<<< url_netloc.#4 {url_netloc}' % (cmi_debug) )
-                    logging.info( f'%s - >>>DEBUG<<< url.#4 {a_urlp}' % (cmi_debug) )
+                    logging.info( f'%s - >>>DEBUG<<< url_netloc.#4 {self.url_netloc}' % (cmi_debug) )
+                    logging.info( f'%s - >>>DEBUG<<< url.#4 {self.a_urlp}' % (cmi_debug) )
                     ml_atype = 0
                 else:
                     # url_netloc = "finance.yahoo.com 2"
                     # url_netloc = test_url.netloc
                     self.url_netloc = urlparse(article_url).netloc
-                    logging.info( f'%s - >>>DEBUG<<< url_netloc.#5 {url_netloc}' % (cmi_debug) )
-                    logging.info( f'%s - >>>DEBUG<<< url.#5 {a_urlp}' % (cmi_debug) )
+                    logging.info( f'%s - >>>DEBUG<<< url_netloc.#5 {self.url_netloc}' % (cmi_debug) )
+                    logging.info( f'%s - >>>DEBUG<<< url.#5 {self.a_urlp}' % (cmi_debug) )
                     a_teaser = li_tag.p.text
                     article_teaser = f"{a_teaser:.170}" + " [...]"
                     ml_atype = 0
