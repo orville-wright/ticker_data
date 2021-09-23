@@ -465,27 +465,13 @@ class yfnews_reader:
         We must test each persona candidate article
         """
 
-        def update_ml_ingest(self, sym, hsh, typ, tht, uht, url, xurl):
-            """ helper method to update ml_ingest{} with extra data """
-            nd = {
-                "symbol" : symbol,
-                "urlhash" : hash,
-                "type" : typ,
-                "thint" : tht,
-                "uhint" : uht,
-                "url" : url,
-                "xturl" : xurl
-        		}
-            self.ml_ingest.update({self.nlp_x : nd})
-            return
-
-
         # data elements extracted & computed
         # Authour, Date posted, Time posted, Age of article
         cmi_debug = __name__+"::"+self.get_locality.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         right_now = date.today()
         id = item_idx
+        data_row = data_row
         symbol = data_row['symbol']
         type = data_row['type']
         thint = data_row['thint']
@@ -513,8 +499,8 @@ class yfnews_reader:
                     logging.info ( f"%s - Depth: 2 / Good <a> Remote-stub / News article @: {rem_url}" % cmi_debug )
                     logging.info ( f"%s - Depth: 2 / Insert ext url into ml_ingest" % cmi_debug )
                     ext_url_item = {'exturl': rem_url }
-                    self.data_row.update(ext_url_item )          # prepare to insert the external url into ml_ingest via an AUGMENTED data_row
-                    self.ml_ingest[id] = self.data_row           # now PERMENTALY update the ml_ingest record @ index = id
+                    data_row.update(ext_url_item )          # prepare to insert the external url into ml_ingest via an AUGMENTED data_row
+                    self.ml_ingest[id] = data_row           # now PERMENTALY update the ml_ingest record @ index = id
                     return uhint, thint, rem_url
                     logging.info ( f"%s - Depth: 2 / NLP candidate is ready" % cmi_debug )
                     return uhint, thint, rem_url                 # 100% confidence that articel is REMOTE
