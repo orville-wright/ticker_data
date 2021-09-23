@@ -360,7 +360,8 @@ class yfnews_reader:
 
                 article_headline = li_tag.a.text        # taken from YFN news feed thumbnail, not actual article page
                 inf_type = "Real news"
-                self.url_netloc = urlparse(article_url).netloc
+                #self.url_netloc = urlparse(article_url).netloc
+                self.url_netloc = self.a_urlp.netloc
                 logging.info( f'%s - >>>DEBUG<<< url_netloc.#2 {self.url_netloc}' % (cmi_debug) )
                 logging.info( f'%s - >>>DEBUG<<< url.#2 {self.a_urlp}' % (cmi_debug) )
                 #test_url = urlparse(article_url)
