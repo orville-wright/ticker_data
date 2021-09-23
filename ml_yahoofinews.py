@@ -49,6 +49,7 @@ class yfnews_reader:
     uh = ""                 # global url hinter class
     url_netloc = ""
     a_urlp = ""
+    self.article_url = "https://www.defaul_instance_url.com"
 
                             # yahoo.com header/cookie hack
     yahoo_headers = { \
@@ -320,7 +321,7 @@ class yfnews_reader:
         pure_url = 9                                         # saftey preset
         uhint = 9                                            # saftey preset
         thint = 99.9                                         # saftey preset
-        article_url = ""
+        article_url = "https://www.error_dummy_url.com"
         #a_urlp = ""
         #url_netloc = ""
         ml_atype = 0
