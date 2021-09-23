@@ -515,7 +515,7 @@ class yfnews_reader:
             #print ( f">>DEBUG<< type rem_news: {type(rem_news)}" )
 
             #if type(rem_news) != type(None):               # page has valid structure
-            if uhint >= 1:
+            if uhint == 0 or uhint == 1:
                 logging.info ( f"%s - Depth: 2 / Stub-page is valid / u: {uhint}" % cmi_debug )
                 if rem_news.find('a'):                     # BAD, no <a> zone in page or article is a REAL remote URL already
                     rem_url = rem_news.a.get("href")       # a remotely hosted news article. Whats its real URL?
