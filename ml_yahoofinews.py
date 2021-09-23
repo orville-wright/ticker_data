@@ -50,6 +50,7 @@ class yfnews_reader:
     url_netloc = ""
     a_urlp = ""
     article_url = "https://www.defaul_instance_url.com"
+    this_article_url = "https://www.default_get_locality_url.com"
 
                             # yahoo.com header/cookie hack
     yahoo_headers = { \
