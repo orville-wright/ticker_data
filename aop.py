@@ -388,7 +388,7 @@ def main():
         NOTE: Locality codes are inferred by decoding the page HTML structure
               They do not match/align with the URL Hint code. Since that could be a 'fake out'
         """
-        cmi_debug = __name__+"::"+"article_header().#1"
+        cmi_debug = __name__+"::"+"article_header().#1    "
         tcode = { 0: 'Real news',
                 1: 'Real news',
                 2: 'OP-Ed article',
@@ -401,7 +401,7 @@ def main():
                 9: 'Cannot decide page',
                 10: 'Article URL mangled'
                 }
-        logging.info ( f"%s - hint code recieved {tc}" % cmi_debug )
+        logging.info ( f"%s - hint code recieved: {tc}" % cmi_debug )
         tc_descr = tcode.get(tc)
         if lc == 0: print ( f"Locality:      Local / {lc}.{tc} / {tc_descr}" )
         if lc == 1: print ( f"Locality:      Remote / {lc}.{tc}  / {tc_descr}" )
@@ -427,35 +427,31 @@ def main():
               Also, false positive articles that may-not have any news relating to this symbol. (News agency's are sleazy!).
         """
         print ( " ")
-        cmi_debug = __name__+"::"+"nlp_final_prep().#1 "
+        cmi_debug = __name__+"::"+"nlp_final_prep().#1  "
         for sn_idx, sn_row in yfn.ml_ingest.items():    # cycle thru the NLP candidate list
             print( f"News article:  {sn_idx} / ", end="" )
             if sn_row['type'] == 0:                       # REAL news, inferred from Depth 0
                 t_url = urlparse(sn_row['url'])
                 uhint, uhdescr = uh.uhinter(1, t_url)
-                #url_hint = url_hinter(t_url)              # >>DELETE ME: !! redundament. already DONE get HINT from url found at depth 0
-                tag_hint = (sn_row['thint'])              # the hint we guess at while interrogating page <tags>
+                tag_hint = (sn_row['thint'])              # the hint we guessed at while interrogating page <tags>
                 print ( f"Real news = NLP candidate" )    # all type 0 are assumed to be REAL news
-                logging.info ( f"%s - T1: get_locality > @hint: {uhint}/{uhdescr}" % cmi_debug )
-                # l_conf, t_conf, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'], hint)    # go deep, with HINT
+                logging.info ( f"%s - get_locality t:0 / @hint: {uhint}/{uhdescr}" % cmi_debug )
                 l_conf, t_conf, rem_url = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
                 article_header(l_conf, t_conf, rem_url, sn_row['url'] )
             elif sn_row['type'] == 1:                     # possibly not news? (Micro Ad)
                 t_url = urlparse(sn_row['url'])
                 uhint, uhdescr = uh.uhinter(2, t_url)
-                #url_hint = url_hinter(t_url)             #  >>DELETE ME: !! redundament. already DONE get HINT from url found at depth 0
                 tag_hint = (sn_row['thint'])             # the hint we guess at while interrogating page <tags>
                 if uhint >= 3:
                     print ( f"Micro ad > NLP candidate" )
-                    logging.info ( f"%s - T2: get_locality > @hint {uhint}/{uhdescr}" % cmi_debug )
-                    # l_conf, t_conf, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'], uhint)    # go deep now!
+                    logging.info ( f"%s - get_locality t:1 / @hint {uhint}/{uhdescr}" % cmi_debug )
                     l_conf, t_conf, rem_url = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
                     article_header(l_conf, t_conf, rem_url, sn_row['url'] )
                 else:
                     article_header(l_conf, t_conf, rem_url, sn_row['url'] )
                     print ( f"Unknown Micro Ad URL > skipping..." )
             else:
-                print ( f"Unknown article type > Error..." )
+                print ( f"ERROR Unknown article type!!" )
 
         return
 

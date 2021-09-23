@@ -477,45 +477,18 @@ class yfnews_reader:
         url = data_row['url']
         self.this_article_url = url
         symbol = symbol.upper()
-        logging.info( f'%s - validate fake news article stub/page for: {symbol}' % (cmi_debug) )
-        logging.info( f'%s - get() stub/page at URL: {self.this_article_url} ' % cmi_debug )
+        logging.info( f'%s - Attempt to read url: {self.this_article_url} ' % cmi_debug )
         with requests.Session() as s:
             nr = s.get( self.this_article_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
             nsoup = BeautifulSoup(nr.text, 'html.parser')
-            logging.info( '%s - Stub/page has been scraped...' % cmi_debug )
+            logging.info( '%s - setting BS4 <tag> zones for eval...' % cmi_debug )
             rem_news = nsoup.find(attrs={"class": "caas-readmore"})             # stub news article, remotely hosted
             local_news = nsoup.find(attrs={"class": "caas-body"})               # full news article, locally hosted
             local_story = nsoup.find(attrs={"class": "caas-body-wrapper"})      # boring options trader bland article type
-
-            # page TYPE logic testing...
-            # we test against the folling HINT codes after analyzing deeply the page structure.
-            # 0 = Remote Stub
-            # 1 = locally TXT articels on yahoo.com
-            # 2 = locally video article on yahoo.com
-            # 3 = Remote article explcitly linked directly to remote partner site
-            #
-            # we send back explicit type codes to indicate our confidence level in the article type
-            # 0 = Good news article (remote not on yahoo.com)
-            # 1 = Good news article (local, on yahoo.com)
-            # 2 = OP-ED article
-            # 3 = Curated report
-            # 4 = Video Story
-            # 5 = Micro Ad
-            # 6 = Bulk Injected Ad
-            # 7, 8 = (reserved and unknonw)
-            # 9 = ERROR / cannot decode page structure
-            # 10 = ERROR / Article URL is mangled
-            #
-            # return codes:
-            # locality with confidence, type with confidence, rem_url of the real/physical news article
-            #print ( f">>DEBUG<< data row: {data_row}" )
-            #print ( f">>DEBUG<< URL hint: {uhint} / Page Type hint: {thint}" )
-            #if uhint == 0 or uhint == 1.0:
-            #    print ( f">>DEBUG<< URL hint: {uhint} / Page Type hint: {thint}" )
-
             #if type(rem_news) != type(None):               # page has valid structure
-            if uhint == 0 or uhint == 1:
-                logging.info ( f"%s - Depth: 2 / Stub-page is valid / u: {uhint} t: {thint}" % cmi_debug )
+            logging.info( f"%s - Data row: {data_row}" )
+            if uhint == 0 or uhint == 1:                    # Local-remote stub or Local-local article
+                logging.info ( f"%s - Depth: 2 / Read Local-remote stub / u: {uhint} t: {thint}" % cmi_debug )
                 if rem_news.find('a'):                     # BAD, no <a> zone in page or article is a REAL remote URL already
                     rem_url = rem_news.a.get("href")       # a remotely hosted news article. Whats its real URL?
                     logging.info ( f"%s - Depth: 2 / Good <a> / Remote-stub NEWS @: {rem_url}" % cmi_debug )
@@ -659,5 +632,5 @@ class yfnews_reader:
         logging.info('%s - IN' % cmi_debug )
         print ( "================= ML Ingested Depth 1 NLP candidates ==================" )
         for k, d in self.ml_ingest.items():
-            print ( f"{k:03} {d['symbol']:.5} / {d['urlhash']} Hints: [T:{d['type']} H:{d['thint']} U:{d['uhint']}] {d['url']}" )
+            print ( f"{k:03} {d['symbol']:.5} / {d['urlhash']} Hints: [t:{d['type']} U:{d['uhint']} h:{d['thint']}] {d['url']}" )
         return
