@@ -49,7 +49,7 @@ class yfnews_reader:
     uh = ""                 # global url hinter class
     url_netloc = ""
     a_urlp = ""
-    self.article_url = "https://www.defaul_instance_url.com"
+    article_url = "https://www.defaul_instance_url.com"
 
                             # yahoo.com header/cookie hack
     yahoo_headers = { \
@@ -321,7 +321,7 @@ class yfnews_reader:
         pure_url = 9                                         # saftey preset
         uhint = 9                                            # saftey preset
         thint = 99.9                                         # saftey preset
-        article_url = "https://www.error_dummy_url.com"
+        #article_url = "https://www.error_dummy_url.com"
         #a_urlp = ""
         #url_netloc = ""
         ml_atype = 0
@@ -338,7 +338,7 @@ class yfnews_reader:
                 logging.info( f'%s - <li> count: {a_counter}' % (cmi_debug) )                  # good new zrticle found
                 news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
                 self.article_url = li_tag.a.get("href")                              # url is path only in the page source, so needs careful treatment
-                self.a_urlp = urlparse(article_url)
+                self.a_urlp = urlparse(self.article_url)
                 if self.a_urlp.scheme == "https" or self.a_urlp.scheme == "http":    # check URL scheme specifier
                     logging.info ( f"%s - Depth: 1 / Pure Remote URL found!" % cmi_debug )
                     pure_url = 1    # explicit pure URL to remote entity
@@ -348,8 +348,8 @@ class yfnews_reader:
                     ml_atype = 0
                     thint = 1.1
                 else:
-                    a_url = f"https://finance.yahoo.com{article_url}"
-                    self.a_urlp = urlparse(a_url)
+                    self.a_url = f"https://finance.yahoo.com{self.article_url}"
+                    self.a_urlp = urlparse(self.a_url)
                     #print ( f">>>DEBUG<<< parsed url: {a_urlp}" )
                     self.url_netloc = self.a_urlp.netloc      # FQDN
                     logging.info( f'%s - url_netloc.#1 {self.a_urlp.netloc}' % (cmi_debug) )
@@ -396,7 +396,7 @@ class yfnews_reader:
                 print ( f"News item:        {self.cycle}: {inf_type} / Confidence Indicators t:{ml_atype} / u:{uhint} / h:{thint}" )
                 print ( f"News agency:      {news_agency} / ", end="" )
 
-                if pure_url == 0: print ( f"Local-Remote stub @ [ {self.url_netloc} ]" )
+                #if pure_url == 0: print ( f"Local-Remote stub @ [ {self.url_netloc} ]" )
                 if pure_url == 1: print ( f"Remote-Abs1 @ [ {self.url_netloc} ]" )
                 if pure_url == 1 and uhint == 3: print ( f"Remote-Abs2 @ [ {self.url_netloc} ]" )
                 if uhint == 2 and thint == 4.0: print ( f"Local video @ [ {self.url_netloc} ]" )
@@ -404,12 +404,13 @@ class yfnews_reader:
                 if uhint == 9: print ( f"Not yet known @ {self.url_netloc}" )
                 if thint == 5.0: print ( f"Local Micro ad @ [ {self.url_netloc} ]" )
                 if thint == 5.1: print ( f"Remote-abs Micro ad @ [ {self.url_netloc} ]" )
+                if thint == 0.0: print ( f"Local-remote stub @ [ {self.url_netloc} ]" )
 
-                print ( f"Article URL:      {article_url}" )
+                print ( f"Article URL:      {self.article_url}" )
                 print ( f"Article headline: {article_headline}" )
                 print ( f"Article teaser:   {article_teaser}" )
                 self.ml_brief.append(article_teaser)           # add Article teaser long TXT into ML pre count vectorizer matrix
-                auh = hashlib.sha256(article_url.encode())
+                auh = hashlib.sha256(self.article_url.encode())
                 aurl_hash = auh.hexdigest()
                 print ( f"Unique url hash:  {aurl_hash}" )
 
@@ -421,7 +422,7 @@ class yfnews_reader:
                     "type" : ml_atype,
                     "thint" : thint,
                     "uhint" : uhint,
-                    "url" : self.article_url
+                    "url" : self.a_urlp.scheme+"://"+self.a_urlp.netloc+self.a_urlp.path
             		}
                 self.ml_ingest.update({self.nlp_x : nd})
 
