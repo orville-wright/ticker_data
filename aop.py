@@ -445,7 +445,7 @@ def main():
                 uhint, uhdescr = uh.uhinter(2, t_url)
                 #url_hint = url_hinter(t_url)             #  >>DELETE ME: !! redundament. already DONE get HINT from url found at depth 0
                 tag_hint = (sn_row['thint'])             # the hint we guess at while interrogating page <tags>
-                if url_hint >= 3:
+                if uhint >= 3:
                     print ( f"Micro ad > NLP candidate" )
                     logging.info ( f"%s - T2: get_locality > @hint {uhint}/{uhdescr}" % cmi_debug )
                     # l_conf, t_conf, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'], uhint)    # go deep now!
