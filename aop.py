@@ -429,13 +429,13 @@ def main():
         print ( " ")
         cmi_debug = __name__+"::"+"nlp_final_prep().#1 "
         for sn_idx, sn_row in yfn.ml_ingest.items():    # cycle thru the NLP candidate list
-            print( f"News article:  {sn_idx} / eval... ", end="" )
+            print( f"News article:  {sn_idx} / ", end="" )
             if sn_row['type'] == 0:                       # REAL news, inferred from Depth 0
                 t_url = urlparse(sn_row['url'])
                 uhint, uhdescr = uh.uhinter(1, t_url)
                 #url_hint = url_hinter(t_url)              # >>DELETE ME: !! redundament. already DONE get HINT from url found at depth 0
                 tag_hint = (sn_row['thint'])              # the hint we guess at while interrogating page <tags>
-                print ( f"Real news > NLP candidate" )    # all type 0 are assumed to be REAL news
+                print ( f"Real news = NLP candidate" )    # all type 0 are assumed to be REAL news
                 logging.info ( f"%s - T1: get_locality > @hint: {uhint}/{uhdescr}" % cmi_debug )
                 # l_conf, t_conf, rem_url = yfn.get_locality(sn_idx, sn_row['symbol'], sn_row['url'], hint)    # go deep, with HINT
                 l_conf, t_conf, rem_url = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
