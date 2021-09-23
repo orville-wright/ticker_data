@@ -412,7 +412,7 @@ def main():
         if r_uhint == 10: print ( f"Locality:      Unknown state - ", end="" )
         print ( f"- u:{r_uhint} t:{r_thint} / {tc_descr}" )
         print ( f"News feed URL: {orig_url}" )
-        print ( f"Real dest URL: {rr_xturlu}" )
+        print ( f"Real dest URL: {r_xturl}" )
         print ( f"====================== Depth 2 ======================" )
         return
 
@@ -440,7 +440,7 @@ def main():
                 logging.info ( f"%s - #1 get_locality hints: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
                 r_uhint, r_thint, r_xturl = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
                 yfn.dump_ml_ingest()
-                article_header(l_conf, t_conf, rem_url, sn_row['url'] )
+                article_header(r_uhint, r_thint, r_xturl, sn_row['url'] )
             elif sn_row['type'] == 1:                     # possibly not news? (Micro Ad)
                 t_url = urlparse(sn_row['url'])
                 uhint, uhdescr = uh.uhinter(2, t_url)
@@ -448,10 +448,10 @@ def main():
                 if uhint >= 3:
                     print ( f"Micro ad > NLP candidate" )
                     logging.info ( f"%s - #2 get_locality hints: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
-                    l_conf, t_conf, rem_url = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
-                    article_header(l_conf, t_conf, rem_url, sn_row['url'] )
+                    r_uhint, r_thint, r_xturl = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
+                    article_header(r_uhint, r_thint, r_xturl, sn_row['url'] )
                 else:
-                    article_header(l_conf, t_conf, rem_url, sn_row['url'] )
+                    article_header(r_uhint, r_thint, r_xturl, sn_row['url'] )
                     print ( f"Unknown Micro Ad URL > skipping..." )
             else:
                 print ( f"ERROR Unknown article type!!" )
