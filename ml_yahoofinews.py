@@ -530,7 +530,7 @@ class yfnews_reader:
                 else:
                     logging.info ( f"%s - Depth: 2 / NO <a> / Simple-stub [OP-ED]" % cmi_debug )
                     logging.info ( f"%s - Depth: 2 / confidence level {uhint} / 2.0 " % cmi_debug )
-                        return uhint, 2.0, this_article_url          # OP-ED story (doesn't have [story continues...] button)
+                    return uhint, 2.0, this_article_url          # OP-ED story (doesn't have [story continues...] button)
 
             if uhint == 2:
                 print ( f">>DEBUG<< URL hint: {uhint} / Page Type hint: {thint}" )
