@@ -474,7 +474,7 @@ class yfnews_reader:
         thint = data_row['thint']
         uhint = data_row['uhint']
         url = data_row['url']
-        this_article_url = url
+        self.this_article_url = url
         symbol = symbol.upper()
         logging.info( f'%s - validate fake news article stub/page for: {symbol}' % (cmi_debug) )
         logging.info( f'%s - get() stub/page at URL: {this_article_url} ' % cmi_debug )
@@ -524,31 +524,31 @@ class yfnews_reader:
                 elif rem_news.text == "Story continues":   # local articles have a [story continues...] button
                     logging.info ( f"%s - Depth: 2 / NO <a> / Good-stub [story continues...]" % cmi_debug )
                     logging.info ( f"%s - Depth: 2 / confidence level {uhint} / 0.0 " % cmi_debug )
-                    return uhint, 0.0, this_article_url      # REAL news
+                    return uhint, 0.0, self.this_article_url      # REAL news
                 elif local_story.button.text == "Read full article":    # test to make 100% sure its a low quality story
                     logging.info ( f"%s - Depth: 2 / Basic-stub [curated story]" % cmi_debug )
                     logging.info ( f"%s - Depth: 2 / confidence level {uhint} / 2.0 " % cmi_debug )
-                    return uhint, 3.0, this_article_url              # Curated Report
+                    return uhint, 3.0, self.this_article_url              # Curated Report
                 else:
                     logging.info ( f"%s - Depth: 2 / NO <a> / Simple-stub [OP-ED]" % cmi_debug )
                     logging.info ( f"%s - Depth: 2 / confidence level {uhint} / 2.0 " % cmi_debug )
-                    return uhint, 2.0, this_article_url          # OP-ED story (doesn't have [story continues...] button)
+                    return uhint, 2.0, self.this_article_url          # OP-ED story (doesn't have [story continues...] button)
             else:
                 logging.info ( f"%s - Depth: 2 / ERROR bad Local page / u: {uhint} t: {thint}" % cmi_debug )
-                return uhint, 10.0, this_article
+                return uhint, 10.0, self.this_article
 
             if uhint == 2:
                 print ( f">>DEBUG<< URL hint: {uhint} / Page Type hint: {thint}" )
                 logging.info ( f"%s - Depth: 2 / NO <a> / Good-stub [Video report]" % cmi_debug )
                 logging.info ( f"%s - Depth: 2 / confidence level 2 / 4.0 " % cmi_debug )
                 # extract some info from the video page and do some stronger testing
-                return uhint, 4.0, this_article_url          # OP-ED story (doesn't have [story continues...] button)
+                return uhint, 4.0, self.this_article_url          # OP-ED story (doesn't have [story continues...] button)
 
             if uhint == 3:
                 print ( f">>DEBUG<< URL hint: {uhint} / Page Type hint: {thint}" )
                 logging.info ( f"%s - Depth: 2 / Explcit Remote article" % cmi_debug )
                 logging.info ( f"%s - Depth: 2 / confidence level 0 / 1.1 " % cmi_debug )
-                return 1, 1.1, this_article_url              # Explicit remote article - can process any details from here
+                return 1, 1.1, self.this_article_url              # Explicit remote article - can process any details from here
 
         logging.info ( f"%s - Depth: 2 / confidence level 10 / 10.0 " % cmi_debug )
         return 10, 10.0, "ERROR_unknown_state!"              # error unknown state
