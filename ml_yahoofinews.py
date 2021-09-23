@@ -381,6 +381,7 @@ class yfnews_reader:
                     thint = 4.0
                     self.url_netloc = self.a_urlp.netloc
                     logging.info( f'%s - url_netloc.#4 {self.url_netloc}' % (cmi_debug) )
+                    self.article_teaser = "FIX-ME check video page for teaser <tag> zone"
                     ml_atype = 0
                 else:
                     # url_netloc = "finance.yahoo.com 2"
