@@ -511,12 +511,10 @@ class yfnews_reader:
             #print ( f">>DEBUG<< URL hint: {uhint} / Page Type hint: {thint}" )
             #if uhint == 0 or uhint == 1.0:
             #    print ( f">>DEBUG<< URL hint: {uhint} / Page Type hint: {thint}" )
-            print ( f">>DEBUG<< rem_news: {rem_news}" )
-            #print ( f">>DEBUG<< type rem_news: {type(rem_news)}" )
 
             #if type(rem_news) != type(None):               # page has valid structure
             if uhint == 0 or uhint == 1:
-                logging.info ( f"%s - Depth: 2 / Stub-page is valid / u: {uhint}" % cmi_debug )
+                logging.info ( f"%s - Depth: 2 / Stub-page is valid / u: {uhint} t: {thint}" % cmi_debug )
                 if rem_news.find('a'):                     # BAD, no <a> zone in page or article is a REAL remote URL already
                     rem_url = rem_news.a.get("href")       # a remotely hosted news article. Whats its real URL?
                     logging.info ( f"%s - Depth: 2 / Good <a> / Remote-stub NEWS @: {rem_url}" % cmi_debug )
