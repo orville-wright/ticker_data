@@ -321,6 +321,7 @@ class yfnews_reader:
         pure_url = 9                                         # saftey preset
         uhint = 9                                            # saftey preset
         thint = 99.9                                         # saftey preset
+        self.article_teaser ="ERROR_unset_teaser"
         #article_url = "https://www.error_dummy_url.com"
         #a_urlp = ""
         #url_netloc = ""
@@ -372,7 +373,7 @@ class yfnews_reader:
                     self.url_netloc = self.a_urlp.netloc
                     logging.info( f'%s - url_netloc.#3 {self.url_netloc}' % (cmi_debug) )
                     inf_type = "Micro Advertisment"
-                    article_teaser = "None"
+                    self.article_teaser = "None"
                     ml_atype = 1
                     if pure_url == 0: thint = 5.0    # local entity
                     if pure_url == 1: thint = 5.1    # remote entity
@@ -387,7 +388,7 @@ class yfnews_reader:
                     self.url_netloc = self.a_urlp.netloc
                     logging.info( f'%s - url_netloc.#5 {self.url_netloc}' % (cmi_debug) )
                     a_teaser = li_tag.p.text
-                    article_teaser = f"{a_teaser:.170}" + " [...]"
+                    self.article_teaser = f"{a_teaser:.170}" + " [...]"
                     ml_atype = 0
                     if pure_url == 0: thint = 0.0
                     if pure_url == 1: thint = 1.0
@@ -408,8 +409,8 @@ class yfnews_reader:
 
                 print ( f"Article URL:      {self.article_url}" )
                 print ( f"Article headline: {article_headline}" )
-                print ( f"Article teaser:   {article_teaser}" )
-                self.ml_brief.append(article_teaser)           # add Article teaser long TXT into ML pre count vectorizer matrix
+                print ( f"Article teaser:   {self.article_teaser}" )
+                self.ml_brief.append(self.article_teaser)           # add Article teaser long TXT into ML pre count vectorizer matrix
                 auh = hashlib.sha256(self.article_url.encode())
                 aurl_hash = auh.hexdigest()
                 print ( f"Unique url hash:  {aurl_hash}" )
