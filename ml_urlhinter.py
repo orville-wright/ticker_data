@@ -49,10 +49,10 @@ class url_hinter:
         cmi_debug = __name__+"::"+self.uhinter.__name__+".eng#"+str(self.yti)+"_cyc#"+str(hcycle)
         logging.info('%s - CALLED' % cmi_debug )
 
-        uhint_code = { 'm': ('Local/remote stub', 0),
+        uhint_code = { 'm': ('Local-remote stub', 0),
                     'news': ('Local article', 1),
-                    'video': ('Local Video', 2),
-                    'rfa': ('Remote external', 3),
+                    'video': ('Local video', 2),
+                    'rfa': ('Remote absolute', 3),
                     'udef': ('Not yet defined', 9),
                     'err': ('Error mangled url', 10)
                     }

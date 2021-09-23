@@ -350,6 +350,7 @@ class yfnews_reader:
 
                 article_headline = li_tag.a.text        # taken from YFN news feed thumbnail, not actual article page
                 inf_type = "Real news"
+                url_netloc = urlparse(article_url).netloc
                 #test_url = urlparse(article_url)
                 #uhint, uhdescr = self.uh.uhinter(hcycle, test_url)
                 #hcycle += 1
@@ -379,12 +380,14 @@ class yfnews_reader:
                 print ( f"News item:        {self.cycle}: {inf_type} / Confidence Indicators t:{ml_atype}, u:{uhint}, t:{thint}" )
                 print ( f"News agency:      {news_agency} / ", end="" )
 
-                if pure_url == 0: print ( f"Remote-stub @ [ {url_netloc} ]" )
-                if pure_url == 1: print ( f"Local-page  @ {url_netloc}" )
-                if pure_url == 1 and uhint == 3: print ( f"Remote-external  @ {url_netloc}" )
-                if uhint == 2 and thint == 4: print ( f"Local video @ {url_netloc}" )
+                if pure_url == 0: print ( f"Local-Remote stub @ [ {url_netloc} ]" )
+                if pure_url == 1: print ( f"Remote-Abs1 @ [ {url_netloc} ]" )
+                if pure_url == 1 and uhint == 3: print ( f"Remote-Abs2 @ [ {url_netloc} ]" )
+                if uhint == 2 and thint == 4.0: print ( f"Local video @ [ {url_netloc} ]" )
                 if pure_url == 9: print ( f"Unknown     @ *bad url*" )
                 if uhint == 9: print ( f"Not yet known @ {url_netloc}" )
+                if thint == 5.0: print ( f"Local Micro ad @ [ {url_netloc} ]" )
+                if thint == 5.1: print ( f"Remote-abs Micro ad @ [ {url_netloc} ]" )
 
                 print ( f"Article URL:      {article_url}" )
                 print ( f"Article headline: {article_headline}" )
