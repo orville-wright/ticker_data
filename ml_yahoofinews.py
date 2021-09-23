@@ -329,12 +329,13 @@ class yfnews_reader:
                 logging.info( f'%s - <li> count: {a_counter}' % (cmi_debug) )                  # good new zrticle found
                 news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
                 article_url = li_tag.a.get("href")
-                test_http_scheme = urlparse(article_url)
-                if test_http_scheme.scheme == "https" or test_http_scheme.scheme == "http":    # check URL scheme specifier
+                a_urlp = urlparse(article_url)
+                if a_urlp.scheme == "https" or a_urlp.scheme == "http":    # check URL scheme specifier
                     logging.info ( f"%s - Depth: 1 / Pure Remote URL found!" % cmi_debug )
                     pure_url = 1    # explicit pure URL to remote entity
                     uhint = 3       # we can definatley set this here ONLY for this item type
-                    url_netloc = article_url.netloc
+                    url_netloc = a_urlp.netloc
+                    logging.info( f'%s - >>>DEBUG<<< pure url_netloc {url_netloc}' % (cmi_debug) )
                     ml_atype = 0
                     thint = 1.1
                 else:
@@ -342,6 +343,7 @@ class yfnews_reader:
                     a_urlp = urlparse(a_url)
                     #print ( f">>>DEBUG<<< parsed url: {a_urlp}" )
                     url_netloc = a_urlp.netloc      # FQDN
+                    logging.info( f'%s - >>>DEBUG<<< url_netloc.#1 {url_netloc}' % (cmi_debug) )
                     pure_url = 0                    # locally hosted entity
                     ml_atype = 0                    # Real news
                     uhint, uhdescr = self.uh.uhinter(hcycle, a_urlp)
@@ -351,14 +353,14 @@ class yfnews_reader:
                 article_headline = li_tag.a.text        # taken from YFN news feed thumbnail, not actual article page
                 inf_type = "Real news"
                 url_netloc = urlparse(article_url).netloc
-                logging.info( f'%s - >>>DEBUG<<< url_netloc.#1 {url_netloc}' % (cmi_debug) )
+                logging.info( f'%s - >>>DEBUG<<< url_netloc.#2 {url_netloc}' % (cmi_debug) )
                 #test_url = urlparse(article_url)
                 #uhint, uhdescr = self.uh.uhinter(hcycle, test_url)
                 #hcycle += 1
 
                 if not li_tag.find('p'):
                     url_netloc = urlparse(article_url).netloc
-                    logging.info( f'%s - >>>DEBUG<<< url_netloc.#2 {url_netloc}' % (cmi_debug) )
+                    logging.info( f'%s - >>>DEBUG<<< url_netloc.#3 {url_netloc}' % (cmi_debug) )
                     inf_type = "Micro Advertisment"
                     article_teaser = "None"
                     ml_atype = 1
@@ -367,13 +369,13 @@ class yfnews_reader:
                 elif news_agency == "Yahoo Finance Video" and uhint == 2:
                     thint = 4.0
                     url_netloc = urlparse(article_url).netloc
-                    logging.info( f'%s - >>>DEBUG<<< url_netloc.#3 {url_netloc}' % (cmi_debug) )
+                    logging.info( f'%s - >>>DEBUG<<< url_netloc.#4 {url_netloc}' % (cmi_debug) )
                     ml_atype = 0
                 else:
                     # url_netloc = "finance.yahoo.com 2"
                     # url_netloc = test_url.netloc
                     url_netloc = urlparse(article_url).netloc
-                    logging.info( f'%s - >>>DEBUG<<< url_netloc.#4 {url_netloc}' % (cmi_debug) )
+                    logging.info( f'%s - >>>DEBUG<<< url_netloc.#5 {url_netloc}' % (cmi_debug) )
                     a_teaser = li_tag.p.text
                     article_teaser = f"{a_teaser:.170}" + " [...]"
                     ml_atype = 0
