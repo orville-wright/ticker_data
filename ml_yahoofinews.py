@@ -312,10 +312,14 @@ class yfnews_reader:
 
         h3_counter = a_counter = 0
         x = y = 0
-        pure_url = 9                                         # saftey preset
-        thint = 99.9                                         # saftey preset
-        uhint = 9                                            # saftey preset
         hcycle = 1
+        pure_url = 9                                         # saftey preset
+        uhint = 9                                            # saftey preset
+        thint = 99.9                                         # saftey preset
+        article_url = ""
+        a_urlp = ""
+        url_netloc = ""
+        ml_atype = 0
         for li_tag in li_subset_all:                         # <li> is where the new articels hide
             self.nlp_x += 1                                  # counter = which article we are looking at
             for element in li_tag.descendants:               # walk the full tag tree recurisvely
