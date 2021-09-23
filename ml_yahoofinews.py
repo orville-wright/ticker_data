@@ -336,7 +336,7 @@ class yfnews_reader:
                 news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
                 article_url = li_tag.a.get("href")
                 self.a_urlp = urlparse(article_url)
-                if a_urlp.scheme == "https" or a_urlp.scheme == "http":    # check URL scheme specifier
+                if self.a_urlp.scheme == "https" or self.a_urlp.scheme == "http":    # check URL scheme specifier
                     logging.info ( f"%s - Depth: 1 / Pure Remote URL found!" % cmi_debug )
                     pure_url = 1    # explicit pure URL to remote entity
                     uhint = 3       # we can definatley set this here ONLY for this item type
