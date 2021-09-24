@@ -132,7 +132,7 @@ class y_topgainers:
             #co_name_lj = (re.sub('[\'\"]', '', co_name_lj))    # remove " '
 
             price = float(price)
-            logging.info ( f"%s - #2 Count: {x} / Symbol: {co_sym_lj} / price: {pct} type: {type(price)}" % cmi_debug )
+            logging.info ( f"%s - #4 Count: {x} / Symbol: {co_sym_lj} / price: {pct} type: {type(price)}" % cmi_debug )
 
             mktcap = (re.sub('[N\/A]', '0', mktcap))   # handle N/A
 
@@ -167,20 +167,20 @@ class y_topgainers:
             #pct = np.float(re.sub('[-+,%]', '', pct))
             # np.float(re.sub('[\+,]', '', change)), \
 
-            logging.info ( f"%s - #1 Count: {x} / Symbol: {co_sym_lj} / change: {change} type: {type(change)}" % cmi_debug )
-            logging.info ( f"%s - #2 Count: {x} / Symbol: {co_sym_lj} / Pct: {pct} type: {type(pct)}" % cmi_debug )
+            logging.info ( f"%s - #5 Count: {x} / Symbol: {co_sym_lj} / change: {change} type: {type(change)}" % cmi_debug )
+            logging.info ( f"%s - #6 Count: {x} / Symbol: {co_sym_lj} / Pct: {pct} type: {type(pct)}" % cmi_debug )
 
             change_clean = re.sub('[\-\+]', "", change )
-            logging.info ( f"%s - #3 Count: {x} / Symbol: {co_sym_lj} / change_clean: {change_clean} type: {type(change_clean)}" % cmi_debug )
+            logging.info ( f"%s - #7 Count: {x} / Symbol: {co_sym_lj} / change_clean: {change_clean} type: {type(change_clean)}" % cmi_debug )
 
             pct_clean = re.sub('[\-\+\,\%]', "", pct )
-            logging.info ( f"%s - #4 Count: {x} / Symbol: {co_sym_lj} / pct_clean: {pct_clean} type: {type(pct_clean)}" % cmi_debug )
+            logging.info ( f"%s - #8 Count: {x} / Symbol: {co_sym_lj} / pct_clean: {pct_clean} type: {type(pct_clean)}" % cmi_debug )
 
             change_clean = np.float(change_clean)
-            logging.info ( f"%s - #5 Count: {x} / Symbol: {co_sym_lj} / change: {change_clean} type: {type(change_clean)}" % cmi_debug )
+            logging.info ( f"%s - #9 Count: {x} / Symbol: {co_sym_lj} / change: {change_clean} type: {type(change_clean)}" % cmi_debug )
 
             pct_clean = np.float(pct_clean)
-            logging.info ( f"%s - #6 Count: {x} / Symbol: {co_sym_lj} / pct: {pct_clean} type: {type(pct_clean)}" % cmi_debug )
+            logging.info ( f"%s - #10 Count: {x} / Symbol: {co_sym_lj} / pct: {pct_clean} type: {type(pct_clean)}" % cmi_debug )
 
             # note: Pandas DataFrame : top_gainers pre-initalized as EMPYT
             # Data treatment:
