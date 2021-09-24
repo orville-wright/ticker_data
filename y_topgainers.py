@@ -116,13 +116,12 @@ class y_topgainers:
             pct_sign = next(extr_strs)       # 5.0-th <td> : % change / e.g "+" or "-"
             pct_val = next(extr_strs)        # 5.1-th <td> : % change / e.g "210.0000%" WARN trailing "%" must be removed before casting to float
             logging.info( f'%s - >> 32 DEBUG<< Symbol: {co_sym} / pct_sign orig: {pct_sign} type: {type(pct_sign)}' % cmi_debug )
-
             print ( f">> 33 DEBUG<< pct_val: {pct_val}" )
             vol = next(extr_strs)            # 6th <td> : volume with scale indicator/ e.g "70.250k"
             avg_vol = next(extr_strs)        # 6th <td> : Avg. vol over 3 months) / e.g "61,447"
             mktcap = next(extr_strs)         # 7th <td> : Market cap with scale indicator / e.g "15.753B"
             peratio = next(extr_strs)        # 8th <td> : PE ratio TTM (Trailing 12 months) / e.g "N/A"
-            mini_gfx = next(extr_strs)       # 9th <td> : mini-graphic shows 52-week rage & current price on range/scale (no TXT/strings avail)
+            #mini_gfx = next(extr_strs)       # 9th <td> : mini-graphic shows 52-week rage & current price on range/scale (no TXT/strings avail)
 
             ####################################################################
             # now wrangle the data...
