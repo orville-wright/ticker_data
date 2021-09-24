@@ -440,7 +440,7 @@ def main():
                 thint = (sn_row['thint'])                  # the hint we guessed at while interrogating page <tags>
                 logging.info ( f"%s - #1 get_locality hints: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
                 r_uhint, r_thint, r_xturl = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
-                print ( f"#0 {uhdescr} - NLP candidate" )    # all type 0 are assumed to be REAL news
+                print ( f"#0 {uhdescr} - NLP candidate" )                       # all type 0 are assumed to be REAL news
                 confidence_ind(r_uhint, r_thint, r_xturl, sn_row['url'] )       # dodes NOT chnage any data, just nice output
                 #
             elif sn_row['type'] == 1:                     # possibly not news? (Micro Ad)
@@ -450,7 +450,7 @@ def main():
                 thint = (sn_row['thint'])                 # the hint we guess at while interrogating page <tags>
                 logging.info ( f"%s - #1 get_locality hints: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
                 r_uhint, r_thint, r_xturl = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
-                print ( f"#1 {uhdescr} - NLP candidate" )    # all type 0 are assumed to be REAL news
+                print ( f"#1 {uhdescr} - NLP candidate" )                       # all type 1 are only possible news
                 confidence_ind(r_uhint, r_thint, r_xturl, sn_row['url'] )       # dodes NOT chnage any data, just nice output
                 #
             elif sn_row['type'] == 2:                     # possibly not news? (Micro Ad)
