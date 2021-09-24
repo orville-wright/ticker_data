@@ -1,7 +1,7 @@
 # ticker_data
 
 Date: 24 Sept 2021
-** Major updates **
+** Major updates **<BR>
 YAHOO.com did a major rewrite of their internal page data structures (see disclaimer below). This broke the finance.yahoo.com core data scraper.<br>
 - It is now fixed and works perfectly again.
 - The logic is a bit more robust/tollerant.
