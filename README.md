@@ -2,10 +2,10 @@
 
 Date: 24 Sept 2021
 ** Major updates **<BR>
-YAHOO.com did a major rewrite of their internal page data structures (see disclaimer below). This broke the finance.yahoo.com core data scraper badly and needed a lot of BS4 decoding & instrumentation/telemetry to catchup with Yahoo and fix.<br>
-- That work is now done, and the core scraper is now fixed and works perfectly again.
-- The logic is a bit more robust/tollerant and accurate.
-- The news ML (NLP) functionaly (i.e. -n IBM or -a options) is stable & close to being done. It runs without error but the hinter/confidence logic is complex & need refining.
+YAHOO.com did a major rewrite of their internal page data structures (see disclaimer below). This broke the finance.yahoo.com core data scraper badly. Debugging this needed a lot of BS4 decoding & instrumentation & telemetry to catchup with Yahoo's enhancments and impliment new scraper logic.<br>
+- That work is done, and the core scraper is now works perfectly again.
+- It's logic is a bit more robust/tollerant and accurate.
+- The news ML (NLP) functionaly (i.e. -n <symbol> and -a CMD_line options) are stable & close to being done. It runs without error but the hinter/confidence logic is complex & need refining.
 <br>
 <br>
 - I am currently hacking on ML NLP (Natural Language Processing) code - to read news artciles for a stock and guess/inferr sentimnet
