@@ -410,7 +410,7 @@ def main():
         if r_uhint == 3: print ( f"Locality:      Remote external - ", end="" )
         if r_uhint == 9: print ( f"Locality:      Bad Local page - ", end="" )
         if r_uhint == 10: print ( f"Locality:      Unknown state - ", end="" )
-        print ( f"u:{r_uhint} t:{r_thint} / {tc_descr}" )
+        print ( f"t:{r_thint} / u:{r_uhint} / {tc_descr}" )
         print ( f"News feed URL: {orig_url}" )
         print ( f"Real dest URL: {r_xturl}" )
         print ( f"====================== Depth 2 ======================" )
