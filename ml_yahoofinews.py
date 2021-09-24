@@ -348,7 +348,7 @@ class yfnews_reader:
                     self.url_netloc = self.a_urlp.netloc
                     logging.info( f'%s - pure url_netloc {self.url_netloc}' % (cmi_debug) )
                     ml_atype = 0
-                    uhint, uhdescr = self.uh.uhinter(hcycle, self.a_urlp)
+                    uhint, uhdescr = self.uh.uhinter(hcycle, self.article_url)
                     thint = 1.1
                 else:
                     self.a_url = f"https://finance.yahoo.com{self.article_url}"
