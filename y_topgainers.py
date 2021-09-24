@@ -131,6 +131,8 @@ class y_topgainers:
             #co_name_lj = np.array2string(np.char.ljust(co_name, 20) )   # left justify TXT in DF & convert to raw string
             #co_name_lj = (re.sub('[\'\"]', '', co_name_lj))    # remove " '
 
+            price = float(price)
+            
             mktcap = (re.sub('[N\/A]', '0', mktcap))   # handle N/A
 
             TRILLIONS = re.search('T', mktcap)
