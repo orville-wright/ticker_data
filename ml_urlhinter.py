@@ -52,7 +52,7 @@ class url_hinter:
         uhint_code = { 'm': ('Local-remote stub', 0),
                     'news': ('Local article', 1),
                     'video': ('Local video', 2),
-                    'rfa': ('Remote absolute', 3),
+                    'rabs': ('Remote absolute', 3),
                     'udef': ('Not yet defined', 9),
                     'err': ('Error mangled url', 10)
                     }
@@ -74,7 +74,7 @@ class url_hinter:
 
         return 11, "ERROR_Unknown state"
 
-    def status(self):
+    def hstatus(self):
         """
         the engine reports it status
         """
@@ -82,3 +82,53 @@ class url_hinter:
         logging.info('%s - CALLED' % cmi_debug )
         logging.info ( f"%s - Url hinter engine #{self.yti} / cycle #{self.hcycle}" % cmi_debug )
         return self.yti, self.hcycle
+
+    def confidence_lvl(r_uhint, r_thint, r_xturl, orig_url):
+        """
+        NLP Support function #1
+        INFO: Does *not* print any output
+        RETURNSL a dict of computed confidence level codes & info
+        r_uhint = locality confidence code (0=remote, 1=local, 9=ERROR_bad_page_struct, 10=ERROR_unknown_state)
+        tc = type confidence code (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+        ru = Real remote url (extracted)
+        su = Fake url from Depth 0 news feed
+        Print some nicely formatted info about this discovered article
+        NOTE: Locality codes are inferred by decoding the page HTML structure
+              They do not match/align with the URL Hint code. Since that could be a 'fake out'
+        """
+        cmi_debug = __name__+"::"+"confidence_ind().#1    "
+        tcode = { 0.0: 'Real news - local page',
+                1.0: 'Real news - remote-stub',
+                1.1: 'Real news - remote-abs',
+                2.0: 'OP-Ed - local',
+                2.1: 'OP-Ed - remote',
+                3.0: 'Curated report - local',
+                3.1: 'Curated report - remote',
+                4.0: 'Video story - local',
+                4.1: 'Video story - remote',
+                5.0: 'Micro-ad - local',
+                5.1: 'Micro-ad - remote',
+                6.0: 'Bulk ad - local',
+                6.0: 'Bulk ad - remote',
+                7.0: 'Unknown thint 7.0',
+                8.0: 'Unknown thint 8.0',
+                9.0: 'Unknown thing 9.0',
+                9.9: 'Unknown page structure',
+                10.0: 'ERROR unknonw state',
+                99.9: 'DEfault NO-YET-SET'
+                }
+        logging.info ( f"%s - hint code recieved: {r_thint}" % cmi_debug )
+        thint_descr = tcode.get(r_thint)
+        #print ( f"Confidence:    u:{r_uhint} / h:{r_thint} {thint_descr}" )
+        #print ( f"News feed URL: {orig_url}" )
+        #print ( f"Real dest URL: {r_xturl}" )
+        #print ( f"====================== Depth 2 ======================" )
+
+        conf_level = {
+                "confidence" : thint_descr,
+                "loc_url" : orig_url,
+                "abs_url" : r_xturl,
+                "tcode" : r_thint,
+                }
+
+        return conf_level
