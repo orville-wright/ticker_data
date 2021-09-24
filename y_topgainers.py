@@ -102,17 +102,17 @@ class y_topgainers:
 
             #logging.info( f'%s - >>DEBUG<< {type(datarow)}' % cmi_debug )
             extr_strs = datarow.strings
-            logging.info( f'%s - >> 1 DEBUG<< {extr_strs}' % cmi_debug )
-            logging.info( f'%s - >> 1 DEBUG<<' % cmi_debug )
+            logging.info( f'%s - >> 10 DEBUG<< {extr_strs}' % cmi_debug )
+            logging.info( f'%s - >> 11 DEBUG<<' % cmi_debug )
 
             co_sym = next(extr_strs)         # 1st <td> : ticker symbol info / e.g "NWAU"
             co_name = next(extr_strs)        # 2nd <td> : company name / e.g "Consumer Automotive Finance, Inc."
             price = next(extr_strs)          # 3rd <td> : price (Intraday) / e.g "0.0031"
-            logging.info( f'%s - >> 2 DEBUG<< Symbol: {co_sym} / price orig: {price} type: {type(price)}' % cmi_debug )
+            logging.info( f'%s - >> 20 DEBUG<< Symbol: {co_sym} / price orig: {price} type: {type(price)}' % cmi_debug )
             change_sign = next(extr_strs)    # 4th <td> : $ change / e.g  "+0.0021"
             change_val = next(extr_strs)     # 4th <td> : $ change / e.g  "+0.0021"
-            logging.info( f'%s - >> 3.1 DEBUG<< Symbol: {co_sym} / change_sign orig: {change_sign} type: {type(change_sign)}' % cmi_debug )
-            logging.info( f'%s - >> 3.2 DEBUG<< Symbol: {co_sym} / change_val orig: {change_val} type: {type(change_val)}' % cmi_debug )
+            logging.info( f'%s - >> 20 DEBUG<< Symbol: {co_sym} / change_sign orig: {change_sign} type: {type(change_sign)}' % cmi_debug )
+            logging.info( f'%s - >> 21 DEBUG<< Symbol: {co_sym} / change_val orig: {change_val} type: {type(change_val)}' % cmi_debug )
             pct = next(extr_strs)            # 5th <td> : % change / e.g "+210.0000%"
             vol = next(extr_strs)            # 6th <td> : volume with scale indicator/ e.g "70.250k"
             avg_vol = next(extr_strs)        # 6th <td> : Avg. vol over 3 months) / e.g "61,447"
@@ -133,9 +133,9 @@ class y_topgainers:
             #co_name_lj = np.array2string(np.char.ljust(co_name, 20) )   # left justify TXT in DF & convert to raw string
             #co_name_lj = (re.sub('[\'\"]', '', co_name_lj))    # remove " '
 
-            logging.info ( f"%s - >> 4.1 DEBUG<< Symbol: {co_sym_lj} / price: {price} type: {type(price)}" % cmi_debug )
+            logging.info ( f"%s - >> 40 DEBUG<< Symbol: {co_sym_lj} / price: {price} type: {type(price)}" % cmi_debug )
             price_clean = float(price)
-            logging.info ( f"%s - >> 4.1 DEBUG<< Symbol: {co_sym_lj} / price_float: {price_clean} type: {type(price_clean)}" % cmi_debug )
+            logging.info ( f"%s - >> 41 DEBUG<< Symbol: {co_sym_lj} / price_float: {price_clean} type: {type(price_clean)}" % cmi_debug )
 
             mktcap = (re.sub('[N\/A]', '0', mktcap))   # handle N/A
 
