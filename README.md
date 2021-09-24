@@ -2,16 +2,17 @@
 
 Date: 24 Sept 2021
 ** Major updates **<BR>
-YAHOO.com did a major rewrite of their internal page data structures (see disclaimer below). This broke the finance.yahoo.com core data scraper.<br>
-- It is now fixed and works perfectly again.
-- The logic is a bit more robust/tollerant.
+YAHOO.com did a major rewrite of their internal page data structures (see disclaimer below). This broke the finance.yahoo.com core data scraper badly and needed a lot of BS4 decoding & instrumentation/telemetry to catchup with Yahoo and fix.<br>
+- That work is now done, and the core scraper is now fixed and works perfectly again.
+- The logic is a bit more robust/tollerant and accurate.
 - The news ML (NLP) functionaly (i.e. -n IBM or -a options) is stable & close to being done. It runs without error but the hinter/confidence logic is complex & need refining.
 <br>
 <br>
-
-- I am currently hacking on ML NLP (Natural Language Processing) code - to read 100's of news artciles for a stock and guess/inferr sentimnet
-- Major code added to prepare for ML/NLP news reading of 100's of news articles. ML/NLP reading code is not yet active, but...
-- the system now scans the news feed of multiple stocks and inferrs (with confidence) new articles that are fake/credible, their typ & thier locality
+- I am currently hacking on ML NLP (Natural Language Processing) code - to read news artciles for a stock and guess/inferr sentimnet
+- Major focus is to prepare for ML/NLP news reading of 100's of news articles with high confidence level on which news article to read.
+- ML/NLP prep code is live, but the final NLP TEXT reader (count vectorizers) are yet active.
+- the system now scans the news feed of multiple stocks and inferrs (with confidence) new articles that are fake/credible, their type & thier true locality
+- This is pretty complex and very finaince.yahoo.com centric. But oone its complete, it wont be difficlt to port to other news data sources.
 
 
 
