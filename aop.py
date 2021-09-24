@@ -112,7 +112,7 @@ def bkgrnd_worker():
 #
 
 def main():
-    cmi_debug = __name__+"::".__init__.__name__+"main()"
+    cmi_debug = __name__+"::".__init__.__name__
     global args
     args = vars(parser.parse_args())        # args as a dict []
 
@@ -389,7 +389,7 @@ def main():
         NOTE: Locality codes are inferred by decoding the page HTML structure
               They do not match/align with the URL Hint code. Since that could be a 'fake out'
         """
-        cmi_debug = __name__+"::"+"confidence_ind().#1    "
+        cmi_debug = __name__+"::confidence_ind().#1    "
         tcode = { 0.0: 'Real news - local page',
                 1.0: 'Real news - remote-stub',
                 1.1: 'Real news - remote-abs',
@@ -431,7 +431,7 @@ def main():
               Also, false positive articles that may-not have any news relating to this symbol. (News agency's are sleazy!).
         """
         print ( " ")
-        cmi_debug = __name__+"::"+"nlp_final_prep().#1  "
+        cmi_debug = __name__+"::nlp_final_prep().#1  "
         for sn_idx, sn_row in yfn.ml_ingest.items():    # cycle thru the NLP candidate list
             if sn_row['type'] == 0:                       # REAL news, inferred from Depth 0
                 print( f"News article:  {sn_idx} / ", end="" )
@@ -481,7 +481,6 @@ def main():
         #news_symbol = str(args['newsymbol'])       # symbol provided on CMDLine
         yfn = yfnews_reader(1, "IBM", args )        # dummy symbol just for instantiation
         yfn.init_dummy_session()
-        logging.info ( f"%s - >>>>>>>>>>>>>>>>>>>>>>>Enable url hinter-engine: {type(uh)}" % cmi_debug )
         uh.hstatus()
         yfn.share_hinter(uh)                        # share the url hinter available
         #yfn.yfn_bintro()
