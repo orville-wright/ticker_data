@@ -477,8 +477,8 @@ class yfnews_reader:
         url = data_row['url']
         self.this_article_url = url
         symbol = symbol.upper()
-        print ( f">>>DEBUG<<< 1 DISNEY: {url}" ")
-        print ( f">>>DEBUG<<< 2 DISNEY: {self.this_article_url}" ")
+        print ( f">>>DEBUG<<< 1 DISNEY: {url}" )
+        print ( f">>>DEBUG<<< 2 DISNEY: {self.this_article_url}" )
 
         logging.info( f'%s - Attempt to read url: {self.this_article_url} ' % cmi_debug )
         with requests.Session() as s:
