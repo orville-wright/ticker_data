@@ -514,8 +514,7 @@ class yfnews_reader:
                     article = local_news.find(attrs={"class": "caas-body"} )
                     # remotely hosted news article. with a real external URL, Also has [Continue reading] button TEXT
                     logging.info ( f"%s - Depth: 2 / Good <p> Local full TEXT article" % cmi_debug )
-                    print ( f"News item:        5)
-                    print ( f"Article author:   {authot.text}" )
+                    print ( f"Article author:   {author.text}" )
                     print ( f"Published date:   {pubdate.text}" )
                     logging.info ( f"%s - Depth: 2 / NLP candidate is ready" % cmi_debug )
                     return uhint, thint, url
