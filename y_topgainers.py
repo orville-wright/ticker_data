@@ -101,11 +101,9 @@ class y_topgainers:
             co_name_lj = (re.sub('[\'\"]', '', co_name) )                   # remove " ' and strip leading/trailing spaces
             co_name_lj = np.array2string(np.char.ljust(co_name_lj, 25) )    # left justify TXT in DF & convert to raw string
             co_name_lj = (re.sub('[\']', '', co_name_lj) )                  # remove " ' and strip leading/trailing spaces
-
             price_clean = float(price)
-            logging.info ( f"%s - >> 40 DEBUG<< Symbol: {co_sym} / price_float: {price_clean} type: {type(price_clean)}" % cmi_debug )
-
             mktcap = (re.sub('[N\/A]', '0', mktcap))   # handle N/A
+            change_clean = np.float(change_val)
 
             TRILLIONS = re.search('T', mktcap)
             BILLIONS = re.search('B', mktcap)
@@ -136,11 +134,7 @@ class y_topgainers:
                 pct_val = float(0.0)        # Bad data. FOund a filed with N/A instead of read num
             else:
                 pct_clean = re.sub('[\%]', "", pct_val )
-                logging.info( f'%s - >> 33 DEBUG<< Symbol: {co_sym} / pct_val orig: {pct_clean} type: {type(pct_clean)}' % cmi_debug )
                 pct_clean = float(pct_clean)
-                logging.info( f'%s - >> 34 DEBUG<< Symbol: {co_sym} / pct_val orig: {pct_clean} type: {type(pct_clean)}' % cmi_debug )
-
-            change_clean = np.float(change_val)
 
             self.data0 = [[ \
                        x, \
