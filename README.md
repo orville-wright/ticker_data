@@ -1,7 +1,14 @@
 # ticker_data
 
-Date: 19 Sept 2021
+Date: 24 Sept 2021
 ** Major updates **
+YAHOO.com did a major rewrite of their internal page data structures (see disclaimer below). This broke the finance.yahoo.com core data scraper.<br>
+- It is now fixed and works perfectly again.
+- The logic is a bit more robust/tollerant.
+- The news ML (NLP) functionaly (i.e. -n IBM or -a options) is stable & close to being done. It runs without error but the hinter/confidence logic is complex & need refining.
+<br>
+<br>
+
 - I am currently hacking on ML NLP (Natural Language Processing) code - to read 100's of news artciles for a stock and guess/inferr sentimnet
 - Major code added to prepare for ML/NLP news reading of 100's of news articles. ML/NLP reading code is not yet active, but...
 - the system now scans the news feed of multiple stocks and inferrs (with confidence) new articles that are fake/credible, their typ & thier locality
