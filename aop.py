@@ -390,7 +390,7 @@ def main():
               They do not match/align with the URL Hint code. Since that could be a 'fake out'
         """
         cmi_debug = __name__+"::"+"confidence_ind().#1    "
-        tcode = { 0.0: 'Real news - local',
+        tcode = { 0.0: 'Real news - local page',
                 1.0: 'Real news - remote-stub',
                 1.0: 'Real news - remote-abs',
                 2.0: 'OP-Ed - local',
