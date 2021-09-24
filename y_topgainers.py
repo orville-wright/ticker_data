@@ -108,7 +108,8 @@ class y_topgainers:
             co_sym = next(extr_strs)         # 1st <td> : ticker symbol info / e.g "NWAU"
             co_name = next(extr_strs)        # 2nd <td> : company name / e.g "Consumer Automotive Finance, Inc."
             price = next(extr_strs)          # 3rd <td> : price (Intraday) / e.g "0.0031"
-            logging.info( f'%s - >> 20 DEBUG<< Symbol: {co_sym} / price orig: {price} type: {type(price)}' % cmi_debug )
+            logging.info( f'%s - >> 20a DEBUG<< Symbol: {co_sym} / price orig: {price} type: {type(price)}' % cmi_debug )
+            logging.info( f'%s - >> 20b DEBUG<< Symbol: {co_sym} / price orig: {price} type: {type(price)}' % cmi_debug )
             change_sign = next(extr_strs)    # 4th <td> : $ change / e.g  "+0.0021"
             change_val = next(extr_strs)     # 4th <td> : $ change / e.g  "+0.0021"
             logging.info( f'%s - >> 20 DEBUG<< Symbol: {co_sym} / change_sign orig: {change_sign} type: {type(change_sign)}' % cmi_debug )
