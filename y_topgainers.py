@@ -113,10 +113,10 @@ class y_topgainers:
             change_val = next(extr_strs)     # 4.1-th <td> : $ change / e.g  "+0.0021"
             logging.info( f'%s - >> 30 DEBUG<< Symbol: {co_sym} / change_sign orig: {change_sign} type: {type(change_sign)}' % cmi_debug )
             logging.info( f'%s - >> 31 DEBUG<< Symbol: {co_sym} / change_val orig: {change_val} type: {type(change_val)}' % cmi_debug )
-            pct_sign = next(extr_strs)       # 5.0-th <td> : % change / e.g "+210.0000%"
-            pct_val = next(extr_strs)        # 5.1-th <td> : % change / e.g "+210.0000%"
+            pct_sign = next(extr_strs)       # 5.0-th <td> : % change / e.g "+" or "-"
+            pct_val = next(extr_strs)        # 5.1-th <td> : % change / e.g "210.0000%" WARN trailing "%" must be removed before casting to float
             logging.info( f'%s - >> 32 DEBUG<< Symbol: {co_sym} / pct_sign orig: {pct_sign} type: {type(pct_sign)}' % cmi_debug )
-            #logging.info( f'%s - >> 33 DEBUG<< Symbol: {co_sym} / pct_val orig: {pct_val} type: OFF' % cmi_debug )
+
             print ( f">> 33 DEBUG<< pct_val: {pct_val}" )
             vol = next(extr_strs)            # 6th <td> : volume with scale indicator/ e.g "70.250k"
             avg_vol = next(extr_strs)        # 6th <td> : Avg. vol over 3 months) / e.g "61,447"
@@ -171,6 +171,8 @@ class y_topgainers:
             if pct_val == "N/A":
                 pct_val = float(0.0)        # Bad data. FOund a filed with N/A instead of read num
             else:
+                pct_clean = re.sub('[\-\+\,\%]', "", pct_val )
+                logging.info( f'%s - >> 33 DEBUG<< Symbol: {co_sym} / pct_val orig: {pct_val} type: OFF' % cmi_debug )
                 pct_val = float(pct)
             #pct = np.float(re.sub('[-+,%]', '', pct))
             # np.float(re.sub('[\+,]', '', change)), \
