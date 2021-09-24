@@ -133,8 +133,9 @@ class y_topgainers:
             #co_name_lj = np.array2string(np.char.ljust(co_name, 20) )   # left justify TXT in DF & convert to raw string
             #co_name_lj = (re.sub('[\'\"]', '', co_name_lj))    # remove " '
 
-            price = float(price)
-            logging.info ( f"%s - >> 4 DEBUG<< Symbol: {co_sym_lj} / price: {price} type: {type(price)}" % cmi_debug )
+            logging.info ( f"%s - >> 4.1 DEBUG<< Symbol: {co_sym_lj} / price: {price} type: {type(price)}" % cmi_debug )
+            price_clean = float(price)
+            logging.info ( f"%s - >> 4.1 DEBUG<< Symbol: {co_sym_lj} / price_float: {price_clean} type: {type(price_clean)}" % cmi_debug )
 
             mktcap = (re.sub('[N\/A]', '0', mktcap))   # handle N/A
 
