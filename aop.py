@@ -122,7 +122,7 @@ def main():
 
     print ( "CMDLine args:", parser.parse_args() )
     logging.info ( f"%s - url-hinter engine started: {type(uh)}" % cmi_debug )
-    uh.status()
+    uh.hstatus()
     # ARGS[] cmdline pre-processing
     if args['bool_verbose'] is True:        # Logging level
         print ( "Enabeling verbose info logging..." )
@@ -482,7 +482,7 @@ def main():
         yfn = yfnews_reader(1, "IBM", args )        # dummy symbol just for instantiation
         yfn.init_dummy_session()
         logging.info ( f"%s - >>>>>>>>>>>>>>>>>>>>>>>Enable url hinter-engine: {type(uh)}" % cmi_debug )
-        uh.status()
+        uh.hstatus()
         yfn.share_hinter(uh)                        # share the url hinter available
         #yfn.yfn_bintro()
         print ( "============================== Prepare bulk NLP candidate list =================================" )
@@ -516,7 +516,7 @@ def main():
         yfn.form_url_endpoint(news_symbol)
         yfn.do_simple_get()
         logging.info ( f"%s - Enable url hinter-engine: {type(uh)}" % cmi_debug )
-        uh.status()
+        uh.hstatus()
         yfn.share_hinter(uh)
         yfn.scan_news_feed(news_symbol, 0, 0)    # (params) #1: level, #2: 0=HTML / 1=JavaScript
         yfn.eval_article_tags(news_symbol)          # ml_ingest{} is built
