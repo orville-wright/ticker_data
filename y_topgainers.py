@@ -112,7 +112,8 @@ class y_topgainers:
             change_sign = next(extr_strs)    # 4.0-th <td> : $ change / e.g  "+0.0021"
             change_val = next(extr_strs)     # 4.1-th <td> : $ change / e.g  "+0.0021"
             logging.info( f'%s - >> 30 DEBUG<< Symbol: {co_sym} / change_sign orig: {change_sign} type: {type(change_sign)}' % cmi_debug )
-            logging.info( f'%s - >> 31 DEBUG<< Symbol: {co_sym} / change_val orig: {change_val} type: {type(change_val)}' % cmi_debug )
+            print ( f">> 31 DEBUG<< change_val: {change_val}" )
+            #logging.info( f'%s - >> 31 DEBUG<< Symbol: {co_sym} / change_val orig: {change_val} type: {type(change_val)}' % cmi_debug )
             pct_sign = next(extr_strs)       # 5.0-th <td> : % change / e.g "+" or "-"
             pct_val = next(extr_strs)        # 5.1-th <td> : % change / e.g "210.0000%" WARN trailing "%" must be removed before casting to float
             logging.info( f'%s - >> 32 DEBUG<< Symbol: {co_sym} / pct_sign orig: {pct_sign} type: {type(pct_sign)}' % cmi_debug )
