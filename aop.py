@@ -390,27 +390,29 @@ def main():
               They do not match/align with the URL Hint code. Since that could be a 'fake out'
         """
         cmi_debug = __name__+"::"+"article_header().#1    "
-        tcode = { 0: 'Real news',
-                1: 'Real news',
-                2: 'OP-Ed article',
-                3: 'Curated report',
-                4: 'Video story',
-                5: 'Unknown type 5',
-                6: 'Unknown type 6',
-                7: 'Unknown type 7',
-                8: 'Unknown type 9',
-                9: 'Cannot decide page',
-                10: 'Article URL mangled'
+        tcode = { 0.0: 'Real news - local',
+                1.0: 'Real news - remote-stub',
+                1.0: 'Real news - remote-abs',
+                2.0: 'OP-Ed - local',
+                2.1: 'OP-Ed - remote',
+                3.0: 'Curated report - local',
+                3.1: 'Curated report - remote',
+                4.0: 'Video story - local',
+                4.1: 'Video story - remote',
+                5.0: 'Micro-ad - local',
+                5.1: 'Micro-ad - remote',
+                6.0: 'Bulk ad - local',
+                6.0: 'Bulk ad - remote',
+                7.0: 'Unknown thint 7.0',
+                8.0: 'Unknown thint 8.0',
+                9.0: 'Unknown thing 9.0',
+                9.9: 'Unknown page structure',
+                10.0: 'ERROR unknonw state',
+                99.9: 'DEfault NO-YET-SET'
                 }
         logging.info ( f"%s - hint code recieved: {r_thint}" % cmi_debug )
-        tc_descr = tcode.get(r_thint)
-        if r_uhint == 0: print ( f"Locality:      Local-remote stub - ", end="" )
-        if r_uhint == 1: print ( f"Locality:      local article - ", end="" )
-        if r_uhint == 2: print ( f"Locality:      Injected ad - ", end="" )
-        if r_uhint == 3: print ( f"Locality:      Remote external - ", end="" )
-        if r_uhint == 9: print ( f"Locality:      Bad Local page - ", end="" )
-        if r_uhint == 10: print ( f"Locality:      Unknown state - ", end="" )
-        print ( f"t:{r_thint} / u:{r_uhint} / {tc_descr}" )
+        thint_descr = tcode.get(r_thint)
+        print ( f"t:{r_thint} / u:{r_uhint} / h:{r_thint} {thint_descr}" )
         print ( f"News feed URL: {orig_url}" )
         print ( f"Real dest URL: {r_xturl}" )
         print ( f"====================== Depth 2 ======================" )
