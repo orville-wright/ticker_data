@@ -116,7 +116,8 @@ class y_topgainers:
             pct_sign = next(extr_strs)       # 5.0-th <td> : % change / e.g "+210.0000%"
             pct_val = next(extr_strs)        # 5.1-th <td> : % change / e.g "+210.0000%"
             logging.info( f'%s - >> 32 DEBUG<< Symbol: {co_sym} / pct_sign orig: {pct_sign} type: {type(pct_sign)}' % cmi_debug )
-            logging.info( f'%s - >> 33 DEBUG<< Symbol: {co_sym} / pct_val orig: {pct_val} type: OFF' % cmi_debug )
+            #logging.info( f'%s - >> 33 DEBUG<< Symbol: {co_sym} / pct_val orig: {pct_val} type: OFF' % cmi_debug )
+            print ( f">> 33 DEBUG<< pct_val: {pct_val}" )
             vol = next(extr_strs)            # 6th <td> : volume with scale indicator/ e.g "70.250k"
             avg_vol = next(extr_strs)        # 6th <td> : Avg. vol over 3 months) / e.g "61,447"
             mktcap = next(extr_strs)         # 7th <td> : Market cap with scale indicator / e.g "15.753B"
