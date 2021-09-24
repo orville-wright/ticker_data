@@ -431,7 +431,7 @@ def main():
               Also, false positive articles that may-not have any news relating to this symbol. (News agency's are sleazy!).
         """
         print ( " ")
-        cmi_debug = __name__+"::nlp_final_prep().#1  "
+        cmi_debug = __name__+"::nlp_final_prep().#1    "
         for sn_idx, sn_row in yfn.ml_ingest.items():    # cycle thru the NLP candidate list
             if sn_row['type'] == 0:                       # REAL news, inferred from Depth 0
                 print( f"News article:  {sn_idx} / ", end="" )
@@ -448,18 +448,18 @@ def main():
                 t_url = urlparse(sn_row['url'])
                 uhint, uhdescr = uh.uhinter(2, t_url)
                 thint = (sn_row['thint'])                 # the hint we guess at while interrogating page <tags>
-                logging.info ( f"%s - #1 get_locality hints: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
+                logging.info ( f"%s - #2 get_locality hints: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
                 r_uhint, r_thint, r_xturl = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
                 print ( f"#1 {uhdescr} - NLP candidate" )                       # all type 1 are only possible news
                 confidence_ind(r_uhint, r_thint, r_xturl, sn_row['url'] )       # dodes NOT chnage any data, just nice output
                 #
             elif sn_row['type'] == 2:                     # possibly not news? (Micro Ad)
                 print ( f"Bulk injected ad NOT an NLP candidate" )
-                logging.info ( f"%s - #2 skipping..." % cmi_debug )
+                logging.info ( f"%s - #3 skipping..." % cmi_debug )
                 #
             else:
                 print ( f"ERROR unknown article type in ml_ingest" )
-                logging.info ( f"%s - #? skipping..." % cmi_debug )
+                logging.info ( f"%s - #4 skipping..." % cmi_debug )
 
         return
 
@@ -495,7 +495,7 @@ def main():
             print ( "============================== NLP candidates are ready =================================" )
 
         #yfn.dump_ml_ingest()
-        nlp_final_prep(uh)
+        # nlp_final_prep(uh)
 
 # Read the news for just 1 stock symbol
     """
