@@ -132,7 +132,7 @@ class y_topgainers:
             #co_name_lj = (re.sub('[\'\"]', '', co_name_lj))    # remove " '
 
             price = float(price)
-            logging.info ( f"%s - #4 Count: {x} / Symbol: {co_sym_lj} / price: {pct} type: {type(price)}" % cmi_debug )
+            logging.info ( f"%s - >> 4 DEBUG<< Count: {x} / Symbol: {co_sym_lj} / price: {pct} type: {type(price)}" % cmi_debug )
 
             mktcap = (re.sub('[N\/A]', '0', mktcap))   # handle N/A
 
