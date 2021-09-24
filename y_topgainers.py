@@ -111,8 +111,8 @@ class y_topgainers:
             logging.info( f'%s - >> 2 DEBUG<< Symbol: {co_sym} / price orig: {price} type: {type(price)}' % cmi_debug )
             change_sign = next(extr_strs)    # 4th <td> : $ change / e.g  "+0.0021"
             change_val = next(extr_strs)     # 4th <td> : $ change / e.g  "+0.0021"
-            logging.info( f'%s - >> 3 DEBUG<< Symbol: {co_sym} / change orig: {change_sign} type: {type(change_sign)}' % cmi_debug )
-            logging.info( f'%s - >> 3 DEBUG<< Symbol: {co_sym} / change orig: {change_val} type: {type(change_val)}' % cmi_debug )
+            logging.info( f'%s - >> 3.1 DEBUG<< Symbol: {co_sym} / change_sign orig: {change_sign} type: {type(change_sign)}' % cmi_debug )
+            logging.info( f'%s - >> 3.2 DEBUG<< Symbol: {co_sym} / change_val orig: {change_val} type: {type(change_val)}' % cmi_debug )
             pct = next(extr_strs)            # 5th <td> : % change / e.g "+210.0000%"
             vol = next(extr_strs)            # 6th <td> : volume with scale indicator/ e.g "70.250k"
             avg_vol = next(extr_strs)        # 6th <td> : Avg. vol over 3 months) / e.g "61,447"
