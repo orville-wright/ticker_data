@@ -71,64 +71,26 @@ class y_topgainers:
         logging.info('%s - Drop all rows from DF0' % cmi_debug )
         self.tg_df0.drop(self.tg_df0.index, inplace=True)
         x = 1    # row counter Also leveraged for unique dataframe key
-        for datarow in self.all_tag_tr:
-            # BS4 generator object from "extracted strings" BS4 operation (nice)
-
-            """
-            logging.info( f'%s - >>DEBUG<< {type(datarow)}' % cmi_debug )
-
-            #print ( f"{datarow}")
-            extr_strings = datarow.stripped_strings
-            logging.info( f'%s - >> 1 DEBUG<< {extr_strings}' % cmi_debug )
-
-            co_sym = next(extr_strings)         # 1st <td> : ticker symbol info / e.g "NWAU"
-            co_name = next(extr_strings)        # 2nd <td> : company name / e.g "Consumer Automotive Finance, Inc."
-
-            #price = next(extr_strings)          # 3rd <td> : price (Intraday) / e.g "0.0031"
-            price = next(datarow.strings)          # 3rd <td> : price (Intraday) / e.g "0.0031"
-            logging.info( f'%s - >> 2 DEBUG<< price orig: {price} type: {type(price)}' % cmi_debug )
-
-            #change = next(extr_strings)         # 4th <td> : $ change / e.g  "+0.0021"
-            change = next(datarow.strings)         # 4th <td> : $ change / e.g  "+0.0021"
-            logging.info( f'%s - >> 3 DEBUG<< change orig: {change} type: {type(change)}' % cmi_debug )
-
-            pct = next(extr_strings)            # 5th <td> : % change / e.g "+210.0000%"
-            vol = next(extr_strings)            # 6th <td> : volume with scale indicator/ e.g "70.250k"
-            avg_vol = next(extr_strings)        # 6th <td> : Avg. vol over 3 months) / e.g "61,447"
-            mktcap = next(extr_strings)         # 7th <td> : Market cap with scale indicator / e.g "15.753B"
-            peratio = next(extr_strings)        # 8th <td> : PE ratio TTM (Trailing 12 months) / e.g "N/A"
-            mini_gfx = next(extr_strings)       # 9th <td> : mini-graphic shows 52-week rage & current price on range/scale (no TXT/strings avail)
-            """
-
-            #logging.info( f'%s - >>DEBUG<< {type(datarow)}' % cmi_debug )
+        for datarow in self.all_tag_tr:                  # BS4 generator object (nice, but has BS4 accessiblity limits)
             extr_strs = datarow.strings
             logging.info( f'%s - >> 10 DEBUG<< {extr_strs}' % cmi_debug )
             logging.info( f'%s - >> 11 DEBUG<<' % cmi_debug )
-
             co_sym = next(extr_strs)         # 1st <td> : ticker symbol info / e.g "NWAU"
             co_name = next(extr_strs)        # 2nd <td> : company name / e.g "Consumer Automotive Finance, Inc."
             price = next(extr_strs)          # 3rd <td> : price (Intraday) / e.g "0.0031"
-            logging.info( f'%s - >> 20 DEBUG<< Symbol: {co_sym} / price orig: {price} type: {type(price)}' % cmi_debug )
+            #logging.info( f'%s - >> 20 DEBUG<< Symbol: {co_sym} / price orig: {price} type: {type(price)}' % cmi_debug )
             change_sign = next(extr_strs)    # 4.0-th <td> : $ change / e.g  "+0.0021"
             change_val = next(extr_strs)     # 4.1-th <td> : $ change / e.g  "+0.0021"
-            logging.info( f'%s - >> 30 DEBUG<< Symbol: {co_sym} / change_sign orig: {change_sign} type: {type(change_sign)}' % cmi_debug )
-            #print ( f">> 31 DEBUG<< change_val: {change_val}" )
-            logging.info( f'%s - >> 31 DEBUG<< Symbol: {co_sym} / change_val orig: {change_val} type: {type(change_val)}' % cmi_debug )
+            #logging.info( f'%s - >> 30 DEBUG<< Symbol: {co_sym} / change_sign orig: {change_sign} type: {type(change_sign)}' % cmi_debug )
+            #logging.info( f'%s - >> 31 DEBUG<< Symbol: {co_sym} / change_val orig: {change_val} type: {type(change_val)}' % cmi_debug )
             pct_sign = next(extr_strs)       # 5.0-th <td> : % change / e.g "+" or "-"
             pct_val = next(extr_strs)        # 5.1-th <td> : % change / e.g "210.0000%" WARN trailing "%" must be removed before casting to float
-            logging.info( f'%s - >> 32 DEBUG<< Symbol: {co_sym} / pct_sign orig: {pct_sign} type: {type(pct_sign)}' % cmi_debug )
+            #logging.info( f'%s - >> 32 DEBUG<< Symbol: {co_sym} / pct_sign orig: {pct_sign} type: {type(pct_sign)}' % cmi_debug )
             vol = next(extr_strs)            # 6th <td> : volume with scale indicator/ e.g "70.250k"
             avg_vol = next(extr_strs)        # 6th <td> : Avg. vol over 3 months) / e.g "61,447"
             mktcap = next(extr_strs)         # 7th <td> : Market cap with scale indicator / e.g "15.753B"
             peratio = next(extr_strs)        # 8th <td> : PEsratio TTM (Trailing 12 months) / e.g "N/A"
-            try:
-                mini_gfx = next(extr_strs) # 9th <td> : mini-graphic shows 52-week rage & current price on range/scale (no TXT/strings avail)
-                logging.info( f'%s - >> NEXT ITER GOOD << Symbol: {co_sym} type: {type(mini_gfx)}' % cmi_debug )
-                print ( f"{mini_gfx}" )
-            except StopIteration:
-                logging.info( f'%s - >> END OF ITER - raised StopIteration << Symbol: {co_sym}' % cmi_debug )
-            finally:
-                logging.info( f'%s - >> FLOW through - end of next Iterations << Symbol: {co_sym}' % cmi_debug )
+            #mini_gfx = next(extr_strs)      # 9th <td> : IGNORED = mini-canvas graphic 52-week rnage current price range with scale (no TXT/strings avail)
 
             ####################################################################
             # now wrangle the data...
@@ -140,10 +102,6 @@ class y_topgainers:
             co_name_lj = np.array2string(np.char.ljust(co_name_lj, 25) )    # left justify TXT in DF & convert to raw string
             co_name_lj = (re.sub('[\']', '', co_name_lj) )                  # remove " ' and strip leading/trailing spaces
 
-            #co_name_lj = np.array2string(np.char.ljust(co_name, 20) )   # left justify TXT in DF & convert to raw string
-            #co_name_lj = (re.sub('[\'\"]', '', co_name_lj))    # remove " '
-
-            #logging.info ( f"%s - >> 40 DEBUG<< Symbol: {co_sym} / price: {price} type: {type(price)}" % cmi_debug )
             price_clean = float(price)
             logging.info ( f"%s - >> 40 DEBUG<< Symbol: {co_sym} / price_float: {price_clean} type: {type(price_clean)}" % cmi_debug )
 
@@ -182,31 +140,8 @@ class y_topgainers:
                 pct_clean = float(pct_clean)
                 logging.info( f'%s - >> 34 DEBUG<< Symbol: {co_sym} / pct_val orig: {pct_clean} type: {type(pct_clean)}' % cmi_debug )
 
-            #pct = np.float(re.sub('[-+,%]', '', pct))
-            # np.float(re.sub('[\+,]', '', change)), \
-
-            #logging.info ( f"%s - #50 Count: {x} / Symbol: {co_sym} / change: {change_val} type: {type(change_val)}" % cmi_debug )
-            #logging.info ( f"%s - #60 Count: {x} / Symbol: {co_sym} / Pct: {pct} type: {type(pct)}" % cmi_debug )
-
-            #change_clean = re.sub('[\-\+]', "", change )
-            #logging.info ( f"%s - #70 Count: {x} / Symbol: {co_sym} / change_clean: {change_clean} type: {type(change_clean)}" % cmi_debug )
-
-            #pct_clean = re.sub('[\-\+\,\%]', "", pct )
-            #logging.info ( f"%s - #80 Count: {x} / Symbol: {co_sym} / pct_clean: {pct_clean} type: {type(pct_clean)}" % cmi_debug )
-
             change_clean = np.float(change_val)
-            #logging.info ( f"%s - #90 Count: {x} / Symbol: {co_sym} / change: {change_clean} type: {type(change_clean)}" % cmi_debug )
 
-            #pct_clean = np.float(pct_clean)
-            #logging.info ( f"%s - #100 Count: {x} / Symbol: {co_sym} / pct: {pct_clean} type: {type(pct_clean)}" % cmi_debug )
-
-            # note: Pandas DataFrame : top_gainers pre-initalized as EMPYT
-            # Data treatment:
-            # Data is extracted as raw strings, so needs wrangeling...
-            #    price - stip out any thousand "," seperators and cast as true decimal via numpy
-            #    change - strip out chars '+' and ',' and cast as true decimal via numpy
-            #    pct - strip out chars '+ and %' and cast as true decimal via numpy
-            #    mktcap - strio out 'B' Billions & 'M' Millions
             self.data0 = [[ \
                        x, \
                        re.sub('\'', '', co_sym_lj), \
