@@ -66,7 +66,7 @@ class url_hinter:
         if url.scheme == "https" or url.scheme == "http":    # URL has valid scheme but isn NOT @ YFN
             print ( f"3 / Remote pure url - ", end="" )
             logging.info ( f"%s - Inferred hint from URL: 3 [{url.netloc}] / Remote pure article" % cmi_debug )
-            return 3, "Remote external"
+            return 3, "Remote-abs"
         else:
             #print ( f"ERROR_url / ", end="" )
             logging.info ( f"%s - ERROR URL hint is -1 / Mangled URL" % cmi_debug )
