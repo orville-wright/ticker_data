@@ -108,9 +108,9 @@ class y_topgainers:
             co_sym = next(extr_strs)         # 1st <td> : ticker symbol info / e.g "NWAU"
             co_name = next(extr_strs)        # 2nd <td> : company name / e.g "Consumer Automotive Finance, Inc."
             price = next(extr_strs)          # 3rd <td> : price (Intraday) / e.g "0.0031"
-            logging.info( f'%s - >> 2 DEBUG<< price orig: {price} type: {type(price)}' % cmi_debug )
+            logging.info( f'%s - >> 2 DEBUG<< Symbol: {co_sym_lj} / price orig: {price} type: {type(price)}' % cmi_debug )
             change = next(extr_strs)         # 4th <td> : $ change / e.g  "+0.0021"
-            logging.info( f'%s - >> 3 DEBUG<< change orig: {change} type: {type(change)}' % cmi_debug )
+            logging.info( f'%s - >> 3 DEBUG<< Symbol: {co_sym_lj} / change orig: {change} type: {type(change)}' % cmi_debug )
             pct = next(extr_strs)            # 5th <td> : % change / e.g "+210.0000%"
             vol = next(extr_strs)            # 6th <td> : volume with scale indicator/ e.g "70.250k"
             avg_vol = next(extr_strs)        # 6th <td> : Avg. vol over 3 months) / e.g "61,447"
@@ -132,7 +132,7 @@ class y_topgainers:
             #co_name_lj = (re.sub('[\'\"]', '', co_name_lj))    # remove " '
 
             price = float(price)
-            logging.info ( f"%s - >> 4 DEBUG<< Count: {x} / Symbol: {co_sym_lj} / price: {pct} type: {type(price)}" % cmi_debug )
+            logging.info ( f"%s - >> 4 DEBUG<< Symbol: {co_sym_lj} / price: {pct} type: {type(price)}" % cmi_debug )
 
             mktcap = (re.sub('[N\/A]', '0', mktcap))   # handle N/A
 
