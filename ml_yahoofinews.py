@@ -516,7 +516,7 @@ class yfnews_reader:
                     logging.info ( f"%s - Depth: 2 / Good <p> Local full TEXT article" % cmi_debug )
                     print ( f"Article author:   {author.text.lstrip()}" )
                     pub_clean = pubdate.text.lstrip()
-                    published = pub.clean.split('·', 1)
+                    published = pub_clean.split('·', 1)
                     print ( f"Published date:   {published[0]}" )
                     logging.info ( f"%s - Depth: 2 / NLP candidate is ready" % cmi_debug )
                     return uhint, thint, url
