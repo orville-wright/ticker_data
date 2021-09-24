@@ -465,7 +465,7 @@ class yfnews_reader:
 
         # data elements extracted & computed
         # Authour, Date posted, Time posted, Age of article
-        cmi_debug = __name__+"::"+self.get_locality.__name__+".#"+str(self.yti)
+        cmi_debug = __name__+"::"+self.get_locality+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         right_now = date.today()
         id = item_idx
@@ -480,7 +480,7 @@ class yfnews_reader:
         print ( f">>>DEBUG<<< 1 DISNEY: {url}" )
         print ( f">>>DEBUG<<< 2 DISNEY: {self.this_article_url}" )
 
-        logging.info( f'%s - Attempt to read url: {self.this_article_url} ' % cmi_debug )
+        logging.info( f'%s - Attempt to read url: {url} ' % cmi_debug )
         with requests.Session() as s:
             nr = s.get( self.this_article_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
             nsoup = BeautifulSoup(nr.text, 'html.parser')
