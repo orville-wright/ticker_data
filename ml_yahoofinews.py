@@ -337,7 +337,7 @@ class yfnews_reader:
                 break
 
             if a_counter > 0 and a_counter <= 3:
-                logging.info( f'%s - <li> count: {a_counter}' % (cmi_debug) )                  # good new zrticle found
+                logging.info( f'%s - <li> count: {a_counter}' % (cmi_debug) )        # good new zrticle found
                 news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
                 self.article_url = li_tag.a.get("href")                              # url is path only in the page source, so needs careful treatment
                 self.a_urlp = urlparse(self.article_url)
@@ -364,12 +364,8 @@ class yfnews_reader:
 
                 article_headline = li_tag.a.text        # taken from YFN news feed thumbnail, not actual article page
                 inf_type = "Real news"
-                #self.url_netloc = urlparse(article_url).netloc
                 self.url_netloc = self.a_urlp.netloc
                 logging.info( f'%s - url_netloc.#2 {self.url_netloc}' % (cmi_debug) )
-                #test_url = urlparse(article_url)
-                #uhint, uhdescr = self.uh.uhinter(hcycle, test_url)
-                #hcycle += 1
 
                 if not li_tag.find('p'):
                     self.url_netloc = self.a_urlp.netloc
@@ -386,21 +382,22 @@ class yfnews_reader:
                     self.article_teaser = "FIX-ME check video page for teaser <tag> zone"
                     ml_atype = 0
                 else:
-                    # url_netloc = "finance.yahoo.com 2"
-                    # url_netloc = test_url.netloc
-                    self.url_netloc = self.a_urlp.netloc
+                    #self.url_netloc = self.a_urlp.netloc
                     logging.info( f'%s - url_netloc.#5 {self.url_netloc}' % (cmi_debug) )
                     a_teaser = li_tag.p.text
                     self.article_teaser = f"{a_teaser:.170}" + " [...]"
-                    ml_atype = 0
-                    if pure_url == 0: thint = 0.0
-                    if pure_url == 1: thint = 1.0
+                    #ml_atype = 0
+                    #if pure_url == 0: thint = 0.0
+                    #if pure_url == 1: thint = 1.0
 
                 print ( f"================= Depth 1 / {symbol} Article {x} ==================" )
                 print ( f"News item:        {self.cycle}: {inf_type} / Confidence Indicators t:{ml_atype} / u:{uhint} / h:{thint}" )
                 print ( f"News agency:      {news_agency} / ", end="" )
 
                 #if pure_url == 0: print ( f"Local-Remote stub @ [ {self.url_netloc} ]" )
+                # >>> This is bad error-prone unecessary work <<<
+                # >>> I should be able to call the hinter to help print via hint logic <<<
+                # >>> dont print manually via manual if/and logic
                 if pure_url == 1: print ( f"Remote-Abs1 @ [ {self.url_netloc} ]" )
                 if pure_url == 1 and uhint == 3: print ( f"Remote-Abs2 @ [ {self.url_netloc} ]" )
                 if uhint == 2 and thint == 4.0: print ( f"Local video @ [ {self.url_netloc} ]" )
