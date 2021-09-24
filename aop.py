@@ -377,8 +377,8 @@ def main():
 
 # Machine Learning NLP (Natural Language Processing) ####################################
 # News Sentiment AI
-    #def article_header(r_uhint, tc, ru, su):
-    def article_header(r_uhint, r_thint, r_xturl, orig_url):
+    #def confidence_ind(r_uhint, tc, ru, su):
+    def confidence_ind(r_uhint, r_thint, r_xturl, orig_url):
         """
         NLP Support function #1
         r_uhint = locality confidence code (0=remote, 1=local, 9=ERROR_bad_page_struct, 10=ERROR_unknown_state)
@@ -389,7 +389,7 @@ def main():
         NOTE: Locality codes are inferred by decoding the page HTML structure
               They do not match/align with the URL Hint code. Since that could be a 'fake out'
         """
-        cmi_debug = __name__+"::"+"article_header().#1    "
+        cmi_debug = __name__+"::"+"confidence_ind().#1    "
         tcode = { 0.0: 'Real news - local',
                 1.0: 'Real news - remote-stub',
                 1.0: 'Real news - remote-abs',
@@ -412,7 +412,7 @@ def main():
                 }
         logging.info ( f"%s - hint code recieved: {r_thint}" % cmi_debug )
         thint_descr = tcode.get(r_thint)
-        print ( f"Confidence:    t:{r_uhint} / h:{r_thint} {thint_descr}" )
+        print ( f"Confidence:    u:{r_uhint} / h:{r_thint} {thint_descr}" )
         print ( f"News feed URL: {orig_url}" )
         print ( f"Real dest URL: {r_xturl}" )
         print ( f"====================== Depth 2 ======================" )
@@ -437,31 +437,28 @@ def main():
             if sn_row['type'] == 0:                       # REAL news, inferred from Depth 0
                 t_url = urlparse(sn_row['url'])
                 uhint, uhdescr = uh.uhinter(1, t_url)
-                thint = (sn_row['thint'])              # the hint we guessed at while interrogating page <tags>
+                thint = (sn_row['thint'])                  # the hint we guessed at while interrogating page <tags>
                 print ( f"#0 Real news NLP candidate" )    # all type 0 are assumed to be REAL news
                 logging.info ( f"%s - #1 get_locality hints: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
                 r_uhint, r_thint, r_xturl = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
-                article_header(r_uhint, r_thint, r_xturl, sn_row['url'] )
+                confidence_ind(r_uhint, r_thint, r_xturl, sn_row['url'] )       # dodes NOT chnage any data, just nice output
+                #
             elif sn_row['type'] == 1:                     # possibly not news? (Micro Ad)
                 t_url = urlparse(sn_row['url'])
                 uhint, uhdescr = uh.uhinter(2, t_url)
-                thint = (sn_row['thint'])             # the hint we guess at while interrogating page <tags>
-                print ( f"#1 Real news NLP candidate" )    # all type 0 are assumed to be REAL news
+                thint = (sn_row['thint'])                 # the hint we guess at while interrogating page <tags>
+                print ( f"#1 Micro-ad NLP candidate" )    # all type 0 are assumed to be REAL news
                 logging.info ( f"%s - #1 get_locality hints: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
                 r_uhint, r_thint, r_xturl = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
-                article_header(r_uhint, r_thint, r_xturl, sn_row['url'] )
-
+                confidence_ind(r_uhint, r_thint, r_xturl, sn_row['url'] )       # dodes NOT chnage any data, just nice output
+                #
             elif sn_row['type'] == 2:                     # possibly not news? (Micro Ad)
-                if uhint >= 3:
-                    print ( f"Micro-ad NLP candidate" )
-                    logging.info ( f"%s - #2 get_locality hints: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
-                    r_uhint, r_thint, r_xturl = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
-                    article_header(r_uhint, r_thint, r_xturl, sn_row['url'] )
-                else:
-                    article_header(r_uhint, r_thint, r_xturl, sn_row['url'] )
-                    print ( f"Unknown Micro Ad URL > skipping..." )
+                print ( f"Bulk injected ad NOT an NLP candidate" )
+                logging.info ( f"%s - #2 skipping..." % cmi_debug )
+                #
             else:
-                print ( f"ERROR Unknown article type!!" )
+                print ( f"ERROR unknown article type in ml_ingest" )
+                logging.info ( f"%s - #? skipping..." % cmi_debug )
 
         return
 
