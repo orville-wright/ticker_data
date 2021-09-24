@@ -81,31 +81,47 @@ class screener_dg1:
         self.dg1_df0.drop(self.dg1_df0.index, inplace=True)
 
         x = 1                               # row counter leveraged for unique dataframe key
-        for datarow in self.all_tag_tr:
-            # BS4 generator object comes from "extracted strings" BS4 operation (nice)
-            extr_strings = datarow.stripped_strings
-            co_sym = next(extr_strings)     # 1st <td> : ticker symbol info & has comment of company name
-            co_name = next(extr_strings)    # 2nd <td> : company name
-            price = next(extr_strings)      # 3rd <td> : price
-            change = next(extr_strings)     # 4th <td> : $ change
-            pct = next(extr_strings)        # 5th <td> : % change
-            vol = next(extr_strings)        # 6th <td> : volume
-            avg_vol = next(extr_strings)    # 6th <td> : Avg. vol over 3 months)
-            mktcap = next(extr_strings)     # 7th <td> : Market cap
-            # 8th <td> : PE ratio - **IGNORED & NOT extracted**
+        for datarow in self.all_tag_tr:                  # BS4 generator object (nice, but has BS4 accessiblity limits)
+            extr_strs = datarow.strings
+            co_sym = next(extr_strs)         # 1st <td> : ticker symbol info / e.g "NWAU"
+            co_name = next(extr_strs)        # 2nd <td> : company name / e.g "Consumer Automotive Finance, Inc."
+            price = next(extr_strs)          # 3rd <td> : price (Intraday) / e.g "0.0031"
+            #logging.info( f'%s - >> 20 DEBUG<< Symbol: {co_sym} / price orig: {price} type: {type(price)}' % cmi_debug )
+            change_sign = next(extr_strs)    # 4.0-th <td> : $ change / e.g  "+0.0021"
+            change_val = next(extr_strs)     # 4.1-th <td> : $ change / e.g  "+0.0021"
+            #logging.info( f'%s - >> 30 DEBUG<< Symbol: {co_sym} / change_sign orig: {change_sign} type: {type(change_sign)}' % cmi_debug )
+            #logging.info( f'%s - >> 31 DEBUG<< Symbol: {co_sym} / change_val orig: {change_val} type: {type(change_val)}' % cmi_debug )
+            pct_sign = next(extr_strs)       # 5.0-th <td> : % change / e.g "+" or "-"
+            pct_val = next(extr_strs)        # 5.1-th <td> : % change / e.g "210.0000%" WARN trailing "%" must be removed before casting to float
+            #logging.info( f'%s - >> 32 DEBUG<< Symbol: {co_sym} / pct_sign orig: {pct_sign} type: {type(pct_sign)}' % cmi_debug )
+            vol = next(extr_strs)            # 6th <td> : volume with scale indicator/ e.g "70.250k"
+            avg_vol = next(extr_strs)        # 6th <td> : Avg. vol over 3 months) / e.g "61,447"
+            mktcap = next(extr_strs)         # 7th <td> : Market cap with scale indicator / e.g "15.753B"
+            peratio = next(extr_strs)        # 8th <td> : PEsratio TTM (Trailing 12 months) / e.g "N/A"
+            #mini_gfx = next(extr_strs)      # 9th <td> : IGNORED = mini-canvas graphic 52-week rnage current price range with scale (no TXT/strings avail)
 
-            co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )         # left justify TXT in DF & convert to raw string
-            co_name_lj = (re.sub('[\'\"]', '', co_name) )                  # remove " ' and strip leading/trailing spaces
-            co_name_lj = np.array2string(np.char.ljust(co_name_lj, 25) )   # left justify TXT in DF & convert to raw string
-            co_name_lj = (re.sub('[\']', '', co_name_lj) )                 # remove " ' and strip leading/trailing spaces
+            ####################################################################
+            # now wrangle the data...
 
-            mktcap = (re.sub('[N\/A]', '0', mktcap))                       # handle N/A in market cap field
+            co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )          # left justify TXT in DF & convert to raw string
 
-            # TODO: co_name_lj has "" removed later in data setup as some odd companies have " surround their name.
-            # But remving " leaves 1 space infront/behind name str. Fix that
+            # TODO: look at using f-string justifers to do this
+            co_name_lj = (re.sub('[\'\"]', '', co_name) )                   # remove " ' and strip leading/trailing spaces
+            co_name_lj = np.array2string(np.char.ljust(co_name_lj, 25) )    # left justify TXT in DF & convert to raw string
+            co_name_lj = (re.sub('[\']', '', co_name_lj) )                  # remove " ' and strip leading/trailing spaces
+            price_clean = float(price)
+            mktcap = (re.sub('[N\/A]', '0', mktcap))   # handle N/A
+            change_clean = np.float(change_val)
 
+            TRILLIONS = re.search('T', mktcap)
             BILLIONS = re.search('B', mktcap)
             MILLIONS = re.search('M', mktcap)
+
+            if TRILLIONS:
+                mktcap_clean = np.float(re.sub('T', '', mktcap))
+                mb = "ST"
+                logging.info('%s - Small Cap/TRILLIONS. set ST' % cmi_debug )
+
             if BILLIONS:
                 mktcap_clean = np.float(re.sub('B', '', mktcap))
                 mb = "SB"
@@ -114,33 +130,27 @@ class screener_dg1:
             if MILLIONS:
                 mktcap_clean = np.float(re.sub('M', '', mktcap))
                 mb = "SM"
-                logging.info('%s - Small cap/MILLIONS. set SM' % cmi_debug )
+                logging.info('%s - Large cap/MILLIONS. set SM' % cmi_debug )
 
-            if not BILLIONS and not MILLIONS:
+            if not TRILLIONS and not BILLIONS and not MILLIONS:
                 mktcap_clean = 0    # error condition - possible bad data
-                mb = "SZ"
-                logging.info('%s - bad mktcap data. set to S0' % cmi_debug )
+                mb = "SZ"           # Zillions
+                logging.info('%s - bad mktcap data N/A setting to SZ' % cmi_debug )
                 # handle bad data in mktcap html page field
 
-            if pct == "N/A":            # Bad data. Found a filed with N/A instead of read num
-                pct = "1.0"
+            if pct_val == "N/A":
+                pct_val = float(0.0)        # Bad data. FOund a filed with N/A instead of read num
+            else:
+                pct_clean = re.sub('[\%]', "", pct_val )
+                pct_clean = float(pct_clean)
 
-            #pct = np.float(re.sub('[\-+,%]', '', pct))
-            pct = np.float(re.sub('[,%]', '', pct))
-
-            # note: Pandas DataFrame : top_gainers pre-initalized as EMPYT
-            # Data is extracted as raw strings, so needs wrangeling...
-            #    price - stip out any thousand "," seperators and cast as true decimal via numpy
-            #    change - strip out chars '+' and ',' and cast as true decimal via numpy
-            #    pct - strip out chars '+ and %' and cast as true decimal via numpy
-            #    mktcap - strio out 'B' Billions & 'M' Millions & "N/A"
             self.data0 = [[ \
                        x, \
                        re.sub('\'', '', co_sym_lj), \
                        co_name_lj, \
                        np.float(re.sub('\,', '', price)), \
-                       np.float(re.sub('[\+,]', '', change)), \
-                       pct, \
+                       change_clean, \
+                       pct_clean, \
                        mktcap_clean, \
                        mb, \
                        time_now ]]
