@@ -432,9 +432,9 @@ def main():
         """
         print ( " ")
         cmi_debug = __name__+"::"+"nlp_final_prep().#1  "
-        for sn_idx, sn_row in yfn.ml_ingest.items():    # cycle thru the NLP candidate list
-            print( f"News article:  {sn_idx} / ", end="" )
+        for sn_idx, sn_row in yfn.ml_ingest.items():    # cycle thru the NLP candidate list    
             if sn_row['type'] == 0:                       # REAL news, inferred from Depth 0
+                print( f"News article:  {sn_idx} / ", end="" )
                 t_url = urlparse(sn_row['url'])
                 uhint, uhdescr = uh.uhinter(1, t_url)
                 thint = (sn_row['thint'])                  # the hint we guessed at while interrogating page <tags>
@@ -444,6 +444,7 @@ def main():
                 confidence_ind(r_uhint, r_thint, r_xturl, sn_row['url'] )       # dodes NOT chnage any data, just nice output
                 #
             elif sn_row['type'] == 1:                     # possibly not news? (Micro Ad)
+                print( f"News article:  {sn_idx} / ", end="" )
                 t_url = urlparse(sn_row['url'])
                 uhint, uhdescr = uh.uhinter(2, t_url)
                 thint = (sn_row['thint'])                 # the hint we guess at while interrogating page <tags>
