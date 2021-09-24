@@ -518,8 +518,8 @@ class yfnews_reader:
                     pub_clean = pubdate.text.lstrip()
                     published = pub_clean.split('·', 1)
                     author_clean = author.text.lstrip()
-                    print ( f"Author:        {author_clean}" )
-                    print ( f"Published:     {published[0]}" )
+                    #print ( f"Author:        {author_clean}" )
+                    #print ( f"Published:     {published[0]}" )
                     logging.info ( f"%s - Depth: 2 / NLP candidate is ready" % cmi_debug )
                     return uhint, thint, url
                     #
