@@ -439,7 +439,7 @@ def main():
                 print ( f"Real news = NLP candidate" )    # all type 0 are assumed to be REAL news
                 logging.info ( f"%s - #1 get_locality hints: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
                 r_uhint, r_thint, r_xturl = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
-                yfn.dump_ml_ingest()
+                #yfn.dump_ml_ingest()
                 article_header(r_uhint, r_thint, r_xturl, sn_row['url'] )
             elif sn_row['type'] == 1:                     # possibly not news? (Micro Ad)
                 t_url = urlparse(sn_row['url'])
@@ -490,7 +490,7 @@ def main():
             yfn.eval_article_tags(nlp_target)       # ml_ingest{} is built
             print ( "============================== NLP candidates are ready =================================" )
 
-        yfn.dump_ml_ingest()
+        #yfn.dump_ml_ingest()
         nlp_final_prep(uh)
 
 # Read the news for just 1 stock symbol
@@ -516,7 +516,7 @@ def main():
         yfn.scan_news_feed(news_symbol, 0, 0)    # (params) #1: level, #2: 0=HTML / 1=JavaScript
         yfn.eval_article_tags(news_symbol)          # ml_ingest{} is built
         print ( "============================== NLP News candidates are ready =================================" )
-        yfn.dump_ml_ingest()
+        #yfn.dump_ml_ingest()
         nlp_final_prep()
 
 #################################################################################
