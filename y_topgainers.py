@@ -116,7 +116,6 @@ class y_topgainers:
             pct_sign = next(extr_strs)       # 5.0-th <td> : % change / e.g "+" or "-"
             pct_val = next(extr_strs)        # 5.1-th <td> : % change / e.g "210.0000%" WARN trailing "%" must be removed before casting to float
             logging.info( f'%s - >> 32 DEBUG<< Symbol: {co_sym} / pct_sign orig: {pct_sign} type: {type(pct_sign)}' % cmi_debug )
-            print ( f">> 33 DEBUG<< pct_val: {pct_val}" )
             vol = next(extr_strs)            # 6th <td> : volume with scale indicator/ e.g "70.250k"
             avg_vol = next(extr_strs)        # 6th <td> : Avg. vol over 3 months) / e.g "61,447"
             mktcap = next(extr_strs)         # 7th <td> : Market cap with scale indicator / e.g "15.753B"
@@ -172,7 +171,9 @@ class y_topgainers:
             else:
                 pct_clean = re.sub('[\%]', "", pct_val )
                 logging.info( f'%s - >> 33 DEBUG<< Symbol: {co_sym} / pct_val orig: {pct_clean} type: {type(pct_clean)}' % cmi_debug )
-                pct_val = float(pct_clean)
+                pct_clean = float(pct_clean)
+                logging.info( f'%s - >> 34 DEBUG<< Symbol: {co_sym} / pct_val orig: {pct_clean} type: {type(pct_clean)}' % cmi_debug )
+
             #pct = np.float(re.sub('[-+,%]', '', pct))
             # np.float(re.sub('[\+,]', '', change)), \
 
