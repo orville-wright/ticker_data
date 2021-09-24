@@ -123,7 +123,7 @@ class y_topgainers:
             peratio = next(extr_strs)        # 8th <td> : PEsratio TTM (Trailing 12 months) / e.g "N/A"
             try:
                 mini_gfx = next(datarow.next_siblings) # 9th <td> : mini-graphic shows 52-week rage & current price on range/scale (no TXT/strings avail)
-                logging.info( f'%s - >> NEXT ITER GOOD << Symbol: {co_sym}' % cmi_debug )
+                logging.info( f'%s - >> NEXT ITER GOOD << Symbol: {co_sym} type: {type(mini_gfx)}' % cmi_debug )
             except StopIteration:
                 logging.info( f'%s - >> END OF ITER - raised StopIteration << Symbol: {co_sym}' % cmi_debug )
             finally:
