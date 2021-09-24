@@ -120,8 +120,8 @@ class y_topgainers:
             vol = next(extr_strs)            # 6th <td> : volume with scale indicator/ e.g "70.250k"
             avg_vol = next(extr_strs)        # 6th <td> : Avg. vol over 3 months) / e.g "61,447"
             mktcap = next(extr_strs)         # 7th <td> : Market cap with scale indicator / e.g "15.753B"
-            peratio = next(extr_strs)        # 8th <td> : PE ratio TTM (Trailing 12 months) / e.g "N/A"
-            mini_gfx = next(datarow.next_sibling) # 9th <td> : mini-graphic shows 52-week rage & current price on range/scale (no TXT/strings avail)
+            peratio = next(extr_strs)        # 8th <td> : PEsratio TTM (Trailing 12 months) / e.g "N/A"
+            mini_gfx = next(datarow.next_siblings) # 9th <td> : mini-graphic shows 52-week rage & current price on range/scale (no TXT/strings avail)
 
             ####################################################################
             # now wrangle the data...
