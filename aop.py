@@ -392,7 +392,7 @@ def main():
         cmi_debug = __name__+"::"+"confidence_ind().#1    "
         tcode = { 0.0: 'Real news - local page',
                 1.0: 'Real news - remote-stub',
-                1.0: 'Real news - remote-abs',
+                1.1: 'Real news - remote-abs',
                 2.0: 'OP-Ed - local',
                 2.1: 'OP-Ed - remote',
                 3.0: 'Curated report - local',
@@ -438,18 +438,18 @@ def main():
                 t_url = urlparse(sn_row['url'])
                 uhint, uhdescr = uh.uhinter(1, t_url)
                 thint = (sn_row['thint'])                  # the hint we guessed at while interrogating page <tags>
-                print ( f"#0 Real news NLP candidate" )    # all type 0 are assumed to be REAL news
                 logging.info ( f"%s - #1 get_locality hints: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
                 r_uhint, r_thint, r_xturl = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
+                print ( f"#0 {uhdescr} - NLP candidate" )    # all type 0 are assumed to be REAL news
                 confidence_ind(r_uhint, r_thint, r_xturl, sn_row['url'] )       # dodes NOT chnage any data, just nice output
                 #
             elif sn_row['type'] == 1:                     # possibly not news? (Micro Ad)
                 t_url = urlparse(sn_row['url'])
                 uhint, uhdescr = uh.uhinter(2, t_url)
                 thint = (sn_row['thint'])                 # the hint we guess at while interrogating page <tags>
-                print ( f"#1 Micro-ad NLP candidate" )    # all type 0 are assumed to be REAL news
                 logging.info ( f"%s - #1 get_locality hints: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
                 r_uhint, r_thint, r_xturl = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
+                print ( f"#0 {uhdescr} - NLP candidate" )    # all type 0 are assumed to be REAL news
                 confidence_ind(r_uhint, r_thint, r_xturl, sn_row['url'] )       # dodes NOT chnage any data, just nice output
                 #
             elif sn_row['type'] == 2:                     # possibly not news? (Micro Ad)
