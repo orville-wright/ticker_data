@@ -58,7 +58,7 @@ class url_hinter:
                     }
 
         #a_url = urlparse(url)
-        print ( f">>>DEBUG<<< Incomming url: {t_nl}" )
+        print ( f">>>DEBUG<<< Incomming url: {url}" )
         t_nl = url.path.split('/', 2)       # e.g.  https://finance.yahoo.com/video/disney-release-rest-2021-films-210318469.html
         uhint = uhint_code.get(t_nl[1])     # retrieve uhint code: 0, 1, 2, 3
         logging.info ( f"%s - Hinter logic: {uhint[1]} [{url_netloc}] / {uhint[0]}" % cmi_debug )
