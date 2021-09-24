@@ -122,7 +122,7 @@ class y_topgainers:
             mktcap = next(extr_strs)         # 7th <td> : Market cap with scale indicator / e.g "15.753B"
             peratio = next(extr_strs)        # 8th <td> : PEsratio TTM (Trailing 12 months) / e.g "N/A"
             try:
-                mini_gfx = next(datarow.td) # 9th <td> : mini-graphic shows 52-week rage & current price on range/scale (no TXT/strings avail)
+                mini_gfx = next(datarow.td.find()) # 9th <td> : mini-graphic shows 52-week rage & current price on range/scale (no TXT/strings avail)
                 logging.info( f'%s - >> NEXT ITER GOOD << Symbol: {co_sym} type: {type(mini_gfx)}' % cmi_debug )
                 print ( f"{mini_gfx}" )
             except StopIteration:
