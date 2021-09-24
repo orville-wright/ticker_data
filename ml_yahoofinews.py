@@ -484,13 +484,15 @@ class yfnews_reader:
             nr = s.get( self.this_article_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
             nsoup = BeautifulSoup(nr.text, 'html.parser')
             logging.info( '%s - setting BS4 <tag> zones for eval...' % cmi_debug )
-            rem_news = nsoup.find(attrs={"class": "caas-readmore"})             # stub news article, remotely hosted
-            local_news = nsoup.find(attrs={"class": "caas-body"})               # full news article, locally hosted
-            local_story = nsoup.find(attrs={"class": "caas-body-wrapper"})      # boring options trader bland article type
+            rem_news = nsoup.find(attrs={"class": "caas-readmore"} )             # stub news article, remotely hosted
+            #local_news = nsoup.find(attrs={"class": "caas-body"})              # full news article, locally hosted
+            local_news = nsoup.find(attrs={"class": "caas-content-wrapper"} )    # full news article, locally hosted
+            local_story = nsoup.find(attrs={"class": "caas-body-wrapper"} )      # boring options trader bland article type
 
             #if type(rem_news) != type(None):               # page has valid structure
             logging.info( f"%s - Data row: {data_row}" % cmi_debug )
-            if uhint == 0 or uhint == 1:                    # Local-remote stub or Local-local article
+            #if uhint == 0 or uhint == 1:                    # Local-remote stub or Local-local article
+            if uhint == 0:                    # Local-remote stub or Local-local article
                 logging.info ( f"%s - Depth: 2 / Read Local-remote stub / u: {uhint} t: {thint}" % cmi_debug )
                 #logging.info ( f"%s - Depth: 2 / Raw HTML data: {rem_news}" % cmi_debug )
                 if rem_news.find('a'):                     # BAD, no <a> zone in page or article is a REAL remote URL already
@@ -501,9 +503,22 @@ class yfnews_reader:
                     ext_url_item = {'exturl': rem_url }
                     data_row.update(ext_url_item )          # prepare to insert the external url into ml_ingest via an AUGMENTED data_row
                     self.ml_ingest[id] = data_row           # now PERMENTALY update the ml_ingest record @ index = id
-                    return uhint, thint, rem_url
                     logging.info ( f"%s - Depth: 2 / NLP candidate is ready" % cmi_debug )
-                    return uhint, thint, rem_url                 # 100% confidence that articel is REMOTE
+                    return uhint, thint, rem_url
+                    #
+            if uhint == 1:
+                logging.info ( f"%s - Depth: 2 / Read Local artice / u: {uhint} t: {thint}" % cmi_debug )
+                if local_news.find('p'):                     # <p> is where the ENTIRE article is written
+                    author = local_news.find(attrs={"class": "caas-attr-item-author"} )
+                    pubdate = local_news.find(attrs={"class": "caas-attr-time-style"} )
+                    article = local_news.find(attrs={"class": "caas-body"} )
+                    # remotely hosted news article. with a real external URL, Also has [Continue reading] button TEXT
+                    logging.info ( f"%s - Depth: 2 / Good <p> Local full TEXT article" % cmi_debug )
+                    print ( f"News item:        5)
+                    print ( f"Article author:   {authot.text}" )
+                    print ( f"Published date:   {pubdate.text}" )
+                    logging.info ( f"%s - Depth: 2 / NLP candidate is ready" % cmi_debug )
+                    return uhint, thint, url
                     #
                 elif rem_news.text == "Story continues":         # local articles have a [story continues...] button
                     logging.info ( f"%s - Depth: 2 / Good-stub founr [story continues...]" % cmi_debug )
