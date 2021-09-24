@@ -73,22 +73,39 @@ class y_topgainers:
         x = 1    # row counter Also leveraged for unique dataframe key
         for datarow in self.all_tag_tr:
             # BS4 generator object from "extracted strings" BS4 operation (nice)
+            logging.info( f'%s - >>DEBUG<< {type(datarow)}' % cmi_debug )
+
+            #print ( f"{datarow}")
             extr_strings = datarow.stripped_strings
-            co_sym = next(extr_strings)         # 1st <td> : ticker symbol info & has comment of company name
-            co_name = next(extr_strings)        # 2nd <td> : company name
-            price = next(extr_strings)          # 3rd <td> : price
-            change = next(extr_strings)         # 4th <td> : $ change
-            pct = next(extr_strings)            # 5th <td> : % change
-            vol = next(extr_strings)            # 6th <td> : volume
-            avg_vol = next(extr_strings)        # 6th <td> : Avg. vol over 3 months)
-            mktcap = next(extr_strings)         # 7th <td> : Market cap
-            # 8th <td> : PE ratio (I dont care aboutt this. so ignore/disgard it)
+            logging.info( f'%s - >> 1 DEBUG<< {extr_strings}' % cmi_debug )
 
-            co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )      # left justify TXT in DF & convert to raw string
+            co_sym = next(extr_strings)         # 1st <td> : ticker symbol info / e.g "NWAU"
+            co_name = next(extr_strings)        # 2nd <td> : company name / e.g "Consumer Automotive Finance, Inc."
 
-            co_name_lj = (re.sub('[\'\"]', '', co_name) )    # remove " ' and strip leading/trailing spaces
-            co_name_lj = np.array2string(np.char.ljust(co_name_lj, 25) )   # left justify TXT in DF & convert to raw string
-            co_name_lj = (re.sub('[\']', '', co_name_lj) )    # remove " ' and strip leading/trailing spaces
+            #price = next(extr_strings)          # 3rd <td> : price (Intraday) / e.g "0.0031"
+            price = next(datarow.strings)          # 3rd <td> : price (Intraday) / e.g "0.0031"
+            logging.info( f'%s - >> 2 DEBUG<< price orig: {price} type: {type(price)}' % cmi_debug )
+
+            #change = next(extr_strings)         # 4th <td> : $ change / e.g  "+0.0021"
+            change = next(datarow.strings)         # 4th <td> : $ change / e.g  "+0.0021"
+            logging.info( f'%s - >> 3 DEBUG<< change orig: {change} type: {type(change)}' % cmi_debug )
+
+            pct = next(extr_strings)            # 5th <td> : % change / e.g "+210.0000%"
+            vol = next(extr_strings)            # 6th <td> : volume with scale indicator/ e.g "70.250k"
+            avg_vol = next(extr_strings)        # 6th <td> : Avg. vol over 3 months) / e.g "61,447"
+            mktcap = next(extr_strings)         # 7th <td> : Market cap with scale indicator / e.g "15.753B"
+            peratio = next(extr_strings)        # 8th <td> : PE ratio TTM (Trailing 12 months) / e.g "N/A"
+            mini_gfx = next(extr_strings)       # 9th <td> : mini-graphic shows 52-week rage & current price on range/scale (no TXT/strings avail)
+
+            # now wrangle the data...
+
+
+            co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )          # left justify TXT in DF & convert to raw string
+
+            # TODO: look at using f-string justifers to do this
+            co_name_lj = (re.sub('[\'\"]', '', co_name) )                   # remove " ' and strip leading/trailing spaces
+            co_name_lj = np.array2string(np.char.ljust(co_name_lj, 25) )    # left justify TXT in DF & convert to raw string
+            co_name_lj = (re.sub('[\']', '', co_name_lj) )                  # remove " ' and strip leading/trailing spaces
 
             #co_name_lj = np.array2string(np.char.ljust(co_name, 20) )   # left justify TXT in DF & convert to raw string
             #co_name_lj = (re.sub('[\'\"]', '', co_name_lj))    # remove " '
@@ -117,13 +134,29 @@ class y_topgainers:
             if not TRILLIONS and not BILLIONS and not MILLIONS:
                 mktcap_clean = 0    # error condition - possible bad data
                 mb = "LZ"           # Zillions
-                logging.info('%s - bad mktcap data. set to L0' % cmi_debug )
+                logging.info('%s - bad mktcap data N/A setting to LZ' % cmi_debug )
                 # handle bad data in mktcap html page field
 
             if pct == "N/A":            # Bad data. FOund a filed with N/A instead of read num
-                pct = "1.0"
+                pct = float(0.0)
 
-            pct = np.float(re.sub('[-+,%]', '', pct))
+            #pct = np.float(re.sub('[-+,%]', '', pct))
+            # np.float(re.sub('[\+,]', '', change)), \
+
+            logging.info ( f"%s - #1 Count: {x} / Symbol: {co_sym_lj} / change: {change} type: {type(change)}" % cmi_debug )
+            logging.info ( f"%s - #2 Count: {x} / Symbol: {co_sym_lj} / Pct: {pct} type: {type(pct)}" % cmi_debug )
+
+            change_clean = re.sub('[\-\+]', "", change )
+            logging.info ( f"%s - #3 Count: {x} / Symbol: {co_sym_lj} / change_clean: {change_clean} type: {type(change_clean)}" % cmi_debug )
+
+            pct_clean = re.sub('[\-\+\,\%]', "", pct )
+            logging.info ( f"%s - #4 Count: {x} / Symbol: {co_sym_lj} / pct_clean: {pct_clean} type: {type(pct_clean)}" % cmi_debug )
+
+            change_clean = np.float(change_clean)
+            logging.info ( f"%s - #5 Count: {x} / Symbol: {co_sym_lj} / change: {change_clean} type: {type(change_clean)}" % cmi_debug )
+
+            pct_clean = np.float(pct_clean)
+            logging.info ( f"%s - #6 Count: {x} / Symbol: {co_sym_lj} / pct: {pct_clean} type: {type(pct_clean)}" % cmi_debug )
 
             # note: Pandas DataFrame : top_gainers pre-initalized as EMPYT
             # Data treatment:
@@ -137,8 +170,8 @@ class y_topgainers:
                        re.sub('\'', '', co_sym_lj), \
                        co_name_lj, \
                        np.float(re.sub('\,', '', price)), \
-                       np.float(re.sub('[\+,]', '', change)), \
-                       pct, \
+                       change_clean, \
+                       pct_clean, \
                        mktcap_clean, \
                        mb, \
                        time_now ]]
