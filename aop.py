@@ -412,7 +412,7 @@ def main():
                 }
         logging.info ( f"%s - hint code recieved: {r_thint}" % cmi_debug )
         thint_descr = tcode.get(r_thint)
-        print ( f"Confidence:    t:{r_uhint} / u:{r_uhint} {thint_descr}" )
+        print ( f"Confidence:    t:{r_uhint} / h:{r_thint} {thint_descr}" )
         print ( f"News feed URL: {orig_url}" )
         print ( f"Real dest URL: {r_xturl}" )
         print ( f"====================== Depth 2 ======================" )
