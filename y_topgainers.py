@@ -121,7 +121,13 @@ class y_topgainers:
             avg_vol = next(extr_strs)        # 6th <td> : Avg. vol over 3 months) / e.g "61,447"
             mktcap = next(extr_strs)         # 7th <td> : Market cap with scale indicator / e.g "15.753B"
             peratio = next(extr_strs)        # 8th <td> : PEsratio TTM (Trailing 12 months) / e.g "N/A"
-            mini_gfx = next(datarow.next_siblings) # 9th <td> : mini-graphic shows 52-week rage & current price on range/scale (no TXT/strings avail)
+            try:
+                mini_gfx = next(datarow.next_siblings) # 9th <td> : mini-graphic shows 52-week rage & current price on range/scale (no TXT/strings avail)
+                logging.info( f'%s - >> NEXT ITER GOOD << Symbol: {co_sym}' % cmi_debug )
+            except StopIteration:
+                logging.info( f'%s - >> END OF ITER - raised StopIteration << Symbol: {co_sym}' % cmi_debug )
+            finally:
+                logging.info( f'%s - >> FLOW through - end of next Iterations << Symbol: {co_sym}' % cmi_debug )
 
             ####################################################################
             # now wrangle the data...
