@@ -73,6 +73,8 @@ class y_topgainers:
         x = 1    # row counter Also leveraged for unique dataframe key
         for datarow in self.all_tag_tr:
             # BS4 generator object from "extracted strings" BS4 operation (nice)
+
+            """
             logging.info( f'%s - >>DEBUG<< {type(datarow)}' % cmi_debug )
 
             #print ( f"{datarow}")
@@ -96,9 +98,28 @@ class y_topgainers:
             mktcap = next(extr_strings)         # 7th <td> : Market cap with scale indicator / e.g "15.753B"
             peratio = next(extr_strings)        # 8th <td> : PE ratio TTM (Trailing 12 months) / e.g "N/A"
             mini_gfx = next(extr_strings)       # 9th <td> : mini-graphic shows 52-week rage & current price on range/scale (no TXT/strings avail)
+            """
 
+            #logging.info( f'%s - >>DEBUG<< {type(datarow)}' % cmi_debug )
+            extr_strs = datarow.strings
+            logging.info( f'%s - >> 1 DEBUG<< {extr_strs}' % cmi_debug )
+            logging.info( f'%s - >> 1 DEBUG<<' % cmi_debug )
+
+            co_sym = next(extr_strs)         # 1st <td> : ticker symbol info / e.g "NWAU"
+            co_name = next(extr_strs)        # 2nd <td> : company name / e.g "Consumer Automotive Finance, Inc."
+            #price = next(extr_strings)          # 3rd <td> : price (Intraday) / e.g "0.0031"
+            logging.info( f'%s - >> 2 DEBUG<< price orig: {price} type: {type(price)}' % cmi_debug )
+            #change = next(extr_strings)         # 4th <td> : $ change / e.g  "+0.0021"
+            logging.info( f'%s - >> 3 DEBUG<< change orig: {change} type: {type(change)}' % cmi_debug )
+            pct = next(extr_strs)            # 5th <td> : % change / e.g "+210.0000%"
+            vol = next(extr_strs)            # 6th <td> : volume with scale indicator/ e.g "70.250k"
+            avg_vol = next(extr_strs)        # 6th <td> : Avg. vol over 3 months) / e.g "61,447"
+            mktcap = next(extr_strs)         # 7th <td> : Market cap with scale indicator / e.g "15.753B"
+            peratio = next(extr_strs)        # 8th <td> : PE ratio TTM (Trailing 12 months) / e.g "N/A"
+            mini_gfx = next(extr_strs)       # 9th <td> : mini-graphic shows 52-week rage & current price on range/scale (no TXT/strings avail)
+
+            ####################################################################
             # now wrangle the data...
-
 
             co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )          # left justify TXT in DF & convert to raw string
 
