@@ -436,17 +436,22 @@ def main():
                 t_url = urlparse(sn_row['url'])
                 uhint, uhdescr = uh.uhinter(1, t_url)
                 thint = (sn_row['thint'])              # the hint we guessed at while interrogating page <tags>
-                print ( f"Real news = NLP candidate" )    # all type 0 are assumed to be REAL news
+                print ( f"#0 Real news NLP candidate" )    # all type 0 are assumed to be REAL news
                 logging.info ( f"%s - #1 get_locality hints: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
                 r_uhint, r_thint, r_xturl = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
-                #yfn.dump_ml_ingest()
                 article_header(r_uhint, r_thint, r_xturl, sn_row['url'] )
             elif sn_row['type'] == 1:                     # possibly not news? (Micro Ad)
                 t_url = urlparse(sn_row['url'])
                 uhint, uhdescr = uh.uhinter(2, t_url)
                 thint = (sn_row['thint'])             # the hint we guess at while interrogating page <tags>
+                print ( f"#1 Real news NLP candidate" )    # all type 0 are assumed to be REAL news
+                logging.info ( f"%s - #1 get_locality hints: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
+                r_uhint, r_thint, r_xturl = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
+                article_header(r_uhint, r_thint, r_xturl, sn_row['url'] )
+
+            elif sn_row['type'] == 2:                     # possibly not news? (Micro Ad)
                 if uhint >= 3:
-                    print ( f"Micro ad > NLP candidate" )
+                    print ( f"Micro-ad NLP candidate" )
                     logging.info ( f"%s - #2 get_locality hints: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
                     r_uhint, r_thint, r_xturl = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
                     article_header(r_uhint, r_thint, r_xturl, sn_row['url'] )
@@ -515,8 +520,9 @@ def main():
         yfn.share_hinter(uh)
         yfn.scan_news_feed(news_symbol, 0, 0)    # (params) #1: level, #2: 0=HTML / 1=JavaScript
         yfn.eval_article_tags(news_symbol)          # ml_ingest{} is built
-        print ( "============================== NLP News candidates are ready =================================" )
-        #yfn.dump_ml_ingest()
+
+        print ( f" " )
+        print ( "========================= Evaluate quality of ML/NLP candidates =========================" )
         nlp_final_prep()
 
 #################################################################################
