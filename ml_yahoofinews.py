@@ -465,8 +465,8 @@ class yfnews_reader:
 
         # data elements extracted & computed
         # Authour, Date posted, Time posted, Age of article
-        cmi_debug = __name__+"::self.get_locality.#"+str(self.yti)
-        logging.info('%s - IN' % cmi_debug )
+        cmi_debug = __name__+"::get_locality.#"+str(self.yti)
+        #logging.info('%s - IN' % cmi_debug )
         right_now = date.today()
         id = item_idx
         data_row = data_row
