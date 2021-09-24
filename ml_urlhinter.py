@@ -46,7 +46,7 @@ class url_hinter:
         11 = Error state for method
         """
 
-        cmi_debug = __name__+"::"+self.uhinter.__name__+".eng#"+str(self.yti)+"_cyc#"+str(hcycle)
+        cmi_debug = __name__+"::uhinter.eng#"+str(self.yti)+"_cyc#"+str(hcycle)
         logging.info('%s - CALLED' % cmi_debug )
 
         uhint_code = { 'm': ('Local-remote stub', 0),
@@ -55,17 +55,19 @@ class url_hinter:
                     'rabs': ('Remote absolute', 3),
                     'udef': ('Not yet defined', 9),
                     'err': ('Error mangled url', 10)
-                    }
+
+        #a_url = urlparse(url)
+        print ( f">>>DEBUG<<< Incomming url: {t_nl}" )
         t_nl = url.path.split('/', 2)       # e.g.  https://finance.yahoo.com/video/disney-release-rest-2021-films-210318469.html
         uhint = uhint_code.get(t_nl[1])     # retrieve uhint code: 0, 1, 2, 3
-        logging.info ( f"%s - Hinter logic: {uhint[1]} [{url.netloc}] / {uhint[0]}" % cmi_debug )
-        if url.netloc == "finance.yahoo.com":
-            logging.info ( f"%s - Inferred hint from URL: {uhint[1]} [{url.netloc}] / {uhint[0]}" % cmi_debug )
+        logging.info ( f"%s - Hinter logic: {uhint[1]} [{url_netloc}] / {uhint[0]}" % cmi_debug )
+        if url_netloc == "finance.yahoo.com":
+            logging.info ( f"%s - Inferred hint from URL: {uhint[1]} [{url_netloc}] / {uhint[0]}" % cmi_debug )
             return uhint[1], uhint[0]
 
         if url.scheme == "https" or url.scheme == "http":    # URL has valid scheme but isn NOT @ YFN
             #print ( f"3 / Remote pure url - ", end="" )
-            logging.info ( f"%s - Inferred hint from URL: 3 [{url.netloc}] / Remote pure article" % cmi_debug )
+            logging.info ( f"%s - Inferred hint from URL: 3 [{url_netloc}] / Remote pure article" % cmi_debug )
             return 3, "Remote-abs"
         else:
             #print ( f"ERROR_url / ", end="" )
