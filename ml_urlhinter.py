@@ -55,6 +55,7 @@ class url_hinter:
                     'rabs': ('Remote absolute', 3),
                     'udef': ('Not yet defined', 9),
                     'err': ('Error mangled url', 10)
+                    }
 
         #a_url = urlparse(url)
         print ( f">>>DEBUG<<< Incomming url: {t_nl}" )
