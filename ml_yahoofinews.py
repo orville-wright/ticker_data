@@ -432,7 +432,7 @@ class yfnews_reader:
                 inf_type = "Bulk injected ad"
                 ml_atype = 2
                 thint = 6.0
-                print ( f"================= Depth 1 / {symbol} Article {x} ==================" )
+                print ( f"====================== Article {x} / {symbol} / Depth 1 ======================" )
                 print ( f"News item:        {self.cycle}: {inf_type} / Confidence > t:{ml_atype} / u:[] / h:{thint}" )
                 print ( f"News agency:      {fa_2} / not {symbol} news / NOT an NLP candidate" )
                 print ( f"Adv injector:     {fa_3:.40} [...]" )
