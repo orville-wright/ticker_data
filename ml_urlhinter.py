@@ -99,7 +99,7 @@ class url_hinter:
 
 
 # method #3
-    def confidence_lvl(r_uhint, r_thint, r_xturl, orig_url):
+    def confidence_lvl(self, thint):
         """
         NLP Support function #1
         INFO: Does *not* print any output
@@ -133,18 +133,6 @@ class url_hinter:
                 10.0: 'ERROR unknonw state',
                 99.9: 'DEfault NO-YET-SET'
                 }
-        logging.info ( f"%s - hint code recieved: {r_thint}" % cmi_debug )
-        thint_descr = tcode.get(r_thint)
-        #print ( f"Confidence:    u:{r_uhint} / h:{r_thint} {thint_descr}" )
-        #print ( f"News feed URL: {orig_url}" )
-        #print ( f"Real dest URL: {r_xturl}" )
-        #print ( f"====================== Depth 2 ======================" )
-
-        conf_level = {
-                "confidence" : thint_descr,
-                "loc_url" : orig_url,
-                "abs_url" : r_xturl,
-                "tcode" : r_thint,
-                }
-
-        return conf_level
+        logging.info ( f"%s - hint code recieved: {thint}" % cmi_debug )
+        thint_descr = tcode.get(thint)
+        return thint_descr
