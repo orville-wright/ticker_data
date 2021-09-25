@@ -401,23 +401,11 @@ class yfnews_reader:
                 print ( f"================= Depth 1 / {symbol} Article {x} ==================" )
                 print ( f"News item:        {self.cycle}: {inf_type} / Confidence Indicators t:{ml_atype} / u:{uhint} / h:{thint}" )
                 print ( f"News agency:      {news_agency} " )
-
-                #if pure_url == 0: print ( f"Local-Remote stub @ [ {self.url_netloc} ]" )
-                # >>> This is bad error-prone unecessary work <<<
-                # >>> I should be able to call the hinter to help print via hint logic <<<
-                # >>> dont print manually via manual if/and logic
-                if pure_url == 1: print ( f"Remote-Abs1 @ [ {self.url_netloc} ]" )
-                if pure_url == 1 and uhint == 3: print ( f"Remote-Abs2 @ [ {self.url_netloc} ]" )
-                if uhint == 2 and thint == 4.0: print ( f"Local video @ [ {self.url_netloc} ]" )
-                if pure_url == 9: print ( f"Unknown     @ *bad url*" )
-                if uhint == 9: print ( f"Not yet known @ {self.url_netloc}" )
-                if thint == 5.0: print ( f"Local Micro ad @ [ {self.url_netloc} ]" )
-                if thint == 5.1: print ( f"Remote-abs Micro ad @ [ {self.url_netloc} ]" )
-                if thint == 0.0: print ( f"Local-remote stub @ [ {self.url_netloc} ]" )
-
+                print ( f"News origin:      {self.url_netloc} )
                 print ( f"Article URL:      {self.article_url}" )
                 print ( f"Article headline: {article_headline}" )
                 print ( f"Article teaser:   {self.article_teaser}" )
+
                 self.ml_brief.append(self.article_teaser)           # add Article teaser long TXT into ML pre count vectorizer matrix
                 auh = hashlib.sha256(self.article_url.encode())
                 aurl_hash = auh.hexdigest()
