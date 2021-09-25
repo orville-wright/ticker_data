@@ -66,7 +66,7 @@ class url_hinter:
         uhint = uhint_code.get(urlp_attr)                       # retrieve uhint code as tuple
         logging.info ( f"%s - Hinter logic: {uhint[1]} [{input_url.netloc}] / {uhint[0]}" % cmi_debug )
         # must be of type 'urllib.parse.ParseResult'
-        if type(input_url) == 'urllib.parse.ParseResult':       # was a parsed URL named tuple sent in?
+        if type(input_url) == type(urllib.parse.ParseResult):       # was a parsed URL named tuple sent in?
             if input_url.netloc == "finance.yahoo.com":
                 logging.info ( f"%s - Inferred hint from URL: {uhint[1]} [{input_url.netloc}] / {uhint[0]}" % cmi_debug )
                 return uhint[1], uhint[0]
