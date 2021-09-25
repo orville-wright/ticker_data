@@ -71,7 +71,7 @@ class url_hinter:
                 logging.info ( f"%s - Inferred hint from URL: {uhint[1]} [{input_url.netloc}] / {uhint[0]}" % cmi_debug )
                 return uhint[1], uhint[0]
 
-        parsed_url = urlparse(input_url):    # no, not a URL name tuple
+        parsed_url = urlparse(input_url)    # no, not a URL name tuple
         if parsed_url.netloc == "finance.yahoo.com":
             logging.info ( f"%s - ERROR confused URL state: {uhint[1]} [{parsed_url.netloc}] / {uhint[0]}" % cmi_debug )
             return uhint[1], uhint[0]
