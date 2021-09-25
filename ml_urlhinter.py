@@ -58,8 +58,8 @@ class url_hinter:
                     }
 
         #a_url = urlparse(url)
-        print ( f">>>DEBUG<<< Incomming url data: {url}" )
-        print ( f">>>DEBUG<<< Incomming url type: {type(url)}" )
+        print ( f">>>DEBUG<<< Incomming url data: {urlpassed_ntuple}" )
+        print ( f">>>DEBUG<<< Incomming url type: {type(urlpassed_ntuple)}" )
 
         urlp_attr = urlpassed_ntuple.path.split('/', 2)       # e.g.  ParseResult(scheme='https', netloc='finance.yahoo.com', path='/m/49c60293...
         uhint = uhint_code.get(urlp_attr)                       # retrieve uhint code as tuple
