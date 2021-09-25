@@ -33,7 +33,7 @@ class url_hinter:
         self.yti = yti
         return
 
-    def uhinter(self, hcycle, url):
+    def uhinter(self, hcycle, urlpassed_ntuple):
         """
         NLP Support function - Exact copy of main::url_hinter()
         Only a few hint types are possible...
@@ -58,17 +58,19 @@ class url_hinter:
                     }
 
         #a_url = urlparse(url)
-        print ( f">>>DEBUG<<< Incomming url: {url}" )
-        t_nl = url.path.split('/', 2)       # e.g.  https://finance.yahoo.com/video/disney-release-rest-2021-films-210318469.html
-        uhint = uhint_code.get(t_nl[1])     # retrieve uhint code: 0, 1, 2, 3
-        logging.info ( f"%s - Hinter logic: {uhint[1]} [{url_netloc}] / {uhint[0]}" % cmi_debug )
-        if url_netloc == "finance.yahoo.com":
-            logging.info ( f"%s - Inferred hint from URL: {uhint[1]} [{url_netloc}] / {uhint[0]}" % cmi_debug )
+        print ( f">>>DEBUG<<< Incomming url data: {url}" )
+        print ( f">>>DEBUG<<< Incomming url type: {type(url)}" )
+
+        urlp_attr = urlpassed_ntuple.path.split('/', 2)       # e.g.  ParseResult(scheme='https', netloc='finance.yahoo.com', path='/m/49c60293...
+        uhint = uhint_code.get(urlp_attr)                       # retrieve uhint code as tuple
+        logging.info ( f"%s - Hinter logic: {uhint[1]} [{urlpassed_ntuple.netloc}] / {uhint[0]}" % cmi_debug )
+        if urlpassed_ntuple.netloc == "finance.yahoo.com":
+            logging.info ( f"%s - Inferred hint from URL: {uhint[1]} [{urlpassed_ntuple.netloc}] / {uhint[0]}" % cmi_debug )
             return uhint[1], uhint[0]
 
         if url.scheme == "https" or url.scheme == "http":    # URL has valid scheme but isn NOT @ YFN
             #print ( f"3 / Remote pure url - ", end="" )
-            logging.info ( f"%s - Inferred hint from URL: 3 [{url_netloc}] / Remote pure article" % cmi_debug )
+            logging.info ( f"%s - Inferred hint from orig URL: 3 [{url_netloc}] / Remote pure article" % cmi_debug )
             return 3, "Remote-abs"
         else:
             #print ( f"ERROR_url / ", end="" )

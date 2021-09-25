@@ -435,7 +435,7 @@ def main():
         for sn_idx, sn_row in yfn.ml_ingest.items():    # cycle thru the NLP candidate list
             if sn_row['type'] == 0:                       # REAL news, inferred from Depth 0
                 print( f"News article:  {sn_idx} / ", end="" )
-                t_url = urlparse(sn_row['url'])
+                t_url = urlparse(sn_row['url'])           # WARN: a rlparse() url_named_tupple (NOT the raw url)
                 uhint, uhdescr = uh.uhinter(1, t_url)
                 thint = (sn_row['thint'])                  # the hint we guessed at while interrogating page <tags>
                 logging.info ( f"%s - #1 get_locality hints: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
