@@ -398,7 +398,7 @@ class yfnews_reader:
                     a_teaser = li_tag.p.text
                     self.article_teaser = f"{a_teaser:.170}" + " [...]"
 
-                print ( f"================= Depth 1 / {symbol} Article {x} ==================" )
+                print ( f"====================== Article {x} / {symbol} / Depth 1 ======================" )
                 print ( f"News item:        {self.cycle}: {inf_type} / Confidence Indicators t:{ml_atype} / u:{uhint} / h:{thint}" )
                 print ( f"News agency:      {news_agency}" )
                 print ( f"News origin:      {self.url_netloc}" )
