@@ -400,8 +400,8 @@ class yfnews_reader:
 
                 print ( f"================= Depth 1 / {symbol} Article {x} ==================" )
                 print ( f"News item:        {self.cycle}: {inf_type} / Confidence Indicators t:{ml_atype} / u:{uhint} / h:{thint}" )
-                print ( f"News agency:      {news_agency} " )
-                print ( f"News origin:      {self.url_netloc} )
+                print ( f"News agency:      {news_agency}" )
+                print ( f"News origin:      {self.url_netloc}" )
                 print ( f"Article URL:      {self.article_url}" )
                 print ( f"Article headline: {article_headline}" )
                 print ( f"Article teaser:   {self.article_teaser}" )
