@@ -317,7 +317,8 @@ class yfnews_reader:
         li_subset_all = self.ul_tag_dataset.find_all('li')
 
         h3_counter = a_counter = 0
-        x = y = 0
+        x = 1
+        y = 0
         hcycle = 1
         pure_url = 9                                         # saftey preset
         uhint = 9                                            # saftey preset
@@ -398,7 +399,7 @@ class yfnews_reader:
                     a_teaser = li_tag.p.text
                     self.article_teaser = f"{a_teaser:.170}" + " [...]"
 
-                print ( f"====================== Article {x} / {symbol} / Depth 1 ======================" )
+                print ( f"================= Article {x} / {symbol} / Depth 1 ==========================" )
                 print ( f"News item:        {self.cycle}: {inf_type} / Confidence Indicators t:{ml_atype} / u:{uhint} / h:{thint}" )
                 print ( f"News agency:      {news_agency}" )
                 print ( f"News origin:      {self.url_netloc}" )
@@ -432,7 +433,7 @@ class yfnews_reader:
                 inf_type = "Bulk injected ad"
                 ml_atype = 2
                 thint = 6.0
-                print ( f"====================== Article {x} / {symbol} / Depth 1 ======================" )
+                print ( f"================= Article {x} / {symbol} / Depth 1 ==========================" )
                 print ( f"News item:        {self.cycle}: {inf_type} / Confidence > t:{ml_atype} / u:[] / h:{thint}" )
                 print ( f"News agency:      {fa_2} / not {symbol} news / NOT an NLP candidate" )
                 print ( f"Adv injector:     {fa_3:.40} [...]" )
