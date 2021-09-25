@@ -54,7 +54,8 @@ class url_hinter:
                     'video': ('Local video', 2),
                     'rabs': ('Remote absolute', 3),
                     'udef': ('Not yet defined', 9),
-                    'err': ('Error mangled url', 10)
+                    'err': ('Error mangled url', 10),
+                    'bad': ('ERROR_unknown_state', 99)
                     }
 
         #a_url = urlparse(url)
@@ -69,21 +70,25 @@ class url_hinter:
             if input_url.netloc == "finance.yahoo.com":
                 logging.info ( f"%s - Inferred hint from URL: {uhint[1]} [{input_url.netloc}] / {uhint[0]}" % cmi_debug )
                 return uhint[1], uhint[0]
-        elif:    # no, not a URL name tuple
-            parsed_url = urlparse(input_url)
-            if parsed_url.netloc == "finance.yahoo.com":
-                logging.info ( f"%s - ERROR confused URL state: {uhint[1]} [{parsed_url.netloc}] / {uhint[0]}" % cmi_debug )
+
+        parsed_url = urlparse(input_url):    # no, not a URL name tuple
+        if parsed_url.netloc == "finance.yahoo.com":
+            logging.info ( f"%s - ERROR confused URL state: {uhint[1]} [{parsed_url.netloc}] / {uhint[0]}" % cmi_debug )
+            return uhint[1], uhint[0]
+        else:
+            logging.info ( f"%s - Recieved a pure-absolute url: {uhint[1]} [{parsed_url.netloc}] / {uhint[0]}" % cmi_debug )
+            if parsed_url.scheme == "https" or parsed_url.scheme == "http":    # URL has valid scheme but isn NOT @ YFN
+                uhint = uhint_code.get(rabs)
+                logging.info ( f"%s - Inferred hint from URL: {uhint[1]} [{parsed_url.netloc}] / {uhint[0]}" % cmi_debug )
                 return uhint[1], uhint[0]
             else:
-                if parsed_url.scheme == "https" or parsed_url.scheme == "http":    # URL has valid scheme but isn NOT @ YFN
-                logging.info ( f"%s - Inferred hint from URL: 3 [{parsed_url.netloc}] / Remote pure article" % cmi_debug )
-                return 3, "Remote-abs"
-        else:
-            #print ( f"ERROR_url / ", end="" )
-            logging.info ( f"%s - ERROR URL hint is 10 / Mangled URL" % cmi_debug )
-            return 10, "Error mangled url"
+                #print ( f"ERROR_url / ", end="" )
+                uhint = uhint_code.get(err)
+                logging.info ( f"%s - ERROR recieved Mangled URL / {uhint[1]} [{parsed_url.netloc}] / {uhint[0]}" % cmi_debug )
+                return uhint[1], uhint[0]
 
-        return 11, "ERROR_Unknown state"
+        error_state = uhint_code.get(errbad)
+        return uhint[1], uhint[0]
 
     def hstatus(self):
         """
