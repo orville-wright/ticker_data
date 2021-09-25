@@ -371,7 +371,7 @@ class yfnews_reader:
                         hcycle += 1
                         # ... need more analysis of this type...so keep working....
 
-                    if not li_tag.find('p'):
+                    if not li_tag.find('p'):            # Micro-Ad
                         self.url_netloc = self.a_urlp.netloc
                         logging.info( f'%s - url_netloc.#3 {self.url_netloc}' % (cmi_debug) )
                         if pure_url == 0: thint = 5.0    # local entity
@@ -497,8 +497,8 @@ class yfnews_reader:
 
                     ext_url_item = {'exturl': rem_url }     # build a new dict entry (external; absolute url)
                     data_row.update(ext_url_item )          # insert new dict entry into ml_ingest via an AUGMENTED data_row
-
                     self.ml_ingest[idx] = data_row           # now PERMENTALY update the ml_ingest record @ index = id
+
                     logging.info ( f"%s - Depth: 2 / NLP candidate is ready" % cmi_debug )
                     return uhint, thint, rem_url
                     #

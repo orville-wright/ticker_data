@@ -415,7 +415,6 @@ def main():
         print ( f"Confidence:    u:{r_uhint} / h:{r_thint} {thint_descr}" )
         print ( f"News feed URL: {orig_url}" )
         print ( f"Real dest URL: {r_xturl}" )
-        print ( f"====================== Depth 2 ======================" )
         return
 
 
@@ -431,6 +430,7 @@ def main():
               Also, false positive articles that may-not have any news relating to this symbol. (News agency's are sleazy!).
         """
         print ( " ")
+        print ( f"====================== Depth 2 ======================" )
         cmi_debug = __name__+"::nlp_final_prep().#1    "
         for sn_idx, sn_row in yfn.ml_ingest.items():    # cycle thru the NLP candidate list
             if sn_row['type'] == 0:                       # REAL news, inferred from Depth 0
@@ -442,13 +442,14 @@ def main():
                 r_uhint, r_thint, r_xturl = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
                 print ( f"#0 {uhdescr} - NLP candidate" )                       # all type 0 are assumed to be REAL news
                 confidence_ind(r_uhint, r_thint, r_xturl, sn_row['url'] )       # dodes NOT chnage any data, just nice output
+                print ( f"====================== Depth 2 ======================" )
                 #
             elif sn_row['type'] == 1:                     # possibly not news? (Micro Ad)
                 print( f"News article:  {sn_idx} / ", end="" )
                 t_url = urlparse(sn_row['url'])
                 uhint, uhdescr = uh.uhinter(2, t_url)
                 thint = (sn_row['thint'])                 # the hint we guess at while interrogating page <tags>
-                logging.info ( f"%s - #2 get_locality hints: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
+                logging.info ( f"%s - #2 get_locality hints: t:1 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
                 r_uhint, r_thint, r_xturl = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
                 print ( f"#1 {uhdescr} - NLP candidate" )                       # all type 1 are only possible news
                 confidence_ind(r_uhint, r_thint, r_xturl, sn_row['url'] )       # dodes NOT chnage any data, just nice output
