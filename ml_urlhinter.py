@@ -33,7 +33,7 @@ class url_hinter:
         self.yti = yti
         return
 
-    def uhinter(self, hcycle, urlpassed_ntuple):
+    def uhinter(self, hcycle, input_url):
         """
         NLP Support function - Exact copy of main::url_hinter()
         Only a few hint types are possible...
@@ -58,23 +58,29 @@ class url_hinter:
                     }
 
         #a_url = urlparse(url)
-        print ( f">>>DEBUG<<< Incomming url data: {urlpassed_ntuple}" )
-        print ( f">>>DEBUG<<< Incomming url type: {type(urlpassed_ntuple)}" )
+        print ( f">>>DEBUG<<< Incomming url data: {input_url}" )
+        print ( f">>>DEBUG<<< Incomming url type: {type(input_url)}" )
 
-        urlp_attr = urlpassed_ntuple.path.split('/', 2)       # e.g.  ParseResult(scheme='https', netloc='finance.yahoo.com', path='/m/49c60293...
+        urlp_attr = input_url.path.split('/', 2)       # e.g.  ParseResult(scheme='https', netloc='finance.yahoo.com', path='/m/49c60293...
         uhint = uhint_code.get(urlp_attr)                       # retrieve uhint code as tuple
-        logging.info ( f"%s - Hinter logic: {uhint[1]} [{urlpassed_ntuple.netloc}] / {uhint[0]}" % cmi_debug )
-        if urlpassed_ntuple.netloc == "finance.yahoo.com":
-            logging.info ( f"%s - Inferred hint from URL: {uhint[1]} [{urlpassed_ntuple.netloc}] / {uhint[0]}" % cmi_debug )
-            return uhint[1], uhint[0]
-
-        if url.scheme == "https" or url.scheme == "http":    # URL has valid scheme but isn NOT @ YFN
-            #print ( f"3 / Remote pure url - ", end="" )
-            logging.info ( f"%s - Inferred hint from orig URL: 3 [{url_netloc}] / Remote pure article" % cmi_debug )
-            return 3, "Remote-abs"
+        logging.info ( f"%s - Hinter logic: {uhint[1]} [{input_url.netloc}] / {uhint[0]}" % cmi_debug )
+        # must be of type 'urllib.parse.ParseResult'
+        if type(input_url) == 'urllib.parse.ParseResult':       # was a parsed URL named tuple sent in?
+            if input_url.netloc == "finance.yahoo.com":
+                logging.info ( f"%s - Inferred hint from URL: {uhint[1]} [{input_url.netloc}] / {uhint[0]}" % cmi_debug )
+                return uhint[1], uhint[0]
+        else:    # no, not a URL name tuple
+            parsed_url = urlparse(input_url)
+            if parsed_url.netloc == "finance.yahoo.com":
+                logging.info ( f"%s - ERROR confused URL state: {uhint[1]} [{parsed_url.netloc}] / {uhint[0]}" % cmi_debug )
+                return uhint[1], uhint[0]
+            else:
+                if parsed_url.scheme == "https" or parsed_url.scheme == "http":    # URL has valid scheme but isn NOT @ YFN
+                logging.info ( f"%s - Inferred hint from URL: 3 [{parsed_url.netloc}] / Remote pure article" % cmi_debug )
+                return 3, "Remote-abs"
         else:
             #print ( f"ERROR_url / ", end="" )
-            logging.info ( f"%s - ERROR URL hint is -1 / Mangled URL" % cmi_debug )
+            logging.info ( f"%s - ERROR URL hint is 10 / Mangled URL" % cmi_debug )
             return 10, "Error mangled url"
 
         return 11, "ERROR_Unknown state"
