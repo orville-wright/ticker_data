@@ -354,7 +354,7 @@ class yfnews_reader:
                         logging.info( f'%s - pure-abs url {uhint} {self.a_url.netloc} / {uhdescr}' % (cmi_debug) )
                         ml_atype = 0
                         thint = 1.1
-                        inf_type = self.uh.def confidence_lvl(thint)
+                        inf_type = self.uh.confidence_lvl(thint)
                         break
                     else:
                         self.a_url = f"https://finance.yahoo.com{self.article_url}"
@@ -366,7 +366,7 @@ class yfnews_reader:
                         uhint, uhdescr = self.uh.uhinter(hcycle, self.a_urlp)          # urlparse named tuple
                         if uhint == 0: thint 1.0
                         if uhint == 1: thint 0.0
-                        inf_type = self.uh.def confidence_lvl(thint)
+                        inf_type = self.uh.confidence_lvl(thint)
                         hcycle += 1
                         # ... need more analysis of this type...so keep working....
 
@@ -375,7 +375,7 @@ class yfnews_reader:
                         logging.info( f'%s - url_netloc.#3 {self.url_netloc}' % (cmi_debug) )
                         if pure_url == 0: thint = 5.0    # local entity
                         if pure_url == 1: thint = 5.1    # remote entity - currently NOT a valid type on yahoo.com
-                        inf_type = self.uh.def confidence_lvl(thint)
+                        inf_type = self.uh.confidence_lvl(thint)
                         self.article_teaser = "None"
                         ml_atype = 1
                         break
@@ -387,7 +387,7 @@ class yfnews_reader:
                             thint = 4.0
                         else:
                             thint = 9.9
-                        inf_type = self.uh.def confidence_lvl(thint)
+                        inf_type = self.uh.confidence_lvl(thint)
                         self.url_netloc = self.a_urlp.netloc
                         logging.info( f'%s - url_netloc.#4 {self.url_netloc}' % (cmi_debug) )
                         self.article_teaser = "FIX-ME check video page for teaser <tag> zone"
