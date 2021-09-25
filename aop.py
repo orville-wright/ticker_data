@@ -453,14 +453,17 @@ def main():
                 r_uhint, r_thint, r_xturl = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
                 print ( f"#1 {uhdescr} - NLP candidate" )                       # all type 1 are only possible news
                 confidence_ind(r_uhint, r_thint, r_xturl, sn_row['url'] )       # dodes NOT chnage any data, just nice output
+                print ( f"====================== Depth 2 ======================" )
                 #
             elif sn_row['type'] == 2:                     # possibly not news? (Micro Ad)
                 print ( f"Bulk injected ad NOT an NLP candidate" )
                 logging.info ( f"%s - #3 skipping..." % cmi_debug )
+                print ( f"====================== Depth 2 ======================" )
                 #
             else:
                 print ( f"ERROR unknown article type in ml_ingest" )
                 logging.info ( f"%s - #4 skipping..." % cmi_debug )
+                print ( f"====================== Depth 2 ======================" )
 
         return
 
