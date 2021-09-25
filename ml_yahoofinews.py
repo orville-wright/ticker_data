@@ -364,8 +364,8 @@ class yfnews_reader:
                         pure_url = 0                    # locally hosted entity
                         ml_atype = 0                    # Real news
                         uhint, uhdescr = self.uh.uhinter(hcycle, self.a_urlp)          # urlparse named tuple
-                        if uhint == 0: thint 1.0
-                        if uhint == 1: thint 0.0
+                        if uhint == 0: thint = 1.0
+                        if uhint == 1: thint = 0.0
                         inf_type = self.uh.confidence_lvl(thint)
                         hcycle += 1
                         # ... need more analysis of this type...so keep working....
