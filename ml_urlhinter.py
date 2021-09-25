@@ -63,6 +63,7 @@ class url_hinter:
         print ( f">>>DEBUG<<< Incomming url type: {type(input_url)}" )
 
         urlp_attr = input_url.path.split('/', 2)       # e.g.  ParseResult(scheme='https', netloc='finance.yahoo.com', path='/m/49c60293...
+        print ( f"urlp_attr: {urlp_attr}" )
         uhint = uhint_code.get(urlp_attr)                       # retrieve uhint code as tuple
         logging.info ( f"%s - Hinter logic: {uhint[1]} [{input_url.netloc}] / {uhint[0]}" % cmi_debug )
         # must be of type 'urllib.parse.ParseResult'
