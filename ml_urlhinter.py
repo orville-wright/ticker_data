@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+from urllib.parse import urlparse
 import re
 import logging
 import argparse
@@ -33,6 +34,8 @@ class url_hinter:
         self.yti = yti
         return
 
+
+# method #1
     def uhinter(self, hcycle, input_url):
         """
         NLP Support function - Exact copy of main::url_hinter()
@@ -52,45 +55,38 @@ class url_hinter:
         uhint_code = { 'm': ('Local-remote stub', 0),
                     'news': ('Local article', 1),
                     'video': ('Local video', 2),
-                    'rabs': ('Remote absolute', 3),
+                    'rabs': ('Remote-absolute', 3),
                     'udef': ('Not yet defined', 9),
                     'err': ('Error mangled url', 10),
                     'bad': ('ERROR_unknown_state', 99)
                     }
 
-        #a_url = urlparse(url)
-        print ( f">>>DEBUG<<< Incomming url data: {input_url}" )
-        print ( f">>>DEBUG<<< Incomming url type: {type(input_url)}" )
-
         urlp_attr = input_url.path.split('/', 2)       # e.g.  ParseResult(scheme='https', netloc='finance.yahoo.com', path='/m/49c60293...
-        print ( f"urlp_attr: {urlp_attr}" )
-        uhint = uhint_code.get(urlp_attr)                       # retrieve uhint code as tuple
-        logging.info ( f"%s - Hinter logic: {uhint[1]} [{input_url.netloc}] / {uhint[0]}" % cmi_debug )
-        # must be of type 'urllib.parse.ParseResult'
-        if type(input_url) == type(urllib.parse.ParseResult):       # was a parsed URL named tuple sent in?
-            if input_url.netloc == "finance.yahoo.com":
-                logging.info ( f"%s - Inferred hint from URL: {uhint[1]} [{input_url.netloc}] / {uhint[0]}" % cmi_debug )
-                return uhint[1], uhint[0]
+        uhint = uhint_code.get(urlp_attr[1])           # retrieve uhint code as tuple
 
-        parsed_url = urlparse(input_url)    # no, not a URL name tuple
-        if parsed_url.netloc == "finance.yahoo.com":
-            logging.info ( f"%s - ERROR confused URL state: {uhint[1]} [{parsed_url.netloc}] / {uhint[0]}" % cmi_debug )
+        if input_url.netloc == "finance.yahoo.com":
+            logging.info ( f"%s - Hint engine decoded: {uhint[1]} [{input_url.netloc}] / {uhint[0]}" % cmi_debug )
             return uhint[1], uhint[0]
         else:
-            logging.info ( f"%s - Recieved a pure-absolute url: {uhint[1]} [{parsed_url.netloc}] / {uhint[0]}" % cmi_debug )
-            if parsed_url.scheme == "https" or parsed_url.scheme == "http":    # URL has valid scheme but isn NOT @ YFN
-                uhint = uhint_code.get(rabs)
-                logging.info ( f"%s - Inferred hint from URL: {uhint[1]} [{parsed_url.netloc}] / {uhint[0]}" % cmi_debug )
+            a_url = urlparse(input_url)               # treat input_url like its a raw absolute FQDN URL
+            uhint = uhint_code.get('rabs')            # get our encodings for absolute URL
+            logging.info ( f"%s - Recieved pure-absolute url: {uhint[1]} [{a_url.netloc}] / {uhint[0]}" % cmi_debug )
+            if a_url.path != "finance.yahoo.com":
+                return uhint[1], uhint[0]
+            elif a_url.path == "finance.yahoo.com":
+                uhint = uhint_code.get('bad')            # get our encodings for absolute URL
+                logging.info ( f"%s - ERROR confused logic state / {uhint[1]} [{a_url.netloc}] / {uhint[0]}" % cmi_debug )
                 return uhint[1], uhint[0]
             else:
-                #print ( f"ERROR_url / ", end="" )
-                uhint = uhint_code.get(err)
-                logging.info ( f"%s - ERROR recieved Mangled URL / {uhint[1]} [{parsed_url.netloc}] / {uhint[0]}" % cmi_debug )
+                uhint = uhint_code.get('err')            # get our encodings for absolute URL
+                logging.info ( f"%s - Recieved Mangled URL / {uhint[1]} [{a_url.netloc}] / {uhint[0]}" % cmi_debug )
                 return uhint[1], uhint[0]
 
-        error_state = uhint_code.get(errbad)
+        error_state = uhint_code.get('bad')             # should NEVER get here
         return uhint[1], uhint[0]
 
+
+# method #2
     def hstatus(self):
         """
         the engine reports it status
@@ -100,6 +96,9 @@ class url_hinter:
         logging.info ( f"%s - Url hinter engine #{self.yti} / cycle #{self.hcycle}" % cmi_debug )
         return self.yti, self.hcycle
 
+
+
+# method #3
     def confidence_lvl(r_uhint, r_thint, r_xturl, orig_url):
         """
         NLP Support function #1

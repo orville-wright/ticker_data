@@ -323,10 +323,8 @@ class yfnews_reader:
         uhint = 9                                            # saftey preset
         thint = 99.9                                         # saftey preset
         self.article_teaser ="ERROR_unset_teaser"
-        #article_url = "https://www.error_dummy_url.com"
-        #a_urlp = ""
-        #url_netloc = ""
         ml_atype = 0
+
         for li_tag in li_subset_all:                         # <li> is where the new articels hide
             self.nlp_x += 1                                  # counter = which article we are looking at
             for element in li_tag.descendants:               # walk the full tag tree recurisvely
@@ -336,36 +334,36 @@ class yfnews_reader:
                 print ( f"Empty news page - NO NEWS found" )
                 break
 
+        #####################################
+
+            end_logic = False
             if a_counter > 0 and a_counter <= 3:
                 logging.info( f'%s - <li> count: {a_counter}' % (cmi_debug) )        # good new zrticle found
                 news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
-                self.article_url = li_tag.a.get("href")                              # url is path only in the page source, so needs careful treatment
+
+                self.article_url = li_tag.a.get("href")
                 self.a_urlp = urlparse(self.article_url)
+
                 if self.a_urlp.scheme == "https" or self.a_urlp.scheme == "http":    # check URL scheme specifier
                     logging.info ( f"%s - Depth: 1 / Pure Remote URL found!" % cmi_debug )
                     pure_url = 1    # explicit pure URL to remote entity
-                    uhint = 3       # we can definatley set this here ONLY for this item type
-                    self.url_netloc = self.a_urlp.netloc
-                    logging.info( f'%s - pure url_netloc {self.url_netloc}' % (cmi_debug) )
+                    uhint, uhdescr = self.uh.uhinter(hcycle, self.article_url)    # raw url string
+                    logging.info( f'%s - pure-abs url {uhint} {self.a_url.netloc} / {uhdescr}' % (cmi_debug) )
                     ml_atype = 0
-                    uhint, uhdescr = self.uh.uhinter(hcycle, self.article_url)
                     thint = 1.1
                 else:
                     self.a_url = f"https://finance.yahoo.com{self.article_url}"
                     self.a_urlp = urlparse(self.a_url)
-                    #print ( f">>>DEBUG<<< parsed url: {a_urlp}" )
-                    self.url_netloc = self.a_urlp.netloc      # FQDN
+                    self.url_netloc = self.a_urlp.netloc      # FQDN netloc
                     logging.info( f'%s - url_netloc.#1 {self.a_urlp.netloc}' % (cmi_debug) )
                     pure_url = 0                    # locally hosted entity
                     ml_atype = 0                    # Real news
-                    uhint, uhdescr = self.uh.uhinter(hcycle, self.a_urlp)
+                    uhint, uhdescr = self.uh.uhinter(hcycle, self.a_urlp)          # urlparse named tuple
                     hcycle += 1
-                    # assume hosted at https://finaince.yahoo.com becasue it has no leading FQDN scheme (i.e. http/https)
 
                 article_headline = li_tag.a.text        # taken from YFN news feed thumbnail, not actual article page
-                inf_type = "Real news"
                 self.url_netloc = self.a_urlp.netloc
-                logging.info( f'%s - url_netloc.#2 {self.url_netloc}' % (cmi_debug) )
+                end_logic = False
 
                 if not li_tag.find('p'):
                     self.url_netloc = self.a_urlp.netloc
@@ -375,24 +373,27 @@ class yfnews_reader:
                     ml_atype = 1
                     if pure_url == 0: thint = 5.0    # local entity
                     if pure_url == 1: thint = 5.1    # remote entity
-                elif news_agency == "Yahoo Finance Video" and uhint == 2:
-                    thint = 4.0
-                    self.url_netloc = self.a_urlp.netloc
-                    logging.info( f'%s - url_netloc.#4 {self.url_netloc}' % (cmi_debug) )
-                    self.article_teaser = "FIX-ME check video page for teaser <tag> zone"
-                    ml_atype = 0
-                else:
-                    #self.url_netloc = self.a_urlp.netloc
+                    end_logic = True
+
+                if end_logic is not True:
+                    if news_agency == "Yahoo Finance Video" and uhint == 2:
+                        thint = 4.0
+                        inf_type = "Video articel news"
+                        self.url_netloc = self.a_urlp.netloc
+                        logging.info( f'%s - url_netloc.#4 {self.url_netloc}' % (cmi_debug) )
+                        self.article_teaser = "FIX-ME check video page for teaser <tag> zone"
+                        ml_atype = 0
+                        end_logic = True
+
+                if end_logic is not True:
                     logging.info( f'%s - url_netloc.#5 {self.url_netloc}' % (cmi_debug) )
                     a_teaser = li_tag.p.text
                     self.article_teaser = f"{a_teaser:.170}" + " [...]"
-                    #ml_atype = 0
-                    #if pure_url == 0: thint = 0.0
-                    #if pure_url == 1: thint = 1.0
+                    inf_type = "Undefined"
 
                 print ( f"================= Depth 1 / {symbol} Article {x} ==================" )
                 print ( f"News item:        {self.cycle}: {inf_type} / Confidence Indicators t:{ml_atype} / u:{uhint} / h:{thint}" )
-                print ( f"News agency:      {news_agency} / ", end="" )
+                print ( f"News agency:      {news_agency} " )
 
                 #if pure_url == 0: print ( f"Local-Remote stub @ [ {self.url_netloc} ]" )
                 # >>> This is bad error-prone unecessary work <<<
@@ -445,7 +446,6 @@ class yfnews_reader:
             self.cycle += 1
 
         # need to capture junk adds here (very difficult as they're injected by add engine. Not hard page elements)
-        # type = 2 / ml_atype = 2
         return
 
 # method 10
@@ -468,19 +468,17 @@ class yfnews_reader:
         cmi_debug = __name__+"::get_locality.#"+str(self.yti)
         #logging.info('%s - IN' % cmi_debug )
         right_now = date.today()
-        id = item_idx
+        idx = item_idx
         data_row = data_row
         symbol = data_row['symbol']
-        type = data_row['type']
+        ttype = data_row['type']
         thint = data_row['thint']
         uhint = data_row['uhint']
         url = data_row['url']
         self.this_article_url = url
         symbol = symbol.upper()
-        print ( f">>>DEBUG<<< 1 DISNEY: {url}" )
-        print ( f">>>DEBUG<<< 2 DISNEY: {self.this_article_url}" )
 
-        logging.info( f'%s - Attempt to read url: {url} ' % cmi_debug )
+        logging.info( f'%s - Attempt to read url' % cmi_debug )
         with requests.Session() as s:
             nr = s.get( self.this_article_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
             nsoup = BeautifulSoup(nr.text, 'html.parser')
@@ -491,7 +489,6 @@ class yfnews_reader:
             local_story = nsoup.find(attrs={"class": "caas-body-wrapper"} )      # boring options trader bland article type
 
             #if type(rem_news) != type(None):               # page has valid structure
-            logging.info( f"%s - Data row: {data_row}" % cmi_debug )
             #if uhint == 0 or uhint == 1:                    # Local-remote stub or Local-local article
             if uhint == 0:                    # Local-remote stub or Local-local article
                 logging.info ( f"%s - Depth: 2 / Read Local-remote stub / u: {uhint} t: {thint}" % cmi_debug )
@@ -501,9 +498,11 @@ class yfnews_reader:
                     # remotely hosted news article. with a real external URL, Also has [Continue reading] button TEXT
                     logging.info ( f"%s - Depth: 2 / Good <a> Remote-stub / News article @: {rem_url}" % cmi_debug )
                     logging.info ( f"%s - Depth: 2 / Insert ext url into ml_ingest" % cmi_debug )
-                    ext_url_item = {'exturl': rem_url }
-                    data_row.update(ext_url_item )          # prepare to insert the external url into ml_ingest via an AUGMENTED data_row
-                    self.ml_ingest[id] = data_row           # now PERMENTALY update the ml_ingest record @ index = id
+
+                    ext_url_item = {'exturl': rem_url }     # build a new dict entry (external; absolute url)
+                    data_row.update(ext_url_item )          # insert new dict entry into ml_ingest via an AUGMENTED data_row
+
+                    self.ml_ingest[idx] = data_row           # now PERMENTALY update the ml_ingest record @ index = id
                     logging.info ( f"%s - Depth: 2 / NLP candidate is ready" % cmi_debug )
                     return uhint, thint, rem_url
                     #
