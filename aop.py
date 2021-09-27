@@ -433,7 +433,7 @@ def main():
         cmi_debug = __name__+"::nlp_final_prep().#1"
         for sn_idx, sn_row in yfn.ml_ingest.items():                            # cycle thru the NLP candidate list
             if sn_row['type'] == 0:                                             # REAL news, inferred from Depth 0
-                print( f"News article:  {sn_idx} / {sn_row['symbol']} / ", end="" )
+                print( f"News article:  {sn_idx} / {sn_row['symbol']} /", end="" )
                 t_url = urlparse(sn_row['url'])                                 # WARN: a rlparse() url_named_tupple (NOT the raw url)
                 uhint, uhdescr = uh.uhinter(20, t_url)
                 thint = (sn_row['thint'])                                       # the hint we guessed at while interrogating page <tags>
@@ -442,13 +442,13 @@ def main():
                 p_r_xturl = urlparse(r_xturl)
                 inf_type = yfn.uh.confidence_lvl(thint)
                 print ( f"Logic.#0 - NLP candidate / {uhdescr}" )                # all type 0 are assumed to be REAL news
-                print ( f"Origin URL:      [ {t_url.netloc} ] / {uhdescr} / {inf_type}" )
+                print ( f"Origin URL:    [ {t_url.netloc} ] / {uhdescr} / {inf_type}" )
                 uhint, uhdescr = uh.uhinter(21, p_r_xturl)
-                print ( f"Absolute URL:    [ {p_r_xturl.netloc} ] / {inf_type}" )
+                print ( f"Absolute URL:  [ {p_r_xturl.netloc} ] / {inf_type}" )
                 print ( f"====================== Depth 2 ======================" )
                 #
             elif sn_row['type'] == 1:                     # possibly not news? (Micro Ad)
-                print( f"News article:  {sn_idx} / {sn_row['symbol']} / ", end="" )
+                print( f"News article:  {sn_idx} / {sn_row['symbol']} /", end="" )
                 t_url = urlparse(sn_row['url'])
                 uhint, uhdescr = uh.uhinter(21, t_url)
                 thint = (sn_row['thint'])                 # the hint we guess at while interrogating page <tags>
@@ -457,9 +457,9 @@ def main():
                 p_r_xturl = urlparse(r_xturl)
                 inf_type = yfn.uh.confidence_lvl(thint)
                 print ( f"Logic.#1 - NLP candidate / {uhdescr}" )                # all type 0 are assumed to be REAL news
-                print ( f"Origin URL:      [ {t_url.netloc} ] / {uhdescr} / {inf_type}" )
+                print ( f"Origin URL:    [ {t_url.netloc} ] / {uhdescr} / {inf_type}" )
                 uhint, uhdescr = uh.uhinter(21, p_r_xturl)
-                print ( f"Absolute URL:    [ {p_r_xturl.netloc} ] / {inf_type}" )
+                print ( f"Absolute URL:  [ {p_r_xturl.netloc} ] / {inf_type}" )
                 print ( f"====================== Depth 2 ======================" )
                 #
             elif sn_row['type'] == 2:                     # possibly not news? (Micro Ad)
