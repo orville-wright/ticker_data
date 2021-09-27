@@ -68,9 +68,9 @@ class url_hinter:
             logging.info ( f"%s - recvd raw url string: {input_url}" % cmi_debug )
             a_url = urlparse(input_url)                 # conv url string into aprsed named tuple object
             if a_url.netloc == "finance.yahoo.com":
-                urlp_attr = input_url.path.split('/', 2)                        # work on path=object ONLY
+                urlp_attr = a_url.path.split('/', 2)                        # work on path=object ONLY
                 uhint = uhint_code.get(urlp_attr[1])                            # retrieve uhint code/descr tuple
-                logging.info ( f"%s - decoded url as [{input_url.netloc}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
+                logging.info ( f"%s - decoded url as [{a_url.netloc}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
                 return uhint[1], uhint[0]
             else:
                 uhint = uhint_code.get('rabs')            # get our encodings for absolute URL
@@ -80,7 +80,7 @@ class url_hinter:
                     error_state = uhint_code.get('err')
                     return error_state[1], error_state[0]
                 else:
-                    logging.info ( f"%s - decoded url as [{input_url.netloc}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
+                    logging.info ( f"%s - decoded url as [{a_url.netloc}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
                     return uhint[1], uhint[0]
         else:
             logging.info ( f"%s - recvd pre-parsed urlparse object" % cmi_debug )
@@ -91,9 +91,9 @@ class url_hinter:
                 return uhint[1], uhint[0]
             else:
                 uhint = uhint_code.get('rabs')            # get our encodings for absolute URL
-                logging.info ( f"%s - Extract pure-abs url component: [{a_url.netloc}] u:{uhint[1]} / {uhint[0]}" % cmi_debug )
-                if a_url.path == "finance.yahoo.com":                           # paranoid tripple check b/c urls are nortotiously junky
-                    logging.info ( f"%s - ERROR mangled url: [{a_url.netloc}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
+                logging.info ( f"%s - Extract pure-abs url component: [{input_url.netloc}] u:{uhint[1]} / {uhint[0]}" % cmi_debug )
+                if input_url.path == "finance.yahoo.com":                           # paranoid tripple check b/c urls are nortotiously junky
+                    logging.info ( f"%s - ERROR mangled url: [{input_url.netloc}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
                     error_state = uhint_code.get('err')
                     return error_state[1], error_state[0]
                 else:
