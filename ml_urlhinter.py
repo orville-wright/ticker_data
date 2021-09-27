@@ -61,7 +61,7 @@ class url_hinter:
                     'bad': ('ERROR_unknown_state', 99)
                     }
 
-        logging.info ( f"%s - Hint engine was sent object: {type(input_url)} % cmi_debug )
+        logging.info ( f"%s - Hint engine was sent object: {type(input_url)}" % cmi_debug )
         t_check = isinstance(input_url, str)
         if t_check:
             logging.info ( f"%s - recvd a raw url string object: {input_url}" % cmi_debug )
