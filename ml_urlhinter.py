@@ -61,6 +61,9 @@ class url_hinter:
                     'bad': ('ERROR_unknown_state', 99)
                     }
 
+        logging.info ( f"%s - Hint engine was sent object: {type(input_url)} % cmi_debug )
+        t_check = isinstance(input_url, str)
+
         if input_url.netloc == "finance.yahoo.com":
             logging.info ( f"%s - recvd pre-parsed url object" % cmi_debug )
             urlp_attr = input_url.path.split('/', 2)       # e.g.  ParseResult(scheme='https', netloc='finance.yahoo.com', path='/m/49c60293...

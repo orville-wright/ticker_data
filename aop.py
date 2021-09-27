@@ -431,17 +431,17 @@ def main():
         """
         print ( " ")
         print ( f"====================== Depth 2 ======================" )
-        cmi_debug = __name__+"::nlp_final_prep().#1    "
-        for sn_idx, sn_row in yfn.ml_ingest.items():    # cycle thru the NLP candidate list
-            if sn_row['type'] == 0:                       # REAL news, inferred from Depth 0
+        cmi_debug = __name__+"::nlp_final_prep().#1"
+        for sn_idx, sn_row in yfn.ml_ingest.items():                            # cycle thru the NLP candidate list
+            if sn_row['type'] == 0:                                             # REAL news, inferred from Depth 0
                 print( f"News article:  {sn_idx} / ", end="" )
-                t_url = urlparse(sn_row['url'])           # WARN: a rlparse() url_named_tupple (NOT the raw url)
+                t_url = urlparse(sn_row['url'])                                 # WARN: a rlparse() url_named_tupple (NOT the raw url)
                 uhint, uhdescr = uh.uhinter(20, t_url)
-                thint = (sn_row['thint'])                  # the hint we guessed at while interrogating page <tags>
-                logging.info ( f"%s - #1 get_locality hints: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
+                thint = (sn_row['thint'])                                       # the hint we guessed at while interrogating page <tags>
+                logging.info ( f"%s - Logic.#0 send get_locality hints: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
                 r_uhint, r_thint, r_xturl = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
                 #
-                uhint, uhdescr = yfn.uh.uhinter(21, sn_row['url')           # urlparse named tuple
+                uhint, uhdescr = yfn.uh.uhinter(21, sn_row['url')               # urlparse named tuple
                 if uhint == 0: thint = 1.0                                      # real news / Real news - local-stub referr
                 if uhint == 1: thint = 0.0                                      # real news / local page
                 inf_type = self.uh.confidence_lvl(thint)
