@@ -391,7 +391,7 @@ def main():
         """
         cmi_debug = __name__+"::confidence_ind().#1    "
         tcode = { 0.0: 'Real news - local page',
-                1.0: 'Real news - remote-stub',
+                1.0: 'Real news - remote-stub XXXXXXXXXXXXXXXXXXX',
                 1.1: 'Real news - remote-abs',
                 2.0: 'OP-Ed - local',
                 2.1: 'OP-Ed - remote',
