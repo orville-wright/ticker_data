@@ -63,14 +63,8 @@ class url_hinter:
 
         logging.info ( f"%s - Hint engine was sent object: {type(input_url)} % cmi_debug )
         t_check = isinstance(input_url, str)
-
-        if input_url.netloc == "finance.yahoo.com":
-            logging.info ( f"%s - recvd pre-parsed url object" % cmi_debug )
-            urlp_attr = input_url.path.split('/', 2)       # e.g.  ParseResult(scheme='https', netloc='finance.yahoo.com', path='/m/49c60293...
-            uhint = uhint_code.get(urlp_attr[1])           # retrieve uhint code as tuple
-            logging.info ( f"%s - decoded url as [{input_url.netloc}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
-            return uhint[1], uhint[0]
-        else:
+        if t_check:
+            logging.info ( f"%s - recvd a raw url string object: {input_url}" % cmi_debug )
             logging.info ( f"%s - recvd raw url string object" % cmi_debug )
             a_url = urlparse(input_url)               # treat input_url like its a raw absolute FQDN URL
             uhint = uhint_code.get('rabs')            # get our encodings for absolute URL
@@ -85,9 +79,16 @@ class url_hinter:
                 uhint = uhint_code.get('err')            # get our encodings for absolute URL
                 logging.info ( f"%s - Recvd mangled raw url: [{a_url.netloc}] u:{uhint[1]} / {uhint[0]}" % cmi_debug )
                 return uhint[1], uhint[0]
+        else:
+            if input_url.netloc == "finance.yahoo.com":
+            logging.info ( f"%s - recvd pre-parsed url object" % cmi_debug )
+            urlp_attr = input_url.path.split('/', 2)       # e.g.  ParseResult(scheme='https', netloc='finance.yahoo.com', path='/m/49c60293...
+            uhint = uhint_code.get(urlp_attr[1])           # retrieve uhint code as tuple
+            logging.info ( f"%s - decoded url as [{input_url.netloc}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
+            return uhint[1], uhint[0]
 
         error_state = uhint_code.get('bad')             # should NEVER get here
-        return uhint[1], uhint[0]                       # u: locality code / description
+        return error_state[1], error_state[0]                       # u: locality code / description
 
 
 # method #2
