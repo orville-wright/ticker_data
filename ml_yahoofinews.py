@@ -346,13 +346,12 @@ class yfnews_reader:
                 self.a_urlp = urlparse(self.article_url)
                 inf_type = "Undefined"
 
-                for safety_cycle in range(1):                # 1 single cycle, so we can abuse BREAK as our logic exit control
-
+                for safety_cycle in range(1):                # leverage for/loop to abuse BREAK as logic exit control (poor mans switch/case)
                     if self.a_urlp.scheme == "https" or self.a_urlp.scheme == "http":    # check URL scheme specifier
                         logging.info ( f"%s - Depth: 1 / Pure Remote URL found!" % cmi_debug )
                         pure_url = 1    # explicit pure URL to remote entity
                         uhint, uhdescr = self.uh.uhinter(hcycle, self.article_url)    # raw url string
-                        logging.info( f'%s - pure-abs url {uhint} {self.a_url.netloc} / {uhdescr}' % (cmi_debug) )
+                        logging.info( f'%s - Logic.#1 Pure-Abs url {uhint} {self.a_url.netloc} / {uhdescr}' % (cmi_debug) )
                         ml_atype = 0
                         thint = 1.1
                         inf_type = self.uh.confidence_lvl(thint)
@@ -361,7 +360,7 @@ class yfnews_reader:
                         self.a_url = f"https://finance.yahoo.com{self.article_url}"
                         self.a_urlp = urlparse(self.a_url)
                         self.url_netloc = self.a_urlp.netloc      # FQDN netloc
-                        logging.info( f'%s - url_netloc.#1 {self.a_urlp.netloc}' % (cmi_debug) )
+                        logging.info( f'%s - Logic.#2 / Origin url: {self.a_urlp.netloc}' % (cmi_debug) )
                         pure_url = 0                    # locally hosted entity
                         ml_atype = 0                    # Real news
                         uhint, uhdescr = self.uh.uhinter(hcycle, self.a_urlp)          # urlparse named tuple
@@ -373,7 +372,7 @@ class yfnews_reader:
 
                     if not li_tag.find('p'):            # Micro-Ad
                         self.url_netloc = self.a_urlp.netloc
-                        logging.info( f'%s - url_netloc.#3 {self.url_netloc}' % (cmi_debug) )
+                        logging.info( f'%s - Logic.#3 / Origin url: {self.url_netloc}' % (cmi_debug) )
                         if pure_url == 0: thint = 5.0    # local entity
                         if pure_url == 1: thint = 5.1    # remote entity - currently NOT a valid type on yahoo.com
                         inf_type = self.uh.confidence_lvl(thint)
@@ -390,12 +389,12 @@ class yfnews_reader:
                             thint = 9.9
                         inf_type = self.uh.confidence_lvl(thint)
                         self.url_netloc = self.a_urlp.netloc
-                        logging.info( f'%s - url_netloc.#4 {self.url_netloc}' % (cmi_debug) )
+                        logging.info( f'%s - Logic.#4 / Origin url: {self.url_netloc}' % (cmi_debug) )
                         self.article_teaser = "FIX-ME check video page for teaser <tag> zone"
                         ml_atype = 0
                         break
 
-                    logging.info( f'%s - url_netloc.#5 {self.url_netloc}' % (cmi_debug) )
+                    logging.info( f'%s - Logic.#5 / Origin url: {self.url_netloc}' % (cmi_debug) )
                     a_teaser = li_tag.p.text
                     self.article_teaser = f"{a_teaser:.170}" + " [...]"
 

@@ -133,6 +133,6 @@ class url_hinter:
                 10.0: 'ERROR unknonw state',
                 99.9: 'DEfault NO-YET-SET'
                 }
-        logging.info ( f"%s    - hint code recieved: {thint}" % cmi_debug )
+        logging.info ( f"%s - hint code recieved: {thint}" % cmi_debug )
         thint_descr = tcode.get(thint)
         return thint_descr
