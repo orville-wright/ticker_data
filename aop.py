@@ -438,11 +438,11 @@ def main():
                 t_url = urlparse(sn_row['url'])                                 # WARN: a rlparse() url_named_tupple (NOT the raw url)
                 uhint, uhdescr = uh.uhinter(20, t_url)
                 thint = (sn_row['thint'])                                       # the hint we guessed at while interrogating page <tags>
-                logging.info ( f"%s - Logic.#1 hinting origin url: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
+                logging.info ( f"%s - Logic.#0 hinting origin url: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
                 r_uhint, r_thint, r_xturl = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
                 p_r_xturl = urlparse(r_xturl)
                 inf_type = yfn.uh.confidence_lvl(thint)
-                print ( f"Logic.#1 - NLP candidate / {uhdescr}" )                # all type 0 are assumed to be REAL news
+                print ( f"Logic.#0 - NLP candidate / {uhdescr}" )                # all type 0 are assumed to be REAL news
                 print ( f"Origin URL:      [ {t_url.netloc} ] / {uhdescr} / {inf_type}" )
                 uhint, uhdescr = uh.uhinter(21, p_r_xturl)
                 print ( f"Absolute URL:    [ {p_r_xturl.netloc} ] / {inf_type}" )
@@ -464,17 +464,17 @@ def main():
                 print ( f"====================== Depth 2 ======================" )
                 #
             elif sn_row['type'] == 2:                     # possibly not news? (Micro Ad)
-                print ( f"Bulk injected - NOT an NLP candidate" )
+                print ( f"Logic.#2 - Bulk injected - NOT an NLP candidate" )
                 logging.info ( f"%s - #3 skipping..." % cmi_debug )
                 print ( f"====================== Depth 2 ======================" )
                 #
             elif sn_row['type'] == 9:                     # possibly not news? (Micro Ad)
-                print ( f"Article type NOT yet define - NOT an NLP candidate" )
+                print ( f"Logic.#9 - Article type NOT yet define - NOT an NLP candidate" )
                 logging.info ( f"%s - #3 skipping..." % cmi_debug )
                 print ( f"====================== Depth 2 ======================" )
                 #
             else:
-                print ( f"ERROR unknown article type in ml_ingest" )
+                print ( f"Logic.#ERR - ERROR unknown article type in ml_ingest" )
                 logging.info ( f"%s - #4 skipping..." % cmi_debug )
                 print ( f"====================== Depth 2 ======================" )
 
@@ -540,8 +540,9 @@ def main():
         print ( f" " )
         print ( "========================= Evaluate quality of ML/NLP candidates =========================" )
 
-        yfn.dump_ml_ingest()
         nlp_final_prep()
+        print ( f" " )
+        print ( f" " )
         yfn.dump_ml_ingest()
 
 #################################################################################
