@@ -83,7 +83,7 @@ class url_hinter:
                 return uhint[1], uhint[0]
 
         error_state = uhint_code.get('bad')             # should NEVER get here
-        return uhint[1], uhint[0]
+        return uhint[1], uhint[0]                       # u: locality code / description
 
 
 # method #2
@@ -112,7 +112,7 @@ class url_hinter:
         NOTE: Locality codes are inferred by decoding the page HTML structure
               They do not match/align with the URL Hint code. Since that could be a 'fake out'
         """
-        cmi_debug = __name__+"::"+"confidence_ind().#1"
+        cmi_debug = __name__+"::"+"confidence_lvl().#1"
         tcode = { 0.0: 'Real news - local page',
                 1.0: 'Real news - local-stub ext referr',
                 1.1: 'Real news - external-abs link',

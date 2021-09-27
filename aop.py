@@ -436,18 +436,24 @@ def main():
             if sn_row['type'] == 0:                       # REAL news, inferred from Depth 0
                 print( f"News article:  {sn_idx} / ", end="" )
                 t_url = urlparse(sn_row['url'])           # WARN: a rlparse() url_named_tupple (NOT the raw url)
-                uhint, uhdescr = uh.uhinter(1, t_url)
+                uhint, uhdescr = uh.uhinter(20, t_url)
                 thint = (sn_row['thint'])                  # the hint we guessed at while interrogating page <tags>
                 logging.info ( f"%s - #1 get_locality hints: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
                 r_uhint, r_thint, r_xturl = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
-                print ( f"#0 {uhdescr} - NLP candidate" )                       # all type 0 are assumed to be REAL news
-                confidence_ind(r_uhint, r_thint, r_xturl, sn_row['url'] )       # dodes NOT chnage any data, just nice output
+                #
+                uhint, uhdescr = yfn.uh.uhinter(21, sn_row['url')           # urlparse named tuple
+                if uhint == 0: thint = 1.0                                      # real news / Real news - local-stub referr
+                if uhint == 1: thint = 0.0                                      # real news / local page
+                inf_type = self.uh.confidence_lvl(thint)
+                print ( f"Logic.#1 {uhdescr} - NLP candidate" )                 # all type 0 are assumed to be REAL news
+                #confidence_ind(r_uhint, r_thint, r_xturl, sn_row['url'] )      # dodes NOT chnage any data, just nice output
+
                 print ( f"====================== Depth 2 ======================" )
                 #
             elif sn_row['type'] == 1:                     # possibly not news? (Micro Ad)
                 print( f"News article:  {sn_idx} / ", end="" )
                 t_url = urlparse(sn_row['url'])
-                uhint, uhdescr = uh.uhinter(2, t_url)
+                uhint, uhdescr = uh.uhinter(22, t_url)
                 thint = (sn_row['thint'])                 # the hint we guess at while interrogating page <tags>
                 logging.info ( f"%s - #2 get_locality hints: t:1 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
                 r_uhint, r_thint, r_xturl = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
