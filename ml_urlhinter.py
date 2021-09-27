@@ -61,33 +61,48 @@ class url_hinter:
                     'bad': ('ERROR_unknown_state', 99)
                     }
 
-        logging.info ( f"%s - Hint engine was sent object: {type(input_url)}" % cmi_debug )
+        logging.info ( f"%s - Hint engine recvd url as: {type(input_url)}" % cmi_debug )
         t_check = isinstance(input_url, str)
+
         if t_check:
-            logging.info ( f"%s - recvd raw url string object: {input_url}" % cmi_debug )
-            a_url = urlparse(input_url)               # treat input_url like its a raw absolute FQDN URL
-            uhint = uhint_code.get('rabs')            # get our encodings for absolute URL
-            logging.info ( f"%s - Extract pure-abs url component: [{a_url.netloc}] u:{uhint[1]} / {uhint[0]}" % cmi_debug )
-            if a_url.path != "finance.yahoo.com":
-                return uhint[1], uhint[0]
-            elif a_url.path == "finance.yahoo.com":
-                uhint = uhint_code.get('bad')            # get our encodings for absolute URL
-                logging.info ( f"%s - ERROR confused logic state: [{a_url.netloc}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
-                return uhint[1], uhint[0]
-            else:
-                uhint = uhint_code.get('err')            # get our encodings for absolute URL
-                logging.info ( f"%s - Recvd mangled raw url: [{a_url.netloc}] u:{uhint[1]} / {uhint[0]}" % cmi_debug )
-                return uhint[1], uhint[0]
-        else:
-            if input_url.netloc == "finance.yahoo.com":
-                logging.info ( f"%s - recvd pre-parsed url object" % cmi_debug )
-                urlp_attr = input_url.path.split('/', 2)       # e.g.  ParseResult(scheme='https', netloc='finance.yahoo.com', path='/m/49c60293...
-                uhint = uhint_code.get(urlp_attr[1])           # retrieve uhint code as tuple
+            logging.info ( f"%s - recvd raw url string: {input_url}" % cmi_debug )
+            a_url = urlparse(input_url)                 # conv url string into aprsed named tuple object
+            if a_url.netloc == "finance.yahoo.com":
+                urlp_attr = input_url.path.split('/', 2)                        # work on path=object ONLY
+                uhint = uhint_code.get(urlp_attr[1])                            # retrieve uhint code/descr tuple
                 logging.info ( f"%s - decoded url as [{input_url.netloc}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
                 return uhint[1], uhint[0]
+            else:
+                uhint = uhint_code.get('rabs')            # get our encodings for absolute URL
+                logging.info ( f"%s - Extract pure-abs url component: [{a_url.netloc}] u:{uhint[1]} / {uhint[0]}" % cmi_debug )
+                if a_url.path == "finance.yahoo.com":                           # paranoid tripple check b/c urls are nortotiously junky
+                    logging.info ( f"%s - ERROR mangled url: [{a_url.netloc}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
+                    error_state = uhint_code.get('err')
+                    return error_state[1], error_state[0]
+                else:
+                    logging.info ( f"%s - decoded url as [{input_url.netloc}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
+                    return uhint[1], uhint[0]
+        else:
+            logging.info ( f"%s - recvd pre-parsed urlparse object" % cmi_debug )
+            if input_url.netloc == "finance.yahoo.com":                         # e.g.  ParseResult(scheme='https', netloc='finance.yahoo.com', path='/m/49c60293...
+                urlp_attr = input_url.path.split('/', 2)                        # work on path=object ONLY
+                uhint = uhint_code.get(urlp_attr[1])                            # retrieve uhint code/descr tuple
+                logging.info ( f"%s - decoded url as [{input_url.netloc}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
+                return uhint[1], uhint[0]
+            else:
+                uhint = uhint_code.get('rabs')            # get our encodings for absolute URL
+                logging.info ( f"%s - Extract pure-abs url component: [{a_url.netloc}] u:{uhint[1]} / {uhint[0]}" % cmi_debug )
+                if a_url.path == "finance.yahoo.com":                           # paranoid tripple check b/c urls are nortotiously junky
+                    logging.info ( f"%s - ERROR mangled url: [{a_url.netloc}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
+                    error_state = uhint_code.get('err')
+                    return error_state[1], error_state[0]
+                else:
+                    logging.info ( f"%s - decoded url as [{input_url.netloc}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
+                    return uhint[1], uhint[0]
 
-        error_state = uhint_code.get('bad')             # should NEVER get here
-        return error_state[1], error_state[0]                       # u: locality code / description
+        error_state = uhint_code.get('bad')             # should NEVER get here - did recv a url raw string or a urlparse object named tuple
+        logging.info ( f"%s - ERROR confused logic state: [{a_url.netloc}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
+        return error_state[1], error_state[0]           # u: locality code / description
 
 
 # method #2
