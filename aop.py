@@ -448,7 +448,7 @@ def main():
                 #if uhint == 1: thint = 0.0                                      # real news / local page
                 #if uhint == 2: thint = 4.0                                      # real news / local page
                 #if uhint == 3: thint = 1.1                                      # real news / local page
-                print ( f"Absolute URL:    [ {t_url.netloc} ] / {uhdescr} / {inf_type}" )
+                print ( f"Absolute URL:    [ {r_xturl.netloc} ] / {uhdescr} / {inf_type}" )
                 #confidence_ind(r_uhint, r_thint, r_xturl, sn_row['url'] )      # dodes NOT chnage any data, just nice output
                 print ( f"====================== Depth 2 ======================" )
                 #
