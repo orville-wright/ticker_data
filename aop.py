@@ -507,8 +507,7 @@ def main():
     Read finance.yahoo.com / News 'Brief headlines' (i.e. short text docs) for ONE stock symbol.
     """
     if args['newsymbol'] is not False:
-        #cmi_debug = __name__+"::nlp_one"+.__name__+"#0"
-        cmi_debug = __name__+"::"+self.get_nquote.__name__+".#"+str(self.yti)
+        cmi_debug = __name__+"::_args_newsymbol.#1"
         print ( " " )
         print ( "========================= ML (NLP) / Yahoo Finance News Sentiment AI =========================" )
         print ( f"Examine & Read news for 1 stock symbol..." )

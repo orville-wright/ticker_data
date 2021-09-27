@@ -112,7 +112,7 @@ class url_hinter:
         NOTE: Locality codes are inferred by decoding the page HTML structure
               They do not match/align with the URL Hint code. Since that could be a 'fake out'
         """
-        cmi_debug = __name__+"::"+"confidence_ind().#1    "
+        cmi_debug = __name__+"::"+"confidence_ind().#1"
         tcode = { 0.0: 'Real news - local page',
                 1.0: 'Real news - remote-stub',
                 1.1: 'Real news - remote-abs',
@@ -133,6 +133,6 @@ class url_hinter:
                 10.0: 'ERROR unknonw state',
                 99.9: 'DEfault NO-YET-SET'
                 }
-        logging.info ( f"%s - hint code recieved: {thint}" % cmi_debug )
+        logging.info ( f"%s    - hint code recieved: {thint}" % cmi_debug )
         thint_descr = tcode.get(thint)
         return thint_descr
