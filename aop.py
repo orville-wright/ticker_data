@@ -441,7 +441,7 @@ def main():
                 logging.info ( f"%s - Logic.#0 send get_locality hints: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
                 r_uhint, r_thint, r_xturl = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
                 #
-                uhint, uhdescr = yfn.uh.uhinter(21, sn_row['url')               # urlparse named tuple
+                uhint, uhdescr = yfn.uh.uhinter(21, sn_row['url'])              # urlparse named tuple
                 if uhint == 0: thint = 1.0                                      # real news / Real news - local-stub referr
                 if uhint == 1: thint = 0.0                                      # real news / local page
                 inf_type = self.uh.confidence_lvl(thint)
