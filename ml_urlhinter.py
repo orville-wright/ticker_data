@@ -29,7 +29,7 @@ class url_hinter:
 
     def __init__(self, yti, global_args):
         cmi_debug = __name__+"::"+self.__init__.__name__+".#"+str(self.yti)
-        logging.info('%s - INIT<<<<<<<<<<<<<' % cmi_debug )
+        logging.info('%s - INIT' % cmi_debug )
         self.args = global_args
         self.yti = yti
         return
@@ -112,7 +112,7 @@ class url_hinter:
         """
         cmi_debug = __name__+"::"+self.hstatus.__name__+".eng#"+str(self.yti)+"_cyc#"+str(self.hcycle)
         logging.info('%s - CALLED' % cmi_debug )
-        logging.info ( f"%s - Url hinter engine #{self.yti} / cycle #{self.hcycle}" % cmi_debug )
+        logging.info ( f"%s - STATUS / Url hinter engine #{self.yti} / cycle #{self.hcycle}" % cmi_debug )
         return self.yti, self.hcycle
 
 

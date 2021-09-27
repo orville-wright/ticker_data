@@ -121,7 +121,6 @@ def main():
     print ( " " )
 
     print ( "CMDLine args:", parser.parse_args() )
-    logging.info ( f"%s - url-hinter engine started: {type(uh)}" % cmi_debug )
     uh.hstatus()
     # ARGS[] cmdline pre-processing
     if args['bool_verbose'] is True:        # Logging level
