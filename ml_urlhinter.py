@@ -61,10 +61,9 @@ class url_hinter:
                     'bad': ('ERROR_unknown_state', 99)
                     }
 
-        urlp_attr = input_url.path.split('/', 2)       # e.g.  ParseResult(scheme='https', netloc='finance.yahoo.com', path='/m/49c60293...
-        uhint = uhint_code.get(urlp_attr[1])           # retrieve uhint code as tuple
-
         if input_url.netloc == "finance.yahoo.com":
+            urlp_attr = input_url.path.split('/', 2)       # e.g.  ParseResult(scheme='https', netloc='finance.yahoo.com', path='/m/49c60293...
+            uhint = uhint_code.get(urlp_attr[1])           # retrieve uhint code as tuple
             logging.info ( f"%s - decoded url as [{input_url.netloc}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
             return uhint[1], uhint[0]
         else:
