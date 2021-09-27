@@ -537,6 +537,7 @@ def main():
 
         yfn.dump_ml_ingest()
         nlp_final_prep()
+        yfn.dump_ml_ingest()
 
 #################################################################################
 # 3 differnt methods to get a live quote ########################################
