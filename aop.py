@@ -433,7 +433,7 @@ def main():
         cmi_debug = __name__+"::nlp_final_prep().#1"
         for sn_idx, sn_row in yfn.ml_ingest.items():                            # cycle thru the NLP candidate list
             if sn_row['type'] == 0:                                             # REAL news, inferred from Depth 0
-                print( f"News article:  {sn_idx} / ", end="" )
+                print( f"News article:  {sn_idx} / {sn_row['symbol']} / ", end="" )
                 t_url = urlparse(sn_row['url'])                                 # WARN: a rlparse() url_named_tupple (NOT the raw url)
                 uhint, uhdescr = uh.uhinter(20, t_url)
                 thint = (sn_row['thint'])                                       # the hint we guessed at while interrogating page <tags>
@@ -448,7 +448,7 @@ def main():
                 print ( f"====================== Depth 2 ======================" )
                 #
             elif sn_row['type'] == 1:                     # possibly not news? (Micro Ad)
-                print( f"News article:  {sn_idx} / ", end="" )
+                print( f"News article:  {sn_idx} / {sn_row['symbol']} / ", end="" )
                 t_url = urlparse(sn_row['url'])
                 uhint, uhdescr = uh.uhinter(21, t_url)
                 thint = (sn_row['thint'])                 # the hint we guess at while interrogating page <tags>
