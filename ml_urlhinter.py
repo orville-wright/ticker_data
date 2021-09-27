@@ -52,7 +52,7 @@ class url_hinter:
         cmi_debug = __name__+"::uhinter.eng#"+str(self.yti)+"_cyc#"+str(hcycle)
         logging.info('%s - CALLED' % cmi_debug )
 
-        uhint_code = { 'm': ('Local-remote stub', 0),
+        uhint_code = { 'm': ('local-stub ext referr', 0),
                     'news': ('Local article', 1),
                     'video': ('Local video', 2),
                     'rabs': ('Remote-absolute', 3),
@@ -114,7 +114,7 @@ class url_hinter:
         """
         cmi_debug = __name__+"::"+"confidence_ind().#1"
         tcode = { 0.0: 'Real news - local page',
-                1.0: 'Real news - local-stub referr',
+                1.0: 'Real news - local-stub ext referr',
                 1.1: 'Real news - external-abs link',
                 2.0: 'OP-Ed - local',
                 2.1: 'OP-Ed - remote',
