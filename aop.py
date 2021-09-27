@@ -438,33 +438,33 @@ def main():
                 t_url = urlparse(sn_row['url'])                                 # WARN: a rlparse() url_named_tupple (NOT the raw url)
                 uhint, uhdescr = uh.uhinter(20, t_url)
                 thint = (sn_row['thint'])                                       # the hint we guessed at while interrogating page <tags>
-                logging.info ( f"%s - Logic.#0 send get_locality hints: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
+                logging.info ( f"%s - Logic.#1 send get_locality hints: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
                 r_uhint, r_thint, r_xturl = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
-                #
-                uhint, uhdescr = yfn.uh.uhinter(21, r_xturl)              # urlparse named tuple
-                #uhint, uhdescr = yfn.uh.uhinter(21, sn_row['url'])              # urlparse named tuple
-
+                uhint, uhdescr = yfn.uh.uhinter(21, r_xturl)                    # urlparse named tuple
                 if uhint == 0: thint = 1.0                                      # real news / Real news - local-stub referr
                 if uhint == 1: thint = 0.0                                      # real news / local page
                 inf_type = yfn.uh.confidence_lvl(thint)
                 print ( f"Logic.#1 {uhdescr} - NLP candidate" )                 # all type 0 are assumed to be REAL news
                 #confidence_ind(r_uhint, r_thint, r_xturl, sn_row['url'] )      # dodes NOT chnage any data, just nice output
-
                 print ( f"====================== Depth 2 ======================" )
                 #
             elif sn_row['type'] == 1:                     # possibly not news? (Micro Ad)
                 print( f"News article:  {sn_idx} / ", end="" )
                 t_url = urlparse(sn_row['url'])
-                uhint, uhdescr = uh.uhinter(22, t_url)
+                uhint, uhdescr = uh.uhinter(21, t_url)
                 thint = (sn_row['thint'])                 # the hint we guess at while interrogating page <tags>
-                logging.info ( f"%s - #2 get_locality hints: t:1 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
+                logging.info ( f"%s - Logic.#2 send get_locality hints: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
                 r_uhint, r_thint, r_xturl = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
+                uhint, uhdescr = yfn.uh.uhinter(21, r_xturl)                    # urlparse named tuple
+                if uhint == 0: thint = 1.0                                      # real news / Real news - local-stub referr
+                if uhint == 1: thint = 0.0                                      # real news / local page
+                inf_type = yfn.uh.confidence_lvl(thint)
                 print ( f"#1 {uhdescr} - NLP candidate" )                       # all type 1 are only possible news
-                confidence_ind(r_uhint, r_thint, r_xturl, sn_row['url'] )       # dodes NOT chnage any data, just nice output
+                #confidence_ind(r_uhint, r_thint, r_xturl, sn_row['url'] )       # dodes NOT chnage any data, just nice output
                 print ( f"====================== Depth 2 ======================" )
                 #
             elif sn_row['type'] == 2:                     # possibly not news? (Micro Ad)
-                print ( f"Bulk injected ad NOT an NLP candidate" )
+                print ( f"Bulk injected - NOT an NLP candidate" )
                 logging.info ( f"%s - #3 skipping..." % cmi_debug )
                 print ( f"====================== Depth 2 ======================" )
                 #
