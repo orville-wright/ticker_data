@@ -494,12 +494,10 @@ def main():
         nx = newsai_test_dataset.build_tg_df0()     # build entire dataframe
         newsai_test_dataset.build_top10()           # build top 10 gainers
         print ( " " )
-        #news_symbol = str(args['newsymbol'])       # symbol provided on CMDLine
         yfn = yfnews_reader(1, "IBM", args )        # dummy symbol just for instantiation
         yfn.init_dummy_session()
-        uh.hstatus()
-        yfn.share_hinter(uh)                        # share the url hinter available
         #yfn.yfn_bintro()
+        yfn.share_hinter(uh)                        # share the url hinter available
         print ( "============================== Prepare bulk NLP candidate list =================================" )
         print ( f"ML/NLP candidates: {newsai_test_dataset.tg_df1['Symbol'].tolist()}" )
         for nlp_target in newsai_test_dataset.tg_df1['Symbol'].tolist():
@@ -510,8 +508,10 @@ def main():
             yfn.eval_article_tags(nlp_target)       # ml_ingest{} is built
             print ( "============================== NLP candidates are ready =================================" )
 
-        #yfn.dump_ml_ingest()
-        # nlp_final_prep(uh)
+            nlp_final_prep()
+            #print ( f" " )
+            #print ( f" " )
+            #yfn.dump_ml_ingest()
 
 # Read the news for just 1 stock symbol
     """
@@ -530,8 +530,6 @@ def main():
         yfn.update_headers(news_symbol)
         yfn.form_url_endpoint(news_symbol)
         yfn.do_simple_get()
-        logging.info ( f"%s - Enable url hinter-engine: {type(uh)}" % cmi_debug )
-        uh.hstatus()
         yfn.share_hinter(uh)
         yfn.scan_news_feed(news_symbol, 0, 0)    # (params) #1: level, #2: 0=HTML / 1=JavaScript
         yfn.eval_article_tags(news_symbol)          # ml_ingest{} is built
