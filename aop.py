@@ -444,7 +444,7 @@ def main():
                 uhint, uhdescr = yfn.uh.uhinter(21, sn_row['url'])              # urlparse named tuple
                 if uhint == 0: thint = 1.0                                      # real news / Real news - local-stub referr
                 if uhint == 1: thint = 0.0                                      # real news / local page
-                inf_type = self.uh.confidence_lvl(thint)
+                inf_type = yfn.uh.confidence_lvl(thint)
                 print ( f"Logic.#1 {uhdescr} - NLP candidate" )                 # all type 0 are assumed to be REAL news
                 #confidence_ind(r_uhint, r_thint, r_xturl, sn_row['url'] )      # dodes NOT chnage any data, just nice output
 
