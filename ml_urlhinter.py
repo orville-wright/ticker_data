@@ -65,7 +65,7 @@ class url_hinter:
         uhint = uhint_code.get(urlp_attr[1])           # retrieve uhint code as tuple
 
         if input_url.netloc == "finance.yahoo.com":
-            logging.info ( f"%s - Hint engine decoded: {uhint[1]} [{input_url.netloc}] / {uhint[0]}" % cmi_debug )
+            logging.info ( f"%s - decoded url as [{input_url.netloc}] / code:{uhint[1]} / {uhint[0]}" % cmi_debug )
             return uhint[1], uhint[0]
         else:
             a_url = urlparse(input_url)               # treat input_url like its a raw absolute FQDN URL
@@ -133,6 +133,6 @@ class url_hinter:
                 10.0: 'ERROR unknonw state',
                 99.9: 'DEfault NO-YET-SET'
                 }
-        logging.info ( f"%s - hint code recieved: {thint}" % cmi_debug )
+        logging.info ( f"%s - CL decoder input h: {thint}" % cmi_debug )
         thint_descr = tcode.get(thint)
         return thint_descr
