@@ -65,21 +65,21 @@ class url_hinter:
         uhint = uhint_code.get(urlp_attr[1])           # retrieve uhint code as tuple
 
         if input_url.netloc == "finance.yahoo.com":
-            logging.info ( f"%s - decoded url as [{input_url.netloc}] / t:{uhint[1]} / {uhint[0]}" % cmi_debug )
+            logging.info ( f"%s - decoded url as [{input_url.netloc}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
             return uhint[1], uhint[0]
         else:
             a_url = urlparse(input_url)               # treat input_url like its a raw absolute FQDN URL
             uhint = uhint_code.get('rabs')            # get our encodings for absolute URL
-            logging.info ( f"%s - Recieved pure-absolute url: [{a_url.netloc}] t:{uhint[1]} / {uhint[0]}" % cmi_debug )
+            logging.info ( f"%s - Recieved pure-absolute url: [{a_url.netloc}] u:{uhint[1]} / {uhint[0]}" % cmi_debug )
             if a_url.path != "finance.yahoo.com":
                 return uhint[1], uhint[0]
             elif a_url.path == "finance.yahoo.com":
                 uhint = uhint_code.get('bad')            # get our encodings for absolute URL
-                logging.info ( f"%s - ERROR confused logic state: [{a_url.netloc}] / t:{uhint[1]} / {uhint[0]}" % cmi_debug )
+                logging.info ( f"%s - ERROR confused logic state: [{a_url.netloc}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
                 return uhint[1], uhint[0]
             else:
                 uhint = uhint_code.get('err')            # get our encodings for absolute URL
-                logging.info ( f"%s - Recieved Mangled URL: [{a_url.netloc}] t:{uhint[1]} / {uhint[0]}" % cmi_debug )
+                logging.info ( f"%s - Recieved Mangled URL: [{a_url.netloc}] u:{uhint[1]} / {uhint[0]}" % cmi_debug )
                 return uhint[1], uhint[0]
 
         error_state = uhint_code.get('bad')             # should NEVER get here
