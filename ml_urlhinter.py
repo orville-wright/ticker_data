@@ -114,8 +114,8 @@ class url_hinter:
         """
         cmi_debug = __name__+"::"+"confidence_ind().#1"
         tcode = { 0.0: 'Real news - local page',
-                1.0: 'Real news - remote-stub YYYYYYYYYYYYYYYYY',
-                1.1: 'Real news - remote-abs',
+                1.0: 'Real news - local-stub referr',
+                1.1: 'Real news - external-abs link',
                 2.0: 'OP-Ed - local',
                 2.1: 'OP-Ed - remote',
                 3.0: 'Curated report - local',
