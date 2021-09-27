@@ -508,10 +508,10 @@ def main():
             yfn.eval_article_tags(nlp_target)       # ml_ingest{} is built
             print ( "============================== NLP candidates are ready =================================" )
 
-            nlp_final_prep()
-            #print ( f" " )
-            #print ( f" " )
-            #yfn.dump_ml_ingest()
+        nlp_final_prep()
+        #print ( f" " )
+        #print ( f" " )
+        #yfn.dump_ml_ingest()
 
 # Read the news for just 1 stock symbol
     """
