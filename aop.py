@@ -540,9 +540,9 @@ def main():
         print ( "========================= Evaluate quality of ML/NLP candidates =========================" )
 
         nlp_final_prep()
-        print ( f" " )
-        print ( f" " )
-        yfn.dump_ml_ingest()
+        #print ( f" " )
+        #print ( f" " )
+        #yfn.dump_ml_ingest()
 
 #################################################################################
 # 3 differnt methods to get a live quote ########################################
