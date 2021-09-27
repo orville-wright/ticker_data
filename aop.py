@@ -440,15 +440,16 @@ def main():
                 thint = (sn_row['thint'])                                       # the hint we guessed at while interrogating page <tags>
                 logging.info ( f"%s - Logic.#1 hinting origin url: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
                 r_uhint, r_thint, r_xturl = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
+                p_r_xturl = urlparse(r_xturl)
                 inf_type = yfn.uh.confidence_lvl(thint)
                 print ( f"Logic.#1 - NLP candidate / {uhdescr}" )                # all type 0 are assumed to be REAL news
                 print ( f"Origin URL:      [ {t_url.netloc} ] / {uhdescr} / {inf_type}" )
-                uhint, uhdescr = uh.uhinter(21, r_xturl)
+                uhint, uhdescr = uh.uhinter(21, p_r_xturl)
                 #if uhint == 0: thint = 1.0                                      # real news / Real news - local-stub referr
                 #if uhint == 1: thint = 0.0                                      # real news / local page
                 #if uhint == 2: thint = 4.0                                      # real news / local page
                 #if uhint == 3: thint = 1.1                                      # real news / local page
-                print ( f"Absolute URL:    [ {r_xturl.netloc} ] / {uhdescr} / {inf_type}" )
+                print ( f"Absolute URL:    [ {p_r_xturl.netloc} ] / {uhdescr} / {inf_type}" )
                 #confidence_ind(r_uhint, r_thint, r_xturl, sn_row['url'] )      # dodes NOT chnage any data, just nice output
                 print ( f"====================== Depth 2 ======================" )
                 #
