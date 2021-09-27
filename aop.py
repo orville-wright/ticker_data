@@ -532,6 +532,8 @@ def main():
 
         print ( f" " )
         print ( "========================= Evaluate quality of ML/NLP candidates =========================" )
+
+        yfn.dump_ml_ingest()
         nlp_final_prep()
 
 #################################################################################
