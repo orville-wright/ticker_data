@@ -338,7 +338,6 @@ class yfnews_reader:
         #####################################
 
             if a_counter > 0 and a_counter <= 3:
-                print ( f"==============================================================================" )
                 logging.info( f'%s - Tag <li> count: {a_counter}' % (cmi_debug) )        # good new zrticle found
                 self.article_url = li_tag.a.get("href")
                 self.a_urlp = urlparse(self.article_url)
