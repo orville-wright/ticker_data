@@ -370,7 +370,7 @@ class yfnews_reader:
                         news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
                         # cant grab news agency / teaser yet, b/c we dont knonw the struct of this article (just its type)
                         hcycle += 1
-                        break       # ... need 1 more level of analysis analysis for this item...so keep working....on it
+                        break       # ...need 1 more level of analysis analysis to get headline & teaser text
 
                 if not li_tag.find('p'):                # Micro-Ad
                     logging.info( f'%s - Logic.#3 / Origin url: {self.url_netloc}' % (cmi_debug) )
@@ -386,7 +386,8 @@ class yfnews_reader:
                     ml_atype = 1
                 elif news_agency == "Yahoo Finance Video" and uhint == 2:
                     logging.info( f'%s - Logic.#4 / Origin url: {self.url_netloc}' % (cmi_debug) )
-                    videostory_headline = li_tag.find_all(attrs={'class': 'Ov(h)'})
+                    videostory_headline = li_tag.find(attrs={'class': 'Ov(h)'})
+                    self.article_teaser = videostory_headline.p.text
                     self.article_teaser = videostory_headline.p.text
                     uhint, uhdescr = self.uh.uhinter(hcycle, self.a_urlp)          # urlparse named tuple
                     if uhint == 2:
@@ -395,7 +396,6 @@ class yfnews_reader:
                         thint = 9.9
                     inf_type = self.uh.confidence_lvl(thint)
                     self.url_netloc = self.a_urlp.netloc
-                    self.article_teaser = "FIX-ME check video page for teaser <tag> zone"
                     article_headline = li_tag.a.text        # taken from YFN news feed thumbnail, not actual article page
                     ml_atype = 0
                 else:
