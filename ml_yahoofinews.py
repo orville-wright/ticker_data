@@ -336,9 +336,9 @@ class yfnews_reader:
                 break
 
         #####################################
-            print ( f"================= Article {x} / {symbol} / Depth 1 ==========================" )
 
             if a_counter > 0 and a_counter <= 3:
+                print ( f"================= Article {x} / {symbol} / Depth 1 ==========================" )
                 logging.info( f'%s - Tag <li> count: {a_counter}' % (cmi_debug) )        # good new zrticle found
                 self.article_url = li_tag.a.get("href")
                 self.a_urlp = urlparse(self.article_url)
@@ -358,37 +358,36 @@ class yfnews_reader:
                         hcycle += 1
                         break
                     else:
+                        logging.info( f'%s - Logic.#2 / Origin url: {self.a_urlp.netloc}' % (cmi_debug) )
                         self.a_url = f"https://finance.yahoo.com{self.article_url}"
                         self.a_urlp = urlparse(self.a_url)
                         self.url_netloc = self.a_urlp.netloc      # FQDN netloc
-                        logging.info( f'%s - Logic.#2 / Origin url: {self.a_urlp.netloc}' % (cmi_debug) )
                         uhint, uhdescr = self.uh.uhinter(hcycle, self.a_urlp)          # urlparse named tuple
                         if uhint == 0: thint = 1.0      # real news / remote-stub @ YFN stub
                         if uhint == 1: thint = 0.0      # real news / local page
                         pure_url = 0                    # locally hosted entity
                         ml_atype = 0                    # Real news
                         inf_type = self.uh.confidence_lvl(thint)
-                        a_teaser = li_tag.p.text
-                        self.article_teaser = f"{a_teaser:.170}" + " [...]"
                         news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
+                        # cant grab news agency / teaser yet, b/c we dont knonw the struct of this article (just its type)
                         hcycle += 1
                         break
                 # ... need 1 more level of analysis analysis of this type...so keep working....
 
                 if not li_tag.find('p'):                # Micro-Ad
-                    self.url_netloc = self.a_urlp.netloc
-                    microad_news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
-                    microad_headline = li_tag.find(attrs={'class': 'Ov(h)'}).string
-                    self.article_teaser = "No Micro-ad headine"
                     logging.info( f'%s - Logic.#3 / Origin url: {self.url_netloc}' % (cmi_debug) )
+                    self.url_netloc = self.a_urlp.netloc
+                    microad_headline = li_tag.find(attrs={'class': 'Ov(h)'}).string
+                    microad_news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
+                    article_headline = microad_headline # needs refinement ONCE this works
+                    news_agency = microad_news_agency   # needs refinement ONCE this works
+                    self.article_teaser = "No Micro-ad headine"
                     if pure_url == 0: thint = 5.0    # local entity
                     if pure_url == 1: thint = 5.1    # remote entity - currently NOT a valid type on yahoo.com
                     inf_type = self.uh.confidence_lvl(thint)
                     ml_atype = 1
-                    #break
-
-                article_headline = li_tag.a.text        # taken from YFN news feed thumbnail, not actual article page
-                if news_agency == "Yahoo Finance Video" and uhint == 2:
+                elif news_agency == "Yahoo Finance Video" and uhint == 2:
+                    logging.info( f'%s - Logic.#4 / Origin url: {self.url_netloc}' % (cmi_debug) )
                     uhint, uhdescr = self.uh.uhinter(hcycle, self.a_urlp)          # urlparse named tuple
                     if uhint == 2:
                         thint = 4.0
@@ -396,13 +395,14 @@ class yfnews_reader:
                         thint = 9.9
                     inf_type = self.uh.confidence_lvl(thint)
                     self.url_netloc = self.a_urlp.netloc
-                    logging.info( f'%s - Logic.#4 / Origin url: {self.url_netloc}' % (cmi_debug) )
                     self.article_teaser = "FIX-ME check video page for teaser <tag> zone"
+                    article_headline = li_tag.a.text        # taken from YFN news feed thumbnail, not actual article page
                     ml_atype = 0
-
-                logging.info( f'%s - Logic.#5 / Origin url: {self.url_netloc}' % (cmi_debug) )
+                else:
+                logging.info( f'%s - Logic.#5 / No logic triggered / Origin url: {self.url_netloc}' % (cmi_debug) )
                 #a_teaser = li_tag.p.text
                 #self.article_teaser = f"{a_teaser:.170}" + " [...]"
+                #article_headline = li_tag.a.text        # taken from YFN news feed thumbnail, not actual article page
 
                 print ( f"================= Article {x} / {symbol} / Depth 1 ==========================" )
                 print ( f"News item:        {self.cycle}: {inf_type} / Confidence Indicators t:{ml_atype} / u:{uhint} / h:{thint}" )
