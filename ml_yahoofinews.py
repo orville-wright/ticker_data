@@ -386,7 +386,7 @@ class yfnews_reader:
                     ml_atype = 1
                 elif news_agency == "Yahoo Finance Video" and uhint == 2:
                     logging.info( f'%s - Logic.#4 / Origin url: {self.url_netloc}' % (cmi_debug) )
-                    videostory_headline = li_tag.find(attrs={'class': 'Ov(h)'}).strings
+                    videostory_headline = li_tag.find_all(attrs={'class': 'Ov(h)'})
                     self.article_teaser = videostory_headline.p.text
                     uhint, uhdescr = self.uh.uhinter(hcycle, self.a_urlp)          # urlparse named tuple
                     if uhint == 2:
