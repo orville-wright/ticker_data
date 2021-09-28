@@ -336,9 +336,10 @@ class yfnews_reader:
                 break
 
         #####################################
+            print ( f"================= Article {x} / {symbol} / Depth 1 ==========================" )
 
             if a_counter > 0 and a_counter <= 3:
-                logging.info( f'%s - <li> count: {a_counter}' % (cmi_debug) )        # good new zrticle found
+                logging.info( f'%s - Tag <li> count: {a_counter}' % (cmi_debug) )        # good new zrticle found
                 self.article_url = li_tag.a.get("href")
                 self.a_urlp = urlparse(self.article_url)
                 news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
@@ -347,14 +348,13 @@ class yfnews_reader:
 
                 for safety_cycle in range(1):                # leverage for/loop to abuse BREAK as logic exit control (poor mans switch/case)
                     if self.a_urlp.scheme == "https" or self.a_urlp.scheme == "http":    # check URL scheme specifier
-                        logging.info ( f"%s - Depth: 1 / Pure Remote URL found!" % cmi_debug )
+                        logging.info( f'%s - Logic.#1 Pure-Abs url {uhint} {self.a_url.netloc} / {uhdescr}' % (cmi_debug) )
                         pure_url = 1    # explicit pure URL to remote entity
                         uhint, uhdescr = self.uh.uhinter(hcycle, self.article_url)    # raw url string
-                        logging.info( f'%s - Logic.#1 Pure-Abs url {uhint} {self.a_url.netloc} / {uhdescr}' % (cmi_debug) )
-                        ml_atype = 0
-                        thint = 1.1
                         inf_type = self.uh.confidence_lvl(thint)
                         news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
+                        ml_atype = 0
+                        thint = 1.1
                         hcycle += 1
                         break
                     else:
@@ -362,14 +362,15 @@ class yfnews_reader:
                         self.a_urlp = urlparse(self.a_url)
                         self.url_netloc = self.a_urlp.netloc      # FQDN netloc
                         logging.info( f'%s - Logic.#2 / Origin url: {self.a_urlp.netloc}' % (cmi_debug) )
-                        pure_url = 0                    # locally hosted entity
-                        ml_atype = 0                    # Real news
                         uhint, uhdescr = self.uh.uhinter(hcycle, self.a_urlp)          # urlparse named tuple
                         if uhint == 0: thint = 1.0      # real news / remote-stub @ YFN stub
                         if uhint == 1: thint = 0.0      # real news / local page
+                        pure_url = 0                    # locally hosted entity
+                        ml_atype = 0                    # Real news
                         inf_type = self.uh.confidence_lvl(thint)
                         a_teaser = li_tag.p.text
                         self.article_teaser = f"{a_teaser:.170}" + " [...]"
+                        news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
                         hcycle += 1
                         break
                 # ... need 1 more level of analysis analysis of this type...so keep working....
