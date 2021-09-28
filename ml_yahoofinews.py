@@ -379,9 +379,9 @@ class yfnews_reader:
                     self.url_netloc = self.a_urlp.netloc
                     microad_headline = li_tag.find(attrs={'class': 'Ov(h)'}).strings
                     microad_news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
-                    print ( f">>> DEBUG <<< : li_tag.find : {next(microad_headline)}" )
-                    article_headline = microad_headline # needs refinement ONCE this works
-                    news_agency = microad_news_agency   # needs refinement ONCE this works
+                    #print ( f">>> DEBUG <<< : li_tag.find : {next(microad_headline)}" )
+                    article_headline = next(microad_headline)                   # grab the Micro-ad Headline
+                    news_agency = microad_news_agency
                     self.article_teaser = "No Micro-ad headine"
                     if pure_url == 0: thint = 5.0    # local entity
                     if pure_url == 1: thint = 5.1    # remote entity - currently NOT a valid type on yahoo.com
