@@ -377,8 +377,9 @@ class yfnews_reader:
                 if not li_tag.find('p'):                # Micro-Ad
                     logging.info( f'%s - Logic.#3 / Origin url: {self.url_netloc}' % (cmi_debug) )
                     self.url_netloc = self.a_urlp.netloc
-                    microad_headline = li_tag.find(attrs={'class': 'Ov(h)'}).string
+                    microad_headline = li_tag.find(attrs={'class': 'Ov(h)'}).strings
                     microad_news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
+                    print ( f">>> DEBUG <<< : li_tag.find : {microad_headline}" )
                     article_headline = microad_headline # needs refinement ONCE this works
                     news_agency = microad_news_agency   # needs refinement ONCE this works
                     self.article_teaser = "No Micro-ad headine"
