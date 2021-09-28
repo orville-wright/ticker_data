@@ -300,7 +300,7 @@ class yfnews_reader:
         Depth 1
         NOTE: assumes connection was previously setup & html data structures are pre-loaded
               leverages default JS session/request handle
-              Level 0 article logic loop - we're at the TOP-level news page for this stock
+              Level 0 logic - scans @ Level 0 of stocks main News Feed [main news page only, no depth]
         1. cycle though the top-level NEWS FEED page for this stock
         2. Scan & prepare a list of ALL of the articles we see
         3. For each article, extract KEY news elements (i.e. Headline, Brief, URL to real article)
@@ -337,11 +337,9 @@ class yfnews_reader:
 
         #####################################
 
-            end_logic = False
             if a_counter > 0 and a_counter <= 3:
                 logging.info( f'%s - <li> count: {a_counter}' % (cmi_debug) )        # good new zrticle found
                 news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
-
                 self.article_url = li_tag.a.get("href")
                 self.a_urlp = urlparse(self.article_url)
                 inf_type = "Undefined"
@@ -372,11 +370,13 @@ class yfnews_reader:
 
                     if not li_tag.find('p'):            # Micro-Ad
                         self.url_netloc = self.a_urlp.netloc
+                        microad_news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
+                        microad_headline = li_tag.find(attrs={'class': 'Ov(h)'}).string
+                        self.article_teaser = "None"
                         logging.info( f'%s - Logic.#3 / Origin url: {self.url_netloc}' % (cmi_debug) )
                         if pure_url == 0: thint = 5.0    # local entity
                         if pure_url == 1: thint = 5.1    # remote entity - currently NOT a valid type on yahoo.com
                         inf_type = self.uh.confidence_lvl(thint)
-                        self.article_teaser = "None"
                         ml_atype = 1
                         break
 
