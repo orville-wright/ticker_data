@@ -379,7 +379,7 @@ class yfnews_reader:
                     self.url_netloc = self.a_urlp.netloc
                     microad_headline = li_tag.find(attrs={'class': 'Ov(h)'}).strings
                     microad_news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
-                    print ( f">>> DEBUG <<< : li_tag.find : {microad_headline}" )
+                    print ( f">>> DEBUG <<< : li_tag.find : {next(microad_headline)}" )
                     article_headline = microad_headline # needs refinement ONCE this works
                     news_agency = microad_news_agency   # needs refinement ONCE this works
                     self.article_teaser = "No Micro-ad headine"
