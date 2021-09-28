@@ -338,7 +338,7 @@ class yfnews_reader:
         #####################################
 
             if a_counter > 0 and a_counter <= 3:
-                print ( f"================= Article {x} / {symbol} / Depth 1 ==========================" )
+                print ( f"==============================================================================" )
                 logging.info( f'%s - Tag <li> count: {a_counter}' % (cmi_debug) )        # good new zrticle found
                 self.article_url = li_tag.a.get("href")
                 self.a_urlp = urlparse(self.article_url)
@@ -399,11 +399,10 @@ class yfnews_reader:
                     article_headline = li_tag.a.text        # taken from YFN news feed thumbnail, not actual article page
                     ml_atype = 0
                 else:
-                    logging.info( f'%s - Logic.#5 / No logic triggered / Origin url: {self.url_netloc}' % (cmi_debug) )
-                    pass
-                    #a_teaser = li_tag.p.text
-                    #self.article_teaser = f"{a_teaser:.170}" + " [...]"
-                    #article_headline = li_tag.a.text        # taken from YFN news feed thumbnail, not actual article page
+                    logging.info( f'%s - Logic.#5 / Tag <p> vanilla news / Origin url: {self.url_netloc}' % (cmi_debug) )
+                    a_teaser = li_tag.p.text
+                    self.article_teaser = f"{a_teaser:.170}" + " [...]"
+                    article_headline = li_tag.a.text        # taken from YFN news feed thumbnail, not actual article page
 
                 print ( f"================= Article {x} / {symbol} / Depth 1 ==========================" )
                 print ( f"News item:        {self.cycle}: {inf_type} / Confidence Indicators t:{ml_atype} / u:{uhint} / h:{thint}" )
