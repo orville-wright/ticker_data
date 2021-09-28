@@ -303,9 +303,9 @@ class yfnews_reader:
               Level 0 logic - scans @ Level 0 of stocks main News Feed [main news page only, no depth]
         1. cycle though the top-level NEWS FEED page for this stock
         2. Scan & prepare a list of ALL of the articles we see
-        3. For each article, extract KEY news elements (i.e. Headline, Brief, URL to real article)
-        4. Make a high level decision as to the TYPE of item (News, paid article, Injected ad)
-        5. Add articles into ml_ingest{} NLP candidate list (only types 0 & 1 are viable candidates)
+        3. For each article, extract KEY news elements (i.e. Headline, Brief, local URL, remote UIRL)
+        4. leverage the URL hinter. Make a decision on TYPE & HINTER results
+        5. Decide if its a worthy REAL news articles & insert into ml_ingest{} NLP candidate list
         """
 
         cmi_debug = __name__+"::"+self.eval_article_tags.__name__+".#"+str(self.yti)
@@ -335,8 +335,7 @@ class yfnews_reader:
                 print ( f"Empty news page - NO NEWS found" )
                 break
 
-        #####################################
-
+        ################## key logic decisions made below ###################
             if a_counter > 0 and a_counter <= 3:
                 logging.info( f'%s - Tag <li> count: {a_counter}' % (cmi_debug) )        # good new zrticle found
                 self.article_url = li_tag.a.get("href")
@@ -345,7 +344,7 @@ class yfnews_reader:
                 news_agency ="ERROR_default_data_1"
                 inf_type = "Undefined"
 
-                for safety_cycle in range(1):                # leverage for/loop to abuse BREAK as logic exit control (poor mans switch/case)
+                for safety_cycle in range(1):    # ABUSE for/loop BREAK as logic control exit (poor mans switch/case)
                     if self.a_urlp.scheme == "https" or self.a_urlp.scheme == "http":    # check URL scheme specifier
                         logging.info( f'%s - Logic.#1 Pure-Abs url {uhint} {self.a_url.netloc} / {uhdescr}' % (cmi_debug) )
                         pure_url = 1    # explicit pure URL to remote entity
@@ -413,7 +412,7 @@ class yfnews_reader:
                 print ( f"Article teaser:   {self.article_teaser}" )
 
                 self.ml_brief.append(self.article_teaser)           # add Article teaser long TXT into ML pre count vectorizer matrix
-                auh = hashlib.sha256(self.article_url.encode())
+                auh = hashlib.sha256(self.article_url.encode())     # hash the url
                 aurl_hash = auh.hexdigest()
                 print ( f"Unique url hash:  {aurl_hash}" )
 
@@ -446,7 +445,6 @@ class yfnews_reader:
             x += 1
             self.cycle += 1
 
-        # need to capture junk adds here (very difficult as they're injected by add engine. Not hard page elements)
         return
 
 # method 10
@@ -556,22 +554,6 @@ class yfnews_reader:
 
         logging.info ( f"%s - Depth: 2 / confidence level 10 / 10.0 " % cmi_debug )
         return 10, 10.0, "ERROR_unknown_state!"              # error unknown state
-
-        """
-            elif hint == 1:                                # a local YFN page, but a low quality article/report/story
-                local_story.button.text == "Read full article"    # test to make 100% sure its a low quality story
-                logging.info ( f"%s - Depth: 2 / Simple stub-page..." % cmi_debug )
-                logging.info ( f"%s - Depth: 2 / confidence level 1 / 3 " % cmi_debug )
-                return 1, 3, this_article_url              # Curated Report
-            elif hint == 0:                        # definatley a REMOTE article. Cant analyze page/structure <tag> detals from here
-                return 5, 0, this_article_url     # Micro Ad with pure URL pointing to physical remote article
-            else:
-                logging.info ( f"%s - Depth: 2 / Basic page is BAD" % cmi_debug )
-                logging.info ( f"%s - Depth: 2 / confidence level 9 / -1 " % cmi_debug )
-                return 9, -1, "ERROR_bad_page_struct"
-        """
-
-
 
 
         """
