@@ -323,7 +323,7 @@ class yfnews_reader:
         pure_url = 9                                         # saftey preset
         uhint = 9                                            # saftey preset
         thint = 99.9                                         # saftey preset
-        self.article_teaser ="ERROR_unset_teaser"
+        self.article_teaser ="ERROR_default_data_0"
         ml_atype = 0
 
         for li_tag in li_subset_all:                         # <li> is where the new articels hide
@@ -339,9 +339,10 @@ class yfnews_reader:
 
             if a_counter > 0 and a_counter <= 3:
                 logging.info( f'%s - <li> count: {a_counter}' % (cmi_debug) )        # good new zrticle found
-                news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
                 self.article_url = li_tag.a.get("href")
                 self.a_urlp = urlparse(self.article_url)
+                news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
+                news_agency ="ERROR_default_data_1"
                 inf_type = "Undefined"
 
                 for safety_cycle in range(1):                # leverage for/loop to abuse BREAK as logic exit control (poor mans switch/case)
@@ -353,6 +354,8 @@ class yfnews_reader:
                         ml_atype = 0
                         thint = 1.1
                         inf_type = self.uh.confidence_lvl(thint)
+                        news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
+                        hcycle += 1
                         break
                     else:
                         self.a_url = f"https://finance.yahoo.com{self.article_url}"
@@ -365,38 +368,40 @@ class yfnews_reader:
                         if uhint == 0: thint = 1.0      # real news / remote-stub @ YFN stub
                         if uhint == 1: thint = 0.0      # real news / local page
                         inf_type = self.uh.confidence_lvl(thint)
+                        a_teaser = li_tag.p.text
+                        self.article_teaser = f"{a_teaser:.170}" + " [...]"
                         hcycle += 1
-                        # ... need more analysis of this type...so keep working....
-
-                    if not li_tag.find('p'):            # Micro-Ad
-                        self.url_netloc = self.a_urlp.netloc
-                        microad_news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
-                        microad_headline = li_tag.find(attrs={'class': 'Ov(h)'}).string
-                        self.article_teaser = "None"
-                        logging.info( f'%s - Logic.#3 / Origin url: {self.url_netloc}' % (cmi_debug) )
-                        if pure_url == 0: thint = 5.0    # local entity
-                        if pure_url == 1: thint = 5.1    # remote entity - currently NOT a valid type on yahoo.com
-                        inf_type = self.uh.confidence_lvl(thint)
-                        ml_atype = 1
                         break
+                # ... need 1 more level of analysis analysis of this type...so keep working....
 
-                    article_headline = li_tag.a.text        # taken from YFN news feed thumbnail, not actual article page
-                    if news_agency == "Yahoo Finance Video" and uhint == 2:
-                        uhint, uhdescr = self.uh.uhinter(hcycle, self.a_urlp)          # urlparse named tuple
-                        if uhint == 2:
-                            thint = 4.0
-                        else:
-                            thint = 9.9
-                        inf_type = self.uh.confidence_lvl(thint)
-                        self.url_netloc = self.a_urlp.netloc
-                        logging.info( f'%s - Logic.#4 / Origin url: {self.url_netloc}' % (cmi_debug) )
-                        self.article_teaser = "FIX-ME check video page for teaser <tag> zone"
-                        ml_atype = 0
-                        break
+                if not li_tag.find('p'):                # Micro-Ad
+                    self.url_netloc = self.a_urlp.netloc
+                    microad_news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
+                    microad_headline = li_tag.find(attrs={'class': 'Ov(h)'}).string
+                    self.article_teaser = "No Micro-ad headine"
+                    logging.info( f'%s - Logic.#3 / Origin url: {self.url_netloc}' % (cmi_debug) )
+                    if pure_url == 0: thint = 5.0    # local entity
+                    if pure_url == 1: thint = 5.1    # remote entity - currently NOT a valid type on yahoo.com
+                    inf_type = self.uh.confidence_lvl(thint)
+                    ml_atype = 1
+                    #break
 
-                    logging.info( f'%s - Logic.#5 / Origin url: {self.url_netloc}' % (cmi_debug) )
-                    a_teaser = li_tag.p.text
-                    self.article_teaser = f"{a_teaser:.170}" + " [...]"
+                article_headline = li_tag.a.text        # taken from YFN news feed thumbnail, not actual article page
+                if news_agency == "Yahoo Finance Video" and uhint == 2:
+                    uhint, uhdescr = self.uh.uhinter(hcycle, self.a_urlp)          # urlparse named tuple
+                    if uhint == 2:
+                        thint = 4.0
+                    else:
+                        thint = 9.9
+                    inf_type = self.uh.confidence_lvl(thint)
+                    self.url_netloc = self.a_urlp.netloc
+                    logging.info( f'%s - Logic.#4 / Origin url: {self.url_netloc}' % (cmi_debug) )
+                    self.article_teaser = "FIX-ME check video page for teaser <tag> zone"
+                    ml_atype = 0
+
+                logging.info( f'%s - Logic.#5 / Origin url: {self.url_netloc}' % (cmi_debug) )
+                #a_teaser = li_tag.p.text
+                #self.article_teaser = f"{a_teaser:.170}" + " [...]"
 
                 print ( f"================= Article {x} / {symbol} / Depth 1 ==========================" )
                 print ( f"News item:        {self.cycle}: {inf_type} / Confidence Indicators t:{ml_atype} / u:{uhint} / h:{thint}" )
