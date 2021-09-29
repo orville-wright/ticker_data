@@ -385,7 +385,7 @@ def main():
                 r_uhint, r_thint, r_xturl = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
                 p_r_xturl = urlparse(r_xturl)
                 inf_type = yfn.uh.confidence_lvl(thint)
-                print ( f"Logic.#0 - NLP candidate / {uhdescr}" )                # all type 0 are assumed to be REAL news
+                print ( f"- NLP candidate" )                # all type 0 are assumed to be REAL news
                 print ( f"Origin URL:    [ {t_url.netloc} ] / {uhdescr} / {inf_type}" )
                 uhint, uhdescr = uh.uhinter(21, p_r_xturl)
                 print ( f"Absolute URL:  [ {p_r_xturl.netloc} ] / {inf_type}" )
@@ -400,7 +400,7 @@ def main():
                 r_uhint, r_thint, r_xturl = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
                 p_r_xturl = urlparse(r_xturl)
                 inf_type = yfn.uh.confidence_lvl(thint)
-                print ( f"Logic.#1 - NLP candidate / {uhdescr}" )                # all type 0 are assumed to be REAL news
+                print ( f"NLP candidate" )                # all type 0 are assumed to be REAL news
                 print ( f"Origin URL:    [ {t_url.netloc} ] / {uhdescr} / {inf_type}" )
                 uhint, uhdescr = uh.uhinter(21, p_r_xturl)
                 print ( f"Absolute URL:  [ {p_r_xturl.netloc} ] / {inf_type}" )
