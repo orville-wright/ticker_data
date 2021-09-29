@@ -56,6 +56,7 @@ class url_hinter:
                     'news': ('Local article', 1),
                     'video': ('Local video', 2),
                     'rabs': ('Remote-absolute', 3),
+                    'research': ('Research article', 4),
                     'udef': ('Not yet defined', 9),
                     'err': ('Error mangled url', 10),
                     'bad': ('ERROR_unknown_state', 99)
