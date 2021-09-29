@@ -300,12 +300,12 @@ class yfnews_reader:
         Depth 1
         NOTE: assumes connection was previously setup & html data structures are pre-loaded
               leverages default JS session/request handle
-              Level 0 logic - scans @ Level 0 of stocks main News Feed [main news page only, no depth]
+              Level 0 logic - interrogate items wihtin the main [News Feed page]
         1. cycle though the top-level NEWS FEED page for this stock
-        2. Scan & prepare a list of ALL of the articles we see
+        2. Scan each article found
         3. For each article, extract KEY news elements (i.e. Headline, Brief, local URL, remote UIRL)
         4. leverage the URL hinter. Make a decision on TYPE & HINTER results
-        5. Decide if its a worthy REAL news articles & insert into ml_ingest{} NLP candidate list
+        5. Decide worthness of REAL news articles & insert into ml_ingest{} NLP candidate list
         """
 
         cmi_debug = __name__+"::"+self.eval_article_tags.__name__+".#"+str(self.yti)
@@ -487,21 +487,16 @@ class yfnews_reader:
             local_news = nsoup.find(attrs={"class": "caas-content-wrapper"} )    # full news article, locally hosted
             local_story = nsoup.find(attrs={"class": "caas-body-wrapper"} )      # boring options trader bland article type
 
-            #if type(rem_news) != type(None):               # page has valid structure
-            #if uhint == 0 or uhint == 1:                    # Local-remote stub or Local-local article
             if uhint == 0:                    # Local-remote stub or Local-local article
                 logging.info ( f"%s - Depth: 2 / Read Local-remote stub / u: {uhint} t: {thint}" % cmi_debug )
-                #logging.info ( f"%s - Depth: 2 / Raw HTML data: {rem_news}" % cmi_debug )
                 if rem_news.find('a'):                     # BAD, no <a> zone in page or article is a REAL remote URL already
                     rem_url = rem_news.a.get("href")
                     # remotely hosted news article. with a real external URL, Also has [Continue reading] button TEXT
                     logging.info ( f"%s - Depth: 2 / Good <a> Remote-stub / News article @: {rem_url}" % cmi_debug )
                     logging.info ( f"%s - Depth: 2 / Insert ext url into ml_ingest" % cmi_debug )
-
                     ext_url_item = {'exturl': rem_url }     # build a new dict entry (external; absolute url)
                     data_row.update(ext_url_item )          # insert new dict entry into ml_ingest via an AUGMENTED data_row
                     self.ml_ingest[idx] = data_row           # now PERMENTALY update the ml_ingest record @ index = id
-
                     logging.info ( f"%s - Depth: 2 / NLP candidate is ready" % cmi_debug )
                     return uhint, thint, rem_url
                     #
@@ -511,13 +506,10 @@ class yfnews_reader:
                     author = local_news.find(attrs={"class": "caas-attr-item-author"} )
                     pubdate = local_news.find(attrs={"class": "caas-attr-time-style"} )
                     article = local_news.find(attrs={"class": "caas-body"} )
-                    # remotely hosted news article. with a real external URL, Also has [Continue reading] button TEXT
                     logging.info ( f"%s - Depth: 2 / Good <p> Local full TEXT article" % cmi_debug )
                     pub_clean = pubdate.text.lstrip()
                     published = pub_clean.split('·', 1)
                     author_clean = author.text.lstrip()
-                    #print ( f"Author:        {author_clean}" )
-                    #print ( f"Published:     {published[0]}" )
                     logging.info ( f"%s - Depth: 2 / NLP candidate is ready" % cmi_debug )
                     return uhint, thint, url
                     #
@@ -543,7 +535,6 @@ class yfnews_reader:
                 print ( f">>DEBUG<< URL hint: {uhint} / Page Type hint: {thint}" )
                 logging.info ( f"%s - Depth: 2 / NO <a> / Good-stub [Video report]" % cmi_debug )
                 logging.info ( f"%s - Depth: 2 / confidence level 2 / 4.0 " % cmi_debug )
-                # extract some info from the video page and do some stronger testing
                 return uhint, 4.0, self.this_article_url          # OP-ED story (doesn't have [story continues...] button)
 
             if uhint == 3:
