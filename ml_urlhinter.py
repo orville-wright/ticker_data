@@ -132,9 +132,9 @@ class url_hinter:
               They do not match/align with the URL Hint code. Since that could be a 'fake out'
         """
         cmi_debug = __name__+"::"+"confidence_lvl().#1"
-        tcode = { 0.0: 'Real news - local page',
-                1.0: 'Real news - local-stub ext referr',
-                1.1: 'Real news - external-abs link',
+        tcode = { 0.0: 'Local page',
+                1.0: 'Local-stub ext referr',
+                1.1: 'External-abs link',
                 2.0: 'OP-Ed - local',
                 2.1: 'OP-Ed - remote',
                 3.0: 'Curated report - local',
@@ -144,13 +144,13 @@ class url_hinter:
                 5.0: 'Micro-ad - local',
                 5.1: 'Micro-ad - remote',
                 6.0: 'Bulk ad - local',
-                6.0: 'Bulk ad - remote',
+                6.1: 'Bulk ad - remote',
                 7.0: 'Unknown thint 7.0',
                 8.0: 'Unknown thint 8.0',
-                9.0: 'Unknown thing 9.0',
+                9.0: 'Unknown thint 9.0',
                 9.9: 'Unknown page structure',
-                10.0: 'ERROR unknonw state',
-                99.9: 'DEfault NO-YET-SET'
+                10.0: 'ERROR unknown state',
+                99.9: 'Default NO-YET-SET'
                 }
         logging.info ( f"%s - CL decoder input h: {thint}" % cmi_debug )
         thint_descr = tcode.get(thint)
