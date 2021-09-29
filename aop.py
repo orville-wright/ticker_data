@@ -33,17 +33,15 @@ from marketwatch_md import mw_quote
 from ml_yahoofinews import yfnews_reader
 from ml_urlhinter import url_hinter
 
-#from y_newsloop import y_newsfilter
-
 # Globals
 work_inst = 0
 global args
 args = {}
 global parser
 parser = argparse.ArgumentParser(description="Entropy apperture engine")
+parser.add_argument('-a','--allnews', help='ML/NLP News sentiment AI for all stocks', action='store_true', dest='bool_news', required=False, default=False)
 parser.add_argument('-c','--cycle', help='Ephemerial top 10 every 10 secs for 60 secs', action='store_true', dest='bool_tenten60', required=False, default=False)
 parser.add_argument('-d','--deep', help='Deep converged multi data list', action='store_true', dest='bool_deep', required=False, default=False)
-parser.add_argument('-a','--allnews', help='ML/NLP News sentiment AI for all stocks', action='store_true', dest='bool_news', required=False, default=False)
 parser.add_argument('-n','--newsai', help='ML/NLP News sentiment AI for 1 stock', action='store', dest='newsymbol', required=False, default=False)
 parser.add_argument('-q','--quote', help='Get ticker price action quote', action='store', dest='qsymbol', required=False, default=False)
 parser.add_argument('-s','--screen', help='Small cap screener logic', action='store_true', dest='bool_scr', required=False, default=False)
@@ -69,12 +67,12 @@ def do_nice_wait(topg_inst):
     for r in range(6):
         logging.info('do_nice_wait() cycle: %s' % topg_inst.cycle )
         time.sleep(5)    # wait immediatley to let remote update
-        topg_inst.get_topg_data()        # extract data from finance.Yahoo.com
+        topg_inst.get_topg_data()       # extract data from finance.Yahoo.com
         topg_inst.build_tg_df0()
         topg_inst.build_top10()
         topg_inst.build_tenten60(r)     # pass along current cycle
         print ( ".", end="", flush=True )
-        topg_inst.cycle += 1    # adv loop cycle
+        topg_inst.cycle += 1            # adv loop cycle
 
         if topg_inst.cycle == 6:
             logging.info('do_nice_wait() - EMIT exit trigger' )
@@ -104,25 +102,16 @@ def bkgrnd_worker():
     return      # dont know if this this requireed or good semantics?
 
 
-#######################################################################
-# TODO: methods/Functions to add...
-#       see README and TODO.txt
-
 ############################# main() ##################################
-#
 
 def main():
     cmi_debug = __name__+"::".__init__.__name__
     global args
     args = vars(parser.parse_args())        # args as a dict []
-
     print ( " " )
     print ( "########## Initalizing ##########" )
     print ( " " )
-
     print ( "CMDLine args:", parser.parse_args() )
-    uh.hstatus()
-    # ARGS[] cmdline pre-processing
     if args['bool_verbose'] is True:        # Logging level
         print ( "Enabeling verbose info logging..." )
         logging.disable(0)                  # Log level = OFF
@@ -374,63 +363,18 @@ def main():
         print ( f"Current day average $ gain: ${averages.iloc[-1]['Prc_change'].round(2)}" )
         print ( f"Current day percent gain:   %{averages.iloc[-1]['Pct_change'].round(2)}" )
 
-# Machine Learning NLP (Natural Language Processing) ####################################
-# News Sentiment AI
-    #def confidence_ind(r_uhint, tc, ru, su):
-    def confidence_ind(r_uhint, r_thint, r_xturl, orig_url):
-        """
-        NLP Support function #1
-        r_uhint = locality confidence code (0=remote, 1=local, 9=ERROR_bad_page_struct, 10=ERROR_unknown_state)
-        tc = type confidence code (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-        ru = Real remote url (extracted)
-        su = Fake url from Depth 0 news feed
-        Print some nicely formatted info about this discovered article
-        NOTE: Locality codes are inferred by decoding the page HTML structure
-              They do not match/align with the URL Hint code. Since that could be a 'fake out'
-        """
-        cmi_debug = __name__+"::confidence_ind().#1    "
-        tcode = { 0.0: 'Real news - local page',
-                1.0: 'Real news - remote-stub XXXXXXXXXXXXXXXXXXX',
-                1.1: 'Real news - remote-abs',
-                2.0: 'OP-Ed - local',
-                2.1: 'OP-Ed - remote',
-                3.0: 'Curated report - local',
-                3.1: 'Curated report - remote',
-                4.0: 'Video story - local',
-                4.1: 'Video story - remote',
-                5.0: 'Micro-ad - local',
-                5.1: 'Micro-ad - remote',
-                6.0: 'Bulk ad - local',
-                6.0: 'Bulk ad - remote',
-                7.0: 'Unknown thint 7.0',
-                8.0: 'Unknown thint 8.0',
-                9.0: 'Unknown thing 9.0',
-                9.9: 'Unknown page structure',
-                10.0: 'ERROR unknonw state',
-                99.9: 'DEfault NO-YET-SET'
-                }
-        logging.info ( f"%s - hint code recieved: {r_thint}" % cmi_debug )
-        thint_descr = tcode.get(r_thint)
-        print ( f"Confidence:    u:{r_uhint} / h:{r_thint} {thint_descr}" )
-        print ( f"News feed URL: {orig_url}" )
-        print ( f"Real dest URL: {r_xturl}" )
-        return
+# ML / NLP section #############################################################
 
-
-    def nlp_final_prep():
+    def nlp_summary():
         """
         NLP Support function #3
-        Assumes ml_ingest is allreay pre-built
-        process all target items in ml_ingest{} i.e. candidate NLP news articles
-        figure out which ones to commit to NLP READ
-        AWRN: even at this level of depth (2), where we've built up good confidence of which articles to read....
-              we can still be fooled by deceptive/fake articles inserted in the news feed & odd article structures...
-              especially Micro Adds & curated articles inserted in the news feed. (there are many artcile types)
-              Also, false positive articles that may-not have any news relating to this symbol. (News agency's are sleazy!).
+        Assumes ml_ingest is already pre-built
+        Cycle thrug every item in the ml_ingest{} and processes...
+        Prints a nice sumamry of each NLP candidates in ml_digest{}
         """
         print ( " ")
         print ( f"====================== Depth 2 ======================" )
-        cmi_debug = __name__+"::nlp_final_prep().#1"
+        cmi_debug = __name__+"::nlp_summary().#1"
         for sn_idx, sn_row in yfn.ml_ingest.items():                            # cycle thru the NLP candidate list
             if sn_row['type'] == 0:                                             # REAL news, inferred from Depth 0
                 print( f"News article:  {sn_idx} / {sn_row['symbol']} / ", end="" )
@@ -479,6 +423,7 @@ def main():
 
         return
 
+# Read the news for multiple stock symbols
     """
     The machine will read now!
     Read finance.yahoo.com / News 'Brief headlines' (i.e. short text docs) for ALL Top Gainer stocks.
@@ -508,10 +453,7 @@ def main():
             yfn.eval_article_tags(nlp_target)       # ml_ingest{} is built
             print ( "============================== NLP candidates are ready =================================" )
 
-        nlp_final_prep()
-        #print ( f" " )
-        #print ( f" " )
-        #yfn.dump_ml_ingest()
+        nlp_summary()
 
 # Read the news for just 1 stock symbol
     """
@@ -520,27 +462,22 @@ def main():
     """
     if args['newsymbol'] is not False:
         cmi_debug = __name__+"::_args_newsymbol.#1"
-        print ( " " )
-        print ( "========================= ML (NLP) / Yahoo Finance News Sentiment AI =========================" )
-        print ( f"Examine & Read news for 1 stock symbol..." )
         news_symbol = str(args['newsymbol'])       # symbol provided on CMDLine
-        yfn = yfnews_reader(1, news_symbol, args )   # dummy symbol just for instantiation
+        print ( " " )
+        print ( f"========================= ML (NLP) / News Sentiment AI {news_symbol} =========================" )
+        yfn = yfnews_reader(1, news_symbol, args )  # dummy symbol just for instantiation
         yfn.init_dummy_session()
         #yfn.yfn_bintro()
         yfn.update_headers(news_symbol)
         yfn.form_url_endpoint(news_symbol)
         yfn.do_simple_get()
         yfn.share_hinter(uh)
-        yfn.scan_news_feed(news_symbol, 0, 0)    # (params) #1: level, #2: 0=HTML / 1=JavaScript
+        yfn.scan_news_feed(news_symbol, 0, 0)       # (params) #1: level, #2: 0=HTML / 1=JavaScript
         yfn.eval_article_tags(news_symbol)          # ml_ingest{} is built
-
         print ( f" " )
         print ( "========================= Evaluate quality of ML/NLP candidates =========================" )
 
-        nlp_final_prep()
-        #print ( f" " )
-        #print ( f" " )
-        #yfn.dump_ml_ingest()
+        nlp_summary()
 
 #################################################################################
 # 3 differnt methods to get a live quote ########################################
@@ -565,10 +502,7 @@ def main():
         nq.build_df()
         print ( " " )
         print ( f"Get Nasdaq.com quote for: {nq_symbol}" )
-        #print ( f"================= quote json =======================" )
         if nq.quote.get("symbol") is not None:
-            #print ( f"{nq.quote}" )                # >>DEBUG<< dump the quote dict{}
-            #print ( f"{nq.quote_df0}" )            # >>DEBUG<< dump the dataframe
             print ( f"================= Nasdaq quote data =======================" )
             c = 1
             for k, v in nq.quote.items():
@@ -586,13 +520,11 @@ def main():
     10 data fields provided
     """
     if args['qsymbol'] is not False:
-        bc = bc_quote(5, args)       # setup an emphemerial dict
-        bc_symbol = args['qsymbol'].upper()  # what symbol are we getting a quote for?
-        bc.get_basicquote(bc_symbol) # get the quote
+        bc = bc_quote(5, args)                  # setup an emphemerial dict
+        bc_symbol = args['qsymbol'].upper()     # what symbol are we getting a quote for?
+        bc.get_basicquote(bc_symbol)            # get the quote
         print ( " " )
         print ( f"Get BIGCharts.com BasicQuote for: {bc_symbol}" )
-        #print ( f"================= quote json =======================" )
-        #print ( f"{bc.quote}" )    # >>DEBUG<< dump the quote dict{}
         print ( f"================= basicquote data =======================" )
         c = 1
         for k, v in bc.quote.items():
@@ -608,14 +540,12 @@ def main():
     40 data fields provided
     """
     if args['qsymbol'] is not False:
-        bc = bc_quote(5, args)       # setup an emphemerial dict
-        bc_symbol = args['qsymbol'].upper()  # what symbol are we getting a quote for?
-        bc.get_quickquote(bc_symbol) # get the quote
-        bc.q_polish()                # wrangel the data elements
+        bc = bc_quote(5, args)                  # setup an emphemerial dict
+        bc_symbol = args['qsymbol'].upper()     # what symbol are we getting a quote for?
+        bc.get_quickquote(bc_symbol)            # get the quote
+        bc.q_polish()                           # wrangel the data elements
         print ( " " )
         print ( f"Get BIGCharts.com QuickQuote for: {bc_symbol}" )
-        #print ( f"================= quickquote json =======================" )
-        #print ( f"{bc.quote}" )     # >>DEBUG<< dump the quote dict{}
         print ( f"================= quickquote data =======================" )
         c = 1
         for k, v in bc.quote.items():
