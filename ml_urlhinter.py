@@ -44,6 +44,7 @@ class url_hinter:
         1 = local full article - (URL starts with /news/... and has FQDN: https://finance.yahoo.com/
         2 = local full video - (URL starts with /video/... and has FQDN: https://finance.yahoo.com/
         3 = remote full article - (URL is a pure link to remote article (eg.g https://www.independent.co.uk/news/...)
+        4 = research report - (URL starts with /research/... origin FQDN:  https://finance.yahoo.com/
         9 = Not yet defined
         10 = Error mangled url
         11 = Error state for method
@@ -56,7 +57,7 @@ class url_hinter:
                     'news': ('Local article', 1),
                     'video': ('Local video', 2),
                     'rabs': ('Remote-absolute', 3),
-                    'research': ('Research article', 4),
+                    'research': ('Research report', 4),
                     'udef': ('Not yet defined', 9),
                     'err': ('Error mangled url', 10),
                     'bad': ('ERROR_unknown_state', 99)
@@ -146,7 +147,8 @@ class url_hinter:
                 5.1: 'Micro-ad - remote',
                 6.0: 'Bulk ad - local',
                 6.1: 'Bulk ad - remote',
-                7.0: 'Unknown thint 7.0',
+                7.0: 'Research report - local',
+                7.1: 'Research report -Remote',
                 8.0: 'Unknown thint 8.0',
                 9.0: 'Unknown thint 9.0',
                 9.9: 'Unknown page structure',
