@@ -1,18 +1,14 @@
 # ticker_data
 
-Date: 24 Sept 2021
+Date: 28 Sept 2021
 ** Major updates **<br>
 <br>
-YAHOO.com did a major rewrite of their internal page data structures (see disclaimer below). This broke the finance.yahoo.com core data scraper badly. Debugging this needed a lot of BS4 decoding & instrumentation & telemetry to catchup with Yahoo's enhancments and impliment new scraper logic.<br>
-- That work is done, and the core scraper is now works perfectly again.
-- It's logic is a bit more robust/tollerant and accurate.
-- The news ML (NLP) functionaly (i.e. -n <symbol> and -a CMD_line options) are stable & close to being done. It runs without error but the hinter/confidence logic is complex & need refining.
+YAHOO.com did a major rewrite of their internal page data structures (see disclaimer below). This broke the finance.yahoo.com core data scraper badly. Code is now fully aware of Yahoo's enhancments. Logic works good (again).<br>
+- The news ML (NLP) prepare functionaly (i.e. -n <symbol> and -a CMD_line options) are stable. It runs without error & hinter/confidence logic complete. All that work is necessary to prepare to read a corpus of new articles etc. We need to know which articles are 'Real news reports' which articels are junk adds or bugus links to adds. 
 <br>
 <br>
-- I am currently hacking on ML NLP (Natural Language Processing) code - to read news artciles for a stock and guess/inferr sentimnet
-- Major focus is to prepare for ML/NLP news reading of 100's of news articles with high confidence level on which news article to read.
-- ML/NLP prep code is live, but the final NLP TEXT reader (count vectorizers) are yet active.
-- the system now scans the news feed of multiple stocks and inferrs (with confidence) new articles that are fake/credible, their type & thier true locality
+- ML NLP (Natural Language Processing) hacking continues on - The machine wants to read news artciles for a stock and guess/inferr sentimnet
+- the system now scans the news Yahoo Finance feed of multiple stocks and inferrs (with confidence) new articles that are fake/credible, their type & thier true locality
 - This is pretty complex and very finaince.yahoo.com centric. But oone its complete, it wont be difficlt to port to other news data sources.
 
 
