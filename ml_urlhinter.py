@@ -134,27 +134,27 @@ class url_hinter:
               They do not match/align with the URL Hint code. Since that could be a 'fake out'
         """
         cmi_debug = __name__+"::"+"confidence_lvl().#1"
-        tcode = { 0.0: 'Local page',
-                1.0: 'Local-stub ext referr',
-                1.1: 'External-abs link',
-                2.0: 'OP-Ed page - local',
-                2.1: 'OP-Ed stub - remote',
-                3.0: 'Curated report page - local',
-                3.1: 'Curated report stub - remote',
-                4.0: 'Video page - local',
-                4.1: 'Video stub - remote',
-                5.0: 'Micro-ad - local',
-                5.1: 'Micro-ad - remote',
-                6.0: 'Bulk ad - local',
-                6.1: 'Bulk ad - remote',
-                7.0: 'Research report page - local',
-                7.1: 'Research report stub - Remote',
-                8.0: 'Unknown thint 8.0',
-                9.0: 'Unknown thint 9.0',
-                9.9: 'Unknown page structure',
-                10.0: 'ERROR unknown state',
-                99.9: 'Default NO-YET-SET'
+        tcode = { 0.0: ('Full articple page', 0),
+                1.0: ('Stub referr page', 0),
+                1.1: ('External-abs link', 1),
+                2.0: ('OP-Ed page', 0),
+                2.1: ('OP-Ed stub', 1),
+                3.0: ('Curated report page', 0),
+                3.1: ('Curated report stub', 1),
+                4.0: ('Video story page', 0),
+                4.1: ('Video story stub', 1),
+                5.0: ('Micro-ad insert', 0),
+                5.1: ('Micro-ad insert', 1),
+                6.0: ('Bulk ad junk', 0),
+                6.1: ('Bulk ad junk', 1),
+                7.0: ('Research report page', 0),
+                7.1: ('Research report stub', 0),
+                8.0: ('Unknown thint 8.0', 9),
+                9.0: ('Unknown thint 9.0', 9),
+                9.9: ('Unknown page structure', 9),
+                10.0: ('ERROR unknown state', 9),
+                99.9: ('Default NO-YET-SET', 9),
                 }
         logging.info ( f"%s - CL decoder input h: {thint}" % cmi_debug )
-        thint_descr = tcode.get(thint)
+        thint_descr = tcode.get(thint)    # tuple : page type description / locality code 0=local/1=remote
         return thint_descr

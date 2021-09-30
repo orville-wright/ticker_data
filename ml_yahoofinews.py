@@ -349,7 +349,7 @@ class yfnews_reader:
                         logging.info( f'%s - Logic.#1 Pure-Abs url {uhint} {self.a_urlp.netloc} / {uhdescr}' % (cmi_debug) )
                         pure_url = 1    # explicit pure URL to remote entity
                         uhint, uhdescr = self.uh.uhinter(hcycle, self.article_url)    # raw url string
-                        inf_type = self.uh.confidence_lvl(thint)
+                        inf_type = self.uh.confidence_lvl(thint)                # return var is tuple
                         news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
                         ml_atype = 0
                         thint = 1.1
@@ -365,7 +365,7 @@ class yfnews_reader:
                         if uhint == 1: thint = 0.0      # real news / local page
                         pure_url = 0                    # locally hosted entity
                         ml_atype = 0                    # Real news
-                        inf_type = self.uh.confidence_lvl(thint)
+                        inf_type = self.uh.confidence_lvl(thint)                # return var is tuple
                         news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
                         # cant grab news agency / teaser yet, b/c we dont knonw the struct of this article (just its type)
                         hcycle += 1
@@ -381,7 +381,7 @@ class yfnews_reader:
                     self.article_teaser = "No Micro-ad headine"
                     if pure_url == 0: thint = 5.0    # local entity
                     if pure_url == 1: thint = 5.1    # remote entity - currently NOT a valid type on yahoo.com
-                    inf_type = self.uh.confidence_lvl(thint)
+                    inf_type = self.uh.confidence_lvl(thint)                    # return var is tuple
                     ml_atype = 1
                 elif news_agency == "Yahoo Finance Video" and uhint == 2:
                     logging.info( f'%s - Logic.#4 / Origin url: {self.url_netloc}' % (cmi_debug) )
@@ -393,7 +393,7 @@ class yfnews_reader:
                         thint = 4.0
                     else:
                         thint = 9.9
-                    inf_type = self.uh.confidence_lvl(thint)
+                    inf_type = self.uh.confidence_lvl(thint)                    # return var is tuple
                     self.url_netloc = self.a_urlp.netloc
                     article_headline = li_tag.a.text        # taken from YFN news feed thumbnail, not actual article page
                     ml_atype = 0
@@ -404,7 +404,7 @@ class yfnews_reader:
                     article_headline = li_tag.a.text        # taken from YFN news feed thumbnail, not actual article page
 
                 print ( f"================= Article {x} / {symbol} / Depth 1 ==========================" )
-                print ( f"News item:        {self.cycle}: {inf_type} / Confidence Indicators t:{ml_atype} / u:{uhint} / h:{thint}" )
+                print ( f"News item:        {self.cycle}: {inf_type[0]} / Confidence Indicators t:{ml_atype} / u:{uhint} / h:{thint}" )
                 print ( f"News agency:      {news_agency}" )
                 print ( f"News origin:      {self.url_netloc}" )
                 print ( f"Article URL:      {self.article_url}" )

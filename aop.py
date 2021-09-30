@@ -372,6 +372,11 @@ def main():
         Cycle thrug every item in the ml_ingest{} and processes...
         Prints a nice sumamry of each NLP candidates in ml_digest{}
         """
+        locality_code = { 0: 'Local',
+                    1: 'Remote',
+                    9: 'Unknown'
+                    }
+
         print ( " ")
         print ( f"====================== Depth 2 ======================" )
         cmi_debug = __name__+"::nlp_summary().#1"
@@ -384,11 +389,13 @@ def main():
                 logging.info ( f"%s - Logic.#0 hinting origin url: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
                 r_uhint, r_thint, r_xturl = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
                 p_r_xturl = urlparse(r_xturl)
-                inf_type = yfn.uh.confidence_lvl(thint)
+                inf_type = yfn.uh.confidence_lvl(thint)     # returned var is a tupple
                 print ( f"- NLP candidate" )                # all type 0 are assumed to be REAL news
-                print ( f"Origin URL:    [ {t_url.netloc} ] / {uhdescr} / {inf_type}" )
+                print ( f"Origin URL:    [ {t_url.netloc} ] / {uhdescr} / {inf_type[0]} / ", end="" )
+                print ( f"{locality_code.get(inf_type[1])}" )
                 uhint, uhdescr = uh.uhinter(21, p_r_xturl)
-                print ( f"Absolute URL:  [ {p_r_xturl.netloc} ] / {inf_type}" )
+                print ( f"Absolute URL:  [ {p_r_xturl.netloc} ] / {uhdescr} / {inf_type[0]} / ", end="" )
+                print ( f"{locality_code.get(inf_type[1], 'in flux')}" )
                 print ( f"====================== Depth 2 ======================" )
                 #
             elif sn_row['type'] == 1:                     # possibly not news? (Micro Ad)
@@ -401,9 +408,11 @@ def main():
                 p_r_xturl = urlparse(r_xturl)
                 inf_type = yfn.uh.confidence_lvl(thint)
                 print ( f"NLP candidate" )                # all type 0 are assumed to be REAL news
-                print ( f"Origin URL:    [ {t_url.netloc} ] / {uhdescr} / {inf_type}" )
+                print ( f"Origin URL:    [ {t_url.netloc} ] / {uhdescr} / {inf_type[0]} / ", end="" )
+                print ( f"{locality_code.get(inf_type[1], 'in flux')}" )
                 uhint, uhdescr = uh.uhinter(21, p_r_xturl)
-                print ( f"Absolute URL:  [ {p_r_xturl.netloc} ] / {inf_type}" )
+                print ( f"Absolute URL:  [ {p_r_xturl.netloc} ] / {uhdescr} / {inf_type[0]} / ", end="" )
+                print ( f"{locality_code.get(inf_type[1], 'in flux')}" )
                 print ( f"====================== Depth 2 ======================" )
                 #
             elif sn_row['type'] == 2:                     # possibly not news? (Micro Ad)
