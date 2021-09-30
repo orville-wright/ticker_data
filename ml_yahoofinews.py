@@ -346,7 +346,7 @@ class yfnews_reader:
 
                 for safety_cycle in range(1):    # ABUSE for/loop BREAK as logic control exit (poor mans switch/case)
                     if self.a_urlp.scheme == "https" or self.a_urlp.scheme == "http":    # check URL scheme specifier
-                        logging.info( f'%s - Logic.#1 Pure-Abs url {uhint} {self.a_url.netloc} / {uhdescr}' % (cmi_debug) )
+                        logging.info( f'%s - Logic.#1 Pure-Abs url {uhint} {self.a_urlp.netloc} / {uhdescr}' % (cmi_debug) )
                         pure_url = 1    # explicit pure URL to remote entity
                         uhint, uhdescr = self.uh.uhinter(hcycle, self.article_url)    # raw url string
                         inf_type = self.uh.confidence_lvl(thint)
