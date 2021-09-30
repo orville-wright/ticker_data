@@ -53,10 +53,10 @@ class url_hinter:
         cmi_debug = __name__+"::uhinter.eng#"+str(self.yti)+"_cyc#"+str(hcycle)
         logging.info('%s - CALLED' % cmi_debug )
 
-        uhint_code = { 'm': ('local-stub ext referr', 0),
+        uhint_code = { 'm': ('stub-page referr', 0),
                     'news': ('News article', 1),
                     'video': ('Video story', 2),
-                    'rabs': ('Remote-absolute', 3),
+                    'rabs': ('Absolute-ext', 3),
                     'research': ('Research report', 4),
                     'udef': ('Not yet defined', 9),
                     'err': ('Error mangled url', 10),
@@ -134,7 +134,7 @@ class url_hinter:
               They do not match/align with the URL Hint code. Since that could be a 'fake out'
         """
         cmi_debug = __name__+"::"+"confidence_lvl().#1"
-        tcode = { 0.0: ('Full articple page', 0),
+        tcode = { 0.0: ('Full article page', 0),
                 1.0: ('Stub referr page', 0),
                 1.1: ('External-abs link', 1),
                 2.0: ('OP-Ed page', 0),
