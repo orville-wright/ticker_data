@@ -53,7 +53,7 @@ class url_hinter:
         cmi_debug = __name__+"::uhinter.eng#"+str(self.yti)+"_cyc#"+str(hcycle)
         logging.info('%s - CALLED' % cmi_debug )
 
-        uhint_code = { 'm': ('stub-page referr', 0),
+        uhint_code = { 'm': ('News snippet', 0),
                     'news': ('News article', 1),
                     'video': ('Video story', 2),
                     'rabs': ('Absolute-ext', 3),
