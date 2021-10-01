@@ -34,6 +34,9 @@ class nquote:
     js_resp0 = ''           # session response handle for initial blind get()
     js_resp2 = ''           # session response handle for main json data get()
     quote_url = ""
+    summary_url = ""
+    watchlist_url = ""
+    premarket_url = ""
     path = ""
 
 
@@ -65,8 +68,7 @@ class nquote:
     def update_headers(self, symbol):
         cmi_debug = __name__+"::"+self.update_headers.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
-
-        self.symbol = symbol
+        self.symbol = symbol.upper()
         logging.info('%s - set cookies/headers path: object' % cmi_debug )
         self.path = '/api/quote/' + self.symbol + '/info?assetclass=stocks'
         #self.nasdaq_headers['path'] = self.path
@@ -84,11 +86,23 @@ class nquote:
 
 # method 3
     def form_api_endpoint(self, symbol):
-        """This is the explicit quote URL that is used for the req get()"""
+        """
+        This is the basic quote endppint for the req get()
+        As of 1 Oct, 2021...Nasdaq has a new data model that splits quote data across multiple API endpoints.
+        So this API endpoint is now just an inital setup.
+        """
         cmi_debug = __name__+"::"+self.form_api_endpoint.__name__+".#"+str(self.yti)
         logging.info('%s - form API endpoint URL' % cmi_debug )
-        self.quote_url = 'https://api.nasdaq.com' + self.path
-        logging.info('nasdaq_quotes::form_api_endpoint.## - API endpoint URL: %s' % self.quote_url )
+        self.symbol = symbol.upper()
+        self.quote_url = "https://api.nasdaq.com" + self.path
+        self.summary_url = "https://api.nasdaq.com/api/quote/" + self.symbol + "/summary?assetclass=stocks"
+        self.watchlist_url = "https://api.nasdaq.com/api/quote/watchlist?symbol=" + self.symbol + "%7cstocks"
+        self.premarket_url = "https://api.nasdaq.com/api/quote/" + self.symbol + "/extended-trading?assetclass=stocks&markettype=pre"
+        logging.info( f"================================ Quote API endpoints ================================)
+        logging.info( f" - API endpoint #1: [ {self.quote_url} ]" % self.quote_url )
+        logging.info( f" - API endpoint #2: [ {self.summary_url} ]" % self.quote_url )
+        logging.info( f" - API endpoint #3: [ {self.watchlist_url} ]" % self.quote_url )
+        logging.info( f" - API endpoint #4: [ {self.premarket_url} ]" % self.quote_url )
         self.quote_url = self.quote_url
         return
 
@@ -202,6 +216,7 @@ class nquote:
             price_pct = jsondata['primaryData']['percentageChange']
             arrow_updown = jsondata['primaryData']['deltaIndicator']
             price_timestamp = jsondata['primaryData']['lastTradeTimestamp']
+            isreatime = jsondata['primaryData']['isRealTime']
             vol_abs = jsondata['keyStats']['Volume']['value']
             prev_close = jsondata['keyStats']['PreviousClose']['value']
             open_price = jsondata['keyStats']['OpenPrice']['value']
