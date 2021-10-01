@@ -37,7 +37,7 @@ class y_newsfilter:
 
     def __init__(self, i, symbol, global_args):
         cmi_debug = __name__+"::"+self.__init__.__name__
-        logging.info('%s - INIT inst' % cmi_debug )
+        logging.info( f'%s - Instantiate.#{i}' % cmi_debug )
         self.args = global_args
         self.inst_uid = i
         self.symbol = symbol

@@ -49,7 +49,7 @@ class un_volumes:
 
     def __init__(self, yti, global_args):
         cmi_debug = __name__+"::"+self.__init__.__name__
-        logging.info('%s - INIT' % cmi_debug )
+        logging.info( f'%s - Instantiate.#{yti}' % cmi_debug )
         # init empty DataFrame with preset colum names
         self.args = global_args                                # Only set once per INIT. all methods are set globally
         self.up_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ] )

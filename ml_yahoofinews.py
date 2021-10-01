@@ -68,7 +68,7 @@ class yfnews_reader:
     def __init__(self, yti, symbol, global_args):
         self.yti = yti
         cmi_debug = __name__+"::"+self.__init__.__name__+".#"+str(self.yti)
-        logging.info('%s - INIT' % cmi_debug )
+        logging.info( f'%s - Instantiate.#{yti}' % cmi_debug )
         # init empty DataFrame with preset colum names
         self.args = global_args
         self.symbol = symbol

@@ -27,7 +27,7 @@ class y_topgainers:
 
     def __init__(self, yti):
         cmi_debug = __name__+"::"+self.__init__.__name__
-        logging.info('%s - INIT inst' % cmi_debug )
+        logging.info( f'%s - Instantiate.#{yti}' % cmi_debug )
         # init empty DataFrame with present colum names
         self.tg_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time'] )
         self.tg_df1 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time'] )

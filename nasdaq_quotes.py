@@ -52,7 +52,7 @@ class nquote:
 
     def __init__(self, yti, global_args):
         cmi_debug = __name__+"::"+self.__init__.__name__
-        logging.info('%s - INIT' % cmi_debug )
+        logging.info( f'%s - Instantiate.#{yti}' % cmi_debug )
         # init empty DataFrame with preset colum names
         self.args = global_args                                # Only set once per INIT. all methods are set globally
         #self.quote_df0 = pd.DataFrame(columns=[ 'Symbol', 'Co_name', 'arrow_updown', 'Cur_price', 'Prc_change', 'Pct_change', 'Open_price', 'Prev_close', 'Vol', 'Mkt_cap', 'Exch_timestamp', 'Time' ] )
