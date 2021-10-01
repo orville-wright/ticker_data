@@ -29,7 +29,7 @@ class url_hinter:
 
     def __init__(self, yti, global_args):
         cmi_debug = __name__+"::"+self.__init__.__name__+".#"+str(self.yti)
-        logging.info('%s - INIT' % cmi_debug )
+        logging.info( f'%s - Instantiate.#{yti}' % cmi_debug )
         self.args = global_args
         self.yti = yti
         return
