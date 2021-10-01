@@ -85,10 +85,9 @@ class un_volumes:
         logging.info('%s - rest API read json' % cmi_debug )
         with self.js_session.get("https://api.nasdaq.com/api/quote/list-type/unusual_volume", stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp2:
             # read the webpage with our Javascript engine processor
-            logging.info('%s - Javascript engine processing...' % cmi_debug )
-            self.js_resp2.html.render()    # might now even be needed now that nasdaq REST API get is working
-            logging.info('%s - Javascript engine completed!' % cmi_debug )
-
+            #logging.info('%s - Javascript engine processing...' % cmi_debug )
+            #self.js_resp2.html.render()    # might now even be needed now that nasdaq REST API get is working
+            #logging.info('%s - Javascript engine completed!' % cmi_debug )
             # we can access pure 'Unusual VOlume' JSON data via an authenticated/valid REST API call
             logging.info('%s - json data extracted' % cmi_debug )
             logging.info('%s - store FULL json dataset' % cmi_debug )
