@@ -28,7 +28,7 @@ class url_hinter:
     args = []               # class dict to hold global args being passed in from main() methods
 
     def __init__(self, yti, global_args):
-        cmi_debug = __name__+"::"+self.__name__+".#"+str(yti)
+        cmi_debug = __name__+"::"+self.__INIT__.__name__+".#"+str(yti)
         #cmi_debug = __name__+"::"+self.__init__.__name__+".#"+str(self.yti)
         logging.info( f'%s - Instantiate.#{yti}' % cmi_debug )
         self.args = global_args
