@@ -53,7 +53,7 @@ parser.add_argument('-x','--xray', help='dump detailed debug data structures', a
 # Threading globals
 extract_done = threading.Event()
 yti = 1
-uh = url_hinter(1, args)
+uh = url_hinter(1, args)        # anyone needs to be able to get hints on a URL from anywhere
 
 #######################################################################
 # Global method for __main__
@@ -487,6 +487,8 @@ def main():
         print ( "========================= Evaluate quality of ML/NLP candidates =========================" )
 
         nlp_summary()
+        print ( f" " )
+        yfn.dump_ml_ingest()
 
 #################################################################################
 # 3 differnt methods to get a live quote ########################################

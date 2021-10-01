@@ -42,7 +42,7 @@ class mw_quote:
     def __init__(self, i, global_args):
         """ WARNING: symbol is set to NONE at instantiation."""
         cmi_debug = __name__+"::"+self.__init__.__name__
-        logging.info('%s - INIT inst' % cmi_debug )
+        logging.info( f'%s - Instantiate.#{i}' % cmi_debug )
         self.args = global_args
         self.inst_uid = i
         self.symbol = 'NONE'

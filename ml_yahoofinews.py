@@ -541,7 +541,7 @@ class yfnews_reader:
                 print ( f">>DEBUG<< URL hint: {uhint} / Page Type hint: {thint}" )
                 logging.info ( f"%s - Depth: 2 / Explcit Remote article" % cmi_debug )
                 logging.info ( f"%s - Depth: 2 / confidence level 0 / 1.1 " % cmi_debug )
-                return 1, 1.1, self.this_article_url              # Explicit remote article - can process any details from here
+                return 1, 1.1, self.this_article_url              # Explicit remote article - can't see into this off-site article
 
         logging.info ( f"%s - Depth: 2 / confidence level 10 / 10.0 " % cmi_debug )
         return 10, 10.0, "ERROR_unknown_state!"              # error unknown state
