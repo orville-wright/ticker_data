@@ -394,8 +394,7 @@ def main():
                 print ( f"Origin URL:    [ {t_url.netloc} ] / {uhdescr} / {inf_type[0]} / ", end="" )
                 print ( f"{locality_code.get(inf_type[1])}" )
                 uhint, uhdescr = uh.uhinter(21, p_r_xturl)
-                print ( f"Absolute URL:  [ {p_r_xturl.netloc} ] / {uhdescr} / " )
-                #print ( f"{locality_code.get(inf_type[1], 'in flux')}" )
+                print ( f"Target URL:  [ {p_r_xturl.netloc} ] / {uhdescr} / " )
                 print ( f"====================== Depth 2 ======================" )
                 #
             elif sn_row['type'] == 1:                     # possibly not news? (Micro Ad)
@@ -411,8 +410,7 @@ def main():
                 print ( f"Origin URL:    [ {t_url.netloc} ] / {uhdescr} / {inf_type[0]} / ", end="" )
                 print ( f"{locality_code.get(inf_type[1], 'in flux')}" )
                 uhint, uhdescr = uh.uhinter(21, p_r_xturl)
-                print ( f"Absolute URL:  [ {p_r_xturl.netloc} ] / {uhdescr} / " )
-                #print ( f"{locality_code.get(inf_type[1], 'in flux')}" )
+                print ( f"Target URL:  [ {p_r_xturl.netloc} ] / {uhdescr} / " )
                 print ( f"====================== Depth 2 ======================" )
                 #
             elif sn_row['type'] == 2:                     # possibly not news? (Micro Ad)
@@ -464,7 +462,9 @@ def main():
             print ( "============================== NLP candidates are ready =================================" )
 
         nlp_summary()
-
+        print ( f" " )
+        yfn.dump_ml_ingest()
+        
 # Read the news for just 1 stock symbol
     """
     The machine will read now!
