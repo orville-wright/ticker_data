@@ -53,7 +53,7 @@ parser.add_argument('-x','--xray', help='dump detailed debug data structures', a
 # Threading globals
 extract_done = threading.Event()
 yti = 1
-uh = url_hinter(1, args)        # anyone needs to be able to get hints on a URL from anywhere
+#uh = url_hinter(1, args)        # anyone needs to be able to get hints on a URL from anywhere
 
 #######################################################################
 # Global method for __main__
@@ -451,6 +451,7 @@ def main():
         yfn = yfnews_reader(1, "IBM", args )        # dummy symbol just for instantiation
         yfn.init_dummy_session()
         #yfn.yfn_bintro()
+        uh = url_hinter(1, args)        # anyone needs to be able to get hints on a URL from anywhere
         yfn.share_hinter(uh)                        # share the url hinter available
         print ( "============================== Prepare bulk NLP candidate list =================================" )
         print ( f"ML/NLP candidates: {newsai_test_dataset.tg_df1['Symbol'].tolist()}" )
@@ -480,6 +481,7 @@ def main():
         yfn.update_headers(news_symbol)
         yfn.form_url_endpoint(news_symbol)
         yfn.do_simple_get()
+        uh = url_hinter(1, args)        # anyone needs to be able to get hints on a URL from anywhere
         yfn.share_hinter(uh)
         yfn.scan_news_feed(news_symbol, 0, 0)       # (params) #1: level, #2: 0=HTML / 1=JavaScript
         yfn.eval_article_tags(news_symbol)          # ml_ingest{} is built
