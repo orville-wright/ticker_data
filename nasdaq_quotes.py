@@ -246,10 +246,10 @@ class nquote:
                 y = self.quote_json1['data']['summaryData']
             except TypeError:
                 print ( f"json data 10 (summary): probe found NULL data @: ['data']['summaryData']" )
-                jd10_null_errors += 1
+                jd10_null_errors = 1 + len(jd_10)
             except KeyError:
                 print ( f"json data 10 (summary): probe found NULL key @: ['data']['summaryData']" )
-                jd10_null_errors += 1
+                jd10_null_errors = 1 + len(jd_10)
             else:
                 print ( f"json data 10 (summary): ", end="" )
                 for i in jd_10:
@@ -287,20 +287,29 @@ class nquote:
             x = self.jsondata30
             z = 1
             jd31_null_errors = 0
-            print ( f"json data 30 (premarket): ", end="" )
-            for i in jd_30:
-                try:
-                    y = x[1]
-                except TypeError:
-                    print ( f"probe found NULL json data @: {i}" )
-                    jd31_null_errors += 1
-                except KeyError:
-                    print ( f"probe found NULL key @: ['{i}']" )
-                    jd31_null_errors += 1
-                else:
-                    print ( f"{z}...", end="" )
-                    z += 1
-            print ( f"Bad json data: {jd31_null_errors} / 6" )
+            try:
+                y = self.quote_json3['data']['infoTable']
+            except TypeError:
+                print ( f"json data 30 (premarket): probe found NULL data @: ['data']['infoTable']" )
+                jd31_null_errors = 1 + len(jd_30)
+            except KeyError:
+                print ( f"json data 10 (premarket): probe found NULL key @: ['data']['infoTable']" )
+                jd31_null_errors = 1 + len(jd_30)
+            else:
+                print ( f"json data 30 (premarket): ", end="" )
+                for i in jd_30:
+                    try:
+                        y = x[1]
+                    except TypeError:
+                        print ( f"probe found NULL json data @: {i}" )
+                        jd31_null_errors += 1
+                    except KeyError:
+                        print ( f"probe found NULL key @: ['{i}']" )
+                        jd31_null_errors += 1
+                    else:
+                        print ( f"{z}...", end="" )
+                        z += 1
+                print ( f"Bad json data: {jd31_null_errors} / 6" )
 
             return jd10_null_errors, jd20_null_errors, jd31_null_errors
 
