@@ -218,6 +218,60 @@ class nquote:
         Wrangle, clean, convert, cast & format data as needed.
         """
 
+
+        def null_prechecker(self):
+            """
+            Helper method to check all the json data fields for NULL values.
+            We run this before trying to access list indexes, as that will exert an error.
+            And its arduous to wrap all this arround the data acessor method. Better to do it early.
+            """
+            cmi_debug = __name__+"::"+self.null_prechecker.__name__+".#"+str(self.yti)
+            logging.info( f'%s - probing json datasets for NULL zones...' % cmi_debug )
+            jd_20 = ("symbol", "companyName", "lastSalePrice", "netChange", "percentageChange", "deltaIndicator", "lastTradeTimestampDateTime", "volume" )
+            jd_31 = ("consolidated", "volume", "delta" )
+            jd_10 = ("PreviousClose", "MarketCap", "TodayHighLow", "AverageVolume", "OneYrTarget", "Beta", "FiftTwoWeekHighLow" )
+
+            x = "self.quote_json2['data'][0]"
+            null_errors = 0
+            for i in jd_20:
+                try:
+                    y = x[i]
+                except TypeError:
+                    print ( f"probe found NULL json data @: {x}/{i}" )
+                    null_errors += 1
+                else:
+                    pass
+            jd20_null_errors = null_errors
+
+            x = "self.quote_json3['data']['infoTable']['rows'][0]"
+            null_errors = 0
+            for i in jd_31:
+                try:
+                    y = x[i]
+                except TypeError:
+                    print ( f"probe found NULL json data @: {x}/{i}" )
+                    null_errors += 1
+                else:
+                    pass
+            jd31_null_errors = null_errors
+
+            x = "self.quote_json1['data']['summaryData']"
+            null_errors = 0
+            for i in jd_10:
+                try:
+                    y = x[i]
+                except TypeError:
+                    print ( f"probe found NULL json data @: {x}/{i}" )
+                    null_errors += 1
+                else:
+                    pass
+            jd10_null_errors = null_errors
+
+
+            return jd20_null_errors, jd31_null_errors, jd10_null_errors
+
+        ########################################################################
+
         cmi_debug = __name__+"::"+self.build_data.__name__+".#"+str(self.yti)
         logging.info('%s - build quote data payload from JSON' % cmi_debug )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
@@ -225,6 +279,11 @@ class nquote:
 
         # capture bad symbols (e.g. ETF's return NULL json payload. They're not real symbols)
         wrangle_errors = 0
+        null_count = 0
+
+        a, b, c = null_prechecker()
+        print ( f">>>DEBUG<<< : Null prechecks: j20: {a} / j30: {b}, j10: {c}" )
+
         # WATCHLIST quote data                                                  # Data wrangeling error counter
         if self.quote_json2['data'] is not None:                                # bad symbol TEST == Null json payload
             logging.info('%s - Stage #1 / Accessing data fields...' % cmi_debug )
