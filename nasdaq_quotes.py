@@ -235,7 +235,7 @@ class nquote:
             jd_10 = ("PreviousClose", "MarketCap", "TodayHighLow", "AverageVolume", "OneYrTarget", "Beta", "FiftTwoWeekHighLow" )
 
             x = self.jsondata20
-            y = 1
+            z = 1
             null_errors = 0
             for i in jd_20:
                 try:
@@ -248,12 +248,12 @@ class nquote:
                     null_errors += 1
                 else:
                     print ( f"{y}...", end="" )
-                    y += 1
+                    z += 1
             print ( f"\n" )
             jd20_null_errors = null_errors
 
             x = self.jsondata30
-            y = 1
+            z = 1
             null_errors = 0
             for i in jd_31:
                 try:
@@ -266,12 +266,12 @@ class nquote:
                     null_errors += 1
                 else:
                     print ( f"{y}...", end="" )
-                    y += 1
+                    z += 1
             print ( f"\n" )
             jd31_null_errors = null_errors
 
             x = self.jsondata10
-            y = 1
+            z = 1
             null_errors = 0
             for i in jd_10:
                 try:
@@ -284,7 +284,7 @@ class nquote:
                     null_errors += 1
                 else:
                     print ( f"{y}...", end="" )
-                    y += 1
+                    z += 1
             print ( f"\n" )
             jd10_null_errors = null_errors
 
