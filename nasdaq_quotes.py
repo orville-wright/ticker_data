@@ -235,18 +235,25 @@ class nquote:
             jd_10 = ("PreviousClose", "MarketCap", "TodayHighLow", "AverageVolume", "OneYrTarget", "Beta", "FiftTwoWeekHighLow" )
 
             x = self.jsondata20
+            y = 1
             null_errors = 0
             for i in jd_20:
                 try:
                     y = x[i]
                 except TypeError:
-                    print ( f"probe found NULL json data @: {(re.sub('self.quote_', '', x))}['{i}']" )
+                    print ( f"probe found NULL data @: {(re.sub('self.quote_', '', x))}['{i}']" )
+                    null_errors += 1
+                except KeyError:
+                    print ( f"probe found NULL key @: {(re.sub('self.quote_', '', x))}['{i}']" )
                     null_errors += 1
                 else:
-                    pass
+                    print ( f"{y}...", end="" )
+                    y += 1
+            print ( f"\n" )
             jd20_null_errors = null_errors
 
             x = self.jsondata30
+            y = 1
             null_errors = 0
             for i in jd_31:
                 try:
@@ -254,11 +261,17 @@ class nquote:
                 except TypeError:
                     print ( f"probe found NULL json data @: {(re.sub('self.quote_', '', x))}['{i}']" )
                     null_errors += 1
+                except KeyError:
+                    print ( f"probe found NULL key @: {(re.sub('self.quote_', '', x))}['{i}']" )
+                    null_errors += 1
                 else:
-                    pass
+                    print ( f"{y}...", end="" )
+                    y += 1
+            print ( f"\n" )
             jd31_null_errors = null_errors
 
             x = self.jsondata10
+            y = 1
             null_errors = 0
             for i in jd_10:
                 try:
@@ -266,8 +279,13 @@ class nquote:
                 except TypeError:
                     print ( f"probe found NULL json data @: {(re.sub('self.quote_', '', x))}['{i}']'" )
                     null_errors += 1
+                except KeyError:
+                    print ( f"probe found NULL key @: {(re.sub('self.quote_', '', x))}['{i}']" )
+                    null_errors += 1
                 else:
-                    pass
+                    print ( f"{y}...", end="" )
+                    y += 1
+            print ( f"\n" )
             jd10_null_errors = null_errors
 
 
