@@ -160,20 +160,20 @@ class nquote:
         # with self.js_session.get(self.quote_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp1:
 
         with self.js_session.get(self.summary_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp1:
-            logging.info( '%s - Summary / json data extracted / storing...' % cmi_debug )
+            logging.info( '%s - Summary / reading data / storing...' % cmi_debug )
             self.quote_json1 = json.loads(self.js_resp1.text)
-            logging.info( '%s - Stage #1 extractor - Done' % cmi_debug )
+            logging.info( '%s - Stage #1 - Done' % cmi_debug )
 
 
         with self.js_session.get(self.watchlist_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp2:
-            logging.info( '%s - Watchlist / json data extracted / storing...' % cmi_debug )
+            logging.info( '%s - Watchlist / reading data / storing...' % cmi_debug )
             self.quote_json2 = json.loads(self.js_resp2.text)
-            logging.info( '%s - Stage #2 extractor - Done' % cmi_debug )
+            logging.info( '%s - Stage #2 - Done' % cmi_debug )
 
         with self.js_session.get(self.premarket_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp3:
-            logging.info( '%s - premakret / json data extracted / storing...' % cmi_debug )
+            logging.info( '%s - premakret / reading data / storing...' % cmi_debug )
             self.quote_json3 = json.loads(self.js_resp3.text)
-            logging.info( '%s - Stage #3 extractor - Done' % cmi_debug )
+            logging.info( '%s - Stage #3 - Done' % cmi_debug )
 
         # Xray DEBUG
         if self.args['bool_xray'] is True:
@@ -239,7 +239,7 @@ class nquote:
             arrow_updown = jsondata20['deltaIndicator']
             price_timestamp = jsondata20['lastTradeTimestampDateTime']
             vol_abs = jsondata20['volume']
-            logging.info( '%s - Stage #1 /[8] fields extracts - Done' % cmi_debug )
+            logging.info( '%s - Stage #1 /[8] fields - Done' % cmi_debug )
         else:
             logging.info('%s - Stage #1 / NULL json payload - NOT regular stock' % cmi_debug )        # bad symbol json payload
             self.quote.clear()
@@ -253,7 +253,7 @@ class nquote:
             open_price = jsondata31['consolidated']                             # WARN: multi-field string needs splitting/wrangeling e.g. "$140.8 +1.87 (+1.35%)"
             open_volume = jsondata31['volume']                                  # e.g. "71,506"
             open_updown = jsondata31['delta']                                   # e.g. "up"
-            logging.info( '%s - Stage #2 / [3] fields extracts - Done' % cmi_debug )
+            logging.info( '%s - Stage #2 / [3] fields - Done' % cmi_debug )
         else:
             logging.info('%s - Stage #2 / NULL json payload - NOT regular stock' % cmi_debug )        # bad symbol json payload
             self.quote.clear()
@@ -270,7 +270,7 @@ class nquote:
             oneyear_target = jsondata10['OneYrTarget']['value']                 # e.g. "$151.00"
             beta = jsondata10['Beta']['value']                                  # e.g. 1.23
             LII_week_hilo = jsondata10['FiftTwoWeekHighLow']['value']           # WARN: multi-field string needs splitting/wrangeling e.g. "$152.84/$105.92"
-            logging.info( '%s - Stage #3 / [7] fields extracts - Done' % cmi_debug )
+            logging.info( '%s - Stage #3 / [7] fields - Done' % cmi_debug )
         else:
             logging.info('%s - Stage #2 / NULL json payload - NOT regular stock' % cmi_debug )        # bad symbol json payload
             self.quote.clear()
