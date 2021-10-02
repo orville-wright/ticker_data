@@ -322,7 +322,7 @@ class nquote:
         # ################# open price(s) need extra treatment & care...
         if open_price == "N/A" or open_price == type(None) or open_price is None:
             open_price_cl = 0
-            logging.info('%s - WARNING / open_price is bad, found N/A or NULL data' % cmi_debug )
+            logging.info( f'%s - WARNING / open_price is bad, found N/A or NULL data: {open_price}' % cmi_debug )
             wrangle_errors += 1
         else:
             ops = open_price.split()
