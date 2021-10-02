@@ -237,7 +237,7 @@ class nquote:
                 try:
                     y = x['i']
                 except TypeError:
-                    print ( f"probe found NULL json data @: {(re.sub(' self.quote_', '', x)}['{i}']" )
+                    print ( f"probe found NULL json data @: {(re.sub(' self.quote_', '', x))}['{i}']" )
                     null_errors += 1
                 else:
                     pass
