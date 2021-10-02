@@ -264,12 +264,11 @@ class nquote:
             avg_vol = jsondata10['AverageVolume']['value']                      # e.g. "4,811,121"
             oneyear_target = jsondata10['OneYrTarget']['value']                 # e.g. "$151.00"
             beta = jsondata10['Beta']['value']                                  # e.g. 1.23
-            52week_hilo = jsondata10['FiftTwoWeekHighLow']['value']             #WARN: multi-field string needs splitting/wrangeling e.g. "$152.84/$105.92"
+            LII_week_hilo = jsondata10['FiftTwoWeekHighLow']['value']           # WARN: multi-field string needs splitting/wrangeling e.g. "$152.84/$105.92"
         else:
             logging.info('%s - Stage #2 / NULL json payload - NOT regular stock' % cmi_debug )        # bad symbol json payload
             self.quote.clear()
             wrangle_errors += -1
-
 
             # ######### wrangle, clean, cast & prepare the data #####################
             logging.info('%s - Begin data wrangle work...' % cmi_debug )
