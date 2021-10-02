@@ -241,13 +241,13 @@ class nquote:
                 try:
                     y = x[i]
                 except TypeError:
-                    print ( f"probe found NULL data @: {(re.sub('self.quote_', '', x))}['{i}']" )
+                    print ( f"probe found NULL data @: {x}['{i}']" )
                     null_errors += 1
                 except KeyError:
-                    print ( f"probe found NULL key @: {(re.sub('self.quote_', '', x))}['{i}']" )
+                    print ( f"probe found NULL key @: {x}['{i}']" )
                     null_errors += 1
                 else:
-                    print ( f"{y}...", end="" )
+                    print ( f"{z}...", end="" )
                     z += 1
             print ( f"\n" )
             jd20_null_errors = null_errors
@@ -259,13 +259,13 @@ class nquote:
                 try:
                     y = x[i]
                 except TypeError:
-                    print ( f"probe found NULL json data @: {(re.sub('self.quote_', '', x))}['{i}']" )
+                    print ( f"probe found NULL json data @: {x}['{i}']" )
                     null_errors += 1
                 except KeyError:
-                    print ( f"probe found NULL key @: {(re.sub('self.quote_', '', x))}['{i}']" )
+                    print ( f"probe found NULL key @: {x}['{i}']" )
                     null_errors += 1
                 else:
-                    print ( f"{y}...", end="" )
+                    print ( f"{z}...", end="" )
                     z += 1
             print ( f"\n" )
             jd31_null_errors = null_errors
@@ -277,13 +277,13 @@ class nquote:
                 try:
                     y = x[i]
                 except TypeError:
-                    print ( f"probe found NULL json data @: {(re.sub('self.quote_', '', x))}['{i}']'" )
+                    print ( f"probe found NULL json data @: {x}['{i}']'" )
                     null_errors += 1
                 except KeyError:
-                    print ( f"probe found NULL key @: {(re.sub('self.quote_', '', x))}['{i}']" )
+                    print ( f"probe found NULL key @: {x}['{i}']" )
                     null_errors += 1
                 else:
-                    print ( f"{y}...", end="" )
+                    print ( f"{z}...", end="" )
                     z += 1
             print ( f"\n" )
             jd10_null_errors = null_errors
