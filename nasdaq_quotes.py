@@ -218,6 +218,7 @@ class nquote:
         Wrangle, clean, convert, cast & format data as needed.
         """
 
+        self.jsondata11 = self.quote_json1['data']
         self.jsondata10 = self.quote_json1['data']['summaryData']
         self.jsondata20 = self.quote_json2['data'][0]
         self.jsondata30 = self.quote_json3['data']
@@ -231,29 +232,39 @@ class nquote:
             """
             cmi_debug = __name__+"::"+null_prechecker.__name__+".#"+str(self.yti)
             logging.info( f'%s - probing json datasets for NULL zones...' % cmi_debug )
+            jd_10 = ("PreviousClose", "MarketCap", "TodayHighLow", "AverageVolume", "OneYrTarget", "Beta", "FiftTwoWeekHighLow" )
             jd_20 = ("symbol", "companyName", "lastSalePrice", "netChange", "percentageChange", "deltaIndicator", "lastTradeTimestampDateTime", "volume" )
             jd_30 = ("infoTable", "infoTable']['rows", "infoTable']['rows'][0", "infoTable']['rows'][0]['consolidated'",
                        "infoTable']['rows'][0]['volume'", "'infoTable']['rows'][0]['delta'" )
             jd_31 = ("consolidated", "volume", "delta" )
-            jd_10 = ("PreviousClose", "MarketCap", "TodayHighLow", "AverageVolume", "OneYrTarget", "Beta", "FiftTwoWeekHighLow" )
+
 
             x = self.jsondata10
             z = 1
             jd10_null_errors = 0
-            print ( f"json data 10: ", end="" )
-            for i in jd_10:
-                try:
-                    y = x[i]
-                except TypeError:
-                    print ( f"probe found NULL json data @: ['{i}']" )
-                    jd10_null_errors += 1
-                except KeyError:
-                    print ( f"probe found NULL key @: ['{i}']" )
-                    jd10_null_errors += 1
-                else:
-                    print ( f"{z}...", end="" )
-                    z += 1
-            print ( f"Bad json data: {jd10_null_errors} / 7" )
+            try:
+                y = self.quote_json1['data']['summaryData']:
+            except TypeError:
+                print ( f"probe found NULL json data @: ['data']['summaryData']" )
+                jd10_null_errors += 1
+            except KeyError:
+                print ( f"probe found NULL key @: ['data']['summaryData']" )
+                jd10_null_errors += 1
+            else:
+                print ( f"json data 10: ", end="" )
+                for i in jd_10:
+                    try:
+                        y = x[i]
+                    except TypeError:
+                        print ( f"probe found NULL json data @: ['{i}']" )
+                        jd10_null_errors += 1
+                    except KeyError:
+                        print ( f"probe found NULL key @: ['{i}']" )
+                        jd10_null_errors += 1
+                    else:
+                        print ( f"{z}...", end="" )
+                        z += 1
+                print ( f"Bad json data: {jd10_null_errors} / 7" )
 
             x = self.jsondata20
             z = 1
