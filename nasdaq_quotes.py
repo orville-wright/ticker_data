@@ -218,10 +218,10 @@ class nquote:
         Wrangle, clean, convert, cast & format data as needed.
         """
 
-        self.jsondata11 = self.quote_json1['data']
-        self.jsondata10 = self.quote_json1['data']['summaryData']
-        self.jsondata20 = self.quote_json2['data'][0]
-        self.jsondata30 = self.quote_json3['data']
+        self.jsondata11 = self.quote_json1['data']                              # summary
+        self.jsondata10 = self.quote_json1['data']['summaryData']               # summary
+        self.jsondata20 = self.quote_json2['data'][0]                           # watchlist
+        self.jsondata30 = self.quote_json3['data']                              # premarket
         #self.jsondata31 = self.quote_json3['data']['infoTable']['rows'][0]
 
         def null_prechecker():
@@ -245,13 +245,13 @@ class nquote:
             try:
                 y = self.quote_json1['data']['summaryData']
             except TypeError:
-                print ( f"json data 10: probe found NULL data @: ['data']['summaryData']" )
+                print ( f"json data 10 (summary): probe found NULL data @: ['data']['summaryData']" )
                 jd10_null_errors += 1
             except KeyError:
-                print ( f"json data 10: probe found NULL key @: ['data']['summaryData']" )
+                print ( f"json data 10 (summary): probe found NULL key @: ['data']['summaryData']" )
                 jd10_null_errors += 1
             else:
-                print ( f"json data 10: ", end="" )
+                print ( f"json data 10 (summary): ", end="" )
                 for i in jd_10:
                     try:
                         y = x[i]
@@ -269,7 +269,7 @@ class nquote:
             x = self.jsondata20
             z = 1
             jd20_null_errors = 0
-            print ( f"json data 20: ", end="" )
+            print ( f"json data 20 (watchlist): ", end="" )
             for i in jd_20:
                 try:
                     y = x[i]
@@ -287,7 +287,7 @@ class nquote:
             x = self.jsondata30
             z = 1
             jd31_null_errors = 0
-            print ( f"json data 30: ", end="" )
+            print ( f"json data 30 (premarket): ", end="" )
             for i in jd_30:
                 try:
                     y = x[1]
