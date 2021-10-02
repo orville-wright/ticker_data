@@ -320,7 +320,7 @@ class nquote:
             price_pct_cl = np.float(price_pct)
 
         # ################# open price(s) need extra treatment & care...
-        if open_price == "N/A" or open_price == type(None):
+        if open_price == "N/A" or open_price == type(None) or open_price is None:
             open_price_cl = 0
             logging.info('%s - WARNING / open_price is bad, found N/A or NULL data' % cmi_debug )
             wrangle_errors += 1
