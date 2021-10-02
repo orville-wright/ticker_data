@@ -105,7 +105,7 @@ class nquote:
         self.wurl_log1 = "https://api.nasdaq.com/api/quote/watchlist?symbol=" + self.symbol    # hack f-strings doesnt like "%" inside {}
         self.wurl_log2 = "7cstocks"         # hack f-strings doesnt like "%" inside {}
         #
-        logging.info( f"================================ Quote API endpoints ================================)
+        logging.info( f"================================ Quote API endpoints ================================" )
         logging.info( f" - API endpoint #1: [ {self.quote_url} ]" % cmi_debug )
         logging.info( f" - API endpoint #2: [ {self.summary_url} ]" % cmi_debug )
         logging.info( f" - API endpoint #3: [ {self.wurl_log1}%%{self.wurl_log2} ]" % cmi_debug )
