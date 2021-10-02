@@ -160,18 +160,18 @@ class nquote:
         # with self.js_session.get(self.quote_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp1:
 
         with self.js_session.get(self.summary_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp1:
-            logging.info( '%s - Summary / reading data / storing...' % cmi_debug )
+            logging.info( '%s - Stage #1 / Summary / reading data / storing...' % cmi_debug )
             self.quote_json1 = json.loads(self.js_resp1.text)
             logging.info( '%s - Stage #1 - Done' % cmi_debug )
 
 
         with self.js_session.get(self.watchlist_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp2:
-            logging.info( '%s - Watchlist / reading data / storing...' % cmi_debug )
+            logging.info( '%s - Stage #2 / Watchlist / reading data / storing...' % cmi_debug )
             self.quote_json2 = json.loads(self.js_resp2.text)
             logging.info( '%s - Stage #2 - Done' % cmi_debug )
 
         with self.js_session.get(self.premarket_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp3:
-            logging.info( '%s - premakret / reading data / storing...' % cmi_debug )
+            logging.info( '%s - Stage #3 / premarket / reading data / storing...' % cmi_debug )
             self.quote_json3 = json.loads(self.js_resp3.text)
             logging.info( '%s - Stage #3 - Done' % cmi_debug )
 
