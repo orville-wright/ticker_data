@@ -225,7 +225,7 @@ class nquote:
             We run this before trying to access list indexes, as that will exert an error.
             And its arduous to wrap all this arround the data acessor method. Better to do it early.
             """
-            cmi_debug = __name__+"::"+self.null_prechecker.__name__+".#"+str(self.yti)
+            cmi_debug = __name__+"::"+null_prechecker.__name__+".#"+str(self.yti)
             logging.info( f'%s - probing json datasets for NULL zones...' % cmi_debug )
             jd_20 = ("symbol", "companyName", "lastSalePrice", "netChange", "percentageChange", "deltaIndicator", "lastTradeTimestampDateTime", "volume" )
             jd_31 = ("consolidated", "volume", "delta" )
