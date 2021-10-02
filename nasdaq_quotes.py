@@ -324,6 +324,7 @@ class nquote:
             logging.info('%s - Open price is bad, found N/A data' % cmi_debug )
             wrangle_errors += 1
         else:
+            print ( f">>>DEBUG<<< / working on open_price : {open_price}" )
             ops = open_price.split()
             open_price = ops[0]                                 # e.g. 140.8
             open_price_net = ops[1]                             # e.g. +1.87
