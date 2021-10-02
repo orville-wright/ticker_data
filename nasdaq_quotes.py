@@ -148,29 +148,24 @@ class nquote:
         Access NEW nasdaq.com JAVASCRIPT page [unusual volume] and extract the native JSON dataset
         JSON data contains *BOTH* UP vol & DOWN vol for top 25 symbols, right now!
         NO BeautifulSOup scraping needed anymore. We access the pure JSON datset via native API rest call
-        note: Javascript engine process is NOT required as the output page is simple JSON text
-        warning: API URL get success for any URL endpoint. This includes non-existent symbols & symbols
+        NOTE: Javascript engine process is NOT required as the output page is simple JSON text
+        WWARNING: API URL get success for any URL endpoint. This includes non-existent symbols & symbols
                  that return bad/NULL data set (i.e. ETF's, which are not company's or regular symbols)
+        NOTE: Since Nasdaq changed the data model, quote data is now split across mutliple API endpoints
         """
         cmi_debug = __name__+"::"+self.get_nquote.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         self.qs = symbol
-        # due to the updated Nasdaq data model, quotes dfata is now split across mutliple API endpoints
-        #with self.js_session.get(self.quote_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp1:
+        # with self.js_session.get(self.quote_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp1:
         with self.js_session.get(self.watchlist_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp2:
-        with self.js_session.get(self.premarket_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp3:
-            # read the webpage with our Javascript engine processor
-            # logging.info('%s - Javascript engine processing...' % cmi_debug )
-            # self.js_resp2.html.render()    # this isn't needed for this URL becuase is a RAW JSON output page. NOT Javascript
-            # logging.info('%s - Javascript engine completed!' % cmi_debug )
-
-            # access pure 'stock quote' JSON data via an authenticated/valid REST API call
-            logging.info( '%s - 3 json quote data packages extracted' % cmi_debug )
-            logging.info( '%s - store RAW json for: Summary, Watchlist, Premarket quote data' % cmi_debug )
-            #self.quote_json1 = json.loads(self.js_resp1.text)
+            logging.info( '%s - Watchlist json quote data package extracted / storing...' % cmi_debug )
             self.quote_json2 = json.loads(self.js_resp2.text)
+            logging.info( '%s - quote data part #1 Done' % cmi_debug )
+
+        with self.js_session.get(self.premarket_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp3:
+            logging.info( '%s - premakret json quote data package extracted / storing...' % cmi_debug )
             self.quote_json3 = json.loads(self.js_resp3.text)
-            logging.info( '%s - Done' % cmi_debug )
+            logging.info( '%s - quote data part #1 Done' % cmi_debug )
 
         # Xray DEBUG
         if self.args['bool_xray'] is True:
