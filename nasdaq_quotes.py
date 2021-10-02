@@ -240,7 +240,7 @@ class nquote:
             x = self.jsondata10
             z = 1
             null_errors = 0
-            Print ( f"json data 10: ", end="" )
+            print ( f"json data 10: ", end="" )
             for i in jd_10:
                 try:
                     y = x[i]
@@ -259,7 +259,7 @@ class nquote:
             x = self.jsondata20
             z = 1
             null_errors = 0
-            Print ( f"json data 20: ", end="" )
+            print ( f"json data 20: ", end="" )
             for i in jd_20:
                 try:
                     y = x[i]
@@ -278,7 +278,7 @@ class nquote:
             x = self.jsondata30
             z = 1
             null_errors = 0
-            Print ( f"json data 30: ", end="" )
+            print ( f"json data 30: ", end="" )
             for i in jd_30:
                 try:
                     y = x[1]
