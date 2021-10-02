@@ -319,17 +319,39 @@ class nquote:
             price_pct = (re.sub('[\-+%]', '', price_pct))                # remove - + % signs
             price_pct_cl = np.float(price_pct)
 
+        # ################# open price(s) need extra treatment & care...
         if open_price == "N/A":
             open_price_cl = 0
             logging.info('%s - Open price is bad, found N/A data' % cmi_debug )
             wrangle_errors += 1
         else:
-            print ( f">>>DEBUG<<< / working on open_price : {open_price}" )
             ops = open_price.split()
-            open_price = ops[0]                                 # e.g. 140.8
-            open_price_net = ops[1]                             # e.g. +1.87
-            open_price_pct = ops[2]                             # e.g. (+1.35%)
-            open_price_cl = (re.sub('[ $,]', '', open_price))   # remove " " $ ,
+
+            try:
+                open_price = ops[0]                     # e.g. 140.8
+            except IndexError:
+                logging.info('%s - WARNING / open_price is NULL / setting to: $0.0' % cmi_debug )
+                open_price = 0.0
+                wrangle_errors += 1
+            else:
+                open_price_cl = (re.sub('[ $,]', '', open_price))   # remove " " $ ,
+
+            try:
+                open_price_net = ops[1]                 # # (test for missing data) - good data =  +1.87
+            except IndexError:
+                logging.info('%s - WARNING / open_price_net is NULL / setting to: $0.0' % cmi_debug )
+                open_price_net = 0.0                    # set NULL data to ZERO
+                wrangle_errors += 1
+
+            try:
+                open_price_pct = ops[2]                 # (test for missing data) - good data = e.g. (+1.35%)"
+            except IndexError:
+                logging.info('%s - WARNING / open_price_pct is NULL / setting to: %0.0' % cmi_debug )
+                open_price_net = 0.0                    # set NULL data to ZERO
+                wrangle_errors += 1
+            else:
+                open_price_pct_cl = (re.sub('[)(%]', '', price_pct))
+            #################################################
 
         if prev_close == "N/A":
             prev_close_cl = 0
