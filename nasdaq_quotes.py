@@ -230,8 +230,8 @@ class nquote:
             logging.info('%s - Stage #1 / Accessing data fields...' % cmi_debug )
             jsondata20 = self.quote_json2['data'][0]                            # HEAD of data payload
             co_sym = jsondata20['symbol']                                       # "IBM"
-            co_name = jsondata20['companyName'] + str                           # "International Business Machines Corporation Common Stock"
-            price = jsondata20['lastSalePrice'] + str                           # "$143.32"
+            co_name = jsondata20['companyName']                                 # "International Business Machines Corporation Common Stock"
+            price = jsondata20['lastSalePrice']                                 # "$143.32"
             price_net = jsondata20['netChange']                                 # "+4.39"
             price_pct = jsondata20['percentageChange']                          # "3.16%"
             arrow_updown = jsondata20['deltaIndicator']                         # "up"
@@ -274,7 +274,7 @@ class nquote:
             self.quote.clear()
             wrangle_errors += -1
 
-        # ######### wrangle, clean, cast & prepare the data #####################
+        # ######### wrangle, clean, cast & prepare the data ##############################################
         logging.info('%s - Begin data wrangle workload...' % cmi_debug )
 
         co_sym_lj = co_sym.strip()
