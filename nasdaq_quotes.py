@@ -247,9 +247,9 @@ class nquote:
 
         # PRE-MARKET quoet data - 2 data zones
         if self.quote_json3['data'] is not None:                                # bad symbol TEST == Null json payload
-            logging.info('%s - Stage #2 / Accessing data fields...' % cmi_debug
+            logging.info('%s - Stage #2 / Accessing data fields...' % cmi_debug )
             jsondata30 = self.quote_json3['data']                               # HEAD of data payload 0
-            jsondata31 = self.quote_json3['data']['infoTable']['rows'][0]     # HEAD of data payload 1
+            jsondata31 = self.quote_json3['data']['infoTable']['rows'][0]       # HEAD of data payload 1
             open_price = jsondata31['consolidated']                             # WARN: multi-field string needs splitting/wrangeling e.g. "$140.8 +1.87 (+1.35%)"
             open_volume = jsondata31['volume']                                  # e.g. "71,506"
             open_updown = jsondata31['delta']                                   # e.g. "up"
