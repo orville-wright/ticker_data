@@ -25,14 +25,18 @@ class nquote:
     # global accessors
     quote = {}              # quote as dict
     quote_df0 = ""          # quote as pandas DataFrame
-    quote_pridata = ""      # JSON structured dataset contains ALL data
+    quote_json1 = ""        # JSON dataset #1 quote summary
+    quote_json2 = ""        # JSON dataset #2 quote watchlist
+    quote_json3 = ""        # JSON dataset #3 quote premarket
     data0 = []              # JSON data payload
     yti = 0                 # Unique instance identifier
     cycle = 0               # class thread loop counter
     args = []               # class dict to hold global args being passed in from main() methods
     js_session = ""         # main requests session
-    js_resp0 = ''           # session response handle for initial blind get()
-    js_resp2 = ''           # session response handle for main json data get()
+    js_resp0 = ''           # session response handle for initial blind get() & dummy sessions
+    js_resp1 = ''           # session response handle for : self.quote_url
+    js_resp2 = ''           # session response handle for : self.watchlist_url
+    js_resp3 = ''           # session response handle for : self.premarket_url
     quote_url = ""
     summary_url = ""
     watchlist_url = ""
@@ -87,31 +91,37 @@ class nquote:
 # method 3
     def form_api_endpoint(self, symbol):
         """
-        This is the basic quote endppint for the req get()
-        As of 1 Oct, 2021...Nasdaq has a new data model that splits quote data across multiple API endpoints.
-        So this API endpoint is now just an inital setup.
+        This is the quote endppints for the req get()
+        As of 1 Oct, 2021...Nasdaq has a new data model that splits quote data across 4 key API endpoints. Of which,  2 are very intersting.
         """
         cmi_debug = __name__+"::"+self.form_api_endpoint.__name__+".#"+str(self.yti)
         logging.info('%s - form API endpoint URL' % cmi_debug )
         self.symbol = symbol.upper()
         self.quote_url = "https://api.nasdaq.com" + self.path
         self.summary_url = "https://api.nasdaq.com/api/quote/" + self.symbol + "/summary?assetclass=stocks"
-        self.watchlist_url = "https://api.nasdaq.com/api/quote/watchlist?symbol=" + self.symbol + "%7cstocks"
         self.premarket_url = "https://api.nasdaq.com/api/quote/" + self.symbol + "/extended-trading?assetclass=stocks&markettype=pre"
+        #
+        self.watchlist_url = "https://api.nasdaq.com/api/quote/watchlist?symbol=" + self.symbol + "%7cstocks"
+        self.wurl_log1 = "https://api.nasdaq.com/api/quote/watchlist?symbol=" + self.symbol    # hack f-strings doesnt like "%" inside {}
+        self.wurl_log2 = "7cstocks"         # hack f-strings doesnt like "%" inside {}
+        #
         logging.info( f"================================ Quote API endpoints ================================)
-        logging.info( f" - API endpoint #1: [ {self.quote_url} ]" % self.quote_url )
-        logging.info( f" - API endpoint #2: [ {self.summary_url} ]" % self.quote_url )
-        logging.info( f" - API endpoint #3: [ {self.watchlist_url} ]" % self.quote_url )
-        logging.info( f" - API endpoint #4: [ {self.premarket_url} ]" % self.quote_url )
+        logging.info( f" - API endpoint #1: [ {self.quote_url} ]" % cmi_debug )
+        logging.info( f" - API endpoint #2: [ {self.summary_url} ]" % cmi_debug )
+        logging.info( f" - API endpoint #3: [ {self.wurl_log1}%%{self.wurl_log2} ]" % cmi_debug )
+        logging.info( f" - API endpoint #4: [ {self.premarket_url} ]" % cmi_debug )
         self.quote_url = self.quote_url
         return
 
 # method 4
     def do_simple_get(self):
+        """
+        A basic connection/cookie/headers setup method
+        INFO: we simply ping www.nasdaq.com. No need for an API specific url. That comes later.
+        Assumes the cookies have already been set up
+        NO cookie update done!!!
+        """
         cmi_debug = __name__+"::"+self.init_blind_session.__name__+".#"+str(self.yti)
-        # note: we ping www.nasdaq.com. No need for a API specific url. That comes later.
-        #       Assumes the cookies have already been set up
-        #       NO cookie update done!!!
         logging.info('%s - Blind request get() on base url' % cmi_debug )
         with self.js_session.get('https://www.nasdaq.com', stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp0:
             logging.info('%s - Request get() done' % cmi_debug )
@@ -120,10 +130,12 @@ class nquote:
 
 # method 5
     def init_dummy_session(self):
+        """
+        a cookie setup method
+        note: we ping www.nasdaq.com. No need for a API specific url, as this should be the FIRST get
+        Our goal is simply find & extract secret cookies. Nothing more.
+        """
         cmi_debug = __name__+"::"+self.init_dummy_session.__name__+".#"+str(self.yti)
-        # note: we ping www.nasdaq.com.
-        #       No need for a API specific url, as this should be the FIRST get for this url
-        #       becasue our goal is to find & extract secret cookies
         with self.js_session.get('https://www.nasdaq.com', stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp0:
             logging.info('%s - extract & update GOOD cookie  ' % cmi_debug )
             self.js_session.cookies.update({'ak_bmsc': self.js_resp0.cookies['ak_bmsc']} )    # NASDAQ cookie hack
@@ -143,17 +155,21 @@ class nquote:
         cmi_debug = __name__+"::"+self.get_nquote.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         self.qs = symbol
-
-        with self.js_session.get(self.quote_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp2:
+        # due to the updated Nasdaq data model, quotes dfata is now split across mutliple API endpoints
+        #with self.js_session.get(self.quote_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp1:
+        with self.js_session.get(self.watchlist_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp2:
+        with self.js_session.get(self.premarket_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp3:
             # read the webpage with our Javascript engine processor
             # logging.info('%s - Javascript engine processing...' % cmi_debug )
             # self.js_resp2.html.render()    # this isn't needed for this URL becuase is a RAW JSON output page. NOT Javascript
             # logging.info('%s - Javascript engine completed!' % cmi_debug )
 
             # access pure 'stock quote' JSON data via an authenticated/valid REST API call
-            logging.info( '%s - json data extracted' % cmi_debug )
-            logging.info( '%s - Simple quote : store RAW json dataset' % cmi_debug )
-            self.quote_pridata = json.loads(self.js_resp2.text)
+            logging.info( '%s - 3 json quote data packages extracted' % cmi_debug )
+            logging.info( '%s - store RAW json for: Summary, Watchlist, Premarket quote data' % cmi_debug )
+            #self.quote_json1 = json.loads(self.js_resp1.text)
+            self.quote_json2 = json.loads(self.js_resp2.text)
+            self.quote_json3 = json.loads(self.js_resp3.text)
             logging.info( '%s - Done' % cmi_debug )
 
         # Xray DEBUG
@@ -166,21 +182,23 @@ class nquote:
 
 # method 7
     def get_js_nquote(self, symbol):
-        """Access NEW nasdaq.com JAVASCRIPT page [unusual volume] and extract the native JSON dataset"""
-        """JSON dataset contains *BOTH* UP vol & DOWN vol for top 25 symbols, right now!"""
-        """NO BeautifulSOup scraping needed anymore. We access the pure JSON datset via native API rest call"""
-        """note: Javascript engine is required, Cant process/read a JS page via requests(). The get() hangs forever"""
-
+        """
+        Access NEW nasdaq.com JAVASCRIPT page [unusual volume] and extract the native JSON dataset
+        JSON dataset contains *BOTH* UP vol & DOWN vol for top 25 symbols, right now!
+        NO BeautifulSOup scraping needed anymore. We access the pure JSON datset via native API rest call
+        NOTE: Javascript engine is required, Cant process/read a JS page via requests(). The get() hangs forever
+        NOTE: Javascript currently disbaled, since we access he data directly via API endpoint
+        """
         cmi_debug = __name__+"::"+self.get_js_nquote.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         self.symbol = symbol
-        with self.js_session.get(self.quote_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp2:
+        with self.js_session.get(self.quote_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp1:
             # read the webpage with our Javascript engine processor
             logging.info('%s - Javascript engine processing...' % cmi_debug )
-            self.js_resp2.html.render()    # this isn't needed for this URL becuase is a RAW JSON output page. NOT Javascript
+            self.js_resp1.html.render()    # this isn't needed for this URL becuase is a RAW JSON output page. NOT Javascript
             logging.info('%s - Javascript engine completed!' % cmi_debug )
             logging.info('%s - Javascript quote : store FULL json dataset' % cmi_debug )
-            self.quote_pridata = json.loads(self.js_resp2.text)
+            self.quote_json1 = json.loads(self.js_resp1.text)
 
         # Xray DEBUG
         if self.args['bool_xray'] is True:
