@@ -247,13 +247,21 @@ class nquote:
         if self.quote_json3['data'] is not None:                                # bad symbol TEST == Null json payload
             logging.info('%s - Stage #2 / Accessing data fields...' % cmi_debug )
             jsondata30 = self.quote_json3['data']                               # HEAD of data payload 0
-            jsondata31 = self.quote_json3['data']['infoTable']['rows'][0]       # HEAD of data payload 1
-            open_price = jsondata31['consolidated']                             # WARN: multi-field string needs splitting/wrangeling e.g. "$140.8 +1.87 (+1.35%)"
-            open_volume = jsondata31['volume']                                  # e.g. "71,506"
-            open_updown = jsondata31['delta']                                   # e.g. "up"
-            logging.info( '%s - Stage #2 / [3] fields - Done' % cmi_debug )
+            try:
+                jsondata31 = self.quote_json3['data']['infoTable']['rows'][0]       # HEAD of data payload 1
+            except TypeError:
+                logging.info('%s - WARNING / infoTable payload is NULL' % cmi_debug )        # bad symbol json payload
+                open_price = "$0.0 0.0 0.0"
+                open_volume = 0                                  # e.g. "71,506"
+                open_updown = "N/A"                              # e.g. "up"
+                wrangle_errors += -1
+            else:
+                open_price = jsondata31['consolidated']                             # WARN: multi-field string needs splitting/wrangeling e.g. "$140.8 +1.87 (+1.35%)"
+                open_volume = jsondata31['volume']                                  # e.g. "71,506"
+                open_updown = jsondata31['delta']                                   # e.g. "up"
+                logging.info( '%s - Stage #2 / [3] fields - Done' % cmi_debug )
         else:
-            logging.info('%s - Stage #2 / NULL json payload - NOT regular stock' % cmi_debug )        # bad symbol json payload
+            logging.info('%s - Stage #2 / zone [data] NULL json payload - NOT regular stock' % cmi_debug )        # bad symbol json payload
             self.quote.clear()
             wrangle_errors += -1
 
