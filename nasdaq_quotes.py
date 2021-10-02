@@ -245,16 +245,16 @@ class nquote:
                 try:
                     y = x[i]
                 except TypeError:
-                    print ( f"probe found NULL json data @: {x}['{i}']" )
+                    print ( f"probe found NULL json data @: ['{i}']" )
                     null_errors += 1
                 except KeyError:
-                    print ( f"probe found NULL key @: {x}['{i}']" )
+                    print ( f"probe found NULL key @: ['{i}']" )
                     null_errors += 1
                 else:
                     print ( f"{z}...", end="" )
                     z += 1
-            print ( f"\n" )
             jd10_null_errors = null_errors
+            print ( f"Bad data: {jd10_null_errors} / 7" )
 
             x = self.jsondata20
             z = 1
@@ -272,8 +272,8 @@ class nquote:
                 else:
                     print ( f"{z}...", end="" )
                     z += 1
-            print ( f"\n" )
             jd20_null_errors = null_errors
+            print ( f"Bad data: {jd10_null_errors} / 8" )
 
             x = self.jsondata30
             z = 1
@@ -291,8 +291,8 @@ class nquote:
                 else:
                     print ( f"{z}...", end="" )
                     z += 1
-            print ( f"\n" )
             jd31_null_errors = null_errors
+            print ( f"Bad data: {jd10_null_errors} / 6" )
 
             return jd10_null_errors, jd20_null_errors, jd31_null_errors
 
