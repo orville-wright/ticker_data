@@ -231,7 +231,7 @@ class nquote:
             jd_31 = ("consolidated", "volume", "delta" )
             jd_10 = ("PreviousClose", "MarketCap", "TodayHighLow", "AverageVolume", "OneYrTarget", "Beta", "FiftTwoWeekHighLow" )
 
-            x = "self.quote_json2['data'][0]"
+            x = self.quote_json2['data'][0]
             null_errors = 0
             for i in jd_20:
                 try:
@@ -243,25 +243,25 @@ class nquote:
                     pass
             jd20_null_errors = null_errors
 
-            x = "self.quote_json3['data']['infoTable']['rows'][0]"
+            x = self.quote_json3['data']['infoTable']['rows'][0]
             null_errors = 0
             for i in jd_31:
                 try:
                     y = x[i]
                 except TypeError:
-                    print ( f"probe found NULL json data @: {x}['{i}']" )
+                    print ( f"probe found NULL json data @: {(re.sub('self.quote_', '', x))}['{i}']" )
                     null_errors += 1
                 else:
                     pass
             jd31_null_errors = null_errors
 
-            x = "self.quote_json1['data']['summaryData']"
+            x = self.quote_json1['data']['summaryData']
             null_errors = 0
             for i in jd_10:
                 try:
                     y = x[i]
                 except TypeError:
-                    print ( f"probe found NULL json data @: {x}['{i}']'" )
+                    print ( f"probe found NULL json data @: {(re.sub('self.quote_', '', x))}['{i}']'" )
                     null_errors += 1
                 else:
                     pass
