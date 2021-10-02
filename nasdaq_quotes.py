@@ -220,7 +220,8 @@ class nquote:
 
         self.jsondata10 = self.quote_json1['data']['summaryData']
         self.jsondata20 = self.quote_json2['data'][0]
-        self.jsondata31 = self.quote_json3['data']['infoTable']['rows'][0]
+        self.jsondata30 = self.quote_json3['data']
+        #self.jsondata31 = self.quote_json3['data']['infoTable']['rows'][0]
 
         def null_prechecker():
             """
@@ -231,46 +232,10 @@ class nquote:
             cmi_debug = __name__+"::"+null_prechecker.__name__+".#"+str(self.yti)
             logging.info( f'%s - probing json datasets for NULL zones...' % cmi_debug )
             jd_20 = ("symbol", "companyName", "lastSalePrice", "netChange", "percentageChange", "deltaIndicator", "lastTradeTimestampDateTime", "volume" )
+            jd_30 = ("infoTable", "infoTable']['rows", "infoTable']['rows'][0", "infoTable']['rows'][0]['consolidated'",
+                       "infoTable']['rows'][0]['volume'", "'infoTable']['rows'][0]['delta'" )
             jd_31 = ("consolidated", "volume", "delta" )
             jd_10 = ("PreviousClose", "MarketCap", "TodayHighLow", "AverageVolume", "OneYrTarget", "Beta", "FiftTwoWeekHighLow" )
-
-            x = self.jsondata20
-            z = 1
-            null_errors = 0
-            Print ( f"json data 20: ", end="" )
-            for i in jd_20:
-                try:
-                    y = x[i]
-                except TypeError:
-                    print ( f"probe found NULL data @: {x}['{i}']" )
-                    null_errors += 1
-                except KeyError:
-                    print ( f"probe found NULL key @: {x}['{i}']" )
-                    null_errors += 1
-                else:
-                    print ( f"{z}...", end="" )
-                    z += 1
-            print ( f"\n" )
-            jd20_null_errors = null_errors
-
-            x = self.jsondata31
-            z = 1
-            null_errors = 0
-            Print ( f"json data 31: ", end="" )
-            for i in jd_31:
-                try:
-                    y = x[i]
-                except TypeError:
-                    print ( f"probe found NULL json data @: {x}['{i}']" )
-                    null_errors += 1
-                except KeyError:
-                    print ( f"probe found NULL key @: {x}['{i}']" )
-                    null_errors += 1
-                else:
-                    print ( f"{z}...", end="" )
-                    z += 1
-            print ( f"\n" )
-            jd31_null_errors = null_errors
 
             x = self.jsondata10
             z = 1
@@ -291,8 +256,45 @@ class nquote:
             print ( f"\n" )
             jd10_null_errors = null_errors
 
+            x = self.jsondata20
+            z = 1
+            null_errors = 0
+            Print ( f"json data 20: ", end="" )
+            for i in jd_20:
+                try:
+                    y = x[i]
+                except TypeError:
+                    print ( f"probe found NULL data @: {x}['{i}']" )
+                    null_errors += 1
+                except KeyError:
+                    print ( f"probe found NULL key @: {x}['{i}']" )
+                    null_errors += 1
+                else:
+                    print ( f"{z}...", end="" )
+                    z += 1
+            print ( f"\n" )
+            jd20_null_errors = null_errors
 
-            return jd20_null_errors, jd31_null_errors, jd10_null_errors
+            x = self.jsondata30
+            z = 1
+            null_errors = 0
+            Print ( f"json data 30: ", end="" )
+            for i in jd_30:
+                try:
+                    y = x[1]
+                except TypeError:
+                    print ( f"probe found NULL json data @: {x}" )
+                    null_errors += 1
+                except KeyError:
+                    print ( f"probe found NULL key @: {x}['{i}']" )
+                    null_errors += 1
+                else:
+                    print ( f"{z}...", end="" )
+                    z += 1
+            print ( f"\n" )
+            jd31_null_errors = null_errors
+
+            return jd10_null_errors, jd20_null_errors, jd31_null_errors
 
         ########################################################################
 
