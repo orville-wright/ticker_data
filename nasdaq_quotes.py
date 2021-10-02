@@ -320,34 +320,39 @@ class nquote:
             price_pct_cl = np.float(price_pct)
 
         # ################# open price(s) need extra treatment & care...
-        if open_price == "N/A" or open_price == type(None) or open_price is None:
-            open_price_cl = 0
+        if open_price == "N/A" or open_price is None:
+            open_price_cl = np.float(0)
+            open_price_net = float(0)
+            open_price_pct_cl = float(0)
             logging.info( f'%s - WARNING / open_price is bad, found N/A or NULL data: {open_price}' % cmi_debug )
             wrangle_errors += 1
         else:
             ops = open_price.split()
+            # data is good...proceed to access 3 indices of sub-data from split list[]
 
             try:
                 open_price = ops[0]                     # e.g. 140.8
             except IndexError:
                 logging.info('%s - WARNING / open_price is NULL / setting to: $0.0' % cmi_debug )
-                open_price = 0.0
+                open_price = float(0)
                 wrangle_errors += 1
             else:
                 open_price_cl = (re.sub('[ $,]', '', open_price))   # remove " " $ ,
+                # data is good...
 
             try:
-                open_price_net = ops[1]                 # # (test for missing data) - good data =  +1.87
+                open_price_net = ops[1]                 # (test for missing data) - good data =  +1.87
             except IndexError:
                 logging.info('%s - WARNING / open_price_net is NULL / setting to: $0.0' % cmi_debug )
-                open_price_net = 0.0                    # set NULL data to ZERO
+                open_price_net = float(0)               # set NULL data to ZERO
                 wrangle_errors += 1
+                # data is good...
 
             try:
                 open_price_pct = ops[2]                 # (test for missing data) - good data = e.g. (+1.35%)"
             except IndexError:
                 logging.info('%s - WARNING / open_price_pct is NULL / setting to: %0.0' % cmi_debug )
-                open_price_net = 0.0                    # set NULL data to ZERO
+                open_price_pct = float(0)               # set NULL data to ZERO
                 wrangle_errors += 1
             else:
                 open_price_pct_cl = (re.sub('[)(%]', '', price_pct))
