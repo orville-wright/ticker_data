@@ -245,10 +245,10 @@ class nquote:
             try:
                 y = self.quote_json1['data']['summaryData']
             except TypeError:
-                print ( f"probe found NULL json data @: ['data']['summaryData']" )
+                print ( f"json data 10: probe found NULL data @: ['data']['summaryData']" )
                 jd10_null_errors += 1
             except KeyError:
-                print ( f"probe found NULL key @: ['data']['summaryData']" )
+                print ( f"json data 10: probe found NULL key @: ['data']['summaryData']" )
                 jd10_null_errors += 1
             else:
                 print ( f"json data 10: ", end="" )
