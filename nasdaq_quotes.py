@@ -237,7 +237,7 @@ class nquote:
                 try:
                     y = x[i]
                 except TypeError:
-                    print ( f"probe found NULL json data @: {x}/{i}" )
+                    print ( f"probe found NULL json data @: {x}['{i}']'" )
                     null_errors += 1
                 else:
                     pass
@@ -249,7 +249,7 @@ class nquote:
                 try:
                     y = x[i]
                 except TypeError:
-                    print ( f"probe found NULL json data @: {x}/{i}" )
+                    print ( f"probe found NULL json data @: {x}['{i}']" )
                     null_errors += 1
                 else:
                     pass
@@ -261,7 +261,7 @@ class nquote:
                 try:
                     y = x[i]
                 except TypeError:
-                    print ( f"probe found NULL json data @: {x}/{i}" )
+                    print ( f"probe found NULL json data @: {x}['{i}']'" )
                     null_errors += 1
                 else:
                     pass
