@@ -239,60 +239,57 @@ class nquote:
 
             x = self.jsondata10
             z = 1
-            null_errors = 0
+            jd10_null_errors = 0
             print ( f"json data 10: ", end="" )
             for i in jd_10:
                 try:
                     y = x[i]
                 except TypeError:
                     print ( f"probe found NULL json data @: ['{i}']" )
-                    null_errors += 1
+                    jd10_null_errors += 1
                 except KeyError:
                     print ( f"probe found NULL key @: ['{i}']" )
-                    null_errors += 1
+                    jd10_null_errors += 1
                 else:
                     print ( f"{z}...", end="" )
                     z += 1
-            jd10_null_errors = null_errors
-            print ( f"Bad data: {jd10_null_errors} / 7" )
+            print ( f"Bad json data: {jd10_null_errors} / 7" )
 
             x = self.jsondata20
             z = 1
-            null_errors = 0
+            jd20_null_errors = 0
             print ( f"json data 20: ", end="" )
             for i in jd_20:
                 try:
                     y = x[i]
                 except TypeError:
                     print ( f"probe found NULL data @: ['{i}']" )
-                    null_errors += 1
+                    jd20_null_errors += 1
                 except KeyError:
                     print ( f"probe found NULL key @: ['{i}']" )
-                    null_errors += 1
+                    jd20_null_errors += 1
                 else:
                     print ( f"{z}...", end="" )
                     z += 1
-            jd20_null_errors = null_errors
-            print ( f"Bad data: {jd10_null_errors} / 8" )
+            print ( f"Bad json data: {jd10_null_errors} / 8" )
 
             x = self.jsondata30
             z = 1
-            null_errors = 0
+            jd31_null_errors = 0
             print ( f"json data 30: ", end="" )
             for i in jd_30:
                 try:
                     y = x[1]
                 except TypeError:
                     print ( f"probe found NULL json data @: {i}" )
-                    null_errors += 1
+                    jd31_null_errors += 1
                 except KeyError:
                     print ( f"probe found NULL key @: ['{i}']" )
-                    null_errors += 1
+                    jd31_null_errors += 1
                 else:
                     print ( f"{z}...", end="" )
                     z += 1
-            jd31_null_errors = null_errors
-            print ( f"Bad data: {jd10_null_errors} / 6" )
+            print ( f"Bad json data: {jd31_null_errors} / 6" )
 
             return jd10_null_errors, jd20_null_errors, jd31_null_errors
 
