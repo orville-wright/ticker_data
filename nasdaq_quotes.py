@@ -220,7 +220,7 @@ class nquote:
 
         self.jsondata10 = self.quote_json1['data']['summaryData']
         self.jsondata20 = self.quote_json2['data'][0]
-        self.jsondata30 = self.quote_json3['data']
+        self.jsondata31 = self.quote_json3['data']['infoTable']['rows'][0]
 
         def null_prechecker():
             """
@@ -237,6 +237,7 @@ class nquote:
             x = self.jsondata20
             z = 1
             null_errors = 0
+            Print ( f"json data 20: ", end="" )
             for i in jd_20:
                 try:
                     y = x[i]
@@ -252,9 +253,10 @@ class nquote:
             print ( f"\n" )
             jd20_null_errors = null_errors
 
-            x = self.jsondata30
+            x = self.jsondata31
             z = 1
             null_errors = 0
+            Print ( f"json data 31: ", end="" )
             for i in jd_31:
                 try:
                     y = x[i]
@@ -273,6 +275,7 @@ class nquote:
             x = self.jsondata10
             z = 1
             null_errors = 0
+            Print ( f"json data 10: ", end="" )
             for i in jd_10:
                 try:
                     y = x[i]
