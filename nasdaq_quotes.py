@@ -157,13 +157,11 @@ class nquote:
         cmi_debug = __name__+"::"+self.get_nquote.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         self.qs = symbol
-        # with self.js_session.get(self.quote_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp1:
 
         with self.js_session.get(self.summary_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp1:
             logging.info( '%s - Stage #1 / Summary / reading data / storing...' % cmi_debug )
             self.quote_json1 = json.loads(self.js_resp1.text)
             logging.info( '%s - Stage #1 - Done' % cmi_debug )
-
 
         with self.js_session.get(self.watchlist_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp2:
             logging.info( '%s - Stage #2 / Watchlist / reading data / storing...' % cmi_debug )
@@ -230,15 +228,15 @@ class nquote:
         # WATCHLIST quote data                                                  # Data wrangeling error counter
         if self.quote_json2['data'] is not None:                                # bad symbol TEST == Null json payload
             logging.info('%s - Stage #1 / Accessing data fields...' % cmi_debug )
-            jsondata20 = self.quote_json2['data'][0]                           # HEAD of data payload
-            co_sym = jsondata20['symbol']
-            co_name = jsondata20['companyName']
-            price = jsondata20['lastSalePrice']
-            price_net = jsondata20['netChange']
-            price_pct = jsondata20['percentageChange']
-            arrow_updown = jsondata20['deltaIndicator']
-            price_timestamp = jsondata20['lastTradeTimestampDateTime']
-            vol_abs = jsondata20['volume']
+            jsondata20 = self.quote_json2['data'][0]                            # HEAD of data payload
+            co_sym = jsondata20['symbol']                                       # "IBM"
+            co_name = jsondata20['companyName'] + str                           # "International Business Machines Corporation Common Stock"
+            price = jsondata20['lastSalePrice'] + str                           # "$143.32"
+            price_net = jsondata20['netChange']                                 # "+4.39"
+            price_pct = jsondata20['percentageChange']                          # "3.16%"
+            arrow_updown = jsondata20['deltaIndicator']                         # "up"
+            price_timestamp = jsondata20['lastTradeTimestampDateTime']          # "2021-10-01T00:00:00"
+            vol_abs = jsondata20['volume']                                      # "6,604,064"
             logging.info( '%s - Stage #1 /[8] fields - Done' % cmi_debug )
         else:
             logging.info('%s - Stage #1 / NULL json payload - NOT regular stock' % cmi_debug )        # bad symbol json payload
@@ -326,14 +324,18 @@ class nquote:
             logging.info('%s - Open price is bad, found N/A data' % cmi_debug )
             wrangle_errors += 1
         else:
-            open_price_cl = (re.sub('[ $,]', '', open_price))            # remove $ sign
+            ops = open_price.split()
+            open_price = ops[0]                                 # e.g. 140.8
+            open_price_net = ops[1]                             # e.g. +1.87
+            open_price_pct = ops[2]                             # e.g. (+1.35%)
+            open_price_cl = (re.sub('[ $,]', '', open_price))   # remove " " $ ,
 
         if prev_close == "N/A":
             prev_close_cl = 0
             logging.info('%s - Prev close is bad, found N/A data' % cmi_debug )
             wrangle_errors += 1
         else:
-            prev_close_cl = (re.sub('[ $,]', '', prev_close))            # remove $ sign
+            prev_close_cl = (re.sub('[ $,]', '', prev_close))   # remove $ sign
 
         if mkt_cap == "N/A":
             mkt_cap_cl = float(0)
@@ -344,21 +346,10 @@ class nquote:
             logging.info('%s - Mkt cap is ZERO, found N/A data' % cmi_debug )
             wrangle_errors += 1
         else:
-            mkt_cap_cl = np.float(re.sub('[,]', '', mkt_cap))            # remove ,
-            # TODO:
-            # this is where we create M_B_T scale data to insert
-            # into x.combo_df along wiht mkt_cap
-            # if mkt_cap < 500000 MBT = SM
-            # MBT = if mkt_cap =< 500,000,000 MBT = SM
-            # MBT = if mkt_cap =< 999,000,000 MBT = LM
-            # MBT = if mkt_cap =< 2,000,000,0000 MBT = SB
-            # MBT = if mkt_cap =< 100,000,000,000 MBT = LB
-            # MBT = if mkt_cap =< 999,999,999,999 MBT = MT
-
+            mkt_cap_cl = np.float(re.sub('[,]', '', mkt_cap))   # remove ,
             mkt_cap_cl = round(mkt_cap_cl / 1000000, 3)                  # resize & round mantissa = 3, as nasdaq.com gives full num
 
         vol_abs_cl = (re.sub('[,]', '', vol_abs))                        # remove ,
-        timestamp_cl = (re.sub('[DATA AS OF ]', '', price_timestamp) )   # remove prefix string "DATA AS OF "
 
         # craft final data structure.
         # NOTE: globally accessible and used by quote DF and quote DICT
@@ -373,7 +364,7 @@ class nquote:
            np.float(prev_close_cl), \
            np.float(vol_abs_cl), \
            mkt_cap_cl, \
-           timestamp_cl, \
+           price_timestamp, \
            time_now ]]
 
         # craft the quote DICT. Doesn't hurt to do this here as it assumed that the data
