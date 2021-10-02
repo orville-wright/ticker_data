@@ -218,6 +218,9 @@ class nquote:
         Wrangle, clean, convert, cast & format data as needed.
         """
 
+        self.jsondata10 = self.quote_json1['data']['summaryData']
+        self.jsondata20 = self.quote_json2['data'][0]
+        self.jsondata30 = self.quote_json3['data']
 
         def null_prechecker():
             """
@@ -231,7 +234,7 @@ class nquote:
             jd_31 = ("consolidated", "volume", "delta" )
             jd_10 = ("PreviousClose", "MarketCap", "TodayHighLow", "AverageVolume", "OneYrTarget", "Beta", "FiftTwoWeekHighLow" )
 
-            x = self.quote_json2['data'][0]
+            x = self.jsondata20
             null_errors = 0
             for i in jd_20:
                 try:
@@ -243,7 +246,7 @@ class nquote:
                     pass
             jd20_null_errors = null_errors
 
-            x = self.quote_json3['data']['infoTable']['rows'][0]
+            x = self.jsondata30
             null_errors = 0
             for i in jd_31:
                 try:
@@ -255,7 +258,7 @@ class nquote:
                     pass
             jd31_null_errors = null_errors
 
-            x = self.quote_json1['data']['summaryData']
+            x = self.jsondata10
             null_errors = 0
             for i in jd_10:
                 try:
