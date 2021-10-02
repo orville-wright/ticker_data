@@ -219,7 +219,7 @@ class nquote:
         """
 
 
-        def null_prechecker(self):
+        def null_prechecker():
             """
             Helper method to check all the json data fields for NULL values.
             We run this before trying to access list indexes, as that will exert an error.
