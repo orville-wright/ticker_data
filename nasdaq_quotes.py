@@ -239,7 +239,6 @@ class nquote:
             jd_31 = ("consolidated", "volume", "delta" )
 
             z = 1
-            x = self.jsondata10
             jd10_null_errors = 0
             try:
                 y = self.quote_json1['data']['summaryData']
@@ -250,6 +249,7 @@ class nquote:
                 print ( f"json data 10 (summary): probe found NULL key @: ['data']['summaryData']" )
                 jd10_null_errors = len(jd_10)
             else:
+                x = self.quote_json1['data']['summaryData']
                 print ( f"json data 10 (summary): ", end="" )
                 for i in jd_10:
                     try:
@@ -284,7 +284,6 @@ class nquote:
             print ( f"Bad json data: {jd10_null_errors} / 8" )
 
             z = 1
-            x = self.jsondata30
             jd31_null_errors = 0
             try:
                 y = self.jsondata30['infoTable']['rows'][0]
@@ -295,8 +294,9 @@ class nquote:
                 print ( f"json data 30 (premarket): probe found NULL key @: [infoTable][rows][0]" )
                 jd31_null_errors = len(jd_30)
             else:
+                x = self.jsondata30['infoTable']['rows'][0]
                 print ( f"json data 31 (premarket): ", end="" )
-                for i in jd_30:
+                for i in jd_31:
                     try:
                         y = x[i]
                     except TypeError:
