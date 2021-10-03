@@ -369,7 +369,7 @@ def main():
         """
         NLP Support function #3
         Assumes ml_ingest is already pre-built
-        Cycle thrug every item in the ml_ingest{} and processes...
+        Cycles thru each item in the ml_ingest{} and processes...
         Prints a nice sumamry of each NLP candidates in ml_digest{}
         """
         locality_code = { 0: 'Local',
@@ -468,7 +468,7 @@ def main():
 
         nlp_summary()
         print ( f" " )
-        yfn.dump_ml_ingest()
+
 
 # Read the news for just 1 stock symbol
     """
