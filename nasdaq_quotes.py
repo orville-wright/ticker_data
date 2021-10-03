@@ -226,9 +226,10 @@ class nquote:
 
         def null_prechecker():
             """
-            Helper method to check all the json data fields for NULL values.
-            We run this before trying to access list indexes, as that will exert an error.
-            And its arduous to wrap all this arround the data acessor method. Better to do it early.
+            private helper method to build_data()
+            Check all the json data index keys & fields for NULL values and type errors.
+            We run this before trying to access list indexes, as that will exert many hard errors.
+            Its arduous to wrap all this logic arround/inside the data acessor & wrangeling code. Better to do it early.
             """
             cmi_debug = __name__+"::"+null_prechecker.__name__+".#"+str(self.yti)
             logging.info( f'%s - probing json datasets for NULL zones...' % cmi_debug )
@@ -326,198 +327,203 @@ class nquote:
         a, b, c = null_prechecker()
         print ( f">>>DEBUG<<< : Null prechecks: j10: {a} / j20: {b}, j31: {c}" )
 
-        # WATCHLIST quote data                                                  # Data wrangeling error counter
-        if self.quote_json2['data'] is not None:                                # bad symbol TEST == Null json payload
-            logging.info('%s - Stage #1 / Accessing data fields...' % cmi_debug )
-            jsondata20 = self.quote_json2['data'][0]                            # HEAD of data payload
-            co_sym = jsondata20['symbol']                                       # "IBM"
-            co_name = jsondata20['companyName']                                 # "International Business Machines Corporation Common Stock"
-            price = jsondata20['lastSalePrice']                                 # "$143.32"
-            price_net = jsondata20['netChange']                                 # "+4.39"
-            price_pct = jsondata20['percentageChange']                          # "3.16%"
-            arrow_updown = jsondata20['deltaIndicator']                         # "up"
-            price_timestamp = jsondata20['lastTradeTimestampDateTime']          # "2021-10-01T00:00:00"
-            vol_abs = jsondata20['volume']                                      # "6,604,064"
-            logging.info( '%s - Stage #1 /[8] fields - Done' % cmi_debug )
-        else:
-            logging.info('%s - Stage #1 / NULL json payload - NOT regular stock' % cmi_debug )        # bad symbol json payload
-            self.quote.clear()
-            wrangle_errors += -1
-
-        # PRE-MARKET quoet data - 2 data zones
-        if self.quote_json3['data'] is not None:                                # bad symbol TEST == Null json payload
-            logging.info('%s - Stage #2 / Accessing data fields...' % cmi_debug )
-            jsondata30 = self.quote_json3['data']                               # HEAD of data payload 0
-            try:
-                jsondata31 = self.quote_json3['data']['infoTable']['rows'][0]       # HEAD of data payload 1
-            except TypeError:
-                logging.info('%s - WARNING / infoTable payload is NULL' % cmi_debug )        # bad symbol json payload
-                open_price = "$0.0 0.0 0.0"
-                open_volume = 0                                  # e.g. "71,506"
-                open_updown = "N/A"                              # e.g. "up"
+        if a == 0 and b == 0 and c == 0:    # GOOD - all data fields are available
+            # WATCHLIST quote data                                                  # Data wrangeling error counter
+            if self.quote_json2['data'] is not None:                                # bad symbol TEST == Null json payload
+                logging.info('%s - Stage #1 / Accessing data fields...' % cmi_debug )
+                jsondata20 = self.quote_json2['data'][0]                            # HEAD of data payload
+                co_sym = jsondata20['symbol']                                       # "IBM"
+                co_name = jsondata20['companyName']                                 # "International Business Machines Corporation Common Stock"
+                price = jsondata20['lastSalePrice']                                 # "$143.32"
+                price_net = jsondata20['netChange']                                 # "+4.39"
+                price_pct = jsondata20['percentageChange']                          # "3.16%"
+                arrow_updown = jsondata20['deltaIndicator']                         # "up"
+                price_timestamp = jsondata20['lastTradeTimestampDateTime']          # "2021-10-01T00:00:00"
+                vol_abs = jsondata20['volume']                                      # "6,604,064"
+                logging.info( '%s - Stage #1 /[8] fields - Done' % cmi_debug )
+            else:
+                logging.info('%s - Stage #1 / NULL json payload - NOT regular stock' % cmi_debug )        # bad symbol json payload
+                self.quote.clear()
                 wrangle_errors += -1
+
+            # PRE-MARKET quoet data - 2 data zones
+            if self.quote_json3['data'] is not None:                                # bad symbol TEST == Null json payload
+                logging.info('%s - Stage #2 / Accessing data fields...' % cmi_debug )
+                jsondata30 = self.quote_json3['data']                               # HEAD of data payload 0
+                try:
+                    jsondata31 = self.quote_json3['data']['infoTable']['rows'][0]       # HEAD of data payload 1
+                except TypeError:
+                    logging.info('%s - WARNING / infoTable payload is NULL' % cmi_debug )        # bad symbol json payload
+                    open_price = "$0.0 0.0 0.0"
+                    open_volume = 0                                  # e.g. "71,506"
+                    open_updown = "N/A"                              # e.g. "up"
+                    wrangle_errors += -1
+                else:
+                    open_price = jsondata31['consolidated']                             # WARN: multi-field string needs splitting/wrangeling e.g. "$140.8 +1.87 (+1.35%)"
+                    open_volume = jsondata31['volume']                                  # e.g. "71,506"
+                    open_updown = jsondata31['delta']                                   # e.g. "up"
+                    logging.info( '%s - Stage #2 / [3] fields - Done' % cmi_debug )
             else:
-                open_price = jsondata31['consolidated']                             # WARN: multi-field string needs splitting/wrangeling e.g. "$140.8 +1.87 (+1.35%)"
-                open_volume = jsondata31['volume']                                  # e.g. "71,506"
-                open_updown = jsondata31['delta']                                   # e.g. "up"
-                logging.info( '%s - Stage #2 / [3] fields - Done' % cmi_debug )
-        else:
-            logging.info('%s - Stage #2 / zone [data] NULL json payload - NOT regular stock' % cmi_debug )        # bad symbol json payload
-            self.quote.clear()
-            wrangle_errors += -1
+                logging.info('%s - Stage #2 / zone [data] NULL json payload - NOT regular stock' % cmi_debug )        # bad symbol json payload
+                self.quote.clear()
+                wrangle_errors += -1
 
-        # SUMMARY quote data
-        if self.quote_json1['data'] is not None:                                # bad symbol TEST == Null json payload
-            logging.info('%s - Stage #3 / Accessing data fields...' % cmi_debug )
-            jsondata10 = self.quote_json1['data']['summaryData']                # HEAD of data payload
-            prev_close = jsondata10['PreviousClose']['value']                   # e,g, "$138.93"
-            mkt_cap = jsondata10['MarketCap']['value']                          # e.g. "128,460,592,862"
-            today_hilo = jsondata10['TodayHighLow']['value']                    # WARN: multi-field string needs splitting/wrangeling e.g. "$143.97/$140.37"
-            avg_vol = jsondata10['AverageVolume']['value']                      # e.g. "4,811,121"
-            oneyear_target = jsondata10['OneYrTarget']['value']                 # e.g. "$151.00"
-            beta = jsondata10['Beta']['value']                                  # e.g. 1.23
-            LII_week_hilo = jsondata10['FiftTwoWeekHighLow']['value']           # WARN: multi-field string needs splitting/wrangeling e.g. "$152.84/$105.92"
-            logging.info( '%s - Stage #3 / [7] fields - Done' % cmi_debug )
-        else:
-            logging.info('%s - Stage #2 / NULL json payload - NOT regular stock' % cmi_debug )        # bad symbol json payload
-            self.quote.clear()
-            wrangle_errors += -1
+            # SUMMARY quote data
+            if self.quote_json1['data'] is not None:                                # bad symbol TEST == Null json payload
+                logging.info('%s - Stage #3 / Accessing data fields...' % cmi_debug )
+                jsondata10 = self.quote_json1['data']['summaryData']                # HEAD of data payload
+                prev_close = jsondata10['PreviousClose']['value']                   # e,g, "$138.93"
+                mkt_cap = jsondata10['MarketCap']['value']                          # e.g. "128,460,592,862"
+                today_hilo = jsondata10['TodayHighLow']['value']                    # WARN: multi-field string needs splitting/wrangeling e.g. "$143.97/$140.37"
+                avg_vol = jsondata10['AverageVolume']['value']                      # e.g. "4,811,121"
+                oneyear_target = jsondata10['OneYrTarget']['value']                 # e.g. "$151.00"
+                beta = jsondata10['Beta']['value']                                  # e.g. 1.23
+                LII_week_hilo = jsondata10['FiftTwoWeekHighLow']['value']           # WARN: multi-field string needs splitting/wrangeling e.g. "$152.84/$105.92"
+                logging.info( '%s - Stage #3 / [7] fields - Done' % cmi_debug )
+            else:
+                logging.info('%s - Stage #2 / NULL json payload - NOT regular stock' % cmi_debug )        # bad symbol json payload
+                self.quote.clear()
+                wrangle_errors += -1
 
-        # ######### wrangle, clean, cast & prepare the data ##############################################
-        logging.info('%s - Begin data wrangle workload...' % cmi_debug )
+            # ######### wrangle, clean, cast & prepare the data ##############################################
+            logging.info('%s - Begin data wrangle workload...' % cmi_debug )
 
-        co_sym_lj = co_sym.strip()
-        #co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )          # left justify TXT & convert to raw string
+            co_sym_lj = co_sym.strip()
+            #co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )          # left justify TXT & convert to raw string
 
-        co_name_lj = (re.sub('[\'\"]', '', co_name) )                    # remove " ' and strip leading/trailing spaces
-        co_name_lj = np.array2string(np.char.ljust(co_name_lj, 25) )     # left justify & convert to raw string
-        co_name_lj = (re.sub('[\']', '', co_name_lj) )                   # remove " ' and strip leading/trailing spaces
+            co_name_lj = (re.sub('[\'\"]', '', co_name) )                    # remove " ' and strip leading/trailing spaces
+            co_name_lj = np.array2string(np.char.ljust(co_name_lj, 25) )     # left justify & convert to raw string
+            co_name_lj = (re.sub('[\']', '', co_name_lj) )                   # remove " ' and strip leading/trailing spaces
 
-        if price == "N/A":
-            price_cl = 0
-            logging.info('%s - Price is bad, found N/A data' % cmi_debug )
-            wrangle_errors += 1
-        else:
-            price_cl = (re.sub('[ $,]', '', price))                      # remove $ sign
-
-        if price_net == "N/A":
-            price_net_cl = 0
-            logging.info('%s - Price NET is bad, found N/A data' % cmi_debug )
-            wrangle_errors += 1
-        elif price_net == 'UNCH':
-            price_net_cl = "Unch"
-            logging.info('%s - Price NET is unchanged' % cmi_debug )
-            wrangle_errors += 1
-        else:
-            price_net_cl = (re.sub('[\-+]', '', price_net))              # remove - + signs
-            price_net_cl = np.float(price_net)
-
-        if price_pct == "N/A":
-            price_pct_cl = 0
-            logging.info('%s - Price pct is bad, found N/A data' % cmi_debug )
-            wrangle_errors += 1
-        elif price_pct == "UNCH":
-            price_pct_cl = "Unch"
-            logging.info('%s - Price pct is unchanged' % cmi_debug )
-            wrangle_errors += 1
-        elif price_pct == '':
-            price_pct_cl = "No data"
-            logging.info('%s - Price pct is bad, field is Null/empty' % cmi_debug )
-            wrangle_errors += 1
-        else:
-            price_pct = (re.sub('[\-+%]', '', price_pct))                # remove - + % signs
-            price_pct_cl = np.float(price_pct)
-
-        # ################# open price(s) need extra treatment & care...
-        if open_price == "N/A" or open_price is None:
-            open_price_cl = np.float(0)
-            open_price_net = float(0)
-            open_price_pct_cl = float(0)
-            logging.info( f'%s - WARNING / open_price is bad, found N/A or NULL data: {open_price}' % cmi_debug )
-            wrangle_errors += 1
-        else:
-            ops = open_price.split()
-            # data is good...proceed to access 3 indices of sub-data from split list[]
-
-            try:
-                open_price = ops[0]                     # e.g. 140.8
-            except IndexError:
-                logging.info('%s - WARNING / open_price is NULL / setting to: $0.0' % cmi_debug )
-                open_price = float(0)
+            if price == "N/A":
+                price_cl = 0
+                logging.info('%s - Price is bad, found N/A data' % cmi_debug )
                 wrangle_errors += 1
             else:
-                open_price_cl = (re.sub('[ $,]', '', open_price))   # remove " " $ ,
-                # data is good...
+                price_cl = (re.sub('[ $,]', '', price))                      # remove $ sign
 
-            try:
-                open_price_net = ops[1]                 # (test for missing data) - good data =  +1.87
-            except IndexError:
-                logging.info('%s - WARNING / open_price_net is NULL / setting to: $0.0' % cmi_debug )
-                open_price_net = float(0)               # set NULL data to ZERO
+            if price_net == "N/A":
+                price_net_cl = 0
+                logging.info('%s - Price NET is bad, found N/A data' % cmi_debug )
                 wrangle_errors += 1
-                # data is good...
-
-            try:
-                open_price_pct = ops[2]                 # (test for missing data) - good data = e.g. (+1.35%)"
-            except IndexError:
-                logging.info('%s - WARNING / open_price_pct is NULL / setting to: %0.0' % cmi_debug )
-                open_price_pct = float(0)               # set NULL data to ZERO
+            elif price_net == 'UNCH':
+                price_net_cl = "Unch"
+                logging.info('%s - Price NET is unchanged' % cmi_debug )
                 wrangle_errors += 1
             else:
-                open_price_pct_cl = (re.sub('[)(%]', '', price_pct))
-            #################################################
+                price_net_cl = (re.sub('[\-+]', '', price_net))              # remove - + signs
+                price_net_cl = np.float(price_net)
 
-        if prev_close == "N/A":
-            prev_close_cl = 0
-            logging.info('%s - Prev close is bad, found N/A data' % cmi_debug )
-            wrangle_errors += 1
+            if price_pct == "N/A":
+                price_pct_cl = 0
+                logging.info('%s - Price pct is bad, found N/A data' % cmi_debug )
+                wrangle_errors += 1
+            elif price_pct == "UNCH":
+                price_pct_cl = "Unch"
+                logging.info('%s - Price pct is unchanged' % cmi_debug )
+                wrangle_errors += 1
+            elif price_pct == '':
+                price_pct_cl = "No data"
+                logging.info('%s - Price pct is bad, field is Null/empty' % cmi_debug )
+                wrangle_errors += 1
+            else:
+                price_pct = (re.sub('[\-+%]', '', price_pct))                # remove - + % signs
+                price_pct_cl = np.float(price_pct)
+
+            # ################# open price(s) need extra treatment & care...
+            if open_price == "N/A" or open_price is None:
+                open_price_cl = np.float(0)
+                open_price_net = float(0)
+                open_price_pct_cl = float(0)
+                logging.info( f'%s - WARNING / open_price is bad, found N/A or NULL data: {open_price}' % cmi_debug )
+                wrangle_errors += 1
+            else:
+                ops = open_price.split()
+                # data is good...proceed to access 3 indices of sub-data from split list[]
+
+                try:
+                    open_price = ops[0]                     # e.g. 140.8
+                except IndexError:
+                    logging.info('%s - WARNING / open_price is NULL / setting to: $0.0' % cmi_debug )
+                    open_price = float(0)
+                    wrangle_errors += 1
+                else:
+                    open_price_cl = (re.sub('[ $,]', '', open_price))   # remove " " $ ,
+                    # data is good...
+
+                try:
+                    open_price_net = ops[1]                 # (test for missing data) - good data =  +1.87
+                except IndexError:
+                    logging.info('%s - WARNING / open_price_net is NULL / setting to: $0.0' % cmi_debug )
+                    open_price_net = float(0)               # set NULL data to ZERO
+                    wrangle_errors += 1
+                    # data is good...
+
+                try:
+                    open_price_pct = ops[2]                 # (test for missing data) - good data = e.g. (+1.35%)"
+                except IndexError:
+                    logging.info('%s - WARNING / open_price_pct is NULL / setting to: %0.0' % cmi_debug )
+                    open_price_pct = float(0)               # set NULL data to ZERO
+                    wrangle_errors += 1
+                else:
+                    open_price_pct_cl = (re.sub('[)(%]', '', price_pct))
+                #################################################
+
+            if prev_close == "N/A":
+                prev_close_cl = 0
+                logging.info('%s - Prev close is bad, found N/A data' % cmi_debug )
+                wrangle_errors += 1
+            else:
+                prev_close_cl = (re.sub('[ $,]', '', prev_close))   # remove $ sign
+
+            if mkt_cap == "N/A":
+                mkt_cap_cl = float(0)
+                logging.info('%s - Mkt cap is bad, found N/A data' % cmi_debug )
+                wrangle_errors += 1
+            elif mkt_cap == 0:
+                mkt_cap_cl = float(0)
+                logging.info('%s - Mkt cap is ZERO, found N/A data' % cmi_debug )
+                wrangle_errors += 1
+            else:
+                mkt_cap_cl = np.float(re.sub('[,]', '', mkt_cap))   # remove ,
+                mkt_cap_cl = round(mkt_cap_cl / 1000000, 3)                  # resize & round mantissa = 3, as nasdaq.com gives full num
+
+            vol_abs_cl = (re.sub('[,]', '', vol_abs))                        # remove ,
+
+            # craft final data structure.
+            # NOTE: globally accessible and used by quote DF and quote DICT
+            self.data0 = [[ \
+               co_sym_lj, \
+               co_name_lj, \
+               arrow_updown, \
+               np.float(price_cl), \
+               price_net_cl, \
+               price_pct_cl, \
+               np.float(open_price_cl), \
+               np.float(prev_close_cl), \
+               np.float(vol_abs_cl), \
+               mkt_cap_cl, \
+               price_timestamp, \
+               time_now ]]
+
+            # craft the quote DICT. Doesn't hurt to do this here as it assumed that the data
+            # is all nice & clean & in its final beautiful shape by now.
+            logging.info('%s - Build global quote dict' % cmi_debug )        # so we can access it natively if needed, without using pandas
+            self.quote = dict( \
+                    symbol=co_sym_lj.rstrip(), \
+                    name=co_name, \
+                    updown=arrow_updown, \
+                    cur_price=price_cl, \
+                    prc_change=price_net_cl, \
+                    pct_change=price_pct_cl, \
+                    open_price=open_price_cl, \
+                    prev_close=prev_close_cl, \
+                    vol=vol_abs_cl, \
+                    mkt_cap=mkt_cap_cl )
+
+            return wrangle_errors
         else:
-            prev_close_cl = (re.sub('[ $,]', '', prev_close))   # remove $ sign
-
-        if mkt_cap == "N/A":
-            mkt_cap_cl = float(0)
-            logging.info('%s - Mkt cap is bad, found N/A data' % cmi_debug )
-            wrangle_errors += 1
-        elif mkt_cap == 0:
-            mkt_cap_cl = float(0)
-            logging.info('%s - Mkt cap is ZERO, found N/A data' % cmi_debug )
-            wrangle_errors += 1
-        else:
-            mkt_cap_cl = np.float(re.sub('[,]', '', mkt_cap))   # remove ,
-            mkt_cap_cl = round(mkt_cap_cl / 1000000, 3)                  # resize & round mantissa = 3, as nasdaq.com gives full num
-
-        vol_abs_cl = (re.sub('[,]', '', vol_abs))                        # remove ,
-
-        # craft final data structure.
-        # NOTE: globally accessible and used by quote DF and quote DICT
-        self.data0 = [[ \
-           co_sym_lj, \
-           co_name_lj, \
-           arrow_updown, \
-           np.float(price_cl), \
-           price_net_cl, \
-           price_pct_cl, \
-           np.float(open_price_cl), \
-           np.float(prev_close_cl), \
-           np.float(vol_abs_cl), \
-           mkt_cap_cl, \
-           price_timestamp, \
-           time_now ]]
-
-        # craft the quote DICT. Doesn't hurt to do this here as it assumed that the data
-        # is all nice & clean & in its final beautiful shape by now.
-        logging.info('%s - Build global quote dict' % cmi_debug )        # so we can access it natively if needed, without using pandas
-        self.quote = dict( \
-                symbol=co_sym_lj.rstrip(), \
-                name=co_name, \
-                updown=arrow_updown, \
-                cur_price=price_cl, \
-                prc_change=price_net_cl, \
-                pct_change=price_pct_cl, \
-                open_price=open_price_cl, \
-                prev_close=prev_close_cl, \
-                vol=vol_abs_cl, \
-                mkt_cap=mkt_cap_cl )
+            wrangle_errors = 50
 
         return wrangle_errors
 
