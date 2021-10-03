@@ -281,7 +281,7 @@ class nquote:
                 else:
                     print ( f"{z}...", end="" )
                     z += 1
-            print ( f"NULL probe 20 (API watchlist) / errors: {jd10_null_errors} / 8" )
+            print ( f"NULL probe 20 (API watchlist) / errors: {jd20_null_errors} / 8" )
 
             z = 1
             jd31_null_errors = 0
