@@ -324,7 +324,7 @@ class nquote:
         null_count = 0
 
         a, b, c = null_prechecker()
-        print ( f">>>DEBUG<<< : Null prechecks: j20: {a} / j30: {b}, j10: {c}" )
+        print ( f">>>DEBUG<<< : Null prechecks: j10: {a} / j20: {b}, j31: {c}" )
 
         # WATCHLIST quote data                                                  # Data wrangeling error counter
         if self.quote_json2['data'] is not None:                                # bad symbol TEST == Null json payload
