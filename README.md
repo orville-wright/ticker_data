@@ -3,17 +3,17 @@
 Date: 02 Oct 2021<br>
 ** Major updates **<br>
 <br>
-NASDAQ.com did a major release of their Live Quote API data model. NASDAQ pushed the update out on Sept 31st and it went live Oct 1. This broke a lot of quote related code as NASDAQ.com has now broken their Live quote data model into multiple API zones. The fix has been completed and is code is now re-aligned with NASDAQ.com new data model (which is a bit messy under the covers as it's now 4+ API zones & has inconsistencies in the json data structures across the 4 zones).<br>
+NASDAQ.com did a major release of their Live Quote API data model. NASDAQ pushed their update out on Sept 31st and it became live on Oct 1. This broke a lot of quote related code as NASDAQ.com has divided their Live quote data model into multiple API zones. The fix has been completed and the code is now re-aligned with NASDAQ.com new data model (which is a bit messy under the covers as it's now 4+ API zones & has inconsistencies in the json data structures across the 4 zones).<br>
 <br>
 <br>
 28 Sept 2021:<br>
-YAHOO.com did a major rewrite of their internal page data structures (see disclaimer below). This broke the finance.yahoo.com core data scraper badly. Code is now fully aware of Yahoo's enhancments. Logic works good (again). I've started investigating the query1.yahoo.com API interface as an alternative to scraping.<br>
-- The news ML (NLP) prepare functionaly (i.e. -n <symbol> and -a CMD_line options) are stable. It runs without error & hinter/confidence logic complete. All that work is necessary to prepare to read a corpus of new articles etc. We need to know which articles are 'Real news reports' which articels are junk adds or bugus links to adds. 
+YAHOO.com did a major rewrite of their internal page data structures (see disclaimer below). This broke the finance.yahoo.com core data scraper badly. The code is now fully aware of Yahoo's enhancments. The logic works well (again). I've started investigating the query1.yahoo.com API interface as an alternative to scraping.<br>
+- The news ML (NLP) prepare functionaly (i.e. -n <symbol> and -a CMD_line options) are now stable. The NLP prep code runs without errors & the new hinter/confidence logic is complete. All this NLP pre-work code is necessary to prepare the machine to NLP read a corpus of stock news articles etc. We need to know which articles are 'Real news reports' which articels are junk adds or bogus links to junk adds, and where the final target article lives in the real world.
 <br>
 <br>
 Older news...<br>
-- ML NLP (Natural Language Processing) hacking continues on - The machine wants to read news artciles for a stock and guess/inferr sentimnet
-- the system now scans the Yahoo Finance NEWS feed of multiple stocks and inferrs (with confidence) new articles that are fake/credible, their type & thier true locality
+- ML NLP (Natural Language Processing) hacking continues - The machine wants to NLP read the news artciles for a stock and guess/inferr sentimnet.
+- the NLP prep system now scans the Yahoo Finance NEWS feeds of multiple stocks and inferrs (with confidence) new articles that are fake/credible, their type & thier true locality.
 - This is pretty complex (i..e deciding what a real news item is (article/reseasrch report/vide story, op-ed article etc) and then learning the final target locatlity of the article you want to the machine to NLP real. All this NLP prep-code is very finaince.yahoo.com centric, but now that its complete...it wont be difficlt to port to other news data sources.<br>
 <br>
 <br>
