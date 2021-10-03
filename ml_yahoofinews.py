@@ -526,7 +526,7 @@ class yfnews_reader:
                     #
                 else:
                     logging.info ( f"%s - Depth: 2 / NO local page interpreter available / u: {uhint} t: {thint}" % cmi_debug )
-                    return uhint, 10.0, self.this_article_url
+                    return uhint, 9.9, self.this_article_url
                     #else:
                     # still need to catch OP-ED...which is similar to [story continues...] and [Read full article]
                     #    logging.info ( f"%s - Depth: 2 / NO <a> / Simple-stub [OP-ED]" % cmi_debug )
@@ -535,12 +535,16 @@ class yfnews_reader:
 
             if uhint == 2:
                 if local_video.find('p'):          # video page only has a small <p> zone. NOT much TEXT (all the news is in the video)
-                logging.info ( f"%s - Depth: 2 / GOOD [Video report] minimal text" % cmi_debug )
-                logging.info ( f"%s - Depth: 2 / confidence level / u: {uhint} t: {thint}" % cmi_debug )
-                return uhint, thint, self.this_article_url                      # VIDEO story with Minimal text article
+                    logging.info ( f"%s - Depth: 2 / GOOD [Video report] minimal text" % cmi_debug )
+                    logging.info ( f"%s - Depth: 2 / confidence level / u: {uhint} t: {thint}" % cmi_debug )
+                    return uhint, thint, self.this_article_url                   # VIDEO story with Minimal text article
+                else:
+                    logging.info ( f"%s - Depth: 2 / ERROR failed to interpret [Video report] page" % cmi_debug )
+                    logging.info ( f"%s - Depth: 2 / confidence level / u: {uhint} t: {thint}" % cmi_debug )
+                    return uhint, 9.9, self.this_article_url                   # VIDEO story with Minimal text article
 
             if uhint == 3:
-                logging.info ( f"%s - Depth: 2 / External publication - CANT interpret Remote article @ [Depth 2]" % cmi_debug )
+                logging.info ( f"%s - Depth: 2 / External publication - CANT interpret remote article @ [Depth 2]" % cmi_debug )
                 logging.info ( f"%s - Depth: 2 / confidence level / u: {uhint} t: {thint}" % cmi_debug )
                 return uhint, thint, self.this_article_url                      # Explicit remote article - can't interpret off-site article
 
@@ -553,9 +557,7 @@ class yfnews_reader:
                 # e.g. https://finance.yahoo.com/research/reports/MS_0P0000XWEY_AnalystReport_1632872327000
                 return uhint, thint, self.this_article_url                      # Explicit remote article - can't see into this off-site article
 
-
-
-        logging.info ( f"%s - Depth: 2 / ERROR NO page interpreter logic available" % cmi_debug )
+        logging.info ( f"%s - Depth: 2 / ERROR NO page interpreter logic triggered" % cmi_debug )
         return 10, 10.0, "ERROR_unknown_state!"              # error unknown state
 
 
