@@ -3,7 +3,7 @@
 Date: 02 Oct 2021<br>
 ** Major updates **<br>
 <br>
-NASDAQ.com did a major release of their Live Quote API data model. This was pushed on Sept 31st and went live Oct 1. This broke a lot of stuff as NASDAQ.com has now broken the Live quote data model into multiple API zones. The fix has been completed and is code is now re-aligned with NASDAQ.com new data model (which is a bit messy under the covers now that it's 4+ API zones).<br>
+NASDAQ.com did a major release of their Live Quote API data model. NASDAQ pushed the update out on Sept 31st and it went live Oct 1. This broke a lot of quote related code as NASDAQ.com has now broken their Live quote data model into multiple API zones. The fix has been completed and is code is now re-aligned with NASDAQ.com new data model (which is a bit messy under the covers as it's now 4+ API zones & has inconsistencies in the json data structures across the 4 zones).<br>
 <br>
 <br>
 28 Sept 2021:<br>
@@ -11,17 +11,19 @@ YAHOO.com did a major rewrite of their internal page data structures (see discla
 - The news ML (NLP) prepare functionaly (i.e. -n <symbol> and -a CMD_line options) are stable. It runs without error & hinter/confidence logic complete. All that work is necessary to prepare to read a corpus of new articles etc. We need to know which articles are 'Real news reports' which articels are junk adds or bugus links to adds. 
 <br>
 <br>
+Older news...<br>
 - ML NLP (Natural Language Processing) hacking continues on - The machine wants to read news artciles for a stock and guess/inferr sentimnet
-- the system now scans the news Yahoo Finance feed of multiple stocks and inferrs (with confidence) new articles that are fake/credible, their type & thier true locality
-- This is pretty complex and very finaince.yahoo.com centric. But oone its complete, it wont be difficlt to port to other news data sources.
-
-
-
-**DISCLAIMER**: This code is still in heavy development & design. Much of it works well, but a few areas are still early in their prototyping phase (e.g. ML & A.I). Also, the overall strategy behind the design is subject to change as code in key areas becomes more functional.
-- Use at you own risk
-
-**SYNOPSIS**: I built this App to extract live stock data (the raw data info) from various real-time Market web feeds.<br>
-It's main role is to literally *get at the raw data*, so you can do much more interesting things with it.<br>
+- the system now scans the Yahoo Finance NEWS feed of multiple stocks and inferrs (with confidence) new articles that are fake/credible, their type & thier true locality
+- This is pretty complex (i..e deciding what a real news item is (article/reseasrch report/vide story, op-ed article etc) and then learning the final target locatlity of the article you want to the machine to NLP real. All this NLP prep-code is very finaince.yahoo.com centric, but now that its complete...it wont be difficlt to port to other news data sources.<br>
+<br>
+<br>
+<br>
+**DISCLAIMER**<br>
+Tis code is still in heavy development & design. Much of it works well, but a few areas are still early in their prototyping phase (e.g. ML & A.I). Also, the overall strategy behind the design is subject to change as code in key areas becomes more functional. - Use at you own risk.<br>
+<br>
+**SYNOPSIS**<br>
+I built this App to extract live stock data (the raw data info) from various real-time Market web feeds.<br>
+It's main objectis is to literally *get at the raw underlying data*, so you can do much more interesting things with it.<br>
 See the WIKI for more info: https://github.com/orville-wright/ticker_data/wiki
 
 The code currently supports the following data sources, data extraction methods and API's...
