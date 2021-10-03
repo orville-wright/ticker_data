@@ -1,9 +1,13 @@
 # ticker_data
 
-Date: 28 Sept 2021
+Date: 02 Oct 2021
 ** Major updates **<br>
 <br>
-YAHOO.com did a major rewrite of their internal page data structures (see disclaimer below). This broke the finance.yahoo.com core data scraper badly. Code is now fully aware of Yahoo's enhancments. Logic works good (again).<br>
+NASDAQ.com did a major release of their Live Quote API data model. This was pushed on Sept 31st and went live Oct 1. This broke a lot of stuff as NASDAQ.com has now broken the Live quote data model into multiple API zones. The fix has been completed and is code is now re-aligned with NASDAQ.com new data model (which is a bit messy under the covers now that it's 4+ API zones).<br>
+<br>
+<br>
+28 Sept 2021:<br>
+YAHOO.com did a major rewrite of their internal page data structures (see disclaimer below). This broke the finance.yahoo.com core data scraper badly. Code is now fully aware of Yahoo's enhancments. Logic works good (again). I've started investigating the query1.yahoo.com API interface as an alternative to scraping.<br>
 - The news ML (NLP) prepare functionaly (i.e. -n <symbol> and -a CMD_line options) are stable. It runs without error & hinter/confidence logic complete. All that work is necessary to prepare to read a corpus of new articles etc. We need to know which articles are 'Real news reports' which articels are junk adds or bugus links to adds. 
 <br>
 <br>
