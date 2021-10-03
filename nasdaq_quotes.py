@@ -299,7 +299,7 @@ class nquote:
                 print ( f"json data 31 (premarket): ", end="" )
                 for i in jd_30:
                     try:
-                        y = x[1]
+                        y = x[i]
                     except TypeError:
                         print ( f"probe found NULL json data @: {i}" )
                         jd31_null_errors += 1
