@@ -218,8 +218,8 @@ class nquote:
         Wrangle, clean, convert, cast & format data as needed.
         """
 
-        self.jsondata11 = self.quote_json1['data']                              # summary
-        self.jsondata10 = self.quote_json1['data']['summaryData']               # summary
+         = self.quote_json1['data']                              # summary
+        #self.jsondata10 = self.quote_json1['data']['summaryData']               # summary
         self.jsondata20 = self.quote_json2['data'][0]                           # watchlist
         self.jsondata30 = self.quote_json3['data']                              # premarket
         #self.jsondata31 = self.quote_json3['data']['infoTable']['rows'][0]
@@ -241,7 +241,7 @@ class nquote:
             z = 1
             jd10_null_errors = 0
             try:
-                y = self.quote_json1['data']['summaryData']
+                y = self.quote_json11['summaryData']    #y = self.quote_json1['data']['summaryData']
             except TypeError:
                 print ( f"json data 10 (summary): probe found NULL data @: ['data']['summaryData']" )
                 jd10_null_errors = len(jd_10)
@@ -249,7 +249,7 @@ class nquote:
                 print ( f"json data 10 (summary): probe found NULL key @: ['data']['summaryData']" )
                 jd10_null_errors = len(jd_10)
             else:
-                x = self.quote_json1['data']['summaryData']
+                x = self.jsondata11['summaryData']
                 print ( f"json data 10 (summary): ", end="" )
                 for i in jd_10:
                     try:
