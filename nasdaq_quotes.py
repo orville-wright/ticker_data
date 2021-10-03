@@ -243,14 +243,14 @@ class nquote:
             try:
                 y = self.jsondata11['summaryData']    #y = self.quote_json1['data']['summaryData']
             except TypeError:
-                print ( f"json data 10 (summary): probe found NULL data @: ['data']['summaryData']" )
-                jd10_null_errors = len(jd_10)
+                print ( f"json data 10 (summary): probe found NULL data @: [data][summaryData]" )
+                jd10_null_errors = 1 + len(jd_10)
             except KeyError:
-                print ( f"json data 10 (summary): probe found NULL key @: ['data']['summaryData']" )
-                jd10_null_errors = len(jd_10)
+                print ( f"json data 10 (summary): probe found NULL key @: [data][summaryData]" )
+                jd10_null_errors = 1 + len(jd_10)
             else:
                 x = self.jsondata11['summaryData']
-                print ( f"json data 10 (summary): ", end="" )
+                print ( f"json data 11 (summary): ", end="" )
                 for i in jd_10:
                     try:
                         y = x[i]
@@ -263,7 +263,7 @@ class nquote:
                     else:
                         print ( f"{z}...", end="" )
                         z += 1
-                print ( f"Bad json data: {jd10_null_errors} / 7" )
+            print ( f"NULL probe 10/11 (API: summary) / errors: {jd10_null_errors} / 7" )
 
             z = 1
             x = self.jsondata20
@@ -281,7 +281,7 @@ class nquote:
                 else:
                     print ( f"{z}...", end="" )
                     z += 1
-            print ( f"Bad json data: {jd10_null_errors} / 8" )
+            print ( f"NULL probe 20 (API watchlist) / errors: {jd10_null_errors} / 8" )
 
             z = 1
             jd31_null_errors = 0
@@ -289,10 +289,10 @@ class nquote:
                 y = self.jsondata30['infoTable']['rows'][0]
             except TypeError:
                 print ( f"json data 30 (premarket): probe found NULL data @: [infoTable][rows][0]" )
-                jd31_null_errors = len(jd_30)
+                jd31_null_errors = 1 + len(jd_30)
             except KeyError:
                 print ( f"json data 30 (premarket): probe found NULL key @: [infoTable][rows][0]" )
-                jd31_null_errors = len(jd_30)
+                jd31_null_errors = 1 + len(jd_30)
             else:
                 x = self.jsondata30['infoTable']['rows'][0]
                 print ( f"json data 31 (premarket): ", end="" )
@@ -308,7 +308,7 @@ class nquote:
                     else:
                         print ( f"{z}...", end="" )
                         z += 1
-                print ( f"Bad json data: {jd31_null_errors} / 6" )
+            print ( f"NULL prob 30/31 (API premarket): errors: {jd31_null_errors} / 6" )
 
             return jd10_null_errors, jd20_null_errors, jd31_null_errors
 
