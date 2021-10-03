@@ -233,7 +233,7 @@ class nquote:
             """
             cmi_debug = __name__+"::"+null_prechecker.__name__+".#"+str(self.yti)
             logging.info( f'%s - probing json keys/fields for NULLs...' % cmi_debug )
-            
+
             jd_10 = ("PreviousClose", "MarketCap", "TodayHighLow", "AverageVolume", "OneYrTarget", "Beta", "FiftTwoWeekHighLow" )
             jd_20 = ("symbol", "companyName", "lastSalePrice", "netChange", "percentageChange", "deltaIndicator", "lastTradeTimestampDateTime", "volume" )
             jd_30 = ("infoTable", "infoTable']['rows", "infoTable']['rows'][0", "infoTable']['rows'][0]['consolidated'",
@@ -268,7 +268,7 @@ class nquote:
                     else:
                         #print ( f"{z}...", end="" )
                         z += 1
-            logging.info( f"%s - NULL probe 10/11 (API=summary) / errors: {jd10_null_errors} / 7" )
+            logging.info( f"%s - NULL probe 10/11 (API=summary) / errors: {jd10_null_errors} / 7" % cmi_debug )
 
             # ############ ZONE #2 NULL checks....
             z = 1
@@ -289,7 +289,7 @@ class nquote:
                 else:
                     # print ( f"{z}...", end="" )
                     z += 1
-            logging.info( f"%s - NULL probe 20 (API=watchlist) / errors: {jd20_null_errors} / 8" )
+            logging.info( f"%s - NULL probe 20 (API=watchlist) / errors: {jd20_null_errors} / 8" % cmi_debug )
 
             # ############ ZONE #3 NULL checks....
             z = 1
@@ -337,7 +337,6 @@ class nquote:
         null_count = 0
 
         a, b, c = null_prechecker()
-        print ( f">>>DEBUG<<< : Null prechecks: j10: {a} / j20: {b}, j31: {c}" )
 
         if a == 0 and b == 0 and c == 0:    # GOOD - all data fields are available
             # WATCHLIST quote data                                                  # Data wrangeling error counter
