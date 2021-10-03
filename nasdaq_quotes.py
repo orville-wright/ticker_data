@@ -321,7 +321,7 @@ class nquote:
                     else:
                         # print ( f"{z}...", end="" )
                         z += 1
-            logging.info( f"%s - NULL prob 30/31 (API=premarket): errors: {jd31_null_errors} / 6" % cmi_debug )
+            logging.info( f"%s - NULL probe 30/31 (API=premarket): errors: {jd31_null_errors} / 6" % cmi_debug )
 
             return jd10_null_errors, jd20_null_errors, jd31_null_errors
 
@@ -446,13 +446,11 @@ class nquote:
                 open_price_cl = np.float(0)
                 open_price_net = float(0)
                 open_price_pct_cl = float(0)
-                logging.info( f'%s - WARNING / open_price is bad, found N/A or NULL data: {open_price}' % cmi_debug )
+                logging.info( f'%s - WARNING / open_price NULL / setting to $0.0: {open_price}' % cmi_debug )
                 wrangle_errors += 1
             else:
                 ops = open_price.split()
-                # data is good...proceed to access 3 indices of sub-data from split list[]
-
-                try:
+                try:    # data is good...proceed to access 3 indices of sub-data from split list[]
                     open_price = ops[0]                     # e.g. 140.8
                 except IndexError:
                     logging.info('%s - WARNING / open_price is NULL / setting to: $0.0' % cmi_debug )
@@ -460,9 +458,8 @@ class nquote:
                     wrangle_errors += 1
                 else:
                     open_price_cl = (re.sub('[ $,]', '', open_price))   # remove " " $ ,
-                    # data is good...
 
-                try:
+                try:    # data is good...
                     open_price_net = ops[1]                 # (test for missing data) - good data =  +1.87
                 except IndexError:
                     logging.info('%s - WARNING / open_price_net is NULL / setting to: $0.0' % cmi_debug )
@@ -478,7 +475,7 @@ class nquote:
                     wrangle_errors += 1
                 else:
                     open_price_pct_cl = (re.sub('[)(%]', '', price_pct))
-                #################################################
+            #################################################
 
             if prev_close == "N/A":
                 prev_close_cl = 0
