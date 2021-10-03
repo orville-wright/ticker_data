@@ -391,15 +391,15 @@ def main():
                 r_uhint, r_thint, r_xturl = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
                 p_r_xturl = urlparse(r_xturl)
                 inf_type = yfn.uh.confidence_lvl(thint)     # returned var is a tupple
-
+                #
                 print ( f"- NLP candidate" )                # all type 0 are assumed to be REAL news
                 print ( f"Origin URL:    [ {t_url.netloc} ] / {uhdescr} / {inf_type[0]} / ", end="" )
                 print ( f"{locality_code.get(inf_type[1])}" )
                 uhint, uhdescr = uh.uhinter(21, p_r_xturl)
                 print ( f"Target URL:    [ {p_r_xturl.netloc} ] / {uhdescr} / ", end="" )
-                print ( f"{locality_code.get(inf_type[1])}" )
+                print ( f"{locality_code.get(uhint}" )
                 print ( f"====================== Depth 2 ======================" )
-                #
+                # summary report...
             elif sn_row['type'] == 1:                     # possibly not news? (Micro Ad)
                 print( f"News article:  {sn_idx} / {sn_row['symbol']} /", end="" )
                 t_url = urlparse(sn_row['url'])
@@ -409,13 +409,13 @@ def main():
                 r_uhint, r_thint, r_xturl = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
                 p_r_xturl = urlparse(r_xturl)
                 inf_type = yfn.uh.confidence_lvl(thint)
-                
+                # summary report...
                 print ( f"NLP candidate" )                # all type 0 are assumed to be REAL news
                 print ( f"Origin URL:    [ {t_url.netloc} ] / {uhdescr} / {inf_type[0]} / ", end="" )
                 print ( f"{locality_code.get(inf_type[1], 'in flux')}" )
                 uhint, uhdescr = uh.uhinter(21, p_r_xturl)
                 print ( f"Target URL:    [ {p_r_xturl.netloc} ] / {uhdescr} / ", end="" )
-                print ( f"{locality_code.get(inf_type[1])}" )
+                print ( f"{locality_code.get(uhint)}" )
                 print ( f"====================== Depth 2 ======================" )
                 #
             elif sn_row['type'] == 2:                     # possibly not news? (Micro Ad)
