@@ -373,7 +373,8 @@ def main():
         Prints a nice sumamry of each NLP candidates in ml_digest{}
         """
         locality_code = { 0: 'Local',
-                    1: 'Remote',
+                    1: 'External',
+                    3: 'External',
                     9: 'Unknown'
                     }
 
@@ -390,6 +391,7 @@ def main():
                 r_uhint, r_thint, r_xturl = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
                 p_r_xturl = urlparse(r_xturl)
                 inf_type = yfn.uh.confidence_lvl(thint)     # returned var is a tupple
+
                 print ( f"- NLP candidate" )                # all type 0 are assumed to be REAL news
                 print ( f"Origin URL:    [ {t_url.netloc} ] / {uhdescr} / {inf_type[0]} / ", end="" )
                 print ( f"{locality_code.get(inf_type[1])}" )
@@ -407,6 +409,7 @@ def main():
                 r_uhint, r_thint, r_xturl = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
                 p_r_xturl = urlparse(r_xturl)
                 inf_type = yfn.uh.confidence_lvl(thint)
+                
                 print ( f"NLP candidate" )                # all type 0 are assumed to be REAL news
                 print ( f"Origin URL:    [ {t_url.netloc} ] / {uhdescr} / {inf_type[0]} / ", end="" )
                 print ( f"{locality_code.get(inf_type[1], 'in flux')}" )

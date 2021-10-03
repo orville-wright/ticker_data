@@ -54,6 +54,7 @@ class url_hinter:
         cmi_debug = __name__+"::uhinter.eng#"+str(self.yti)+"_cyc#"+str(hcycle)
         logging.info('%s - CALLED' % cmi_debug )
 
+        # INFO: This metainfo does NOT defin locality. You cant inferr locality truth from it. 
         uhint_code = { 'm': ('News brief', 0),
                     'news': ('News article', 1),
                     'video': ('Video story', 2),
