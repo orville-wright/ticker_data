@@ -241,7 +241,7 @@ class nquote:
             z = 1
             jd10_null_errors = 0
             try:
-                y = self.quote_json11['summaryData']    #y = self.quote_json1['data']['summaryData']
+                y = self.jsondata11['summaryData']    #y = self.quote_json1['data']['summaryData']
             except TypeError:
                 print ( f"json data 10 (summary): probe found NULL data @: ['data']['summaryData']" )
                 jd10_null_errors = len(jd_10)
