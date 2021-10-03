@@ -363,6 +363,8 @@ class yfnews_reader:
                         uhint, uhdescr = self.uh.uhinter(hcycle, self.a_urlp)          # urlparse named tuple
                         if uhint == 0: thint = 1.0      # real news / remote-stub @ YFN stub
                         if uhint == 1: thint = 0.0      # real news / local page
+                        if uhint == 2: think = 4.0      # video (currently / FOR NOW, assume all videos are locally hosted on finanice.yahoo.com
+                        if uhint == 4: thint = 7.0      # research report / FOR NOW, assume all research reports are locally hosted on finanice.yahoo.com
                         pure_url = 0                    # locally hosted entity
                         ml_atype = 0                    # Real news
                         inf_type = self.uh.confidence_lvl(thint)                # return var is tuple
