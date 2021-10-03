@@ -50,7 +50,7 @@ class yfnews_reader:
     url_netloc = ""
     a_urlp = ""
     article_url = "https://www.defaul_instance_url.com"
-    this_article_url = "https://www.default_get_locality_url.com"
+    this_article_url = "https://www.default_interpret_page_url.com"
 
                             # yahoo.com header/cookie hack
     yahoo_headers = { \
@@ -448,23 +448,23 @@ class yfnews_reader:
         return
 
 # method 10
-    def get_locality(self, item_idx, data_row):
+    def interpret_page(self, item_idx, data_row):
         """
-        Depth 2
-        Test a possible GOOD news article & return it's REAL target URL
-        In the NEWs feed, 99% of news article url's are FAKE. They point to an internal stub/page
-        The stub/page can have miltple personas
+        Depth 2 Page interpreter
+        Look inside the page and translate it. Test for known pages types (e.g. good news articles etc)
+        Return some info that allows us to definatively know what we're looking at and how/where to NLP read the text of the artcile.
+        NOTE: In the NEWs feed, 99% of news article url's are FAKE internal stubs, that point to themself or an external remote site/page.
+        The stub/page can have miltple personas, so this translater is where the mahic happens...
         1. A mini-stub, snippet of the article, "Continue" button links to a exteranly hosted article @ a partner site
         2. An artcile @ finanice.yahoo.com, shows a smippet of articel, "Continue" button opens full article on yahoo.com
         3. A fake add page on yahoo.com
         4. A fake add # a partner site
         5. other
-        We must test each persona candidate article
         """
 
         # data elements extracted & computed
         # Authour, Date posted, Time posted, Age of article
-        cmi_debug = __name__+"::get_locality.#"+str(self.yti)
+        cmi_debug = __name__+"::interpret_page.#"+str(self.yti)
         #logging.info('%s - IN' % cmi_debug )
         right_now = date.today()
         idx = item_idx
@@ -482,10 +482,11 @@ class yfnews_reader:
             nr = s.get( self.this_article_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
             nsoup = BeautifulSoup(nr.text, 'html.parser')
             logging.info( '%s - setting BS4 <tag> zones for eval...' % cmi_debug )
-            rem_news = nsoup.find(attrs={"class": "caas-readmore"} )             # stub news article, remotely hosted
-            #local_news = nsoup.find(attrs={"class": "caas-body"})              # full news article, locally hosted
-            local_news = nsoup.find(attrs={"class": "caas-content-wrapper"} )    # full news article, locally hosted
-            local_story = nsoup.find(attrs={"class": "caas-body-wrapper"} )      # boring options trader bland article type
+            rem_news = nsoup.find(attrs={"class": "caas-readmore"} )            # stub news article - remotely hosted
+            #local_news = nsoup.find(attrs={"class": "caas-body"})              # full news article - locally hosted
+            local_news = nsoup.find(attrs={"class": "caas-content-wrapper"} )   # full news article - locally hosted
+            local_story = nsoup.find(attrs={"class": "caas-body-wrapper"} )     # Op-Ed article - locally hosted
+            local_video = nsoup.find(attrs={"class": "caas-body"} )             # Video story (minimal supporting text) stub - locally hosted
 
             if uhint == 0:                    # Local-remote stub or Local-local article
                 logging.info ( f"%s - Depth: 2 / Read Local-remote stub / u: {uhint} t: {thint}" % cmi_debug )
@@ -506,7 +507,7 @@ class yfnews_reader:
                     author = local_news.find(attrs={"class": "caas-attr-item-author"} )
                     pubdate = local_news.find(attrs={"class": "caas-attr-time-style"} )
                     article = local_news.find(attrs={"class": "caas-body"} )
-                    logging.info ( f"%s - Depth: 2 / Good <p> Local full TEXT article" % cmi_debug )
+                    logging.info ( f"%s - Depth: 2 / GOOD <p> zone / Local full TEXT article" % cmi_debug )
                     pub_clean = pubdate.text.lstrip()
                     published = pub_clean.split('·', 1)
                     author_clean = author.text.lstrip()
@@ -514,36 +515,47 @@ class yfnews_reader:
                     return uhint, thint, url
                     #
                 elif rem_news.text == "Story continues":         # local articles have a [story continues...] button
-                    logging.info ( f"%s - Depth: 2 / Good-stub founr [story continues...]" % cmi_debug )
+                    logging.info ( f"%s - Depth: 2 / GOOD [story continues...] stub" % cmi_debug )
                     logging.info ( f"%s - Depth: 2 / confidence level / u: {uhint} t: {thint}" % cmi_debug )
                     return uhint, thint, self.this_article_url      # REAL local news
                     #
                 elif local_story.button.text == "Read full article":    # test to make 100% sure its a low quality story
-                    logging.info ( f"%s - Depth: 2 / Basic-stub [curated story]" % cmi_debug )
+                    logging.info ( f"%s - Depth: 2 / GOOD [Read full article] stub" % cmi_debug )
                     logging.info ( f"%s - Depth: 2 / confidence level / u: {uhint} t: {thint}" % cmi_debug )
                     return uhint, thint, self.this_article_url              # Curated Report
                     #
                 else:
-                    logging.info ( f"%s - Depth: 2 / NO <a> / Simple-stub [OP-ED]" % cmi_debug )
-                    logging.info ( f"%s - Depth: 2 / confidence level {uhint} / 2.0 " % cmi_debug )
-                    return uhint, 2.0, self.this_article_url          # OP-ED story (doesn't have [story continues...] button)
-            else:
-                logging.info ( f"%s - Depth: 2 / ERROR bad Local page / u: {uhint} t: {thint}" % cmi_debug )
-                return uhint, 10.0, self.this_article_url
+                    logging.info ( f"%s - Depth: 2 / NO local page interpreter available / u: {uhint} t: {thint}" % cmi_debug )
+                    return uhint, 10.0, self.this_article_url
+                    #else:
+                    # still need to catch OP-ED...which is similar to [story continues...] and [Read full article]
+                    #    logging.info ( f"%s - Depth: 2 / NO <a> / Simple-stub [OP-ED]" % cmi_debug )
+                    #    logging.info ( f"%s - Depth: 2 / confidence level {uhint} / 2.0 " % cmi_debug )
+                    #    return uhint, 2.0, self.this_article_url          # OP-ED story (doesn't have [story continues...] button)
 
             if uhint == 2:
-                print ( f">>DEBUG<< URL hint: {uhint} / Page Type hint: {thint}" )
-                logging.info ( f"%s - Depth: 2 / NO <a> / Good-stub [Video report]" % cmi_debug )
-                logging.info ( f"%s - Depth: 2 / confidence level 2 / 4.0 " % cmi_debug )
-                return uhint, 4.0, self.this_article_url          # OP-ED story (doesn't have [story continues...] button)
+                if local_video.find('p'):          # video page only has a small <p> zone. NOT much TEXT (all the news is in the video)
+                logging.info ( f"%s - Depth: 2 / GOOD [Video report] minimal text" % cmi_debug )
+                logging.info ( f"%s - Depth: 2 / confidence level / u: {uhint} t: {thint}" % cmi_debug )
+                return uhint, thint, self.this_article_url                      # VIDEO story with Minimal text article
 
             if uhint == 3:
-                print ( f">>DEBUG<< URL hint: {uhint} / Page Type hint: {thint}" )
-                logging.info ( f"%s - Depth: 2 / Explcit Remote article" % cmi_debug )
-                logging.info ( f"%s - Depth: 2 / confidence level 0 / 1.1 " % cmi_debug )
-                return 1, 1.1, self.this_article_url              # Explicit remote article - can't see into this off-site article
+                logging.info ( f"%s - Depth: 2 / External publication - CANT interpret Remote article @ [Depth 2]" % cmi_debug )
+                logging.info ( f"%s - Depth: 2 / confidence level / u: {uhint} t: {thint}" % cmi_debug )
+                return uhint, thint, self.this_article_url                      # Explicit remote article - can't interpret off-site article
 
-        logging.info ( f"%s - Depth: 2 / confidence level 10 / 10.0 " % cmi_debug )
+            if uhint == 4:
+                logging.info ( f"%s - Depth: 2 / POSSIBLE Research report " % cmi_debug )
+                logging.info ( f"%s - Depth: 2 / confidence level / u: {uhint} t: {thint}" % cmi_debug )
+                # TODO:
+                # test the target url? is it a finance.yahoo.com hosted research report?
+                # if yes...we can interpret the page. There's lots of text data in that page...
+                # e.g. https://finance.yahoo.com/research/reports/MS_0P0000XWEY_AnalystReport_1632872327000
+                return uhint, thint, self.this_article_url                      # Explicit remote article - can't see into this off-site article
+
+
+
+        logging.info ( f"%s - Depth: 2 / ERROR NO page interpreter logic available" % cmi_debug )
         return 10, 10.0, "ERROR_unknown_state!"              # error unknown state
 
 

@@ -44,8 +44,8 @@ class url_hinter:
         0 = remote stub article - (URL starts with /m/.... and has FQDN:  https://finance.yahoo.com/
         1 = local full article - (URL starts with /news/... and has FQDN: https://finance.yahoo.com/
         2 = local full video - (URL starts with /video/... and has FQDN: https://finance.yahoo.com/
-        3 = remote full article - (URL is a pure link to remote article (eg.g https://www.independent.co.uk/news/...)
-        4 = research report - (URL starts with /research/... origin FQDN:  https://finance.yahoo.com/
+        3 = remote full article - (URL is a pure link to remote article:  https://www.independent.co.uk/news/...
+        4 = research report - (URL starts with /research/... origin FQDN:  https://finance.yahoo.com/research/reports/.....
         9 = Not yet defined
         10 = Error mangled url
         11 = Error state for method
@@ -54,7 +54,7 @@ class url_hinter:
         cmi_debug = __name__+"::uhinter.eng#"+str(self.yti)+"_cyc#"+str(hcycle)
         logging.info('%s - CALLED' % cmi_debug )
 
-        # INFO: This metainfo does NOT defin locality. You cant inferr locality truth from it. 
+        # INFO: This metainfo does NOT defin locality. You cant inferr locality truth from it.
         uhint_code = { 'm': ('News brief', 0),
                     'news': ('News article', 1),
                     'video': ('Video story', 2),

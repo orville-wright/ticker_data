@@ -389,7 +389,7 @@ def main():
                 uhint, uhdescr = uh.uhinter(20, t_url)
                 thint = (sn_row['thint'])                                       # the hint we guessed at while interrogating page <tags>
                 logging.info ( f"%s - Logic.#0 hinting origin url: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
-                r_uhint, r_thint, r_xturl = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
+                r_uhint, r_thint, r_xturl = yfn.interpret_page(sn_idx, sn_row)    # go deep, with everything we knonw about this item
                 p_r_xturl = urlparse(r_xturl)
                 inf_type = yfn.uh.confidence_lvl(thint)     # returned var is a tupple
                 #
@@ -407,7 +407,7 @@ def main():
                 uhint, uhdescr = uh.uhinter(21, t_url)
                 thint = (sn_row['thint'])                 # the hint we guess at while interrogating page <tags>
                 logging.info ( f"%s - Logic.#1 hinting origin url: t:1 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
-                r_uhint, r_thint, r_xturl = yfn.get_locality(sn_idx, sn_row)    # go deep, with everything we knonw about this item
+                r_uhint, r_thint, r_xturl = yfn.interpret_page(sn_idx, sn_row)    # go deep, with everything we knonw about this item
                 p_r_xturl = urlparse(r_xturl)
                 inf_type = yfn.uh.confidence_lvl(thint)
                 # summary report...
