@@ -1,6 +1,6 @@
 # ticker_data
 
-Date: 02 Oct 2021
+Date: 02 Oct 2021<br>
 ** Major updates **<br>
 <br>
 NASDAQ.com did a major release of their Live Quote API data model. This was pushed on Sept 31st and went live Oct 1. This broke a lot of stuff as NASDAQ.com has now broken the Live quote data model into multiple API zones. The fix has been completed and is code is now re-aligned with NASDAQ.com new data model (which is a bit messy under the covers now that it's 4+ API zones).<br>
