@@ -54,10 +54,10 @@ class url_hinter:
         cmi_debug = __name__+"::uhinter.eng#"+str(self.yti)+"_cyc#"+str(hcycle)
         logging.info('%s - CALLED' % cmi_debug )
 
-        uhint_code = { 'm': ('News snippet', 0),
+        uhint_code = { 'm': ('News brief', 0),
                     'news': ('News article', 1),
                     'video': ('Video story', 2),
-                    'rabs': ('Absolute-ext', 3),
+                    'rabs': ('External publication', 3),
                     'research': ('Research report', 4),
                     'udef': ('Not yet defined', 9),
                     'err': ('Error mangled url', 10),
@@ -137,7 +137,7 @@ class url_hinter:
         cmi_debug = __name__+"::"+"confidence_lvl().#1"
         tcode = { 0.0: ('Full article page', 0),
                 1.0: ('Stub referr page', 0),
-                1.1: ('External-abs link', 1),
+                1.1: ('External publication link', 1),
                 2.0: ('OP-Ed page', 0),
                 2.1: ('OP-Ed stub', 1),
                 3.0: ('Curated report page', 0),

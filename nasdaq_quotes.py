@@ -219,10 +219,8 @@ class nquote:
         """
 
         self.jsondata11 = self.quote_json1['data']                              # summary
-        #self.jsondata10 = self.quote_json1['data']['summaryData']               # summary
         self.jsondata20 = self.quote_json2['data'][0]                           # watchlist
         self.jsondata30 = self.quote_json3['data']                              # premarket
-        #self.jsondata31 = self.quote_json3['data']['infoTable']['rows'][0]
 
         def null_prechecker():
             """
@@ -244,7 +242,7 @@ class nquote:
             z = 1
             jd10_null_errors = 0
             try:
-                y = self.jsondata11['summaryData']
+                y = self.jsondata11['summaryData']      # summary
             except TypeError:
                 logging.info( f"%s - Probe #10 (summary): NULL data @: [data][summaryData]" % cmi_debug )
                 jd10_null_errors = 1 + len(jd_10)
@@ -253,41 +251,38 @@ class nquote:
                 jd10_null_errors = 1 + len(jd_10)
             else:
                 x = self.jsondata11['summaryData']
-                #print ( f"json data 11 (summary): ", end="" )
                 for i in jd_10:
                     try:
                         y = x[i]
                     except TypeError:
                         logging.info( f"%s - Probe #10 (summary): NULL data @: [{i}]" % cmi_debug )
-                        #print ( f"probe found NULL json data @: ['{i}']" )
                         jd10_null_errors += 1
                     except KeyError:
                         logging.info( f"%s - Probe #10 (summary): NULL key @: [{i}]" % cmi_debug )
-                        #print ( f"probe found NULL key @: ['{i}']" )
                         jd10_null_errors += 1
                     else:
-                        #print ( f"{z}...", end="" )
                         z += 1
             logging.info( f"%s - NULL probe 10/11 (API=summary) / errors: {jd10_null_errors} / 7" % cmi_debug )
 
             # ############ ZONE #2 NULL checks....
+            """
+            This data zone is far more tollerant
+            All keys/fields are existing no matter what symbol is entered (i.e. asset class stocks or ETF/Funds)
+            So this data zone cant test for a non-existent/bad ticker symbol (or ETF/Fund).
+            """
             z = 1
-            x = self.jsondata20
+            x = self.jsondata20     # watchlist
             jd20_null_errors = 0
-            # print ( f"json data 20 (watchlist): ", end="" )
             for i in jd_20:
                 try:
                     y = x[i]
                 except TypeError:
                     logging.info( f"%s - Probe #20 (watchlist): NULL data @: [{i}]" % cmi_debug )
-                    # print ( f"probe found NULL data @: ['{i}']" )
                     jd20_null_errors += 1
                 except KeyError:
                     logging.info( f"%s - Probe #20 (watchlist): NULL KEY data @: [{i}]" % cmi_debug )
-                    # print ( f"probe found NULL key @: ['{i}']" )
                     jd20_null_errors += 1
                 else:
-                    # print ( f"{z}...", end="" )
                     z += 1
             logging.info( f"%s - NULL probe 20 (API=watchlist) / errors: {jd20_null_errors} / 8" % cmi_debug )
 
@@ -295,31 +290,25 @@ class nquote:
             z = 1
             jd31_null_errors = 0
             try:
-                y = self.jsondata30['infoTable']['rows'][0]
+                y = self.jsondata30['infoTable']['rows'][0]     # premarket
             except TypeError:
                 logging.info( f"%s - Probe #30 (premarket): NULL data @: [infoTable][rows][0]" % cmi_debug )
-                # print ( f"json data 30 (premarket): probe found NULL data @: [infoTable][rows][0]" )
                 jd31_null_errors = 1 + len(jd_30)
             except KeyError:
                 logging.info( f"%s - Probe #30 (premarket): NULL key @: [infoTable][rows][0]" % cmi_debug )
-                # print ( f"json data 30 (premarket): probe found NULL key @: [infoTable][rows][0]" )
                 jd31_null_errors = 1 + len(jd_30)
             else:
                 x = self.jsondata30['infoTable']['rows'][0]
-                # print ( f"json data 31 (premarket): ", end="" )
                 for i in jd_31:
                     try:
                         y = x[i]
                     except TypeError:
                         logging.info( f"%s - Probe #31 (premarket): NULL data @: [{i}]" % cmi_debug )
-                        # print ( f"probe found NULL json data @: {i}" )
                         jd31_null_errors += 1
                     except KeyError:
                         logging.info( f"%s - Probe #31 (premarket): NULL key @: [{i}]" % cmi_debug )
-                        # print ( f"probe found NULL key @: ['{i}']" )
                         jd31_null_errors += 1
                     else:
-                        # print ( f"{z}...", end="" )
                         z += 1
             logging.info( f"%s - NULL probe 30/31 (API=premarket): errors: {jd31_null_errors} / 6" % cmi_debug )
 

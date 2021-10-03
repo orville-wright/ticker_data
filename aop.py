@@ -394,7 +394,8 @@ def main():
                 print ( f"Origin URL:    [ {t_url.netloc} ] / {uhdescr} / {inf_type[0]} / ", end="" )
                 print ( f"{locality_code.get(inf_type[1])}" )
                 uhint, uhdescr = uh.uhinter(21, p_r_xturl)
-                print ( f"Target URL:    [ {p_r_xturl.netloc} ] / {uhdescr} / " )
+                print ( f"Target URL:    [ {p_r_xturl.netloc} ] / {uhdescr} / ", end="" )
+                print ( f"{locality_code.get(inf_type[1])}" )
                 print ( f"====================== Depth 2 ======================" )
                 #
             elif sn_row['type'] == 1:                     # possibly not news? (Micro Ad)
@@ -410,7 +411,8 @@ def main():
                 print ( f"Origin URL:    [ {t_url.netloc} ] / {uhdescr} / {inf_type[0]} / ", end="" )
                 print ( f"{locality_code.get(inf_type[1], 'in flux')}" )
                 uhint, uhdescr = uh.uhinter(21, p_r_xturl)
-                print ( f"Target URL:    [ {p_r_xturl.netloc} ] / {uhdescr} / " )
+                print ( f"Target URL:    [ {p_r_xturl.netloc} ] / {uhdescr} / ", end="" )
+                print ( f"{locality_code.get(inf_type[1])}" )
                 print ( f"====================== Depth 2 ======================" )
                 #
             elif sn_row['type'] == 2:                     # possibly not news? (Micro Ad)
