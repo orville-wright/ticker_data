@@ -356,10 +356,10 @@ class yfnews_reader:
                         hcycle += 1
                         break
                     else:
-                        logging.info( f'%s - Logic.#2 / Origin url: {self.a_urlp.netloc}' % (cmi_debug) )
                         self.a_url = f"https://finance.yahoo.com{self.article_url}"
                         self.a_urlp = urlparse(self.a_url)
                         self.url_netloc = self.a_urlp.netloc      # FQDN netloc
+                        logging.info( f'%s - Logic.#2 / Origin url: {self.a_urlp.netloc}' % (cmi_debug) )
                         uhint, uhdescr = self.uh.uhinter(hcycle, self.a_urlp)          # urlparse named tuple
                         if uhint == 0: thint = 1.0      # real news / remote-stub @ YFN stub
                         if uhint == 1: thint = 0.0      # real news / local page
@@ -372,8 +372,8 @@ class yfnews_reader:
                         break       # ...need 1 more level of analysis analysis to get headline & teaser text
 
                 if not li_tag.find('p'):                # Micro-Ad
-                    logging.info( f'%s - Logic.#3 / Origin url: {self.url_netloc}' % (cmi_debug) )
                     self.url_netloc = self.a_urlp.netloc
+                    logging.info( f'%s - Logic.#3 / Origin url: {self.url_netloc}' % (cmi_debug) )
                     microad_headline = li_tag.find(attrs={'class': 'Ov(h)'}).strings
                     microad_news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
                     article_headline = next(microad_headline)                   # grab the Micro-ad Headline
