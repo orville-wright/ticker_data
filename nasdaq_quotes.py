@@ -218,7 +218,7 @@ class nquote:
         Wrangle, clean, convert, cast & format data as needed.
         """
 
-         = self.quote_json1['data']                              # summary
+        self.jsondata11 = self.quote_json1['data']                              # summary
         #self.jsondata10 = self.quote_json1['data']['summaryData']               # summary
         self.jsondata20 = self.quote_json2['data'][0]                           # watchlist
         self.jsondata30 = self.quote_json3['data']                              # premarket
