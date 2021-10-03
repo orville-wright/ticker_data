@@ -374,7 +374,7 @@ def main():
         """
         locality_code = { 0: 'Local',
                     1: 'External',
-                    3: 'External',
+                    3: 'Remote',
                     9: 'Unknown'
                     }
 
