@@ -495,7 +495,6 @@ def main():
 
         nlp_summary()
         print ( f" " )
-        yfn.dump_ml_ingest()
 
 #################################################################################
 # 3 differnt methods to get a live quote ########################################
