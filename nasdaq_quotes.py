@@ -290,13 +290,13 @@ class nquote:
             try:
                 y = self.quote_json3['data']['infoTable']
             except TypeError:
-                print ( f"json data 30 (premarket): probe found NULL data @: [infoTable]" )
+                print ( f"json data 30 (premarket): probe found NULL data @: [ infoTable ]" )
                 jd31_null_errors = 1 + len(jd_30)
             except KeyError:
-                print ( f"json data 10 (premarket): probe found NULL key @: [infoTable]" )
+                print ( f"json data 30 (premarket): probe found NULL key @: [ infoTable ]" )
                 jd31_null_errors = 1 + len(jd_30)
             else:
-                print ( f"json data 30 (premarket): ", end="" )
+                print ( f"json data 31 (premarket): ", end="" )
                 for i in jd_30:
                     try:
                         y = x[1]
