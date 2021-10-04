@@ -262,7 +262,7 @@ def main():
                 # set default data for non-regualr stocks
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = 'EF'
-                print ( f"++ {wrangle_errors}", end="" )
+                print ( f"++ {n:5{wrangle_errors}}", end="" )
                 cols += 1
                 if cols == 8:
                     print ( f" " )        # onlhy print 8 symbols per row
@@ -285,7 +285,7 @@ def main():
                         x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = i[0]
                         #print ( f"/ Mkt cap scale: {i[0]} - Data issues: {wrangle_errors}" )
                         logging.info( f"%s - Computed Market cap scale as {i[0]} / DF updated!" % cmi_debug )
-                        print ( f"+ {wrangle_errors}", end="" )
+                        print ( f"+ {n:6{wrangle_errors}}", end="" )
                         cleansed_errors += 1
                         cols += 1
                         if cols == 8:
@@ -299,7 +299,7 @@ def main():
                 #print ( f"- INSERT missing data / Market cap: 0 / Mkt cap scale: UZ - Data issues: {wrangle_errors}" )
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = "UZ"
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = float(0)
-                print ( f"++ {wrangle_errors}", end="" )
+                print ( f"++ {n:6{wrangle_errors}}", end="" )
                 cols += 1
                 if cols == 8:
                     print ( f" " )        # onlhy print 8 symbols per row
