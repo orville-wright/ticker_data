@@ -301,38 +301,38 @@ class nquote:
 
             # ZONE #3 watchlist zone....########################################
             def nulls_premkrt():
-            cmi_debug = __name__+"::"+nulls_premkrt.__name__+".#"+str(self.yti)
-            logging.info( f'%s - probing json keys/fields for NULLs...' % cmi_debug )
-            jd_31 = ("consolidated", "volume", "delta" )
-            jd_30 = ("infoTable", "infoTable']['rows", "infoTable']['rows'][0", "infoTable']['rows'][0]['consolidated'",
-                       "infoTable']['rows'][0]['volume'", "'infoTable']['rows'][0]['delta'" )
-            z = 1
-            jd31_null_errors = 0
-            try:
-                y = self.jsondata30['infoTable']['rows'][0]     # premarket
-            except TypeError:
-                logging.info( f"%s - Probe #30 (premarket): NULL data @: [infoTable][rows][0]" % cmi_debug )
-                jd31_null_errors = 1 + len(jd_30)               # everything in data set is BAD
+                cmi_debug = __name__+"::"+nulls_premkrt.__name__+".#"+str(self.yti)
+                logging.info( f'%s - probing json keys/fields for NULLs...' % cmi_debug )
+                jd_31 = ("consolidated", "volume", "delta" )
+                jd_30 = ("infoTable", "infoTable']['rows", "infoTable']['rows'][0", "infoTable']['rows'][0]['consolidated'",
+                           "infoTable']['rows'][0]['volume'", "'infoTable']['rows'][0]['delta'" )
+                z = 1
+                jd31_null_errors = 0
+                try:
+                    y = self.jsondata30['infoTable']['rows'][0]     # premarket
+                except TypeError:
+                    logging.info( f"%s - Probe #30 (premarket): NULL data @: [infoTable][rows][0]" % cmi_debug )
+                    jd31_null_errors = 1 + len(jd_30)               # everything in data set is BAD
+                    return jd31_null_errors
+                except KeyError:
+                    logging.info( f"%s - Probe #30 (premarket): NULL key @: [infoTable][rows][0]" % cmi_debug )
+                    jd31_null_errors = 1 + len(jd_30)               # everything in data set is BAD
+                    return jd31_null_errors
+                else:
+                    x = self.jsondata30['infoTable']['rows'][0]
+                    for i in jd_31:
+                        try:
+                            y = x[i]
+                        except TypeError:
+                            logging.info( f"%s - Probe #31 (premarket): NULL data @: [{i}]" % cmi_debug )
+                            jd31_null_errors += 1
+                        except KeyError:
+                            logging.info( f"%s - Probe #31 (premarket): NULL key @: [{i}]" % cmi_debug )
+                            jd31_null_errors += 1
+                        else:
+                            z += 1
+                logging.info( f"%s - NULL probe 30/31 (API=premarket): errors: {jd31_null_errors} / 6" % cmi_debug )
                 return jd31_null_errors
-            except KeyError:
-                logging.info( f"%s - Probe #30 (premarket): NULL key @: [infoTable][rows][0]" % cmi_debug )
-                jd31_null_errors = 1 + len(jd_30)               # everything in data set is BAD
-                return jd31_null_errors
-            else:
-                x = self.jsondata30['infoTable']['rows'][0]
-                for i in jd_31:
-                    try:
-                        y = x[i]
-                    except TypeError:
-                        logging.info( f"%s - Probe #31 (premarket): NULL data @: [{i}]" % cmi_debug )
-                        jd31_null_errors += 1
-                    except KeyError:
-                        logging.info( f"%s - Probe #31 (premarket): NULL key @: [{i}]" % cmi_debug )
-                        jd31_null_errors += 1
-                    else:
-                        z += 1
-            logging.info( f"%s - NULL probe 30/31 (API=premarket): errors: {jd31_null_errors} / 6" % cmi_debug )
-            return jd31_null_errors
 
 ################################################################################################
 # Quote DATA extractor ########################################################################
