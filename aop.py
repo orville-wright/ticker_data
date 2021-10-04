@@ -238,7 +238,7 @@ def main():
         cleansed_errors = 0
         logging.info('main::x.combo - find missing data for: %s symbols' % len(up_symbols) )
         loop_count = 1
-        print ( f"Collect & insert missing data elements [Nasdaq Unusual UP volume]... )
+        print ( f"Collect & insert missing data elements [Nasdaq Unusual UP volume]..." )
 
         for qsymbol in up_symbols:             # iterate over symbols & get a live quote for each one
             xsymbol = qsymbol                  # raw field from df to match df insert column test - sloppy hack, it has trailing spaces
