@@ -403,7 +403,7 @@ class nquote:
                 wrangle_errors += -1
 
             # ######### wrangle, clean, cast & prepare the data ##############################################
-            logging.info('%s - Begin data wrangle workload...' % cmi_debug )
+            logging.info('%s - Begin heavy data wrangle workloads...' % cmi_debug )
 
             co_sym_lj = co_sym.strip()
             #co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )          # left justify TXT & convert to raw string
@@ -448,7 +448,7 @@ class nquote:
                 price_pct_cl = np.float(price_pct)
 
             # ################# open price(s) need extra treatment & care...
-            """ INFO: Open_price data elements are 3 fields concatinted into 1 long string / e.g. $140.8 +1.87 (+1.35%)
+            """ Open_price data elements are 3 fields concatinted into 1 long string / e.g. $140.8 +1.87 (+1.35%)
             This is a bad nasdaq strategy. We must split & post-process/wrangle the split fields
             """
             if open_price == "N/A" or open_price is None:
@@ -532,7 +532,7 @@ class nquote:
             # craft final data structure.
             # NOTE: globally accessible and used by quote DF and quote DICT
             symbol=co_sym_lj.rstrip()
-            logging.info('%s - FINAL stage / Build global Dataframe list: {symbol}' % cmi_debug )        # so we can access it natively if needed, without using pandas
+            logging.info( f"%s - Build global Dataframe list: {symbol}"' % cmi_debug )        # so we can access it natively if needed, without using pandas
             self.data0 = [[ \
                co_sym_lj, \
                co_name_lj, \
@@ -550,7 +550,7 @@ class nquote:
             # craft the quote DICT. Doesn't hurt to do this here as it assumed that the data
             # is all nice & clean & in its final beautiful shape by now.
             symbol=co_sym_lj.rstrip()
-            logging.info('%s - FINAL stage / Build global dict: {symbol}' % cmi_debug )        # so we can access it natively if needed, without using pandas
+            logging.info( f"%s - Build global dict: {symbol}" % cmi_debug )        # so we can access it natively if needed, without using pandas
             self.quote = dict( \
                     symbol=co_sym_lj.rstrip(), \
                     name=co_name, \
