@@ -373,7 +373,7 @@ def main():
         Prints a nice sumamry of each NLP candidates in ml_digest{}
         """
         locality_code = { 0: 'Local',
-                    1: 'Remote',
+                    1: 'Local',
                     2: 'Local',
                     3: 'Remote',
                     9: 'Unknown locality'
