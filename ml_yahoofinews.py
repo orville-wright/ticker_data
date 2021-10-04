@@ -297,7 +297,8 @@ class yfnews_reader:
 # method #9
     def eval_article_tags(self, symbol):
         """
-        Depth 1
+        Depth 1 - scanning news feed items
+        INFO: we are NOT looking deeply inside each news article
         NOTE: assumes connection was previously setup & html data structures are pre-loaded
               leverages default JS session/request handle
               Level 0 logic - interrogate items wihtin the main [News Feed page]
@@ -376,7 +377,7 @@ class yfnews_reader:
 
                 if not li_tag.find('p'):                # Micro-Ad
                     self.url_netloc = self.a_urlp.netloc
-                    logging.info( f'%s - Logic.#3 / Origin url: {self.url_netloc}' % (cmi_debug) )
+                    logging.info( f'%s - Logic.#3 / Micro-ad Origin url: {self.url_netloc}' % (cmi_debug) )
                     microad_headline = li_tag.find(attrs={'class': 'Ov(h)'}).strings
                     microad_news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
                     article_headline = next(microad_headline)                   # grab the Micro-ad Headline
@@ -386,8 +387,8 @@ class yfnews_reader:
                     if pure_url == 1: thint = 5.1    # remote entity - currently NOT a valid type on yahoo.com
                     inf_type = self.uh.confidence_lvl(thint)                    # return var is tuple
                     ml_atype = 1
-                elif news_agency == "Yahoo Finance Video" and uhint == 2:
-                    logging.info( f'%s - Logic.#4 / Origin url: {self.url_netloc}' % (cmi_debug) )
+                elif uhint == 2:        # TODO: news_agency == "Yahoo Finance Video" to identifiy thint = 4.0 (FYN hosted video) vs. 4.1 externally authoured video
+                    logging.info( f'%s - Logic.#4 / Video Origin url: {self.url_netloc}' % (cmi_debug) )
                     videostory_headline = li_tag.find(attrs={'class': 'Ov(h)'})
                     self.article_teaser = videostory_headline.p.text
                     self.article_teaser = videostory_headline.p.text
