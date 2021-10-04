@@ -327,7 +327,8 @@ class nquote:
 
         a, b, c = null_prechecker()
 
-        if a == 0 and b == 0 and c == 0:    # GOOD - all data fields are available
+        # if a == 0 and b == 0 and c == 0:    # GOOD - all data fields are available
+        if a == 0 and b == 0:    # GOOD - all data fields are available
             logging.info( f'%s - Nasdaq quote data is NOMINAL [ {a} {b} {c} ]' % cmi_debug )
             # WATCHLIST quote data                                                  # Data wrangeling error counter
             if self.quote_json2['data'] is not None:                                # bad symbol TEST == Null json payload
