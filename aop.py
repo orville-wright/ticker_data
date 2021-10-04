@@ -239,6 +239,7 @@ def main():
         logging.info('main::x.combo - find missing data for: %s symbols' % len(up_symbols) )
         loop_count = 1
         print ( f"Collect & insert missing data elements [Nasdaq Unusual UP volume]..." )
+        cols = 1
 
         for qsymbol in up_symbols:             # iterate over symbols & get a live quote for each one
             xsymbol = qsymbol                  # raw field from df to match df insert column test - sloppy hack, it has trailing spaces
@@ -261,7 +262,13 @@ def main():
                 # set default data for non-regualr stocks
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = 'EF'
-                print ( f"++ {wrangle_errors} / ", end="" )
+                print ( f"++ {wrangle_errors}", end="" )
+                cols += 1
+                if cols == 8:
+                    print ( f" " )        # onlhy print 8 symbols per row
+                    cols = 1
+                else:
+                    print ( f" / ", end="" )
             #
             elif nq.quote['mkt_cap'] != 0:            # catch zero mkt cap
                 # insert missing data into dataframe @ row / column
@@ -278,15 +285,27 @@ def main():
                         x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = i[0]
                         #print ( f"/ Mkt cap scale: {i[0]} - Data issues: {wrangle_errors}" )
                         logging.info( f"%s - Computed Market cap scale as {i[0]} / DF updated!" % cmi_debug )
-                        print ( f"+ {wrangle_errors} / ", end="" )
+                        print ( f"+ {wrangle_errors}", end="" )
                         cleansed_errors += 1
+                        cols += 1
+                        if cols == 8:
+                            print ( f" " )        # onlhy print 8 symbols per row
+                            cols = 1
+                        else:
+                            print ( f" / ", end="" )
                         break
             else:
                 wrangle_errors += 2     # regular symbol with ZERO ($0) market cap is a bad data error
                 #print ( f"- INSERT missing data / Market cap: 0 / Mkt cap scale: UZ - Data issues: {wrangle_errors}" )
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = "UZ"
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = float(0)
-                print ( f"++ {wrangle_errors} / ", end="" )
+                print ( f"++ {wrangle_errors}", end="" )
+                cols += 1
+                if cols == 8:
+                    print ( f" " )        # onlhy print 8 symbols per row
+                    cols = 1
+                else:
+                    print ( f" / ", end="" )
                 cleansed_errors += 1
 
             logging.info( f"main::x.combo ================ end quote: {qsymbol} : %s ====================" % loop_count )
