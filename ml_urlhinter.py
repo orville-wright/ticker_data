@@ -150,7 +150,7 @@ class url_hinter:
                 6.0: ('Bulk ad junk', 0),
                 6.1: ('Bulk ad junk', 1),
                 7.0: ('Research report page', 0),
-                7.1: ('Research report stub', 0),
+                7.1: ('Research report stub', 1),
                 8.0: ('Unknown thint 8.0', 9),
                 9.0: ('Unknown thint 9.0', 9),
                 9.9: ('Unknown page structure', 9),
