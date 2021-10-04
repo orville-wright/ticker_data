@@ -263,7 +263,7 @@ def main():
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = 'EF'
                 plusplus = "++"
-                print ( f"{plusplus:3} {wrangle_errors}", end="" )
+                print ( f"{plusplus:3}{wrangle_errors}", end="" )
                 cols += 1
                 if cols == 8:
                     print ( f" " )        # onlhy print 8 symbols per row
@@ -286,7 +286,7 @@ def main():
                         x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = i[0]
                         #print ( f"/ Mkt cap scale: {i[0]} - Data issues: {wrangle_errors}" )
                         logging.info( f"%s - Computed Market cap scale as {i[0]} / DF updated!" % cmi_debug )
-                        print ( f"+ {wrangle_errors}", end="" )
+                        print ( f"+  {wrangle_errors}", end="" )
                         cleansed_errors += 1
                         cols += 1
                         if cols == 8:
