@@ -249,7 +249,7 @@ def main():
             nq.form_api_endpoint(qsymbol)      # set API endpoint url
             nq.get_nquote(qsymbol)             # get a live quote
             wrangle_errors = nq.build_data()   # wrangle & cleanse the data - lots done in here
-            print ( f"{qsymbol:6}...", end="", flush=True )
+            print ( f"{qsymbol:5}...", end="", flush=True )
             #print ( f"symbol: {qsymbol} ", end="", flush=True )
 
             if wrangle_errors == -1:           # bad symbol (not a regular stock)
@@ -262,7 +262,7 @@ def main():
                 # set default data for non-regualr stocks
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = 'EF'
-                print ( f"++ {wrangle_errors}", end="" )
+                print ( f"{++:3} {wrangle_errors}", end="" )
                 cols += 1
                 if cols == 8:
                     print ( f" " )        # onlhy print 8 symbols per row
