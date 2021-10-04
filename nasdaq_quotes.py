@@ -376,7 +376,7 @@ class nquote:
                     open_updown = "N/A"                              # e.g. "up"
                     wrangle_errors += -1
                 else:
-                    open_price = jsondata31['consolidated']                             # WARN: multi-field string needs splitting/wrangeling e.g. "$140.8 +1.87 (+1.35%)"
+                    open_price = jsondata31['consolidated']                             # WARN: open_price info = multi-field string needs splitting e.g. "$140.8 +1.87 (+1.35%)"
                     open_volume = jsondata31['volume']                                  # e.g. "71,506"
                     open_updown = jsondata31['delta']                                   # e.g. "up"
                     logging.info( '%s - Stage #2 / [3] fields - Done' % cmi_debug )
@@ -448,39 +448,62 @@ class nquote:
                 price_pct_cl = np.float(price_pct)
 
             # ################# open price(s) need extra treatment & care...
+            """ INFO: Open_price data elements are 3 fields concatinted into 1 long string / e.g. $140.8 +1.87 (+1.35%)
+            This is a bad nasdaq strategy. We must split & post-process/wrangle the split fields
+            """
             if open_price == "N/A" or open_price is None:
+                """ Stage #0 """
+                logging.info( f'%s - BAD open_price compound data: {type(open_price)} / {open_price} / set all to 0.0' % cmi_debug )
                 open_price_cl = np.float(0)
                 open_price_net = float(0)
                 open_price_pct_cl = float(0)
-                logging.info( f'%s - WARNING / open_price NULL / setting to $0.0: {open_price}' % cmi_debug )
-                wrangle_errors += 1
-            else:
+                wrangle_errors += 3
+            else:       # data is good...access 3 indices of sub-data from split list[]
                 ops = open_price.split()
-                try:    # data is good...proceed to access 3 indices of sub-data from split list[]
+                """ Stage #1 """
+                try:
                     open_price = ops[0]                     # e.g. 140.8
                 except IndexError:
-                    logging.info('%s - WARNING / open_price is NULL / setting to: $0.0' % cmi_debug )
+                    logging.info( f'%s - Bad open_price split: {type(ops[0])} / setting to $0.0 / {ops[0]}' % cmi_debug )
+                    open_price = float(0)
+                    wrangle_errors += 1
+                except ValueError:
+                    logging.info( f'%s - Bad open_price split: {type(ops[0])} / setting to $0.0 / {ops[0]}' % cmi_debug )
                     open_price = float(0)
                     wrangle_errors += 1
                 else:
-                    open_price_cl = (re.sub('[ $,]', '', open_price))   # remove " " $ ,
+                    open_price_cl = (re.sub('[ $,]', '', ops[0]))   # remove " " $ ,
+                    open_price_cl = np.float(open_price_cl)
+                    """ Stage #2 """
+                    try:    # data is good...keep processing...
+                        open_price_net = ops[1]                 # (test for missing data) - good data =  +1.87
+                    except IndexError:
+                        logging.info( f'%s - Bad open_price_net: {type(ops[1])} / setting to $0.0 / {ops[1]}' % cmi_debug )
+                        open_price_net = float(0)               # set NULL data to ZERO
+                        wrangle_errors += 1
+                    except ValueError:
+                        logging.info( f'%s - Bad open_price_net: {type(ops[1])} / setting to $0.0 / {ops[1]}' % cmi_debug )
+                        open_price_net = float(0)               # set NULL data to ZERO
+                        wrangle_errors += 1
+                    else:
+                        pass    # data is good...keep processing...
+                        # INFO: no need of clean open_price_net - VAR is currently not used n our data model
+                        """ Stage #3 """
+                        try:
+                            open_price_pct = ops[2]                 # (test for missing data) - good data = e.g. (+1.35%)"
+                        except IndexError:
+                            logging.info( f'%s - Bad open_price_pct: {type(ops[2])} / setting to $0.0 / {ops[2]}' % cmi_debug )
+                            open_price_pct = float(0)               # set NULL data to ZERO
+                            wrangle_errors += 1
+                        except ValueError:
+                            logging.info( f'%s - Bad open_price_pct: {type(ops[2])} / setting to $0.0 / {ops[2]}' % cmi_debug )
+                            open_price_pct = float(0)               # set NULL data to ZERO
+                            wrangle_errors += 1
+                        else:
+                            open_price_pct_cl = (re.sub('[)(%]', '', price_pct))        # # remove " ", %  (leave +/- indicator)
+                            # INFO: no need of clean open_price_net - VAR is currently not used n our data model
+                            logging.info( f"%s - All 3 open_price vars sucessfully split & processed" % cmi_debug )
 
-                try:    # data is good...
-                    open_price_net = ops[1]                 # (test for missing data) - good data =  +1.87
-                except IndexError:
-                    logging.info('%s - WARNING / open_price_net is NULL / setting to: $0.0' % cmi_debug )
-                    open_price_net = float(0)               # set NULL data to ZERO
-                    wrangle_errors += 1
-                    # data is good...
-
-                try:
-                    open_price_pct = ops[2]                 # (test for missing data) - good data = e.g. (+1.35%)"
-                except IndexError:
-                    logging.info('%s - WARNING / open_price_pct is NULL / setting to: %0.0' % cmi_debug )
-                    open_price_pct = float(0)               # set NULL data to ZERO
-                    wrangle_errors += 1
-                else:
-                    open_price_pct_cl = (re.sub('[)(%]', '', price_pct))
             #################################################
 
             if prev_close == "N/A":
@@ -504,8 +527,11 @@ class nquote:
 
             vol_abs_cl = (re.sub('[,]', '', vol_abs))                        # remove ,
 
+            ####################################################################
             # craft final data structure.
             # NOTE: globally accessible and used by quote DF and quote DICT
+            symbol=co_sym_lj.rstrip()
+            logging.info('%s - FINAL stage / Build global Dataframe list: {symbol}' % cmi_debug )        # so we can access it natively if needed, without using pandas
             self.data0 = [[ \
                co_sym_lj, \
                co_name_lj, \
@@ -513,7 +539,7 @@ class nquote:
                np.float(price_cl), \
                price_net_cl, \
                price_pct_cl, \
-               np.float(open_price_cl), \
+               open_price_cl, \
                np.float(prev_close_cl), \
                np.float(vol_abs_cl), \
                mkt_cap_cl, \
@@ -522,7 +548,8 @@ class nquote:
 
             # craft the quote DICT. Doesn't hurt to do this here as it assumed that the data
             # is all nice & clean & in its final beautiful shape by now.
-            logging.info('%s - Build global quote dict' % cmi_debug )        # so we can access it natively if needed, without using pandas
+            symbol=co_sym_lj.rstrip()
+            logging.info('%s - FINAL stage / Build global dict: {symbol}' % cmi_debug )        # so we can access it natively if needed, without using pandas
             self.quote = dict( \
                     symbol=co_sym_lj.rstrip(), \
                     name=co_name, \
