@@ -262,7 +262,8 @@ def main():
                 # set default data for non-regualr stocks
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = 'EF'
-                print ( f"{++:3} {wrangle_errors}", end="" )
+                plusplus = "++"
+                print ( f"{plusplus:3} {wrangle_errors}", end="" )
                 cols += 1
                 if cols == 8:
                     print ( f" " )        # onlhy print 8 symbols per row
