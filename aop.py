@@ -261,11 +261,13 @@ def main():
                 # set default data for non-regualr stocks
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = 'EF'
+                print ( f"++ {wrangle_errors}", end="" )
+            #
             elif nq.quote['mkt_cap'] != 0:            # catch zero mkt cap
                 # insert missing data into dataframe @ row / column
-                print ( f"+", end='', flush=True )
                 #print ( f"- INSERT missing data / Market cap: {nq.quote['mkt_cap']} ", end='', flush=True )
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = nq.quote['mkt_cap']
+                print ( f"+", end='', flush=True )
                 cleansed_errors += 1
                 # compute market cap scale indicator (Small/Large Millions/Billions/Trillions)
                 for i in (("MT", 999999), ("LB", 10000), ("SB", 2000), ("LM", 500), ("SM", 50), ("TM", 10), ("UZ", 0)):
@@ -274,17 +276,17 @@ def main():
                     else:
                         wrangle_errors += 1          # insert market cap scale into DF @ column M_B for this symbol
                         x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = i[0]
-                        print ( f"+ {wrangle_errors} " )
                         #print ( f"/ Mkt cap scale: {i[0]} - Data issues: {wrangle_errors}" )
-                        logging.info( "main::x.combo - Computed Market cap scale as %s / DF updated!" % i[0] )
+                        logging.info( f"%s - Computed Market cap scale as {i[0]} / DF updated!" % cmi_debug )
+                        print ( f"+ {wrangle_errors}", end="" )
                         cleansed_errors += 1
                         break
             else:
                 wrangle_errors += 2     # regular symbol with ZERO ($0) market cap is a bad data error
-                print ( f"+ {wrangle_errors} " )
                 #print ( f"- INSERT missing data / Market cap: 0 / Mkt cap scale: UZ - Data issues: {wrangle_errors}" )
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = "UZ"
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = float(0)
+                print ( f"++ {wrangle_errors} ", end="" )
                 cleansed_errors += 1
 
             logging.info( f"main::x.combo ================ end quote: {qsymbol} : %s ====================" % loop_count )
