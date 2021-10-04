@@ -209,46 +209,52 @@ class nquote:
             print ( f"========================== {self.yti} - get_js_nquote::session cookies ================================" )
         return
 
+# ###################################################################################################################################
 # method 8
-# New method to build a Pandas DataFrame from JSON data structure
     def build_data(self):
         """
         Build-out the full quote data structure thats tidy & clean.
         All fields sourced from the extracted JSON dataset.
         Wrangle, clean, convert, cast & format data as needed.
         """
-
+        cmi_debug = __name__+"::"+self.build_data.__name__+".#"+str(self.yti)
+        logging.info('%s - build quote data payload from JSON' % cmi_debug )
+        time_now = time.strftime("%H:%M:%S", time.localtime() )
+        logging.info('%s - prepare jsondata accessors [11/20/30]...' % cmi_debug )
         self.jsondata11 = self.quote_json1['data']                              # summary
         self.jsondata20 = self.quote_json2['data'][0]                           # watchlist
         self.jsondata30 = self.quote_json3['data']                              # premarket
 
-        def null_prechecker():
-            """
-            private helper method to build_data()
-            Check all the json data index keys & fields for NULL values and type errors.
-            We run this before trying to access list indexes, as that will exert many hard errors.
-            Its arduous to wrap all this logic arround/inside the data acessor & wrangeling code. Better to do it early.
-            """
-            cmi_debug = __name__+"::"+null_prechecker.__name__+".#"+str(self.yti)
+        # Helper methods ##########################################################################################################
+        """
+        Private helper methods to poll nasdaq data model and test sanity for bad NULL data & bad/missing json keys
+        NOTE: Keys & NULLs are somethimes bad becasue when the amrket is closed (e.g. premarket data). In that scenario
+              this isn't an error scenario... but it's difficult logic to account for.
+        Call before trying to access asdaq API json list indexes, as bad data will exert many hard errors.
+        INFO: Checks 3 data zones in the nasdaq.com API json data model
+              1. summary       :    self.jsondata11 = self.quote_json1['data']
+              2. watchlist     :    self.jsondata20 = self.quote_json2['data'][0]
+              3. pre-market    :    self.jsondata30 = self.quote_json3['data']
+        """
+
+        # ZONE #1 Summary zone....##############################################
+        def nulls_summary():
+            cmi_debug = __name__+"::"+nulls_summary.__name__+".#"+str(self.yti)
             logging.info( f'%s - probing json keys/fields for NULLs...' % cmi_debug )
-
-            jd_10 = ("PreviousClose", "MarketCap", "TodayHighLow", "AverageVolume", "OneYrTarget", "Beta", "FiftTwoWeekHighLow" )
-            jd_20 = ("symbol", "companyName", "lastSalePrice", "netChange", "percentageChange", "deltaIndicator", "lastTradeTimestampDateTime", "volume" )
-            jd_30 = ("infoTable", "infoTable']['rows", "infoTable']['rows'][0", "infoTable']['rows'][0]['consolidated'",
-                       "infoTable']['rows'][0]['volume'", "'infoTable']['rows'][0]['delta'" )
-            jd_31 = ("consolidated", "volume", "delta" )
-
-            # ############ ZONE #1 NULL checks....
             z = 1
             jd10_null_errors = 0
+            jd_10 = ("PreviousClose", "MarketCap", "TodayHighLow", "AverageVolume", "OneYrTarget", "Beta", "FiftTwoWeekHighLow" )
+
             try:
                 y = self.jsondata11['summaryData']      # summary
             except TypeError:
                 logging.info( f"%s - Probe #10 (summary): NULL data @: [data][summaryData]" % cmi_debug )
-                jd10_null_errors = 1 + len(jd_10)
+                jd10_null_errors = 1 + len(jd_10)       # everything in data set is BAD
+                return jd10_null_errors
             except KeyError:
                 logging.info( f"%s - Probe #10 (summary): NULL key @: [data][summaryData]" % cmi_debug )
-                jd10_null_errors = 1 + len(jd_10)
+                jd10_null_errors = 1 + len(jd_10)       # everything in data set is BAD
+                return jd10_null_errors
             else:
                 x = self.jsondata11['summaryData']
                 for i in jd_10:
@@ -263,16 +269,22 @@ class nquote:
                     else:
                         z += 1
             logging.info( f"%s - NULL probe 10/11 (API=summary) / errors: {jd10_null_errors} / 7" % cmi_debug )
+            return jd10_null_errors
 
-            # ############ ZONE #2 NULL checks....
+
+        # ZONE #2 watchlist zone....############################################
+        def nulls_watchlist():
             """
-            This data zone is far more tollerant
-            All keys/fields are existing no matter what symbol is entered (i.e. asset class stocks or ETF/Funds)
-            So this data zone cant test for a non-existent/bad ticker symbol (or ETF/Fund).
+            This data zone is far more tollerant. keys/fields pre-exist. So this zone cant test for a
+            non-existent/bad ticker symbol (or ETF/Fund). but this means errors are less severe.
             """
+            cmi_debug = __name__+"::"+nulls_watchlist.__name__+".#"+str(self.yti)
+            logging.info( f'%s - probing json keys/fields for NULLs...' % cmi_debug )
             z = 1
             x = self.jsondata20     # watchlist
+            jd_20 = ("symbol", "companyName", "lastSalePrice", "netChange", "percentageChange", "deltaIndicator", "lastTradeTimestampDateTime", "volume" )
             jd20_null_errors = 0
+
             for i in jd_20:
                 try:
                     y = x[i]
@@ -285,18 +297,27 @@ class nquote:
                 else:
                     z += 1
             logging.info( f"%s - NULL probe 20 (API=watchlist) / errors: {jd20_null_errors} / 8" % cmi_debug )
+            return jd20_null_errors
 
-            # ############ ZONE #3 NULL checks....
+            # ZONE #3 watchlist zone....########################################
+            def nulls_premkrt():
+            cmi_debug = __name__+"::"+nulls_premkrt.__name__+".#"+str(self.yti)
+            logging.info( f'%s - probing json keys/fields for NULLs...' % cmi_debug )
+            jd_31 = ("consolidated", "volume", "delta" )
+            jd_30 = ("infoTable", "infoTable']['rows", "infoTable']['rows'][0", "infoTable']['rows'][0]['consolidated'",
+                       "infoTable']['rows'][0]['volume'", "'infoTable']['rows'][0]['delta'" )
             z = 1
             jd31_null_errors = 0
             try:
                 y = self.jsondata30['infoTable']['rows'][0]     # premarket
             except TypeError:
                 logging.info( f"%s - Probe #30 (premarket): NULL data @: [infoTable][rows][0]" % cmi_debug )
-                jd31_null_errors = 1 + len(jd_30)
+                jd31_null_errors = 1 + len(jd_30)               # everything in data set is BAD
+                return jd31_null_errors
             except KeyError:
                 logging.info( f"%s - Probe #30 (premarket): NULL key @: [infoTable][rows][0]" % cmi_debug )
-                jd31_null_errors = 1 + len(jd_30)
+                jd31_null_errors = 1 + len(jd_30)               # everything in data set is BAD
+                return jd31_null_errors
             else:
                 x = self.jsondata30['infoTable']['rows'][0]
                 for i in jd_31:
@@ -311,23 +332,17 @@ class nquote:
                     else:
                         z += 1
             logging.info( f"%s - NULL probe 30/31 (API=premarket): errors: {jd31_null_errors} / 6" % cmi_debug )
+            return jd31_null_errors
 
-            return jd10_null_errors, jd20_null_errors, jd31_null_errors
-
-        ########################################################################
-
-        cmi_debug = __name__+"::"+self.build_data.__name__+".#"+str(self.yti)
-        logging.info('%s - build quote data payload from JSON' % cmi_debug )
-        time_now = time.strftime("%H:%M:%S", time.localtime() )
-        logging.info('%s - prepare json data accessors' % cmi_debug )
-
-        # capture bad symbols (e.g. ETF's return NULL json payload. They're not real symbols)
+################################################################################################
+# Quote DATA extractor ########################################################################
+################################################################################################
         wrangle_errors = 0
         null_count = 0
+        a = nulls_summary()
+        b = nulls_watchlist()
+        c = nulls_premkrt()
 
-        a, b, c = null_prechecker()
-
-        # if a == 0 and b == 0 and c == 0:    # GOOD - all data fields are available
         if a == 0 and b == 0:    # GOOD - all data fields are available
             logging.info( f'%s - Nasdaq quote data is NOMINAL [ {a} {b} {c} ]' % cmi_debug )
             # WATCHLIST quote data                                                  # Data wrangeling error counter
