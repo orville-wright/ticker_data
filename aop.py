@@ -12,6 +12,7 @@ import time
 import threading
 import random
 from urllib.parse import urlparse
+from rich import print
 
 # ML capabilities
 from sklearn.feature_extraction.text import CountVectorizer
