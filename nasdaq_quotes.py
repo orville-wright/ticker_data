@@ -486,6 +486,10 @@ class nquote:
                         logging.info( f'%s - Bad open_price_net: {type(open_price_net)} / setting to $0.0 / {open_price_net}' % cmi_debug )
                         open_price_net = float(0)               # set NULL data to ZERO
                         wrangle_errors += 1
+                    except TypeError:
+                        logging.info( f'%s - Bad open_price_net: {type(open_price_net)} / setting to $0.0 / {open_price_net}' % cmi_debug )
+                        open_price_net = float(0)               # set NULL data to ZERO
+                        wrangle_errors += 1
                     else:
                         pass    # data is good...keep processing...
                         # INFO: no need of clean open_price_net - VAR is currently not used n our data model
