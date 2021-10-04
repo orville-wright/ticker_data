@@ -571,6 +571,7 @@ class nquote:
                 open_price_pct=open_price_pct_cl, \
                 prev_close=prev_close_cl, \
                 vol=vol_abs_cl, \
+                avg_vol=avg_vol, \
                 mkt_cap=mkt_cap_cl )
 
             return wrangle_errors
