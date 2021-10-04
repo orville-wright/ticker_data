@@ -460,7 +460,7 @@ class nquote:
                 wrangle_errors += 3
             else:       # data is good...access 3 indices of sub-data from split list[]
                 ops = open_price.split()
-                logging.info( f'%s - Split & process compound 3 x field open_price element: {open_price}' % cmi_debug )
+                logging.info( f"%s - Split open_price compound element into 3 fields: {open_price}" % cmi_debug )
                 """ Stage #1 """
                 try:
                     open_price = ops[0]                     # e.g. 140.8
