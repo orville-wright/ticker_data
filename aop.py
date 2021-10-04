@@ -373,10 +373,10 @@ def main():
         Prints a nice sumamry of each NLP candidates in ml_digest{}
         """
         locality_code = { 0: 'Local',
-                    1: 'Maybe local',
+                    1: 'Remote',
                     2: 'Possibly local',
-                    3: 'Remote',
-                    9: 'Unknown'
+                    3: 'Possibly remote',
+                    9: 'Unknown locality'
                     }
 
         print ( " ")
@@ -401,7 +401,7 @@ def main():
                 print ( f"{locality_code.get(uhint)} {[uhint]})" )
                 print ( f"====================== Depth 2 ======================" )
                 # summary report...
-            elif sn_row['type'] == 1:                     # possibly not news? (Micro Ad)
+            elif sn_row['type'] == 1:           # Micro-Ad, but could possibly be news...
                 print( f"News article:  {sn_idx} / {sn_row['symbol']} /", end="" )
                 t_url = urlparse(sn_row['url'])
                 uhint, uhdescr = uh.uhinter(21, t_url)
@@ -416,7 +416,7 @@ def main():
                 print ( f"{locality_code.get(inf_type[1], 'in flux')}" )
                 uhint, uhdescr = uh.uhinter(21, p_r_xturl)
                 print ( f"Target URL:    [ {p_r_xturl.netloc} ] / {uhdescr} / ", end="" )
-                print ( f"{locality_code.get(uhint)} {[uhint]})" )
+                print ( f"{locality_code.get(uhint, 'in flux')} {[uhint]})" )
                 print ( f"====================== Depth 2 ======================" )
                 #
             elif sn_row['type'] == 2:                     # possibly not news? (Micro Ad)
