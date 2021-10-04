@@ -146,7 +146,7 @@ class url_hinter:
                 4.0: ('Video story page', 0),
                 4.1: ('Video story stub', 1),
                 5.0: ('Micro-ad insert', 1),
-                5.1: ('Micro-ad insert', 2),
+                5.1: ('Micro-ad insert', 3),
                 6.0: ('Bulk ad junk', 0),
                 6.1: ('Bulk ad junk', 1),
                 7.0: ('Research report page', 0),
