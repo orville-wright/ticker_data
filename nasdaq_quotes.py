@@ -460,15 +460,16 @@ class nquote:
                 wrangle_errors += 3
             else:       # data is good...access 3 indices of sub-data from split list[]
                 ops = open_price.split()
+                logging.info( f'%s - Split & process compound 3 x field open_price element: {open_price}' % cmi_debug )
                 """ Stage #1 """
                 try:
                     open_price = ops[0]                     # e.g. 140.8
                 except IndexError:
-                    logging.info( f'%s - Bad open_price split: {type(ops[0])} / setting to $0.0 / {ops[0]}' % cmi_debug )
+                    logging.info( f'%s - Bad key open_price: {open_price)} / setting to $0.0 / {open_price}' % cmi_debug )
                     open_price = float(0)
                     wrangle_errors += 1
                 except ValueError:
-                    logging.info( f'%s - Bad open_price split: {type(ops[0])} / setting to $0.0 / {ops[0]}' % cmi_debug )
+                    logging.info( f'%s - Bad open_price: {open_price)} / setting to $0.0 / {open_price}' % cmi_debug )
                     open_price = float(0)
                     wrangle_errors += 1
                 else:
@@ -478,11 +479,11 @@ class nquote:
                     try:    # data is good...keep processing...
                         open_price_net = ops[1]                 # (test for missing data) - good data =  +1.87
                     except IndexError:
-                        logging.info( f'%s - Bad open_price_net: {type(ops[1])} / setting to $0.0 / {ops[1]}' % cmi_debug )
+                        logging.info( f'%s - Bad key open_price_net: {type(open_price_net)} / setting to $0.0 / {open_price_net}' % cmi_debug )
                         open_price_net = float(0)               # set NULL data to ZERO
                         wrangle_errors += 1
                     except ValueError:
-                        logging.info( f'%s - Bad open_price_net: {type(ops[1])} / setting to $0.0 / {ops[1]}' % cmi_debug )
+                        logging.info( f'%s - Bad open_price_net: {type(open_price_net)} / setting to $0.0 / {open_price_net}' % cmi_debug )
                         open_price_net = float(0)               # set NULL data to ZERO
                         wrangle_errors += 1
                     else:
@@ -492,11 +493,11 @@ class nquote:
                         try:
                             open_price_pct = ops[2]                 # (test for missing data) - good data = e.g. (+1.35%)"
                         except IndexError:
-                            logging.info( f'%s - Bad open_price_pct: {type(ops[2])} / setting to $0.0 / {ops[2]}' % cmi_debug )
+                            logging.info( f'%s - Bad key open_price_pct: {type(open_price_pct)} / setting to $0.0 / {open_price_pct}' % cmi_debug )
                             open_price_pct = float(0)               # set NULL data to ZERO
                             wrangle_errors += 1
                         except ValueError:
-                            logging.info( f'%s - Bad open_price_pct: {type(ops[2])} / setting to $0.0 / {ops[2]}' % cmi_debug )
+                            logging.info( f'%s - Bad open_price_pct: {type(open_price_pct)} / setting to $0.0 / {open_price_pct}' % cmi_debug )
                             open_price_pct = float(0)               # set NULL data to ZERO
                             wrangle_errors += 1
                         else:
