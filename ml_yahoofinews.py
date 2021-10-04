@@ -408,7 +408,7 @@ class yfnews_reader:
                     article_headline = li_tag.a.text        # taken from YFN news feed thumbnail, not actual article page
 
                 print ( f"================= Article {x} / {symbol} / Depth 1 ==========================" )
-                print ( f"News item:        {self.cycle}: {inf_type[0]} / Origin conf Indctrs [[t:{ml_atype} u:{uhint} h:{thint}]]" )
+                print ( f"News item:        {self.cycle}: {inf_type[0]} / Origin conf Indctrs [ t:{ml_atype} u:{uhint} h:{thint} ]" )
                 print ( f"News agency:      {news_agency}" )
                 print ( f"News origin:      {self.url_netloc}" )
                 print ( f"Article URL:      {self.article_url}" )
@@ -442,7 +442,7 @@ class yfnews_reader:
                 ml_atype = 2
                 thint = 6.0
                 print ( f"================= Article {x} / {symbol} / Depth 1 ==========================" )
-                print ( f"News item:        {self.cycle}: {inf_type} / Origin Conf Indctrs [[t:{ml_atype} / u:[-] / h:{thint}]]" )
+                print ( f"News item:        {self.cycle}: {inf_type} / Origin Conf Indctrs [ t:{ml_atype} / u:[-] / h:{thint} ]" )
                 print ( f"News agency:      {fa_2} / not {symbol} news / NOT an NLP candidate" )
                 print ( f"Adv injector:     {fa_3:.40} [...]" )
             a_counter = h3_counter = 0
