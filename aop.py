@@ -238,6 +238,7 @@ def main():
         cleansed_errors = 0
         logging.info('main::x.combo - find missing data for: %s symbols' % len(up_symbols) )
         loop_count = 1
+        print ( f"Collect & insert missing data elements [Nasdaq Unusual UP volume]... )
 
         for qsymbol in up_symbols:             # iterate over symbols & get a live quote for each one
             xsymbol = qsymbol                  # raw field from df to match df insert column test - sloppy hack, it has trailing spaces
@@ -247,20 +248,23 @@ def main():
             nq.form_api_endpoint(qsymbol)      # set API endpoint url
             nq.get_nquote(qsymbol)             # get a live quote
             wrangle_errors = nq.build_data()   # wrangle & cleanse the data - lots done in here
-            print ( f"symbol: {qsymbol} ", end="", flush=True )
+            print ( f"{qsymbol}...", end="", flush=True )
+            #print ( f"symbol: {qsymbol} ", end="", flush=True )
 
             if wrangle_errors == -1:           # bad symbol (not a regular stock)
-                logging.info( f"main::x.combo - {qsymbol} bad / not regular ticker: %s" % qsymbol )
+                logging.info( f"%s - {qsymbol} bad / not regular stock type" % cmi_debug )
                 nq.quote.clear()               # make sure ephemerial quote{} is always empty before bailing out
                 wrangle_errors = 1
                 unfixable_errors += 1
-                print ( f"- UNFIXABLE data problem / Not regular stock / ETF Trust: EF / Data issues: {wrangle_errors}" )
+                print ( f"! {wrangle_errors} ", end="" )
+                # print ( f"- UNFIXABLE data problem / Not regular stock / ETF Trust: EF / Data issues: {wrangle_errors}" )
                 # set default data for non-regualr stocks
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = 'EF'
             elif nq.quote['mkt_cap'] != 0:            # catch zero mkt cap
                 # insert missing data into dataframe @ row / column
-                print ( f"- INSERT missing data / Market cap: {nq.quote['mkt_cap']} ", end='', flush=True )
+                print ( f"+", end='', flush=True )
+                #print ( f"- INSERT missing data / Market cap: {nq.quote['mkt_cap']} ", end='', flush=True )
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = nq.quote['mkt_cap']
                 cleansed_errors += 1
                 # compute market cap scale indicator (Small/Large Millions/Billions/Trillions)
@@ -270,13 +274,15 @@ def main():
                     else:
                         wrangle_errors += 1          # insert market cap scale into DF @ column M_B for this symbol
                         x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = i[0]
-                        print ( f"/ Mkt cap scale: {i[0]} - Data issues: {wrangle_errors}" )
+                        print ( f"+ {wrangle_errors} " )
+                        #print ( f"/ Mkt cap scale: {i[0]} - Data issues: {wrangle_errors}" )
                         logging.info( "main::x.combo - Computed Market cap scale as %s / DF updated!" % i[0] )
                         cleansed_errors += 1
                         break
             else:
                 wrangle_errors += 2     # regular symbol with ZERO ($0) market cap is a bad data error
-                print ( f"- INSERT missing data / Market cap: 0 / Mkt cap scale: UZ - Data issues: {wrangle_errors}" )
+                print ( f"+ {wrangle_errors} " )
+                #print ( f"- INSERT missing data / Market cap: 0 / Mkt cap scale: UZ - Data issues: {wrangle_errors}" )
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = "UZ"
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = float(0)
                 cleansed_errors += 1
