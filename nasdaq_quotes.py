@@ -532,7 +532,7 @@ class nquote:
             # craft final data structure.
             # NOTE: globally accessible and used by quote DF and quote DICT
             symbol=co_sym_lj.rstrip()
-            logging.info( f"%s - Build global Dataframe list: {symbol}"' % cmi_debug )        # so we can access it natively if needed, without using pandas
+            logging.info( f"%s - Build global Dataframe list: {symbol}" % cmi_debug )        # so we can access it natively if needed, without using pandas
             self.data0 = [[ \
                co_sym_lj, \
                co_name_lj, \
