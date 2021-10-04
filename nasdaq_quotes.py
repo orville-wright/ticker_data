@@ -556,20 +556,22 @@ class nquote:
             symbol=co_sym_lj.rstrip()
             logging.info( f"%s - Build global dict: {symbol}" % cmi_debug )        # so we can access it natively if needed, without using pandas
             self.quote = dict( \
-                    symbol=co_sym_lj.rstrip(), \
-                    name=co_name, \
-                    updown=arrow_updown, \
-                    cur_price=price_cl, \
-                    prc_change=price_net_cl, \
-                    pct_change=price_pct_cl, \
-                    open_price=open_price_cl, \
-                    prev_close=prev_close_cl, \
-                    vol=vol_abs_cl, \
-                    mkt_cap=mkt_cap_cl )
+                symbol=co_sym_lj.rstrip(), \
+                name=co_name, \
+                updown=arrow_updown, \
+                cur_price=price_cl, \
+                prc_change=price_net_cl, \
+                pct_change=price_pct_cl, \
+                open_price=open_price_cl, \
+                open_price_net=open_price_net, \
+                open_price_pct=open_price_pct_cl, \
+                prev_close=prev_close_cl, \
+                vol=vol_abs_cl, \
+                mkt_cap=mkt_cap_cl )
 
             return wrangle_errors
         else:
-            wrangle_errors = 50
+            wrangle_errors += 50
             logging.info( f"%s - Nasdaq quote data is ABERRANT [ {a} {b} {c} ]" % cmi_debug )
 
         return wrangle_errors
