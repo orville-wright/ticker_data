@@ -383,8 +383,8 @@ class yfnews_reader:
                     article_headline = next(microad_headline)                   # grab the Micro-ad Headline
                     news_agency = microad_news_agency
                     self.article_teaser = "No Micro-ad headine"
-                    if pure_url == 0: thint = 5.0    # local entity
-                    if pure_url == 1: thint = 5.1    # remote entity - currently NOT a valid type on yahoo.com
+                    if pure_url == 0: thint = 5.0                               # local entity
+                    if pure_url == 1: thint = 5.1                               # remote entity
                     inf_type = self.uh.confidence_lvl(thint)                    # return var is tuple
                     ml_atype = 1
                 elif uhint == 2:        # TODO: news_agency == "Yahoo Finance Video" to identifiy thint = 4.0 (FYN hosted video) vs. 4.1 externally authoured video
@@ -408,7 +408,7 @@ class yfnews_reader:
                     article_headline = li_tag.a.text        # taken from YFN news feed thumbnail, not actual article page
 
                 print ( f"================= Article {x} / {symbol} / Depth 1 ==========================" )
-                print ( f"News item:        {self.cycle}: {inf_type[0]} / Confidence Indicators t:{ml_atype} / u:{uhint} / h:{thint}" )
+                print ( f"News item:        {self.cycle}: {inf_type[0]} / Origin conf Indctrs [t:{ml_atype} u:{uhint} h:{thint}]" )
                 print ( f"News agency:      {news_agency}" )
                 print ( f"News origin:      {self.url_netloc}" )
                 print ( f"Article URL:      {self.article_url}" )
@@ -442,7 +442,7 @@ class yfnews_reader:
                 ml_atype = 2
                 thint = 6.0
                 print ( f"================= Article {x} / {symbol} / Depth 1 ==========================" )
-                print ( f"News item:        {self.cycle}: {inf_type} / Confidence > t:{ml_atype} / u:[] / h:{thint}" )
+                print ( f"News item:        {self.cycle}: {inf_type} / Origin Conf Indctrs [t:{ml_atype} / u:[-] / h:{thint}]" )
                 print ( f"News agency:      {fa_2} / not {symbol} news / NOT an NLP candidate" )
                 print ( f"Adv injector:     {fa_3:.40} [...]" )
             a_counter = h3_counter = 0
@@ -455,7 +455,7 @@ class yfnews_reader:
     def interpret_page(self, item_idx, data_row):
         """
         Depth 2 Page interpreter
-        Look inside the page and translate it. Test for known pages types (e.g. good news articles etc)
+        Look INSIDE each page and translate it. Test for known pages types (e.g. good news articles etc)
         Return some info that allows us to definatively know what we're looking at and how/where to NLP read the text of the artcile.
         NOTE: In the NEWs feed, 99% of news article url's are FAKE internal stubs, that point to themself or an external remote site/page.
         The stub/page can have miltple personas, so this translater is where the mahic happens...
