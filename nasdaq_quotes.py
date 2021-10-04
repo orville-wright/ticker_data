@@ -465,11 +465,11 @@ class nquote:
                 try:
                     open_price = ops[0]                     # e.g. 140.8
                 except IndexError:
-                    logging.info( f'%s - Bad key open_price: {open_price)} / setting to $0.0 / {open_price}' % cmi_debug )
+                    logging.info( f'%s - Bad key open_price: {type(open_price)} / setting to $0.0 / {open_price}' % cmi_debug )
                     open_price = float(0)
                     wrangle_errors += 1
                 except ValueError:
-                    logging.info( f'%s - Bad open_price: {open_price)} / setting to $0.0 / {open_price}' % cmi_debug )
+                    logging.info( f'%s - Bad open_price: {type(open_price)} / setting to $0.0 / {open_price}' % cmi_debug )
                     open_price = float(0)
                     wrangle_errors += 1
                 else:
