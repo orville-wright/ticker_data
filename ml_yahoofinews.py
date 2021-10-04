@@ -442,7 +442,7 @@ class yfnews_reader:
                 ml_atype = 2
                 thint = 6.0
                 print ( f"================= Article {x} / {symbol} / Depth 1 ==========================" )
-                print ( f"News item:        {self.cycle}: {inf_type} / Origin Conf Indctrs [ t:{ml_atype} / u:[-] / h:{thint} ]" )
+                print ( f"News item:        {self.cycle}: {inf_type} / Origin Conf Indctrs [ t:{ml_atype} u:[-] h:{thint} ]" )
                 print ( f"News agency:      {fa_2} / not {symbol} news / NOT an NLP candidate" )
                 print ( f"Adv injector:     {fa_3:.40} [...]" )
             a_counter = h3_counter = 0
