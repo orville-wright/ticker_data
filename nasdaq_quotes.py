@@ -395,7 +395,7 @@ class nquote:
                 prev_close = jsondata10['PreviousClose']['value']                   # e,g, "$138.93"
                 mkt_cap = jsondata10['MarketCap']['value']                          # e.g. "128,460,592,862"
                 today_hilo = jsondata10['TodayHighLow']['value']                    # WARN: multi-field string needs splitting/wrangeling e.g. "$143.97/$140.37"
-                avg_vol = jsondata10['AverageVolume']['value']                      # e.g. "4,811,121"
+                avg_vol = jsondata10['AverageVolume']['value']                      # e.g. "4,811,121" or N/A
                 oneyear_target = jsondata10['OneYrTarget']['value']                 # e.g. "$151.00"
                 beta = jsondata10['Beta']['value']                                  # e.g. 1.23
                 LII_week_hilo = jsondata10['FiftTwoWeekHighLow']['value']           # WARN: multi-field string needs splitting/wrangeling e.g. "$152.84/$105.92"
@@ -572,6 +572,7 @@ class nquote:
                 prev_close=prev_close_cl, \
                 vol=vol_abs_cl, \
                 avg_vol=avg_vol, \
+                one_year_target=oneyear_target, \
                 mkt_cap=mkt_cap_cl )
 
             return wrangle_errors
