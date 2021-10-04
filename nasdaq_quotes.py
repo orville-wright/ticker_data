@@ -339,14 +339,17 @@ class nquote:
 ################################################################################################
         wrangle_errors = 0
         null_count = 0
-        a = nulls_summary()
-        b = nulls_watchlist()
-        c = nulls_premarket()
+        a = nulls_summary()         # self.jsondata11 = self.quote_json1['data']
+        b = nulls_watchlist()       # self.jsondata20 = self.quote_json2['data'][0]
+        c = nulls_premarket()       # self.jsondata30 = self.quote_json3['data']
 
         if a == 0 and b == 0:    # GOOD - all data fields are available
             logging.info( f'%s - Nasdaq quote data is NOMINAL [ {a} {b} {c} ]' % cmi_debug )
-            # WATCHLIST quote data                                                  # Data wrangeling error counter
-            if self.quote_json2['data'] is not None:                                # bad symbol TEST == Null json payload
+            #
+            # setup main JSON data zone accessors...
+            #
+            # WATCHLIST quote data
+            if self.quote_json2['data'] is not None:                                # bad payload? - can also test b == 0
                 logging.info('%s - Stage #1 / Accessing data fields...' % cmi_debug )
                 jsondata20 = self.quote_json2['data'][0]                            # HEAD of data payload
                 co_sym = jsondata20['symbol']                                       # "IBM"
@@ -364,7 +367,7 @@ class nquote:
                 wrangle_errors += -1
 
             # PRE-MARKET quoet data - 2 data zones
-            if self.quote_json3['data'] is not None:                                # bad symbol TEST == Null json payload
+            if self.quote_json3['data'] is not None:                                # bad payload? - can also test c == 0
                 logging.info('%s - Stage #2 / Accessing data fields...' % cmi_debug )
                 jsondata30 = self.quote_json3['data']                               # HEAD of data payload 0
                 try:
@@ -386,7 +389,7 @@ class nquote:
                 wrangle_errors += -1
 
             # SUMMARY quote data
-            if self.quote_json1['data'] is not None:                                # bad symbol TEST == Null json payload
+            if self.quote_json1['data'] is not None:                                # bad payload? - can also test a == 0
                 logging.info('%s - Stage #3 / Accessing data fields...' % cmi_debug )
                 jsondata10 = self.quote_json1['data']['summaryData']                # HEAD of data payload
                 prev_close = jsondata10['PreviousClose']['value']                   # e,g, "$138.93"
@@ -402,7 +405,8 @@ class nquote:
                 self.quote.clear()
                 wrangle_errors += -1
 
-            # ######### wrangle, clean, cast & prepare the data ##############################################
+            ########################################################################################
+            # wrangle, clean, cast & prepare the data ##############################################
             logging.info('%s - Begin heavy data wrangle workloads...' % cmi_debug )
 
             co_sym_lj = co_sym.strip()
@@ -567,6 +571,10 @@ class nquote:
                 open_price_pct=open_price_pct_cl, \
                 prev_close=prev_close_cl, \
                 vol=vol_abs_cl, \
+                avg_vol=avg_vol, \
+                one_year_target=oneyear_target, \
+                beta=beta, \
+                hi_lo_52week, LII_week_hilo, \
                 mkt_cap=mkt_cap_cl )
 
             return wrangle_errors
