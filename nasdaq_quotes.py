@@ -300,8 +300,8 @@ class nquote:
             return jd20_null_errors
 
             # ZONE #3 watchlist zone....########################################
-            def nulls_premkrt():
-                cmi_debug = __name__+"::"+nulls_premkrt.__name__+".#"+str(self.yti)
+            def nulls_premarket():
+                cmi_debug = __name__+"::"+nulls_premarket.__name__+".#"+str(self.yti)
                 logging.info( f'%s - probing json keys/fields for NULLs...' % cmi_debug )
                 jd_31 = ("consolidated", "volume", "delta" )
                 jd_30 = ("infoTable", "infoTable']['rows", "infoTable']['rows'][0", "infoTable']['rows'][0]['consolidated'",
@@ -341,7 +341,7 @@ class nquote:
         null_count = 0
         a = nulls_summary()
         b = nulls_watchlist()
-        c = nulls_premkrt()
+        c = nulls_premarket()
 
         if a == 0 and b == 0:    # GOOD - all data fields are available
             logging.info( f'%s - Nasdaq quote data is NOMINAL [ {a} {b} {c} ]' % cmi_debug )
