@@ -574,7 +574,7 @@ class nquote:
                 avg_vol=avg_vol, \
                 one_year_target=oneyear_target, \
                 beta=beta, \
-                hi_lo_52week, LII_week_hilo, \
+                oneyear_hilo, LII_week_hilo, \
                 mkt_cap=mkt_cap_cl )
 
             return wrangle_errors
