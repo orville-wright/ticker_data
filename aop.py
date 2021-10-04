@@ -372,9 +372,9 @@ def main():
         Cycles thru each item in the ml_ingest{} and processes...
         Prints a nice sumamry of each NLP candidates in ml_digest{}
         """
-        locality_code = { 0: 'Local',
-                    1: 'Local',
-                    2: 'Local',
+        locality_code = { 0: 'Local 0',
+                    1: 'Local 1',
+                    2: 'Local 2',
                     3: 'Remote',
                     9: 'Unknown locality'
                     }
