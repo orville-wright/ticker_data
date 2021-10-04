@@ -398,7 +398,7 @@ def main():
                 print ( f"{locality_code.get(inf_type[1])}" )
                 uhint, uhdescr = uh.uhinter(21, p_r_xturl)
                 print ( f"Target URL:    [ {p_r_xturl.netloc} ] / {uhdescr} / ", end="" )
-                print ( f"{locality_code.get(uhint)} {[uhint]})" )
+                print ( f"{locality_code.get(uhint)} [ u:{uhint} ])" )
                 print ( f"====================== Depth 2 ======================" )
                 # summary report...
             elif sn_row['type'] == 1:           # Micro-Ad, but could possibly be news...
@@ -416,7 +416,7 @@ def main():
                 print ( f"{locality_code.get(inf_type[1], 'in flux')}" )
                 uhint, uhdescr = uh.uhinter(21, p_r_xturl)
                 print ( f"Target URL:    [ {p_r_xturl.netloc} ] / {uhdescr} / ", end="" )
-                print ( f"{locality_code.get(uhint, 'in flux')} h: {[uhint]})" )
+                print ( f"{locality_code.get(uhint, 'in flux')} [ u:{uhint} ])" )
                 print ( f"====================== Depth 2 ======================" )
                 #
             elif sn_row['type'] == 2:                     # possibly not news? (Micro Ad)
