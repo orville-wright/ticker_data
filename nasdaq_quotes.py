@@ -181,8 +181,8 @@ class nquote:
 
         for i in ['stocks', 'etf']:
             test_info_url = self.info_url + i
-            with self.js_session.get(self.info_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp4:
-                logging.info( f'%s - Stage #4 / asset_class{self.info_url}' % cmi_debug )
+            with self.js_session.get(test_info_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp4:
+                logging.info( f'%s - Stage #4 / asset_class get() {test_info_url}' % cmi_debug )
                 self.quote_json4 = json.loads(self.js_resp4.text)
                 if self.quote_json4['status']['rCode'] == 200:
                     self.asset_class = i
