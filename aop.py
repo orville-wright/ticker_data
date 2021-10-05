@@ -305,21 +305,21 @@ def main():
                             print ( f" / ", end="" )
                         break
 
-                if nq.asset_class == "stock" and y == 0:        # stock and market cap = 0
-                    wrangle_errors += 2     # regular symbol with ZERO ($0) market cap is a bad data error
-                    #print ( f"- INSERT missing data / Market cap: 0 / Mkt cap scale: UZ - Data issues: {wrangle_errors}" )
-                    x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = "UZ"
-                    x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = float(0)
-                    nq.quote.clear()               # make sure ephemerial quote{} is always empty before bailing out
-                    plusplus = "++"
-                    print ( f"{plusplus:3} {wrangle_errors}", end="" )
-                    cols += 1
-                    if cols == 8:
-                        print ( f" " )        # onlhy print 8 symbols per row
-                        cols = 1
-                    else:
-                        print ( f" / ", end="" )
-                    cleansed_errors += 1
+            if nq.asset_class == "stock" and y == 0:        # stock and market cap = 0
+                wrangle_errors += 2     # regular symbol with ZERO ($0) market cap is a bad data error
+                #print ( f"- INSERT missing data / Market cap: 0 / Mkt cap scale: UZ - Data issues: {wrangle_errors}" )
+                x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = "UZ"
+                x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = float(0)
+                nq.quote.clear()               # make sure ephemerial quote{} is always empty before bailing out
+                plusplus = "++"
+                print ( f"{plusplus:3} {wrangle_errors}", end="" )
+                cols += 1
+                if cols == 8:
+                    print ( f" " )        # onlhy print 8 symbols per row
+                    cols = 1
+                else:
+                    print ( f" / ", end="" )
+                cleansed_errors += 1
 
             logging.info( f"main::x.combo ================ end quote: {qsymbol} : %s ====================" % loop_count )
             total_wrangle_errors = total_wrangle_errors + wrangle_errors
