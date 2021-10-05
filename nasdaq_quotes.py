@@ -179,6 +179,7 @@ class nquote:
             self.quote_json3 = json.loads(self.js_resp3.text)
             logging.info( '%s - Stage #3 - Done' % cmi_debug )
 
+        self.asset_class = -1
         for i in ['stocks', 'etf']:
             test_info_url = self.info_url + i
             with self.js_session.get(test_info_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp4:
@@ -190,9 +191,8 @@ class nquote:
                     break
                 else:
                     test_info_url = ""
-            logging.info( f'%s - Stage #4 / cant ID asset_class / BAD symbol' % cmi_debug )
-            self.asset_class = -1
-
+                    self.asset_class = -1
+    
         # Xray DEBUG
         if self.args['bool_xray'] is True:
             print ( f"===================== get_nquote.{self.yti} session cookies : {self.qs} ===========================" )
