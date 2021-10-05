@@ -261,7 +261,7 @@ def main():
                 print ( f"!", end="" )
                 # print ( f"- UNFIXABLE data problem / Not regular stock / ETF Trust: EF / Data issues: {wrangle_errors}" )
                 # set default data for non-regualr stocks
-                #x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
+                x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = 'EF'
             #
             try:
@@ -279,6 +279,23 @@ def main():
             else:
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = nq.quote['mkt_cap']
                 cleansed_errors += 1
+                for i in (("MT", 999999), ("LB", 10000), ("SB", 2000), ("LM", 500), ("SM", 50), ("TM", 10), ("UZ", 0)):
+                    if i[1] >= nq.quote['mkt_cap']:
+                        pass
+                    else:
+                        wrangle_errors += 1          # insert market cap scale into DF @ column M_B for this symbol
+                        x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = i[0]
+                        #print ( f"/ Mkt cap scale: {i[0]} - Data issues: {wrangle_errors}" )
+                        logging.info( f"%s - Computed Market cap scale as {i[0]} / DF updated!" % cmi_debug )
+                        print ( f"+  {wrangle_errors}", end="" )
+                        cleansed_errors += 1
+                        cols += 1
+                        if cols == 8:
+                            print ( f" " )        # onlhy print 8 symbols per row
+                            cols = 1
+                        else:
+                            print ( f" / ", end="" )
+                        break
             finally:
                 plusplus = "++"
                 print ( f"{plusplus:3}{wrangle_errors}", end="" )
@@ -295,24 +312,6 @@ def main():
             # print ( f"+", end='', flush=True )
             #cleansed_errors += 1
             # compute market cap scale indicator (Small/Large Millions/Billions/Trillions)
-            for i in (("MT", 999999), ("LB", 10000), ("SB", 2000), ("LM", 500), ("SM", 50), ("TM", 10), ("UZ", 0)):
-                if i[1] >= nq.quote['mkt_cap']:
-                    pass
-                else:
-                    wrangle_errors += 1          # insert market cap scale into DF @ column M_B for this symbol
-                    x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = i[0]
-                    #print ( f"/ Mkt cap scale: {i[0]} - Data issues: {wrangle_errors}" )
-                    logging.info( f"%s - Computed Market cap scale as {i[0]} / DF updated!" % cmi_debug )
-                    print ( f"+  {wrangle_errors}", end="" )
-                    cleansed_errors += 1
-                    cols += 1
-                    if cols == 8:
-                        print ( f" " )        # onlhy print 8 symbols per row
-                        cols = 1
-                    else:
-                        print ( f" / ", end="" )
-                    break
-
             if nq.asset_class == "stock" and y == 0:        # stock and market cap = 0
                 wrangle_errors += 2     # regular symbol with ZERO ($0) market cap is a bad data error
                 #print ( f"- INSERT missing data / Market cap: 0 / Mkt cap scale: UZ - Data issues: {wrangle_errors}" )
