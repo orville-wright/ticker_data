@@ -266,17 +266,17 @@ def main():
                 try:
                     y = nq.quote['mkt_cap']         # some ETF/Funds have a market cap - but this state is inconsistent & random
                 except TypeError:
-                    logging.info( f"%s - ETF Market cap is NULL" % cmi_debug )
-                    nq.quote.clear()               # make sure ephemerial quote{} is always empty before bailing out
+                    logging.info( f"%s - ETF Market cap is NULL / seeing to: 0" % cmi_debug
+                    x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = 0
                     cleansed_errors += 2
                     y = 0
                 except KeyError:
-                    logging.info( f"%s - ETF Market cap key is NULL" % cmi_debug )
+                    logging.info( f"%s - ETF Market cap key is NULL / setting to: 0" % cmi_debug )
+                    x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = 0
                     cleansed_errors += 1
                     y = 0
-                    nq.quote.clear()               # make sure ephemerial quote{} is always empty before bailing out
                 else:
-                    x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = nq.quote['mkt_cap']
+                    x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = y
                 finally:
                     plusplus = "++"
                     print ( f"{plusplus:3}{wrangle_errors}", end="" )
@@ -286,7 +286,7 @@ def main():
                         cols = 1
                     else:
                         print ( f" / ", end="" )
-            #
+            # nq.quote.clear()               # make sure ephemerial quote{} is always empty before bailing out
             else:   # insert missing data into dataframe @ row / column
                 #print ( f"- INSERT missing data / Market cap: {nq.quote['mkt_cap']} ", end='', flush=True )
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = nq.quote['mkt_cap']
