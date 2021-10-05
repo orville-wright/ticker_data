@@ -103,7 +103,7 @@ class nquote:
         logging.info('%s - form API endpoint URL' % cmi_debug )
         self.symbol = symbol.upper()
         self.quote_url = "https://api.nasdaq.com" + self.path
-        self.info_url = "https://api.nasdaq.com/info/" + self.symbol + "/info?assetclass="
+        self.info_url = "https://api.nasdaq.com/api/quote/" + self.symbol + "/info?assetclass="
         self.summary_url = "https://api.nasdaq.com/api/quote/" + self.symbol + "/summary?assetclass=stocks"
         self.premarket_url = "https://api.nasdaq.com/api/quote/" + self.symbol + "/extended-trading?assetclass=stocks&markettype=pre"
         #
