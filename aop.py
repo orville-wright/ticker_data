@@ -246,16 +246,17 @@ def main():
             xsymbol = qsymbol                  # raw field from df to match df insert column test - sloppy hack, it has trailing spaces
             qsymbol = qsymbol.rstrip()         # same data but cleand/striped of trailing spaces
             logging.info( f"main::x.combo ================ get quote: {qsymbol} : %s ====================" % loop_count )
-            nq.update_headers(qsymbol)         # set path: header object. doesnt touch secret nasdaq cookies
-            nq.form_api_endpoint(qsymbol)      # set API endpoint url
-            nq.get_nquote(qsymbol)             # get a live quote
+            nq.update_headers(qsymbol, "stocks")         # set path: header object. doesnt touch secret nasdaq cookies
+            ac = learn_sym_aclass(qsymbol)
+            nq.form_api_endpoint(qsymbol, ac)      # set API endpoint url - default GUESS asset_class=stocks
+            nq.get_nquote(qsymbol, ac)             # get a live quote
             wrangle_errors = nq.build_data()   # wrangle & cleanse the data - lots done in here
             print ( f"{qsymbol:5}...", end="", flush=True )
             #print ( f"symbol: {qsymbol} ", end="", flush=True )
 
             #if wrangle_errors == -1:           # bad symbol (not a regular stock)
-            if nq.asset_class == "etf":        # asset class is ETF. Cant get stock-type data
-                logging.info( f"%s - {qsymbol} asset class is ETF / not stock" % cmi_debug )
+            if nq.asset_class == "etf":        # our Global attribute - is asset class is ETF? yes = Cant get stock-type data
+                logging.info( f"%s - {qsymbol} asset class is ETF" % cmi_debug )
                 wrangle_errors = 1
                 unfixable_errors += 1
                 print ( f"!", end="" )
@@ -263,10 +264,14 @@ def main():
                 # set default data for non-regualr stocks
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = 'EF'
+            else:
+                pass
+                logging.info( f"%s - {qsymbol} asset class is STOCKS" % cmi_debug )
+
             #
+            logging.info( f"%s - Test {nq.asset_class} Mkt_cap for NULLs..." % cmi_debug )
             try:
-                logging.info( f"%s - Test {nq.asset_class} Mkt_cap for NULLs..." % cmi_debug )
-                y = nq.quote['mkt_cap']         # some ETF/Funds have a market cap - but this state is inconsistent & random
+                null_tester = nq.quote['mkt_cap']         # some ETF/Funds have a market cap - but this state is inconsistent & random
             except TypeError:
                 logging.info( f"%s - {nq.asset_class} Mkt_cap data is NULL / setting to: 0" % cmi_debug )
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
@@ -278,7 +283,7 @@ def main():
                 cleansed_errors += 1
                 y = 0
             else:
-                logging.info( f"%s - Set {nq.asset_class} Mkt_cap to: {y}" % cmi_debug )
+                logging.info( f"%s - Set {nq.asset_class} Mkt_cap to: {nq.quote['mkt_cap']}" % cmi_debug )
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = nq.quote['mkt_cap']
                 cleansed_errors += 1
                 logging.info( f"%s - Compute {nq.asset_class} Mkt_cap scale..." % cmi_debug )
@@ -565,7 +570,7 @@ def main():
         nq_symbol = args['qsymbol'].upper()
         logging.info('main::simple get_quote - for symbol: %s' % nq_symbol )
         nq.update_headers(nq_symbol.rstrip())        # set path: header. doesnt touch secret nasdaq cookies
-        nq.form_api_endpoint(nq_symbol.rstrip())
+        nq.form_api_endpoint(nq_symbol.rstrip(), "stocks")
         nq.get_nquote(nq_symbol.rstrip())
         wrangle_errors = nq.build_data()             # return num of data wrangeling errors we found & dealt with
         nq.build_df()

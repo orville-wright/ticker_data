@@ -74,12 +74,12 @@ class nquote:
         return
 
 # method 1
-    def update_headers(self, symbol):
+    def update_headers(self, symbol, asset_class):
         cmi_debug = __name__+"::"+self.update_headers.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         self.symbol = symbol.upper()
         logging.info('%s - set cookies/headers path: object' % cmi_debug )
-        self.path = '/api/quote/' + self.symbol + '/info?assetclass=stocks'
+        self.path = '/api/quote/' + self.symbol + '/info?assetclass=" + "asset_class"
         #self.nasdaq_headers['path'] = self.path
         self.js_session.cookies.update({'path': self.path} )
         logging.info('nasdaq_quotes::update_headers.## - cookies/headers path: object: %s' % self.path )
@@ -94,7 +94,7 @@ class nquote:
         return
 
 # method 3
-    def form_api_endpoint(self, symbol):
+    def form_api_endpoint(self, symbol, asset_class):
         """
         This is the quote endppints for the req get()
         As of 1 Oct, 2021...Nasdaq has a new data model that splits quote data across 4 key API endpoints. Of which,  2 are very intersting.
@@ -103,18 +103,18 @@ class nquote:
         logging.info('%s - form API endpoint URL' % cmi_debug )
         self.symbol = symbol.upper()
         self.quote_url = "https://api.nasdaq.com" + self.path
-        self.info_url = "https://api.nasdaq.com/api/quote/" + self.symbol + "/info?assetclass="
-        self.summary_url = "https://api.nasdaq.com/api/quote/" + self.symbol + "/summary?assetclass=stocks"
-        self.premarket_url = "https://api.nasdaq.com/api/quote/" + self.symbol + "/extended-trading?assetclass=stocks&markettype=pre"
+        self.info_url = "https://api.nasdaq.com/api/quote/" + self.symbol + "/info?assetclass=" + asset_class
+        self.summary_url = "https://api.nasdaq.com/api/quote/" + self.symbol + "/summary?assetclass=" + asset_class
+        self.premarket_url = "https://api.nasdaq.com/api/quote/" + self.symbol + "/extended-trading?assetclass=" + asset_class + "&markettype=pre"
         #
-        self.watchlist_url = "https://api.nasdaq.com/api/quote/watchlist?symbol=" + self.symbol + "%7cstocks"
-        self.wurl_log1 = "https://api.nasdaq.com/api/quote/watchlist?symbol=" + self.symbol    # hack f-strings doesnt like "%" inside {}
-        self.wurl_log2 = "7cstocks"         # hack f-strings doesnt like "%" inside {}
+        self.watchlist_url = "https://api.nasdaq.com/api/quote/watchlist?symbol=" + self.symbol + "%7c" + asset_class
+        wurl_log1 = "https://api.nasdaq.com/api/quote/watchlist?symbol=" + self.symbol    # hack f-strings doesnt like "%" inside {}
+        wurl_log2 = f"7c{asset_class}"         # hack f-strings doesnt like "%" inside {}
         #
         logging.info( f"================================ Quote API endpoints ================================" )
         logging.info( f"%s - API endpoint #0: [ {self.quote_url} ]" % cmi_debug )
         logging.info( f"%s - API endpoint #1: [ {self.summary_url} ]" % cmi_debug )
-        logging.info( f"%s - API endpoint #2: [ {self.wurl_log1}%%{self.wurl_log2} ]" % cmi_debug )
+        logging.info( f"%s - API endpoint #2: [ {wurl_log1}%%{wurl_log2} ]" % cmi_debug )
         logging.info( f"%s - API endpoint #3: [ {self.premarket_url} ]" % cmi_debug )
         logging.info( f"%s - API endpoint #4: [ {self.info_url} ]" % cmi_debug )
         self.quote_url = self.quote_url
@@ -149,6 +149,31 @@ class nquote:
         # if the get() succeds, the response handle is automatically saved in Class Global accessor -> self.js_resp0
         return
 
+    def learn_sym_aclass(self, symbol):
+        with self.js_session.get(self.info_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp1:
+            logging.info( '%s - Stage #1 / Summary / get() data / storing...' % cmi_debug )
+            self.quote_json1 = json.loads(self.js_resp1.text)
+            logging.info( '%s - Stage #1 - Done' % cmi_debug )
+
+        #figure out asset_class which defines which API endpoint to use...
+        self.asset_class = -1
+        t_info_url = "https://api.nasdaq.com/api/quote/" + self.symbol + "/info?assetclass="
+        for i in ['stocks', 'etf']:
+            test_info_url = t_info_url + i
+            with self.js_session.get(test_info_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp4:
+                logging.info( f'%s - Test {symbol} for asset_class [ {i} ] @ API endpoint: {test_info_url}' % cmi_debug )
+                self.quote_json4 = json.loads(self.js_resp4.text)
+                if self.quote_json4['status']['rCode'] == 200:
+                    self.asset_class = i
+                    logging.info( f'%s - Asset_class is: [ {i} ] !' % cmi_debug )
+                    break
+                else:
+                    test_info_url = ""
+            logging.info( f'%s - BAD symbol / Asset class not STOCKS or ETF !' % cmi_debug )
+            return -1
+
+        return i    # asset_class identifier  (stocks / etf)
+
 # method 6
     def get_nquote(self, symbol):
         """
@@ -178,20 +203,6 @@ class nquote:
             logging.info( '%s - Stage #3 / premarket / get() data / storing...' % cmi_debug )
             self.quote_json3 = json.loads(self.js_resp3.text)
             logging.info( '%s - Stage #3 - Done' % cmi_debug )
-
-        self.asset_class = -1
-        for i in ['stocks', 'etf']:
-            test_info_url = self.info_url + i
-            with self.js_session.get(test_info_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp4:
-                logging.info( f'%s - Stage #4 / asset_class get() {test_info_url}' % cmi_debug )
-                self.quote_json4 = json.loads(self.js_resp4.text)
-                if self.quote_json4['status']['rCode'] == 200:
-                    self.asset_class = i
-                    logging.info( f'%s - Stage #4 / asset_class is: {i} / Done / storing...' % cmi_debug )
-                    break
-                else:
-                    test_info_url = ""
-                    self.asset_class = -1
 
         # Xray DEBUG
         if self.args['bool_xray'] is True:
