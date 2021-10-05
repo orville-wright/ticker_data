@@ -261,22 +261,22 @@ def main():
                 print ( f"!", end="" )
                 # print ( f"- UNFIXABLE data problem / Not regular stock / ETF Trust: EF / Data issues: {wrangle_errors}" )
                 # set default data for non-regualr stocks
-                x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
+                #x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = 'EF'
                 try:
                     y = nq.quote['mkt_cap']         # some ETF/Funds have a market cap - but this state is inconsistent & random
                 except TypeError:
                     logging.info( f"%s - ETF Market cap is NULL / seeing to: 0" % cmi_debug
-                    x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = 0
+                    x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
                     cleansed_errors += 2
                     y = 0
                 except KeyError:
                     logging.info( f"%s - ETF Market cap key is NULL / setting to: 0" % cmi_debug )
-                    x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = 0
+                    x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
                     cleansed_errors += 1
                     y = 0
                 else:
-                    x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = y
+                    x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = nq.quote['mkt_cap']
                 finally:
                     plusplus = "++"
                     print ( f"{plusplus:3}{wrangle_errors}", end="" )
