@@ -371,7 +371,7 @@ class nquote:
 ################################################################################################
         wrangle_errors = 0
         null_count = 0
-        >>>
+        #
         a = nulls_summary()         # self.jsondata11 = self.quote_json1['data']
         b = nulls_watchlist()       # self.jsondata20 = self.quote_json2['data'][0]
         c = nulls_premarket()       # self.jsondata30 = self.quote_json3['data']
