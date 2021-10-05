@@ -178,7 +178,7 @@ class nquote:
             self.quote_json3 = json.loads(self.js_resp3.text)
             logging.info( '%s - Stage #3 - Done' % cmi_debug )
 
-        for i in [stocks, etf]:
+        for i in ['stocks', 'etf']:
             with self.js_session.get(self.info_url + i, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp4:
                 logging.info( '%s - Stage #4 / asset_class identifier / get() data / testing...' % cmi_debug )
                 self.quote_json4 = json.loads(self.js_resp4.text)
