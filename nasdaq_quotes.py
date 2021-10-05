@@ -29,6 +29,7 @@ class nquote:
     quote_json1 = ""        # JSON dataset #1 quote summary
     quote_json2 = ""        # JSON dataset #2 quote watchlist
     quote_json3 = ""        # JSON dataset #3 quote premarket
+    quote_json4 = ""        # JSON dataset #4 quote asset_class
     data0 = []              # JSON data payload
     yti = 0                 # Unique instance identifier
     cycle = 0               # class thread loop counter
@@ -38,11 +39,14 @@ class nquote:
     js_resp1 = ''           # session response handle for : self.summary_url
     js_resp2 = ''           # session response handle for : self.watchlist_url
     js_resp3 = ''           # session response handle for : self.premarket_url
+    js_resp4 = ''           # session response handle for : self.info_url
     quote_url = ""
     summary_url = ""
     watchlist_url = ""
     premarket_url = ""
+    info_url = ""
     path = ""
+    asset_class = ""        # global NULL TESTing indicator (important)
 
 
                             # NASDAQ.com header/cookie hack
@@ -99,6 +103,7 @@ class nquote:
         logging.info('%s - form API endpoint URL' % cmi_debug )
         self.symbol = symbol.upper()
         self.quote_url = "https://api.nasdaq.com" + self.path
+        self.info_url = "https://api.nasdaq.com/info/" + self.symbol + "/info?assetclass="
         self.summary_url = "https://api.nasdaq.com/api/quote/" + self.symbol + "/summary?assetclass=stocks"
         self.premarket_url = "https://api.nasdaq.com/api/quote/" + self.symbol + "/extended-trading?assetclass=stocks&markettype=pre"
         #
@@ -159,19 +164,28 @@ class nquote:
         self.qs = symbol
 
         with self.js_session.get(self.summary_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp1:
-            logging.info( '%s - Stage #1 / Summary / reading data / storing...' % cmi_debug )
+            logging.info( '%s - Stage #1 / Summary / get() data / storing...' % cmi_debug )
             self.quote_json1 = json.loads(self.js_resp1.text)
             logging.info( '%s - Stage #1 - Done' % cmi_debug )
 
         with self.js_session.get(self.watchlist_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp2:
-            logging.info( '%s - Stage #2 / Watchlist / reading data / storing...' % cmi_debug )
+            logging.info( '%s - Stage #2 / Watchlist / get() data / storing...' % cmi_debug )
             self.quote_json2 = json.loads(self.js_resp2.text)
             logging.info( '%s - Stage #2 - Done' % cmi_debug )
 
         with self.js_session.get(self.premarket_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp3:
-            logging.info( '%s - Stage #3 / premarket / reading data / storing...' % cmi_debug )
+            logging.info( '%s - Stage #3 / premarket / get() data / storing...' % cmi_debug )
             self.quote_json3 = json.loads(self.js_resp3.text)
             logging.info( '%s - Stage #3 - Done' % cmi_debug )
+
+        for i in [stocks, etf]:
+            with self.js_session.get(self.info_url + i, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp4:
+                logging.info( '%s - Stage #4 / asset_class identifier / get() data / testing...' % cmi_debug )
+                self.quote_json4 = json.loads(self.js_resp4.text)
+                if self.quote_json4[status]rCode] == 200:
+                    asset_class = i
+                    logging.info( f"%s - Stage #3 - class={i} / storing..." % cmi_debug )
+                    break
 
         # Xray DEBUG
         if self.args['bool_xray'] is True:
@@ -213,9 +227,7 @@ class nquote:
 # method 8
     def build_data(self):
         """
-        Build-out the full quote data structure thats tidy & clean.
-        All fields sourced from the extracted JSON dataset.
-        Wrangle, clean, convert, cast & format data as needed.
+        Build-out the full quote data structure thats tidy & clean. All fields sourced from the extracted JSON dataset.
         """
         cmi_debug = __name__+"::"+self.build_data.__name__+".#"+str(self.yti)
         logging.info('%s - build quote data payload from JSON' % cmi_debug )
@@ -334,11 +346,32 @@ class nquote:
             logging.info( f"%s - NULL probe 30/31 (API=premarket): errors: {jd31_null_errors} / 6" % cmi_debug )
             return jd31_null_errors
 
+        def get_asset_class():
+            cmi_debug = __name__+"::"+get_asset_class.__name__+".#"+str(self.yti)
+            logging.info( f'%s - Identify assetclass for [  ]...' % cmi_debug )
+            z = 1
+            jd10_null_errors = 0
+            jd_10 = ("PreviousClose", "MarketCap", "TodayHighLow", "AverageVolume", "OneYrTarget", "Beta", "FiftTwoWeekHighLow" )
+
+            try:
+                y = self.jsondata11['summaryData']      # summary
+            except TypeError:
+                logging.info( f"%s - Probe #10 (summary): NULL data @: [data][summaryData]" % cmi_debug )
+                jd10_null_errors = 1 + len(jd_10)       # everything in data set is BAD
+                return jd10_null_errors
+            except KeyError:
+                logging.info( f"%s - Probe #10 (summary): NULL key @: [data][summaryData]" % cmi_debug )
+                jd10_null_errors = 1 + len(jd_10)       # everything in data set is BAD
+                return jd10_null_errors
+            else:
+                x = self.jsondata11['summaryData']
+
 ################################################################################################
 # Quote DATA extractor ########################################################################
 ################################################################################################
         wrangle_errors = 0
         null_count = 0
+        >>>
         a = nulls_summary()         # self.jsondata11 = self.quote_json1['data']
         b = nulls_watchlist()       # self.jsondata20 = self.quote_json2['data'][0]
         c = nulls_premarket()       # self.jsondata30 = self.quote_json3['data']
