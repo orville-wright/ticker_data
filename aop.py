@@ -266,7 +266,7 @@ def main():
                 try:
                     y = nq.quote['mkt_cap']         # some ETF/Funds have a market cap - but this state is inconsistent & random
                 except TypeError:
-                    logging.info( f"%s - ETF Market cap is NULL / seeing to: 0" % cmi_debug
+                    logging.info( f"%s - ETF Market cap is NULL / seeing to: 0" % cmi_debug )
                     x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
                     cleansed_errors += 2
                     y = 0
