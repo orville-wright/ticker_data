@@ -263,25 +263,31 @@ def main():
                 # set default data for non-regualr stocks
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = 'EF'
-                plusplus = "++"
-                print ( f"{plusplus:3}{wrangle_errors}", end="" )
-                cols += 1
-                if cols == 8:
-                    print ( f" " )        # onlhy print 8 symbols per row
-                    cols = 1
+                try:
+                    y = nq.quote['mkt_cap']         # some ETF/Funds have a market cap - but this state is inconsistent & random
+                except TypeError:
+                    logging.info( f"%s - ETF Market cap is NULL" % cmi_debug )
+                    nq.quote.clear()               # make sure ephemerial quote{} is always empty before bailing out
+                    cleansed_errors += 2
+                    y = 0
+                except KeyError:
+                    logging.info( f"%s - ETF Market cap key is NULL" % cmi_debug )
+                    cleansed_errors += 1
+                    y = 0
+                    nq.quote.clear()               # make sure ephemerial quote{} is always empty before bailing out
                 else:
-                    print ( f" / ", end="" )
+                    x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = nq.quote['mkt_cap']
+                finally:
+                    plusplus = "++"
+                    print ( f"{plusplus:3}{wrangle_errors}", end="" )
+                    cols += 1
+                    if cols == 8:
+                        print ( f" " )        # onlhy print 8 symbols per row
+                        cols = 1
+                    else:
+                        print ( f" / ", end="" )
             #
-            try:
-                y = nq.quote['mkt_cap']         # some ETF/Funds have a market cap - but this state is inconsistent & random
-            except TypeError:
-                logging.info( f"%s - ETF Market cap is NULL" % cmi_debug )
-                y = 0
-            except KeyError:
-                logging.info( f"%s - ETF Market cap key is NULL" % cmi_debug )
-                y = 0
-            else:
-                # insert missing data into dataframe @ row / column
+            else:   # insert missing data into dataframe @ row / column
                 #print ( f"- INSERT missing data / Market cap: {nq.quote['mkt_cap']} ", end='', flush=True )
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = nq.quote['mkt_cap']
                 print ( f"+", end='', flush=True )
