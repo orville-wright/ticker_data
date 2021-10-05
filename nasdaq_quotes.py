@@ -79,7 +79,7 @@ class nquote:
         logging.info('%s - IN' % cmi_debug )
         self.symbol = symbol.upper()
         logging.info('%s - set cookies/headers path: object' % cmi_debug )
-        self.path = '/api/quote/' + self.symbol + '/info?assetclass=" + "asset_class"
+        self.path = "/api/quote/" + self.symbol + "/info?assetclass=" + asset_class
         #self.nasdaq_headers['path'] = self.path
         self.js_session.cookies.update({'path': self.path} )
         logging.info('nasdaq_quotes::update_headers.## - cookies/headers path: object: %s' % self.path )
