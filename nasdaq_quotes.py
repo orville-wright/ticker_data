@@ -190,9 +190,8 @@ class nquote:
                     break
                 else:
                     test_info_url = ""
-            else:
-                logging.info( f'%s - Stage #4 / cant ID asset_class / BAD symbol' % cmi_debug )
-                self.asset_class = -1
+            logging.info( f'%s - Stage #4 / cant ID asset_class / BAD symbol' % cmi_debug )
+            self.asset_class = -1
 
         # Xray DEBUG
         if self.args['bool_xray'] is True:
