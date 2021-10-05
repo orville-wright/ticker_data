@@ -569,9 +569,9 @@ def main():
         nq.init_dummy_session()                      # note: this will set nasdaq magic cookie
         nq_symbol = args['qsymbol'].upper()
         logging.info('main::simple get_quote - for symbol: %s' % nq_symbol )
-        nq.update_headers(qsymbol, "stocks")         # set path: header object. doesnt touch secret nasdaq cookies
-        ac = learn_sym_aclass(qsymbol)
-        nq.form_api_endpoint(qsymbol, ac)      # set API endpoint url - default GUESS asset_class=stocks
+        nq.update_headers(nq_symbol, "stocks")         # set path: header object. doesnt touch secret nasdaq cookies
+        ac = learn_sym_aclass(nq_symbol)
+        nq.form_api_endpoint(nq_symbol, ac)      # set API endpoint url - default GUESS asset_class=stocks
         nq.get_nquote(nq_symbol.rstrip())
         wrangle_errors = nq.build_data()             # return num of data wrangeling errors we found & dealt with
         nq.build_df()
