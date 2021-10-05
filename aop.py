@@ -272,6 +272,7 @@ def main():
                     cols = 1
                 else:
                     print ( f" / ", end="" )
+                    break
             #
             elif nq.quote['mkt_cap'] != 0:            # catch zero mkt cap
                 # insert missing data into dataframe @ row / column
