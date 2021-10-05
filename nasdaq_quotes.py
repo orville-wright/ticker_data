@@ -184,8 +184,8 @@ class nquote:
             with self.js_session.get(self.info_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp4:
                 logging.info( f'%s - Stage #4 / asset_class identifier / get() data @ {self.info_url} / testing...' % cmi_debug )
                 self.quote_json4 = json.loads(self.js_resp4.text)
-                if self.quote_json4[status][rCode] == 200:
-                    asset_class = i
+                if self.quote_json4['status']['rCode'] == 200:
+                    self.asset_class = i
                     logging.info( f"%s - Stage #3 - class={i} / storing..." % cmi_debug )
                     break
 
