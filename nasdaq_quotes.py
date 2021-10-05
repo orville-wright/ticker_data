@@ -116,6 +116,7 @@ class nquote:
         logging.info( f"%s - API endpoint #1: [ {self.summary_url} ]" % cmi_debug )
         logging.info( f"%s - API endpoint #2: [ {self.wurl_log1}%%{self.wurl_log2} ]" % cmi_debug )
         logging.info( f"%s - API endpoint #3: [ {self.premarket_url} ]" % cmi_debug )
+        logging.info( f"%s - API endpoint #4: [ {self.info_url} ]" % cmi_debug )
         self.quote_url = self.quote_url
         return
 
@@ -179,7 +180,7 @@ class nquote:
             logging.info( '%s - Stage #3 - Done' % cmi_debug )
 
         for i in ['stocks', 'etf']:
-            self.info_url = self.info_url = i
+            self.info_url = self.info_url + i
             with self.js_session.get(self.info_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp4:
                 logging.info( f'%s - Stage #4 / asset_class identifier / get() data @ {self.info_url} / testing...' % cmi_debug )
                 self.quote_json4 = json.loads(self.js_resp4.text)
