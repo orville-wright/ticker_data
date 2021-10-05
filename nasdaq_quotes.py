@@ -192,7 +192,7 @@ class nquote:
                 else:
                     test_info_url = ""
                     self.asset_class = -1
-    
+
         # Xray DEBUG
         if self.args['bool_xray'] is True:
             print ( f"===================== get_nquote.{self.yti} session cookies : {self.qs} ===========================" )
@@ -352,32 +352,11 @@ class nquote:
             logging.info( f"%s - NULL probe 30/31 (API=premarket): errors: {jd31_null_errors} / 6" % cmi_debug )
             return jd31_null_errors
 
-        def get_asset_class():
-            cmi_debug = __name__+"::"+get_asset_class.__name__+".#"+str(self.yti)
-            logging.info( f'%s - Identify assetclass for [  ]...' % cmi_debug )
-            z = 1
-            jd10_null_errors = 0
-            jd_10 = ("PreviousClose", "MarketCap", "TodayHighLow", "AverageVolume", "OneYrTarget", "Beta", "FiftTwoWeekHighLow" )
-
-            try:
-                y = self.jsondata11['summaryData']      # summary
-            except TypeError:
-                logging.info( f"%s - Probe #10 (summary): NULL data @: [data][summaryData]" % cmi_debug )
-                jd10_null_errors = 1 + len(jd_10)       # everything in data set is BAD
-                return jd10_null_errors
-            except KeyError:
-                logging.info( f"%s - Probe #10 (summary): NULL key @: [data][summaryData]" % cmi_debug )
-                jd10_null_errors = 1 + len(jd_10)       # everything in data set is BAD
-                return jd10_null_errors
-            else:
-                x = self.jsondata11['summaryData']
-
 ################################################################################################
 # Quote DATA extractor ########################################################################
 ################################################################################################
         wrangle_errors = 0
         null_count = 0
-        #
         a = nulls_summary()         # self.jsondata11 = self.quote_json1['data']
         b = nulls_watchlist()       # self.jsondata20 = self.quote_json2['data'][0]
         c = nulls_premarket()       # self.jsondata30 = self.quote_json3['data']

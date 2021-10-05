@@ -253,8 +253,9 @@ def main():
             print ( f"{qsymbol:5}...", end="", flush=True )
             #print ( f"symbol: {qsymbol} ", end="", flush=True )
 
-            if wrangle_errors == -1:           # bad symbol (not a regular stock)
-                logging.info( f"%s - {qsymbol} bad / not regular stock type" % cmi_debug )
+            #if wrangle_errors == -1:           # bad symbol (not a regular stock)
+            if nq.asset_class == "etf":        # asset class is ETF. Cant get stock-type data
+                logging.info( f"%s - {qsymbol} asset class is ETF / not stock" % cmi_debug )
                 nq.quote.clear()               # make sure ephemerial quote{} is always empty before bailing out
                 wrangle_errors = 1
                 unfixable_errors += 1
