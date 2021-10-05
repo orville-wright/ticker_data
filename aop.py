@@ -265,20 +265,23 @@ def main():
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = 'EF'
             #
             try:
+                logging.info( f"%s - Test {nq.asset_class} Mkt_cap for NULLs..." % cmi_debug )
                 y = nq.quote['mkt_cap']         # some ETF/Funds have a market cap - but this state is inconsistent & random
             except TypeError:
-                logging.info( f"%s - ETF Market cap is NULL / setting to: 0" % cmi_debug )
+                logging.info( f"%s - {nq.asset_class} Mkt_cap data is NULL / setting to: 0" % cmi_debug )
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
                 cleansed_errors += 2
                 y = 0
             except KeyError:
-                logging.info( f"%s - ETF Market cap key is NULL / setting to: 0" % cmi_debug )
+                logging.info( f"%s - {nq.asset_class} Mkt_cap key is NULL / setting to: 0" % cmi_debug )
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
                 cleansed_errors += 1
                 y = 0
             else:
+                logging.info( f"%s - Set {nq.asset_class} Mkt_cap to: {y}" % cmi_debug )
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = nq.quote['mkt_cap']
                 cleansed_errors += 1
+                logging.info( f"%s - Compute {nq.asset_class} Mkt_cap scale..." % cmi_debug )
                 for i in (("MT", 999999), ("LB", 10000), ("SB", 2000), ("LM", 500), ("SM", 50), ("TM", 10), ("UZ", 0)):
                     if i[1] >= nq.quote['mkt_cap']:
                         pass
@@ -286,7 +289,7 @@ def main():
                         wrangle_errors += 1          # insert market cap scale into DF @ column M_B for this symbol
                         x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = i[0]
                         #print ( f"/ Mkt cap scale: {i[0]} - Data issues: {wrangle_errors}" )
-                        logging.info( f"%s - Computed Market cap scale as {i[0]} / DF updated!" % cmi_debug )
+                        logging.info( f"%s - Computed {nq.asset_class} Market cap scale as {i[0]} / DF updated!" % cmi_debug )
                         print ( f"+  {wrangle_errors}", end="" )
                         cleansed_errors += 1
                         cols += 1
