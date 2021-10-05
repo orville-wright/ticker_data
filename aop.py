@@ -305,7 +305,7 @@ def main():
                             print ( f" / ", end="" )
                         break
 
-                if nq.asset_class == "stock" and y = 0:        # stock and market cap = 0
+                if nq.asset_class == "stock" and y == 0:        # stock and market cap = 0
                     wrangle_errors += 2     # regular symbol with ZERO ($0) market cap is a bad data error
                     #print ( f"- INSERT missing data / Market cap: 0 / Mkt cap scale: UZ - Data issues: {wrangle_errors}" )
                     x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = "UZ"
