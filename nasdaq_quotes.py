@@ -25,7 +25,7 @@ class nquote:
     # global accessors
     quote = {}              # quote as dict
     quote_df0 = ""          # quote as pandas DataFrame
-    quote_json0 = ""        # JSON dataset #1 basic info
+    quote_json0 = ""        # JSON dataset #1 : dummy_session + Update_cookiues + do_simple_get
     quote_json1 = ""        # JSON dataset #1 quote summary
     quote_json2 = ""        # JSON dataset #2 quote watchlist
     quote_json3 = ""        # JSON dataset #3 quote premarket
@@ -148,28 +148,28 @@ class nquote:
         return
 
     def learn_sym_aclass(self, symbol):
+        logging.info( f"%s - Learn asset class..." % cmi_debug )
         with self.js_session.get(self.info_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp1:
-            logging.info( '%s - Stage #1 / Summary / get() data / storing...' % cmi_debug )
+            logging.info( f"%s - Extract json..." % cmi_debug )
             self.quote_json1 = json.loads(self.js_resp1.text)
-            logging.info( '%s - Stage #1 - Done' % cmi_debug )
+            #figure out asset_class which defines which API endpoint to use...
+            self.asset_class = -1
+            t_info_url = "https://api.nasdaq.com/api/quote/" + self.symbol + "/info?assetclass="
+            for i in ['stocks', 'etf']:
+                test_info_url = t_info_url + i
+                with self.js_session.get(test_info_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp4:
+                    logging.info( f'%s - Test {symbol} for asset_class [ {i} ] @ API endpoint: {test_info_url}' % cmi_debug )
+                    self.quote_json4 = json.loads(self.js_resp4.text)
+                    if self.quote_json4['status']['rCode'] == 200:
+                        self.asset_class = i
+                        logging.info( f'%s - Asset_class is: [ {i} ] !' % cmi_debug )
+                        break
+                    else:
+                        test_info_url = ""
+                logging.info( f'%s - BAD symbol / Asset class not STOCKS or ETF !' % cmi_debug )
+                return -1
 
-        #figure out asset_class which defines which API endpoint to use...
-        self.asset_class = -1
-        t_info_url = "https://api.nasdaq.com/api/quote/" + self.symbol + "/info?assetclass="
-        for i in ['stocks', 'etf']:
-            test_info_url = t_info_url + i
-            with self.js_session.get(test_info_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp4:
-                logging.info( f'%s - Test {symbol} for asset_class [ {i} ] @ API endpoint: {test_info_url}' % cmi_debug )
-                self.quote_json4 = json.loads(self.js_resp4.text)
-                if self.quote_json4['status']['rCode'] == 200:
-                    self.asset_class = i
-                    logging.info( f'%s - Asset_class is: [ {i} ] !' % cmi_debug )
-                    break
-                else:
-                    test_info_url = ""
-            logging.info( f'%s - BAD symbol / Asset class not STOCKS or ETF !' % cmi_debug )
-            return -1
-
+        logging.info( f"%s - Done" % cmi_debug )
         return i    # asset_class identifier  (stocks / etf)
 
 # method 6
