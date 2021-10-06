@@ -81,8 +81,6 @@ class screener_dg1:
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         logging.info('%s - Drop all rows from DF0' % cmi_debug )
         self.dg1_df0.drop(self.dg1_df0.index, inplace=True)
-
-        print ( f">>>DEBUG<<< : Rows in tbody 0: {len(self.tag_tbody)}" )
         x = 0
         for j in self.tag_tbody.find_all('tr'):
             extr_strs = j.strings
@@ -106,16 +104,13 @@ class screener_dg1:
             # co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )          # left justify TXT in DF & convert to raw string
 
             # TODO: look at using f-string justifers to do this
-            co_name_lj = (re.sub('[\'\"]', '', co_name) )                   # remove " ' and strip leading/trailing spaces
-            co_name_lj = np.array2string(np.char.ljust(co_name_lj, 25) )    # left justify TXT in DF & convert to raw string
-            co_name_lj = (re.sub('[\']', '', co_name_lj) )                  # remove " ' and strip leading/trailing spaces
+            co_name_lj = f"{co_name_lj:<25}"                   # remove " ' and strip leading/trailing spaces
+
+            #co_name_lj = (re.sub('[\'\"]', '', co_name) )                   # remove " ' and strip leading/trailing spaces
+            #co_name_lj = np.array2string(np.char.ljust(co_name_lj, 25) )    # left justify TXT in DF & convert to raw string
+            #co_name_lj = (re.sub('[\']', '', co_name_lj) )                  # remove " ' and strip leading/trailing spaces
             price_clean = float(price)
             mktcap = (re.sub('[N\/A]', '0', mktcap))   # handle N/A
-
-            #print ( f">>>DEBUG<<< : change_sign: {change_sign}" )
-            #print ( f">>>DEBUG<<< : change_val: {change_val}" )
-            #change_cl = re.sub('[\%\+\-]', '', change_val)
-            #print ( f">>>DEBUG<<< : change_cl: {change_cl}" )
             change_clean = np.float(change_val)
 
             TRILLIONS = re.search('T', mktcap)
