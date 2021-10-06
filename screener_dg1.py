@@ -60,7 +60,8 @@ class screener_dg1:
         # <tr> tag has a very complex 'class=' but attributes are unique. e.g. 'simpTblRow'
         logging.info('%s store url data handle' % cmi_debug )
         self.tag_tbody = self.soup.find('tbody')
-        self.all_tag_tr = self.soup.find(attrs={"class": "simpTblRow"})
+        self.tr_rows = self.tag_tbody.find(attrs={"class": "simpTblRow"})
+        #self.all_tag_tr = self.soup.find(attrs={"class": "simpTblRow"})
 
         #self.td_tag_rows = self.all_tag_tr.find('td')
         # Example CSS Selector
@@ -81,23 +82,25 @@ class screener_dg1:
         logging.info('%s - Drop all rows from DF0' % cmi_debug )
         self.dg1_df0.drop(self.dg1_df0.index, inplace=True)
 
-        x = 1                               # row counter leveraged for unique dataframe key
-        #print ( f">>>DEBUG<<< : td_rows: {self.td_tag_rows}" )
         print ( f">>>DEBUG<<< : Rows in tbody 0: {len(self.tag_tbody)}" )
-        print ( f">>>DEBUG<<< : Fields in tr: {len(self.all_tag_tr)}" )
-        print ( f"===================================================" )
-        extr_strs = self.all_tag_tr.strings                 # BS4 generator object (nice, but has BS4 accessiblity limits)
-        print ( f">>>DEBUG<<< : extr_strs 1: {next(extr_strs)}" )
-        print ( f">>>DEBUG<<< : extr_strs 2: {next(extr_strs)}" )
-        print ( f">>>DEBUG<<< : extr_strs 3: {next(extr_strs)}" )
-        print ( f">>>DEBUG<<< : extr_strs 4: {next(extr_strs)}" )
-        print ( f">>>DEBUG<<< : extr_strs 5: {next(extr_strs)}" )
-        print ( f">>>DEBUG<<< : extr_strs 6: {next(extr_strs)}" )
-        print ( f">>>DEBUG<<< : extr_strs 7: {next(extr_strs)}" )
-        print ( f">>>DEBUG<<< : extr_strs 8: {next(extr_strs)}" )
-        print ( f">>>DEBUG<<< : extr_strs 9: {next(extr_strs)}" )
-        print ( f">>>DEBUG<<< : extr_strs 10: {next(extr_strs)}" )
-        print ( f">>>DEBUG<<< : extr_strs 11: {next(extr_strs)}" )
+        for j in self.tag_tbody:
+            x = 1                               # row counter leveraged for unique dataframe key
+            #print ( f">>>DEBUG<<< : td_rows: {self.td_tag_rows}" )
+            print ( f">>>DEBUG<<< : Fields in tr: {len(self.tr_rows)}" )
+            print ( f"===================================================" )
+            extr_strs = self.tr_rows.strings                 # BS4 generator object (nice, but has BS4 accessiblity limits)
+            print ( f">>>DEBUG<<< : extr_strs 1: {next(extr_strs)}" )
+            print ( f">>>DEBUG<<< : extr_strs 2: {next(extr_strs)}" )
+            print ( f">>>DEBUG<<< : extr_strs 3: {next(extr_strs)}" )
+            print ( f">>>DEBUG<<< : extr_strs 4: {next(extr_strs)}" )
+            print ( f">>>DEBUG<<< : extr_strs 5: {next(extr_strs)}" )
+            print ( f">>>DEBUG<<< : extr_strs 6: {next(extr_strs)}" )
+            print ( f">>>DEBUG<<< : extr_strs 7: {next(extr_strs)}" )
+            print ( f">>>DEBUG<<< : extr_strs 8: {next(extr_strs)}" )
+            print ( f">>>DEBUG<<< : extr_strs 9: {next(extr_strs)}" )
+            print ( f">>>DEBUG<<< : extr_strs 10: {next(extr_strs)}" )
+            print ( f">>>DEBUG<<< : extr_strs 11: {next(extr_strs)}" )
+            print ( f"==================================================="
 
         co_sym = next(extr_strs)         # 1st <td> : ticker symbol info / e.g "NWAU"
         co_name = next(extr_strs)        # 2nd <td> : company name / e.g "Consumer Automotive Finance, Inc."
