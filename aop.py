@@ -106,7 +106,7 @@ def bkgrnd_worker():
 ############################# main() ##################################
 
 def main():
-    cmi_debug = __name__+"::".__init__.__name__
+    cmi_debug = __name__+"::main()"
     global args
     args = vars(parser.parse_args())        # args as a dict []
     print ( " " )
