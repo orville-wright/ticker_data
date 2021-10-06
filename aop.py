@@ -303,8 +303,6 @@ def main():
                         break
             #
             finally:
-                plusplus = "++"
-                print ( f"{plusplus:3}{wrangle_errors}", end="" )
                 cols += 1
                 if cols == 8:
                     print ( f" " )        # onlhy print 8 symbols per row
