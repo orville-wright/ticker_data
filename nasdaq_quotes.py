@@ -76,11 +76,11 @@ class nquote:
 # method 1
     def update_headers(self, symbol, asset_class):
         cmi_debug = __name__+"::"+self.update_headers.__name__+".#"+str(self.yti)
-        logging.info('%s - IN' % cmi_debug )
+        logging.info( f"%s - CALLED" % cmi_debug )
         self.symbol = symbol.upper()
         path = "/api/quote/" + self.symbol + "/info?assetclass=" + asset_class
         self.js_session.cookies.update({'path': path} )
-        logging.info( f"%s - cookies/headers [path] object set to: {path}" % path )
+        logging.info( f"%s - cookies/headers [path] object set to: {path}" % cmi_debug )
         return
 
 # method 2
