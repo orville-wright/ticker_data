@@ -260,7 +260,7 @@ class bc_quote:
         self.quote['high52w_p'] = float(ht_cl)     # 52 Week HIGH (shuld be same as range52w_h)
         htt_cl = ht[2]
         htt_cl = re.sub(',', '', htt_cl)
-        self.quote['high52w_d'] = htt_cl]            # date of 52 week HIGH
+        self.quote['high52w_d'] = float(htt_cl)            # date of 52 week HIGH
 
         # 52 week LOW date & value
         l = self.quote['low52w_t']                 # e.g. '5.90 to 13.26'
