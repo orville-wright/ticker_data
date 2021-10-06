@@ -85,7 +85,7 @@ class screener_dg1:
             co_name = next(extr_strs)        # 2nd <td> : company name / e.g "Consumer Automotive Finance, Inc."
             price = next(extr_strs)          # 3rd <td> : price (Intraday) / e.g "0.0031"
             #logging.info( f'%s - >> 20 DEBUG<< Symbol: {co_sym} / price orig: {price} type: {type(price)}' % cmi_debug )
-            # change_sign = next(extr_strs)    # DEPRECATED by Yahoo.com / 4.0-th <td> : $ change / e.g  "+0.0021"
+            change_sign = next(extr_strs)    # DEPRECATED by Yahoo.com / 4.0-th <td> : $ change / e.g  "+0.0021"
             change_val = next(extr_strs)     # 4-th <td> : $ change / e.g  "+0.0021"
             #logging.info( f'%s - >> 30 DEBUG<< Symbol: {co_sym} / change_sign orig: {change_sign} type: {type(change_sign)}' % cmi_debug )
             #logging.info( f'%s - >> 31 DEBUG<< Symbol: {co_sym} / change_val orig: {change_val} type: {type(change_val)}' % cmi_debug )
@@ -110,6 +110,7 @@ class screener_dg1:
             price_clean = float(price)
             mktcap = (re.sub('[N\/A]', '0', mktcap))   # handle N/A
 
+            print ( f">>>DEBUG<<< : change_sign: {change_sign}" )
             print ( f">>>DEBUG<<< : change_val: {change_val}" )
             change_cl = re.sub('[\%\+\-]', '', change_val)
             print ( f">>>DEBUG<<< : change_cl: {change_cl}" )
