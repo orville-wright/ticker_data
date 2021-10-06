@@ -83,6 +83,7 @@ class screener_dg1:
         self.dg1_df0.drop(self.dg1_df0.index, inplace=True)
 
         print ( f">>>DEBUG<<< : Rows in tbody 0: {len(self.tag_tbody)}" )
+        x = 0
         for j in self.tag_tbody.find_all('tr'):
             extr_strs = j.strings
             co_sym = next(extr_strs)         # 1 : ticker symbol info / e.g "NWAU"
