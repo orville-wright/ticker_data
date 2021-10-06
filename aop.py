@@ -568,7 +568,7 @@ def main():
         nq = nquote(4, args)                         # setup an emphemerial dict
         nq.init_dummy_session()                      # note: this will set nasdaq magic cookie
         nq_symbol = args['qsymbol'].upper()
-        logging.info('main::simple get_quote - for symbol: %s' % nq_symbol )
+        logging.info( f"%s - Get Nasdaq.com quote for symbol {nq_symbol}" % cmi_debug )
         nq.update_headers(nq_symbol, "stocks")         # set path: header object. doesnt touch secret nasdaq cookies
         ac = nq.learn_sym_aclass(nq_symbol)
         nq.form_api_endpoint(nq_symbol, ac)      # set API endpoint url - default GUESS asset_class=stocks
@@ -631,5 +631,4 @@ def main():
 
 
 if __name__ == '__main__':
-    #cmi_debug = __name__+"::".__init__.__name__
     main()
