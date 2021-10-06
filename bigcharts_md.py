@@ -265,7 +265,9 @@ class bc_quote:
         # 52 week LOW date & value
         l = self.quote['low52w_t']                 # e.g. '5.90 to 13.26'
         lt = l.partition(' on ')                   # seperator = ' to ' result is fast, light tupple
-        self.quote['low52w_p'] = float(lt[0])      # 52 Week LOW (shuld be same as range52w_l)
+        lt_cl = lt[0]
+        lt_cl = re.sub(',', '', lt_cl)
+        self.quote['low52w_p'] = float(lt_cl)      # 52 Week LOW (shuld be same as range52w_l)
         self.quote['low52w_d'] = lt[2]             # date of 52 week LOW
 
         # SHORT interest (num_of_shares) & shorted % (shorted share as % of outstanding shares)
