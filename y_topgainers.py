@@ -61,9 +61,10 @@ class y_topgainers:
 
 # method #2
     def build_tg_df0(self):
-        """Build-out a fully populated Pandas DataFrame containg all the"""
-        """extracted/scraped fields from the html/markup table data"""
-        """Wrangle, clean/convert/format the data correctly."""
+        """
+        Build-out a fully populated Pandas DataFrame containg all the extracted/scraped fields from the
+        html/markup table data Wrangle, clean/convert/format the data correctly.
+        """
 
         cmi_debug = __name__+"::"+self.build_tg_df0.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
