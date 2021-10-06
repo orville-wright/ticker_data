@@ -59,7 +59,9 @@ class screener_dg1:
         # ATTR style search. Results -> Dict
         # <tr> tag has a very complex 'class=' but attributes are unique. e.g. 'simpTblRow'
         logging.info('%s store url data handle' % cmi_debug )
+        self.tag_tbody = self.soup.find('tbody')
         self.all_tag_tr = self.soup.find(attrs={"class": "simpTblRow"})
+
         #self.td_tag_rows = self.all_tag_tr.find('td')
         # Example CSS Selector
         #all_tag_tr1 = soup.select( "tr.simpTblRow.Bgc" )
@@ -95,16 +97,6 @@ class screener_dg1:
         print ( f">>>DEBUG<<< : extr_strs 9: {next(extr_strs)}" )
         print ( f">>>DEBUG<<< : extr_strs 10: {next(extr_strs)}" )
         print ( f">>>DEBUG<<< : extr_strs 11: {next(extr_strs)}" )
-
-
-
-
-        extr_strs = datarow.strings
-        #extr_strs = datarow.strings
-        print ( f">>>DEBUG<<< : extr_strs 1: {len(datarow)}" )
-        print ( f">>>DEBUG<<< : extr_strs 2: {next(extr_strs)}" )
-        print ( f">>>DEBUG<<< : extr_strs 3: {next(extr_strs)}" )
-        print ( f">>>DEBUG<<< : extr_strs 4: {next(extr_strs)}" )
 
         co_sym = next(extr_strs)         # 1st <td> : ticker symbol info / e.g "NWAU"
         co_name = next(extr_strs)        # 2nd <td> : company name / e.g "Consumer Automotive Finance, Inc."
