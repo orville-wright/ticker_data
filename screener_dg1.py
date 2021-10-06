@@ -101,6 +101,7 @@ class screener_dg1:
             print ( f">>>DEBUG<<< : extr_strs 10: {next(extr_strs)}" )
             print ( f">>>DEBUG<<< : extr_strs 11: {next(extr_strs)}" )
             print ( f"===================================================" )
+            next(j)
 
         co_sym = next(extr_strs)         # 1st <td> : ticker symbol info / e.g "NWAU"
         co_name = next(extr_strs)        # 2nd <td> : company name / e.g "Consumer Automotive Finance, Inc."
