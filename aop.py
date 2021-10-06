@@ -247,7 +247,7 @@ def main():
             qsymbol = qsymbol.rstrip()         # same data but cleand/striped of trailing spaces
             logging.info( f"main::x.combo ================ get quote: {qsymbol} : %s ====================" % loop_count )
             nq.update_headers(qsymbol, "stocks")         # set path: header object. doesnt touch secret nasdaq cookies
-            ac = nq.learn_sym_aclass(qsymbol)
+            ac = nq.learn_aclass(qsymbol)
             nq.form_api_endpoint(qsymbol, ac)      # set API endpoint url - default GUESS asset_class=stocks
             nq.get_nquote(qsymbol)             # get a live quote
             wrangle_errors = nq.build_data()   # wrangle & cleanse the data - lots done in here
@@ -570,8 +570,9 @@ def main():
         nq_symbol = args['qsymbol'].upper()
         logging.info( f"%s - Get Nasdaq.com quote for symbol {nq_symbol}" % cmi_debug )
         nq.update_headers(nq_symbol, "stocks")         # set path: header object. doesnt touch secret nasdaq cookies
-        ac = nq.learn_sym_aclass(nq_symbol)
-        nq.form_api_endpoint(nq_symbol, ac)      # set API endpoint url - default GUESS asset_class=stocks
+        nq.form_api_endpoint(nq_symbol, "stocks")      # set API endpoint url - default GUESS asset_class=stocks
+        ac = nq.learn_aclass(nq_symbol)
+        nq.form_api_endpoint(nq_symbol, "stocks")      # re-set API endpoint url now that we definatively KNONW the asset_class=stocks
         nq.get_nquote(nq_symbol.rstrip())
         wrangle_errors = nq.build_data()             # return num of data wrangeling errors we found & dealt with
         nq.build_df()
