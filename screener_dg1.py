@@ -81,6 +81,7 @@ class screener_dg1:
         x = 1                               # row counter leveraged for unique dataframe key
         for datarow in self.all_tag_tr:                  # BS4 generator object (nice, but has BS4 accessiblity limits)
             extr_strs = datarow.strings
+            print ( f">>>DEBUG<<< : extr_strings: {extr_strs}" )
             co_sym = next(extr_strs)         # 1st <td> : ticker symbol info / e.g "NWAU"
             co_name = next(extr_strs)        # 2nd <td> : company name / e.g "Consumer Automotive Finance, Inc."
             price = next(extr_strs)          # 3rd <td> : price (Intraday) / e.g "0.0031"
@@ -93,7 +94,7 @@ class screener_dg1:
             #logging.info( f'%s - >> 32 DEBUG<< Symbol: {co_sym} / pct_sign orig: {pct_sign} type: {type(pct_sign)}' % cmi_debug )
             vol = next(extr_strs)            # 6th <td> : volume with scale indicator/ e.g "70.250k"
             avg_vol = next(extr_strs)        # 6th <td> : Avg. vol over 3 months) / e.g "61,447"
-            #mktcap = next(extr_strs)         # 7th <td> : Market cap with scale indicator / e.g "15.753B"
+            mktcap = next(extr_strs)         # 7th <td> : Market cap with scale indicator / e.g "15.753B"
             #peratio = next(extr_strs)        # 8th <td> : PEsratio TTM (Trailing 12 months) / e.g "N/A"
             #mini_gfx = next(extr_strs)      # 9th <td> : IGNORED = mini-canvas graphic 52-week rnage current price range with scale (no TXT/strings avail)
 
