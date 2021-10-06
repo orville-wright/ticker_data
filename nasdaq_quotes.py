@@ -166,9 +166,11 @@ class nquote:
                         logging.info( f'%s - Asset_class is: [ {i} ] !' % cmi_debug )
                         break
                     else:
+                        logging.info( f'%s - Asset_class is NOT: [ {i} ] !' % cmi_debug )
                         test_info_url = ""
-                logging.info( f'%s - BAD symbol / Asset class not STOCKS or ETF !' % cmi_debug )
-                return -1
+
+            logging.info( f'%s - BAD symbol / Asset class not STOCKS or ETF !' % cmi_debug )
+            return -1
 
         logging.info( f"%s - Done" % cmi_debug )
         return i    # asset_class identifier  (stocks / etf)
