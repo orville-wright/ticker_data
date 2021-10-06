@@ -247,11 +247,11 @@ def main():
             qsymbol = qsymbol.rstrip()         # same data but cleand/striped of trailing spaces
             logging.info( f"main::x.combo ================ get quote: {qsymbol} : %s ====================" % loop_count )
             nq.update_headers(qsymbol, "stocks")         # set path: header object. doesnt touch secret nasdaq cookies
-            nq.form_api_endpoint(nq_symbol, "stocks")      # set API endpoint url - default GUESS asset_class=stocks
+            nq.form_api_endpoint(qsymbol, "stocks")      # set API endpoint url - default GUESS asset_class=stocks
             ac = nq.learn_aclass(qsymbol)
             if ac != "stocks":
                 logging.info( f"%s - re-shape asset class endpoint to: {ac}" % cmi_debug )
-                nq.form_api_endpoint(nq_symbol, ac)      # re-form API endpoint if default asset_class guess was wrong)
+                nq.form_api_endpoint(qsymbol, ac)      # re-form API endpoint if default asset_class guess was wrong)
             nq.get_nquote(qsymbol)             # get a live quote
             wrangle_errors = nq.build_data()   # wrangle & cleanse the data - lots done in here
             print ( f"{qsymbol:5}...", end="", flush=True )
