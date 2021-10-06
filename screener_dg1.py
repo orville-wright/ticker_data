@@ -81,6 +81,7 @@ class screener_dg1:
 
         x = 1                               # row counter leveraged for unique dataframe key
         #print ( f">>>DEBUG<<< : td_rows: {self.td_tag_rows}" )
+        print ( f">>>DEBUG<<< : extr_strs 0: {len(self.all_tag_tr)}" )
         print ( f"===================================================" )
         for datarow in self.all_tag_tr:                  # BS4 generator object (nice, but has BS4 accessiblity limits)
             print ( f">>>DEBUG<<< : datarow {x}:\n{datarow}" )
