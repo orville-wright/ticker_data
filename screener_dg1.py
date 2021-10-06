@@ -88,7 +88,8 @@ class screener_dg1:
             #print ( f">>>DEBUG<<< : td_rows: {self.td_tag_rows}" )
             print ( f">>>DEBUG<<< : Fields in tr: {len(j.find_all('td'))}" )
             print ( f"===================================================" )
-            extr_strs = j.find_all('td').strings
+            #extr_strs = j.find_all('td').strings
+            print ( f">>>DEBUG<<< : j: {j}" )
             print ( f">>>DEBUG<<< : extr_strs 1: {next(extr_strs)}" )
             print ( f">>>DEBUG<<< : extr_strs 2: {next(extr_strs)}" )
             print ( f">>>DEBUG<<< : extr_strs 3: {next(extr_strs)}" )
