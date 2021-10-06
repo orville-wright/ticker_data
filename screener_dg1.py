@@ -110,7 +110,7 @@ class screener_dg1:
             price_clean = float(price)
             mktcap = (re.sub('[N\/A]', '0', mktcap))   # handle N/A
 
-            change_cl = re.sub('\%+-'', '', change_val)
+            change_cl = re.sub('\%+-', '', change_val)
             change_clean = np.float(change_cl)
 
             TRILLIONS = re.search('T', mktcap)
