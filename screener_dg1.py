@@ -52,11 +52,9 @@ class screener_dg1:
 
         cmi_debug = __name__+"::"+self.get_data.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
-
         r = requests.get("https://finance.yahoo.com/screener/predefined/small_cap_gainers" )
         logging.info('%s - read html stream' % cmi_debug )
         self.soup = BeautifulSoup(r.text, 'html.parser')
-
         # ATTR style search. Results -> Dict
         # <tr> tag has a very complex 'class=' but attributes are unique. e.g. 'simpTblRow'
         logging.info('%s store url data handle' % cmi_debug )
@@ -87,11 +85,11 @@ class screener_dg1:
             co_name = next(extr_strs)        # 2nd <td> : company name / e.g "Consumer Automotive Finance, Inc."
             price = next(extr_strs)          # 3rd <td> : price (Intraday) / e.g "0.0031"
             #logging.info( f'%s - >> 20 DEBUG<< Symbol: {co_sym} / price orig: {price} type: {type(price)}' % cmi_debug )
-            change_sign = next(extr_strs)    # 4.0-th <td> : $ change / e.g  "+0.0021"
-            change_val = next(extr_strs)     # 4.1-th <td> : $ change / e.g  "+0.0021"
+            # change_sign = next(extr_strs)    # DEPRECATED by Yahoo.com / 4.0-th <td> : $ change / e.g  "+0.0021"
+            change_val = next(extr_strs)     # 4-th <td> : $ change / e.g  "+0.0021"
             #logging.info( f'%s - >> 30 DEBUG<< Symbol: {co_sym} / change_sign orig: {change_sign} type: {type(change_sign)}' % cmi_debug )
             #logging.info( f'%s - >> 31 DEBUG<< Symbol: {co_sym} / change_val orig: {change_val} type: {type(change_val)}' % cmi_debug )
-            pct_sign = next(extr_strs)       # 5.0-th <td> : % change / e.g "+" or "-"
+            # pct_sign = next(extr_strs)     # DEPRECATED by Yahoo.com / 5.0-th <td> : % change / e.g "+" or "-"
             pct_val = next(extr_strs)        # 5.1-th <td> : % change / e.g "210.0000%" WARN trailing "%" must be removed before casting to float
             #logging.info( f'%s - >> 32 DEBUG<< Symbol: {co_sym} / pct_sign orig: {pct_sign} type: {type(pct_sign)}' % cmi_debug )
             vol = next(extr_strs)            # 6th <td> : volume with scale indicator/ e.g "70.250k"
@@ -111,7 +109,9 @@ class screener_dg1:
             co_name_lj = (re.sub('[\']', '', co_name_lj) )                  # remove " ' and strip leading/trailing spaces
             price_clean = float(price)
             mktcap = (re.sub('[N\/A]', '0', mktcap))   # handle N/A
-            change_clean = np.float(change_val)
+
+            change_cl = re.sub('\%+-'', '', change_val)
+            change_clean = np.float(change_cl)
 
             TRILLIONS = re.search('T', mktcap)
             BILLIONS = re.search('B', mktcap)
@@ -141,7 +141,7 @@ class screener_dg1:
             if pct_val == "N/A":
                 pct_val = float(0.0)        # Bad data. FOund a filed with N/A instead of read num
             else:
-                pct_clean = re.sub('[\%]', "", pct_val )
+                pct_clean = re.sub('[\%+-]', "", pct_val )
                 pct_clean = float(pct_clean)
 
             self.data0 = [[ \
