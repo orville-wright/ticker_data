@@ -30,6 +30,7 @@ class screener_dg1:
     dg1_df1 = ""          # DataFrame - Ephemerial list of top 10 gainers. Allways overwritten
     dg1_df2 = ""          # DataFrame - Top 10 ever 10 secs for 60 secs
     all_tag_tr = ""      # BS4 handle of the <tr> extracted data
+    td_tag_rows = ""      # BS4 handle of the <tr> extracted data
     yti = 0
     cycle = 0           # class thread loop counter
 
@@ -59,7 +60,7 @@ class screener_dg1:
         # <tr> tag has a very complex 'class=' but attributes are unique. e.g. 'simpTblRow'
         logging.info('%s store url data handle' % cmi_debug )
         self.all_tag_tr = self.soup.find_all(attrs={"class": "simpTblRow"})
-
+        self.td_tag_rows = self.all_tag_tr.find_all('td')
         # Example CSS Selector
         #all_tag_tr1 = soup.select( "tr.simpTblRow.Bgc" )
         logging.info('%s close url handle' % cmi_debug )
@@ -79,7 +80,7 @@ class screener_dg1:
         self.dg1_df0.drop(self.dg1_df0.index, inplace=True)
 
         x = 1                               # row counter leveraged for unique dataframe key
-        print ( f">>>DEBUG<<< : datarow: {self.all_tag_tr}" )
+        print ( f">>>DEBUG<<< : td_rows: {self.td_tag_rows}" )
         for datarow in self.all_tag_tr:                  # BS4 generator object (nice, but has BS4 accessiblity limits)
             extr_strs = datarow.strings
 
