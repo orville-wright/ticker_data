@@ -333,7 +333,7 @@ def main():
         x.rank_hot()
         x.rank_unvol()
         x.rank_caps()
-        x.combo_listall_ranked()
+        print ( f"{x.combo_listall_ranked()}" )
 
 # Summarize combo list key findings ##################################################################
         # Curious Outliers
@@ -393,7 +393,7 @@ def main():
         print ( "============== Market activity overview, inisghts & stats =================" )
         averages = x.combo_grouped().round(2)       # insights
         print ( " " )
-        print ( averages )
+        print ( f"{averages}" )
         print ( " " )
         print ( f"Current day average $ gain: ${averages.iloc[-1]['Prc_change'].round(2)}" )
         print ( f"Current day percent gain:   %{averages.iloc[-1]['Pct_change'].round(2)}" )

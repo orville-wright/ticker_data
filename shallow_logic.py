@@ -225,8 +225,10 @@ class shallow_combo:
         return self.combo_df
 
     def combo_listall_ranked(self):
-        """Print the full contents of the combo DataFrame with DUPES"""
-        """Sorted by % Change"""
+        """
+        Print the full contents of the combo DataFrame with DUPES
+        Sorted by % Change
+        """
 
         cmi_debug = __name__+"::"+self.combo_listall_ranked.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
