@@ -264,9 +264,11 @@ def main():
                 # set default data for non-regualr stocks
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = 'EF'
+                break
             else:
                 pass
                 logging.info( f"%s - {qsymbol} asset class is STOCKS" % cmi_debug )
+                break
 
             #
             logging.info( f"%s - Test {nq.asset_class} Mkt_cap for NULLs..." % cmi_debug )
