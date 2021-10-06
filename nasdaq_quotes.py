@@ -148,6 +148,7 @@ class nquote:
         return
 
     def learn_sym_aclass(self, symbol):
+        cmi_debug = __name__+"::"+self.learn_sym_aclass.__name__+".#"+str(self.yti)
         logging.info( f"%s - Learn asset class..." % cmi_debug )
         with self.js_session.get(self.info_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp1:
             logging.info( f"%s - Extract json..." % cmi_debug )
