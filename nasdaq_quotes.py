@@ -147,8 +147,8 @@ class nquote:
         # if the get() succeds, the response handle is automatically saved in Class Global accessor -> self.js_resp0
         return
 
-    def learn_sym_aclass(self, symbol):
-        cmi_debug = __name__+"::"+self.learn_sym_aclass.__name__+".#"+str(self.yti)
+    def learn_aclass(self, symbol):
+        cmi_debug = __name__+"::"+self.learn_aclass.__name__+".#"+str(self.yti)
         logging.info( f"%s - Learn asset class using API endpoint: {self.info_url}" % cmi_debug )
         with self.js_session.get(self.info_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp1:
             logging.info( f"%s - Extract json..." % cmi_debug )

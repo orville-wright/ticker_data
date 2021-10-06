@@ -571,8 +571,10 @@ def main():
         logging.info( f"%s - Get Nasdaq.com quote for symbol {nq_symbol}" % cmi_debug )
         nq.update_headers(nq_symbol, "stocks")         # set path: header object. doesnt touch secret nasdaq cookies
         nq.form_api_endpoint(nq_symbol, "stocks")      # set API endpoint url - default GUESS asset_class=stocks
+        #
         ac = nq.learn_aclass(nq_symbol)
-        nq.form_api_endpoint(nq_symbol, "stocks")      # re-set API endpoint url now that we definatively KNONW the asset_class=stocks
+        #
+        nq.form_api_endpoint(nq_symbol, ac)      # re-set API endpoint url now that we definatively KNONW the asset_class=stocks
         nq.get_nquote(nq_symbol.rstrip())
         wrangle_errors = nq.build_data()             # return num of data wrangeling errors we found & dealt with
         nq.build_df()
