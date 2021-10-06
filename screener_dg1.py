@@ -124,22 +124,22 @@ class screener_dg1:
             if TRILLIONS:
                 mktcap_clean = np.float(re.sub('T', '', mktcap))
                 mb = "ST"
-                logging.info('%s - Small Cap/TRILLIONS. set ST' % cmi_debug )
+                logging.info( f'%s - {co_name_lj} Small Cap/TRILLIONS. set ST' % cmi_debug )
 
             if BILLIONS:
                 mktcap_clean = np.float(re.sub('B', '', mktcap))
                 mb = "SB"
-                logging.info('%s - Small cap/BILLIONS. set SB' % cmi_debug )
+                logging.info( f'%s - {co_name_lj} Small cap/BILLIONS. set SB' % cmi_debug )
 
             if MILLIONS:
                 mktcap_clean = np.float(re.sub('M', '', mktcap))
                 mb = "SM"
-                logging.info('%s - Large cap/MILLIONS. set SM' % cmi_debug )
+                logging.info( f'%s - {co_name_lj} Large cap/MILLIONS. set SM' % cmi_debug )
 
             if not TRILLIONS and not BILLIONS and not MILLIONS:
                 mktcap_clean = 0    # error condition - possible bad data
                 mb = "SZ"           # Zillions
-                logging.info('%s - bad mktcap data N/A setting to SZ' % cmi_debug )
+                logging.info( f'%s - {co_name_lj} bad mktcap data N/A setting to SZ' % cmi_debug )
                 # handle bad data in mktcap html page field
 
             if pct_val == "N/A":
