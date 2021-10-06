@@ -219,9 +219,8 @@ def main():
     DEEP amalysis means - try to understand & inferr plain language reasons as to why these stock are
     appearing in the final 'Single Source of Truth' combo_df. Having a big list of top mover/highly active
     stocks isn't meaningful unless you can understand (quickly in real-time) whats going on with each one.
-    From that pint, you can plan to do something... otherwise, this is just a meaningless list.
-    NOTE: Raw Data is never usable in its initial state. It allways has holes, is dirty & needs wrangeling.
-          Much of this code prepares & cleans the data into a perfect combo_df 'Single Source of Truth'.
+    From here, you can plan to do something... otherwise, this is just a meaningless list.
+    NOTE: Most of this logic prepares/cleans/wrangles data into a perfect combo_df 'Single Source of Truth'.
     """
 
     if args['bool_deep'] is True and args['bool_scr'] is True and args['bool_uvol'] is True:
