@@ -83,11 +83,21 @@ class screener_dg1:
         #print ( f">>>DEBUG<<< : td_rows: {self.td_tag_rows}" )
         print ( f">>>DEBUG<<< : extr_strs 0: {len(self.all_tag_tr)}" )
         print ( f"===================================================" )
-        for datarow in self.all_tag_tr.strings:                  # BS4 generator object (nice, but has BS4 accessiblity limits)
-            print ( f">>>DEBUG<<< : datarow {x}:\n{datarow}" )
-            print ( f"===================================================" )
-            x += 1
+        datarow = self.all_tag_tr.strings:                  # BS4 generator object (nice, but has BS4 accessiblity limits)
+        print ( f">>>DEBUG<<< : extr_strs 1: {next(extr_strs)}" )
+        print ( f">>>DEBUG<<< : extr_strs 2: {next(extr_strs)}" )
+        print ( f">>>DEBUG<<< : extr_strs 3: {next(extr_strs)}" )
+        print ( f">>>DEBUG<<< : extr_strs 4: {next(extr_strs)}" )
+        print ( f">>>DEBUG<<< : extr_strs 5: {next(extr_strs)}" )
+        print ( f">>>DEBUG<<< : extr_strs 6: {next(extr_strs)}" )
+        print ( f">>>DEBUG<<< : extr_strs 7: {next(extr_strs)}" )
+        print ( f">>>DEBUG<<< : extr_strs 8: {next(extr_strs)}" )
+        print ( f">>>DEBUG<<< : extr_strs 9: {next(extr_strs)}" )
+        print ( f">>>DEBUG<<< : extr_strs 10: {next(extr_strs)}" )
+        print ( f">>>DEBUG<<< : extr_strs 11: {next(extr_strs)}" )
 
+
+                
 
         extr_strs = datarow.strings
         #extr_strs = datarow.strings
