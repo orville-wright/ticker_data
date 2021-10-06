@@ -492,7 +492,7 @@ class nquote:
             else:       # data is good...access 3 indices of sub-data from split list[]
                 ops = open_price.split()
                 logging.info( f"%s - Split open_price into {len(ops)} fields" % cmi_debug )
-                print ( f">>>DEBUG<<< : split data {ops}" )
+
                 """ Stage #1 """
                 try:
                     open_price = ops[0]                     # e.g. 140.8
@@ -508,38 +508,43 @@ class nquote:
                     open_price_cl = (re.sub('[ $,]', '', ops[0]))   # remove " " $ ,
                     open_price_cl = np.float(open_price_cl)
                     """ Stage #2 """
-                    try:    # data is good...keep processing...
-                        open_price_net = ops[1]                 # (test for missing data) - good data =  +1.87
-                    except IndexError:
-                        logging.info( f'%s - Bad key open_price_net: {type(open_price_net)} / setting to $0.0 / {open_price_net}' % cmi_debug )
-                        open_price_net = float(0)               # set NULL data to ZERO
-                        wrangle_errors += 1
-                    except ValueError:
-                        logging.info( f'%s - Bad open_price_net: {type(open_price_net)} / setting to $0.0 / {open_price_net}' % cmi_debug )
-                        open_price_net = float(0)               # set NULL data to ZERO
-                        wrangle_errors += 1
-                    except TypeError:
-                        logging.info( f'%s - Bad open_price_net: {type(open_price_net)} / setting to $0.0 / {open_price_net}' % cmi_debug )
-                        open_price_net = float(0)               # set NULL data to ZERO
-                        wrangle_errors += 1
-                    else:
-                        pass    # data is good...keep processing...
-                        # INFO: no need of clean open_price_net - VAR is currently not used n our data model
-                        """ Stage #3 """
-                        try:
-                            open_price_pct = ops[2]                 # (test for missing data) - good data = e.g. (+1.35%)"
+
+                    if len(ops) != 1:   # the split failed to seperate all 3 elements. i.e. there open_price_net & open_price_pct don't exist
+                        try:    # data is good...keep processing...
+                            open_price_net = ops[1]                 # (test for missing data) - good data =  +1.87
                         except IndexError:
-                            logging.info( f'%s - Bad key open_price_pct: {type(open_price_pct)} / setting to $0.0 / {open_price_pct}' % cmi_debug )
-                            open_price_pct = float(0)               # set NULL data to ZERO
+                            logging.info( f'%s - Bad key open_price_net: {type(open_price_net)} / setting to $0.0 / {open_price_net}' % cmi_debug )
+                            open_price_net = float(0)               # set NULL data to ZERO
                             wrangle_errors += 1
                         except ValueError:
-                            logging.info( f'%s - Bad open_price_pct: {type(open_price_pct)} / setting to $0.0 / {open_price_pct}' % cmi_debug )
-                            open_price_pct = float(0)               # set NULL data to ZERO
+                            logging.info( f'%s - Bad open_price_net: {type(open_price_net)} / setting to $0.0 / {open_price_net}' % cmi_debug )
+                            open_price_net = float(0)               # set NULL data to ZERO
+                            wrangle_errors += 1
+                        except TypeError:
+                            logging.info( f'%s - Bad open_price_net: {type(open_price_net)} / setting to $0.0 / {open_price_net}' % cmi_debug )
+                            open_price_net = float(0)               # set NULL data to ZERO
                             wrangle_errors += 1
                         else:
-                            open_price_pct_cl = (re.sub('[)(%]', '', price_pct))        # # remove " ", %  (leave +/- indicator)
+                            pass    # data is good...keep processing...
                             # INFO: no need of clean open_price_net - VAR is currently not used n our data model
-                            logging.info( f"%s - All 3 open_price vars sucessfully split & processed" % cmi_debug )
+                            """ Stage #3 """
+                            try:
+                                open_price_pct = ops[2]                 # (test for missing data) - good data = e.g. (+1.35%)"
+                            except IndexError:
+                                logging.info( f'%s - Bad key open_price_pct: {type(open_price_pct)} / setting to $0.0 / {open_price_pct}' % cmi_debug )
+                                open_price_pct = float(0)               # set NULL data to ZERO
+                                wrangle_errors += 1
+                            except ValueError:
+                                logging.info( f'%s - Bad open_price_pct: {type(open_price_pct)} / setting to $0.0 / {open_price_pct}' % cmi_debug )
+                                open_price_pct = float(0)               # set NULL data to ZERO
+                                wrangle_errors += 1
+                            else:
+                                open_price_pct_cl = (re.sub('[)(%]', '', price_pct))        # # remove " ", %  (leave +/- indicator)
+                                # INFO: no need of clean open_price_net - VAR is currently not used n our data model
+                                logging.info( f"%s - All 3 open_price vars sucessfully split & processed" % cmi_debug )
+                    else:
+                        open_price_net = float(0)
+                        open_price_pct = float(0)
 
             #################################################
 
