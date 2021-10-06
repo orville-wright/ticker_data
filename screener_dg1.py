@@ -84,7 +84,7 @@ class screener_dg1:
         #for datarow in self.all_tag_tr:                  # BS4 generator object (nice, but has BS4 accessiblity limits)
         for datarow in self.all_tag_tr:                  # BS4 generator object (nice, but has BS4 accessiblity limits)
             extr_strs = datarow.strings
-
+            print ( f">>>DEBIG<<< : extr_strs: {extr_strs}" )
             co_sym = next(extr_strs)         # 1st <td> : ticker symbol info / e.g "NWAU"
             co_name = next(extr_strs)        # 2nd <td> : company name / e.g "Consumer Automotive Finance, Inc."
             price = next(extr_strs)          # 3rd <td> : price (Intraday) / e.g "0.0031"
