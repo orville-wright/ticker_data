@@ -83,7 +83,7 @@ class screener_dg1:
         self.dg1_df0.drop(self.dg1_df0.index, inplace=True)
 
         print ( f">>>DEBUG<<< : Rows in tbody 0: {len(self.tag_tbody)}" )
-        for j in self.tag_tbody:
+        for j in self.tag_tbody.children:
             x = 1                               # row counter leveraged for unique dataframe key
             #print ( f">>>DEBUG<<< : td_rows: {self.td_tag_rows}" )
             print ( f">>>DEBUG<<< : Fields in tr: {len(self.tr_rows)}" )
