@@ -108,8 +108,7 @@ class screener_dg1:
             #co_name_lj = (re.sub('[\'\"]', '', co_name) )                   # remove " ' and strip leading/trailing spaces
             #co_name_lj = f"{co_name_lj:<25}"                   # set field size to 25 chars MAX
             co_name_lj = np.array2string(np.char.ljust(co_name, 25) )    # left justify TXT in DF & convert to raw string
-            #co_name_lj = np.array2string(np.char.ljust(co_name_lj, 25) )    # left justify TXT in DF & convert to raw string
-            co_name_lj = (re.sub('[\']', '', co_name_lj) )                  # remove " ' and strip leading/trailing spaces
+            co_name_lj = (re.sub('[\'\"]', '', co_name_lj) )                  # remove " ' and strip leading/trailing spaces
 
             price_clean = float(price)
             mktcap = (re.sub('[N\/A]', '0', mktcap))   # handle N/A
