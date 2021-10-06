@@ -544,7 +544,7 @@ class nquote:
                                 logging.info( f"%s - All 3 open_price vars sucessfully split & processed" % cmi_debug )
                     else:
                         open_price_net = float(0)
-                        open_price_pct = float(0)
+                        open_price_pct_cl = float(0)
 
             #################################################
 
