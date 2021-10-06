@@ -60,7 +60,7 @@ class screener_dg1:
         # <tr> tag has a very complex 'class=' but attributes are unique. e.g. 'simpTblRow'
         logging.info('%s store url data handle' % cmi_debug )
         self.all_tag_tr = self.soup.find_all(attrs={"class": "simpTblRow"})
-        self.td_tag_rows = self.all_tag_tr.find_all('td')
+        self.td_tag_rows = self.all_tag_tr.find('td')
         # Example CSS Selector
         #all_tag_tr1 = soup.select( "tr.simpTblRow.Bgc" )
         logging.info('%s close url handle' % cmi_debug )
