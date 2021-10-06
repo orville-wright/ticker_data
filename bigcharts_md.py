@@ -286,7 +286,9 @@ class bc_quote:
         # 50day & 200day average price range
         a = self.quote['range_a_p']                # e.g. '10.719 (50-day) 10.2152 (200-day)'
         at = a.split(' ')                          # seperator = ' ' 4 fields split, butonlu 2 of interest
-        self.quote['avg50d_p'] = float(at[0])      # 50 day avg price
+        at_cl = at[0]
+        at_cl = re.sub(',', '', at_cl)
+        self.quote['avg50d_p'] = float(at_cl)      # 50 day avg price
         self.quote['avg200d_p'] = float(at[2])     # 200 day avg price
 
         # 50day & 200day average volume range
