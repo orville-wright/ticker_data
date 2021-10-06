@@ -83,7 +83,7 @@ class screener_dg1:
         #print ( f">>>DEBUG<<< : td_rows: {self.td_tag_rows}" )
         print ( f">>>DEBUG<<< : extr_strs 0: {len(self.all_tag_tr)}" )
         print ( f"===================================================" )
-        datarow = self.all_tag_tr.strings:                  # BS4 generator object (nice, but has BS4 accessiblity limits)
+        datarow = self.all_tag_tr.strings                 # BS4 generator object (nice, but has BS4 accessiblity limits)
         print ( f">>>DEBUG<<< : extr_strs 1: {next(extr_strs)}" )
         print ( f">>>DEBUG<<< : extr_strs 2: {next(extr_strs)}" )
         print ( f">>>DEBUG<<< : extr_strs 3: {next(extr_strs)}" )
@@ -97,7 +97,7 @@ class screener_dg1:
         print ( f">>>DEBUG<<< : extr_strs 11: {next(extr_strs)}" )
 
 
-                
+
 
         extr_strs = datarow.strings
         #extr_strs = datarow.strings
