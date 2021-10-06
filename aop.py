@@ -261,6 +261,7 @@ def main():
                 logging.info( f"%s - {qsymbol} asset class is ETF" % cmi_debug )
                 wrangle_errors += 1
                 unfixable_errors += 1     # set default data for non-regualr stocks
+                print ( f"!!", end="" )
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = 'EF'
             else:
