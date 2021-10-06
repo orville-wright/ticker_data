@@ -289,7 +289,9 @@ class bc_quote:
         at_cl = at[0]
         at_cl = re.sub(',', '', at_cl)
         self.quote['avg50d_p'] = float(at_cl)      # 50 day avg price
-        self.quote['avg200d_p'] = float(at[2])     # 200 day avg price
+        att_cl = at[2]
+        att_cl = re.sub(',', '', att_cl)
+        self.quote['avg200d_p'] = float(att_cl)     # 200 day avg price
 
         # 50day & 200day average volume range
         a = self.quote['range_a_v']                # e.g. '84,447,810 (50-day) 65,450,970 (200-day)'
