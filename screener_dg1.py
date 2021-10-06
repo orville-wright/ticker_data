@@ -83,7 +83,7 @@ class screener_dg1:
         #print ( f">>>DEBUG<<< : td_rows: {self.td_tag_rows}" )
         print ( f"===================================================" )
         for datarow in self.all_tag_tr:                  # BS4 generator object (nice, but has BS4 accessiblity limits)
-            print ( f">>>DEBUG<<< : datarow {x}:\n{datarow)}" )
+            print ( f">>>DEBUG<<< : datarow {x}:\n{datarow}" )
             print ( f"===================================================" )
             x += 1
 
