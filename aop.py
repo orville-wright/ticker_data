@@ -259,14 +259,10 @@ def main():
             logging.info( f"%s >>>>>DEBUG<<<<< - Begin market cap/scale logic cycle... {nq.asset_class}" % cmi_debug )
             if nq.asset_class == "etf":        # our Global attribute - is asset class is ETF? yes = Cant get stock-type data
                 logging.info( f"%s - {qsymbol} asset class is ETF" % cmi_debug )
-                print ( f">>>DEBUG<<< : Fuck you!!!" )
                 wrangle_errors += 1
-                unfixable_errors += 1
-                # print ( f"- UNFIXABLE data problem / Not regular stock / ETF Trust: EF / Data issues: {wrangle_errors}" )
-                # set default data for non-regualr stocks
+                unfixable_errors += 1     # set default data for non-regualr stocks
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = 'EF'
-                break
             else:
                 pass
                 logging.info( f"%s - {qsymbol} asset class is {nq.asset_class}" % cmi_debug )
@@ -304,7 +300,6 @@ def main():
                         cleansed_errors += 1
                         print ( f"+", end="" )
                         break
-            #
             finally:
                 cols += 1
                 if cols == 8:
@@ -317,6 +312,7 @@ def main():
             total_wrangle_errors = total_wrangle_errors + wrangle_errors
             wrangle_errors = 0
             loop_count += 1
+
         print ( " " )
         print  ( f"Symbols scanned: {loop_count-1} / Issues: {cleansed_errors} / Repaired: {total_wrangle_errors} / Unfixbale: {unfixable_errors}" )
 
