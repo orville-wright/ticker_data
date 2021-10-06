@@ -148,20 +148,21 @@ class screener_dg1:
                 pct_cl = re.sub('[\%\+\-]', "", pct_val )
                 pct_clean = float(pct_cl)
 
-        self.data0 = [[ \
-                   x, \
-                   re.sub('\'', '', co_sym_lj), \
-                   co_name_lj, \
-                   np.float(re.sub('\,', '', price)), \
-                   change_clean, \
-                   pct_clean, \
-                   mktcap_clean, \
-                   mb, \
-                   time_now ]]
+            self.data0 = [[ \
+                       x, \
+                       re.sub('\'', '', co_sym_lj), \
+                       co_name_lj, \
+                       np.float(re.sub('\,', '', price)), \
+                       change_clean, \
+                       pct_clean, \
+                       mktcap_clean, \
+                       mb, \
+                       time_now ]]
 
-        self.df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time' ], index=[x] )
-        self.dg1_df0 = self.dg1_df0.append(self.df0)    # append this ROW of data into the REAL DataFrame
-        x+=1
+            self.df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time' ], index=[x] )
+            self.dg1_df0 = self.dg1_df0.append(self.df0)    # append this ROW of data into the REAL DataFrame
+            x+=1
+
         logging.info('%s - populated new DF0 dataset' % cmi_debug )
         return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
                         # sucess = lobal class accessor (y_topgainers.*_df0) populated & updated
