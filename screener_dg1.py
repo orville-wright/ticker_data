@@ -104,7 +104,7 @@ class screener_dg1:
             # co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )          # left justify TXT in DF & convert to raw string
 
             # TODO: look at using f-string justifers to do this
-            co_name_lj = f"{co_name_lj:<25}"                   # remove " ' and strip leading/trailing spaces
+            co_name_lj = f"{co_name:<25}"                   # remove " ' and strip leading/trailing spaces
 
             #co_name_lj = (re.sub('[\'\"]', '', co_name) )                   # remove " ' and strip leading/trailing spaces
             #co_name_lj = np.array2string(np.char.ljust(co_name_lj, 25) )    # left justify TXT in DF & convert to raw string
