@@ -289,12 +289,12 @@ def main():
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = nq.quote['mkt_cap']
                 print ( f"+", end="" )
                 cleansed_errors += 1
-                logging.info( f"%s - Compute {nq.asset_class} Mkt_cap scale..." % cmi_debug )
-                for i in (("MT", 999999), ("LB", 10000), ("SB", 2000), ("LM", 500), ("SM", 50), ("TM", 10), ("UZ", 0)):
-                    if i[1] >= nq.quote['mkt_cap']:
-                        pass
-                    else:
-                        if nq.asset_class == "stocks":
+                if nq.asset_class == "stocks":
+                    logging.info( f"%s - Compute {nq.asset_class} Mkt_cap scale..." % cmi_debug )
+                    for i in (("MT", 999999), ("LB", 10000), ("SB", 2000), ("LM", 500), ("SM", 50), ("TM", 10), ("UZ", 0)):
+                        if i[1] >= nq.quote['mkt_cap']:
+                            pass
+                        else:
                             x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = i[0]
                             logging.info( f"%s - Computed {nq.asset_class} Market cap scale as {i[0]}" % cmi_debug )
                             wrangle_errors += 1          # insert market cap scale into DF @ column M_B for this symbol

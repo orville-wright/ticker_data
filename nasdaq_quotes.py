@@ -270,7 +270,11 @@ class nquote:
             logging.info( f'%s - probing json keys/fields for NULLs...' % cmi_debug )
             z = 1
             jd10_null_errors = 0
-            jd_10 = ("PreviousClose", "MarketCap", "TodayHighLow", "AverageVolume", "OneYrTarget", "Beta", "FiftTwoWeekHighLow" )
+            jd_10s = ("PreviousClose", "MarketCap", "TodayHighLow", "AverageVolume", "OneYrTarget", "Beta", "FiftTwoWeekHighLow" )
+            jd_10e = ("PreviousClose", "MarketCap", "TodayHighLow", "FiftyDayAvgDailyVol", "Beta", "FiftTwoWeekHighLow" )
+
+            if self.asset_class == "stocks": jd_10 = jd_10s
+            if self.asset_class == "etf": jd_10 = jd_10e
 
             try:
                 y = self.jsondata11['summaryData']      # summary
@@ -479,7 +483,8 @@ class nquote:
                 price_pct_cl = np.float(price_pct)
 
             # ################# open price(s) need extra treatment & care...
-            """ Open_price data elements are 3 fields concatinted into 1 long string / e.g. $140.8 +1.87 (+1.35%)
+            """
+            Open_price data elements are 3 fields concatinted into 1 long string / e.g. $140.8 +1.87 (+1.35%)
             This is a bad nasdaq strategy. We must split & post-process/wrangle the split fields
             """
             if open_price == "N/A" or open_price is None:
