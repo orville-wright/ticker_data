@@ -290,14 +290,14 @@ def main():
                 print ( f"+", end="" )
                 cleansed_errors += 1
                 if nq.asset_class == "stocks":
-                    logging.info( f"%s - Compute Mkt_cap scale tag: [ {nq.quote['mkt_cap']} ] / {type(nq.quote['mkt_cap'])}..." % cmi_debug )
+                    logging.info( f"%s - Compute Mkt_cap scale tag: [ {nq.quote['mkt_cap']} ]..." % cmi_debug )
                     for i in (("MT", 999999), ("LB", 10000), ("SB", 2000), ("LM", 500), ("SM", 50), ("TM", 10), ("UZ", 0)):
-                        if i[1] >= nq.quote['mkt_cap']:
-                            pass
-                        elif nq.quote['mkt_cap'] == "0.0":
+                        if nq.quote['mkt_cap'] == float(0):
                             x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = "UZ"
                             logging.info( f"%s - Market cap: {nq.quote['mkt_cap']} scale set to: UZ" % cmi_debug )
                             break
+                        elif i[1] >= nq.quote['mkt_cap']:
+                            pass                        
                         else:
                             x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = i[0]
                             logging.info( f"%s - Market cap: {nq.quote['mkt_cap']} scale set to: {i[0]}" % cmi_debug )
