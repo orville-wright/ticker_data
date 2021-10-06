@@ -294,13 +294,13 @@ def main():
                     for i in (("MT", 999999), ("LB", 10000), ("SB", 2000), ("LM", 500), ("SM", 50), ("TM", 10), ("UZ", 0)):
                         if nq.quote['mkt_cap'] == float(0):
                             x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = "UZ"
-                            logging.info( f"%s - Market cap: {nq.quote['mkt_cap']} scale set to: UZ" % cmi_debug )
+                            logging.info( f"%s - Bad Market cap: [ {nq.quote['mkt_cap']} ] / scale set to: UZ" % cmi_debug )
                             break
                         elif i[1] >= nq.quote['mkt_cap']:
-                            pass                        
+                            pass
                         else:
                             x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = i[0]
-                            logging.info( f"%s - Market cap: {nq.quote['mkt_cap']} scale set to: {i[0]}" % cmi_debug )
+                            logging.info( f"%s - Market cap: [ {nq.quote['mkt_cap']} ] scale set to: {i[0]}" % cmi_debug )
                             wrangle_errors += 1          # insert market cap scale into DF @ column M_B for this symbol
                             cleansed_errors += 1
                             print ( f"+", end="" )
