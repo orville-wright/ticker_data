@@ -90,91 +90,91 @@ class screener_dg1:
 
 
         extr_strs = datarow.strings
-            #extr_strs = datarow.strings
-            print ( f">>>DEBUG<<< : extr_strs 1: {len(datarow)}" )
-            print ( f">>>DEBUG<<< : extr_strs 2: {next(extr_strs)}" )
-            print ( f">>>DEBUG<<< : extr_strs 3: {next(extr_strs)}" )
-            print ( f">>>DEBUG<<< : extr_strs 4: {next(extr_strs)}" )
+        #extr_strs = datarow.strings
+        print ( f">>>DEBUG<<< : extr_strs 1: {len(datarow)}" )
+        print ( f">>>DEBUG<<< : extr_strs 2: {next(extr_strs)}" )
+        print ( f">>>DEBUG<<< : extr_strs 3: {next(extr_strs)}" )
+        print ( f">>>DEBUG<<< : extr_strs 4: {next(extr_strs)}" )
 
-            co_sym = next(extr_strs)         # 1st <td> : ticker symbol info / e.g "NWAU"
-            co_name = next(extr_strs)        # 2nd <td> : company name / e.g "Consumer Automotive Finance, Inc."
-            price = next(extr_strs)          # 3rd <td> : price (Intraday) / e.g "0.0031"
-            change_sign = next(extr_strs)    # DEPRECATED by Yahoo.com / 4.0-th <td> : $ change / e.g  "+0.0021"
-            change_val = next(extr_strs)     # 4-th <td> : $ change / e.g  "+0.0021"
-            #logging.info( f'%s - >> 30 DEBUG<< Symbol: {co_sym} / change_sign orig: {change_sign} type: {type(change_sign)}' % cmi_debug )
-            #logging.info( f'%s - >> 31 DEBUG<< Symbol: {co_sym} / change_val orig: {change_val} type: {type(change_val)}' % cmi_debug )
-            pct_sign = next(extr_strs)     # DEPRECATED by Yahoo.com / 5.0-th <td> : % change / e.g "+" or "-"
-            pct_val = next(extr_strs)        # 5.1-th <td> : % change / e.g "210.0000%" WARN trailing "%" must be removed before casting to float
-            #logging.info( f'%s - >> 32 DEBUG<< Symbol: {co_sym} / pct_sign orig: {pct_sign} type: {type(pct_sign)}' % cmi_debug )
-            vol = next(extr_strs)            # 6th <td> : volume with scale indicator/ e.g "70.250k"
-            avg_vol = next(extr_strs)        # 6th <td> : Avg. vol over 3 months) / e.g "61,447"
-            mktcap = next(extr_strs)         # 7th <td> : Market cap with scale indicator / e.g "15.753B"
-            #peratio = next(extr_strs)        # 8th <td> : PEsratio TTM (Trailing 12 months) / e.g "N/A"
-            #mini_gfx = next(extr_strs)      # 9th <td> : IGNORED = mini-canvas graphic 52-week rnage current price range with scale (no TXT/strings avail)
+        co_sym = next(extr_strs)         # 1st <td> : ticker symbol info / e.g "NWAU"
+        co_name = next(extr_strs)        # 2nd <td> : company name / e.g "Consumer Automotive Finance, Inc."
+        price = next(extr_strs)          # 3rd <td> : price (Intraday) / e.g "0.0031"
+        change_sign = next(extr_strs)    # DEPRECATED by Yahoo.com / 4.0-th <td> : $ change / e.g  "+0.0021"
+        change_val = next(extr_strs)     # 4-th <td> : $ change / e.g  "+0.0021"
+        #logging.info( f'%s - >> 30 DEBUG<< Symbol: {co_sym} / change_sign orig: {change_sign} type: {type(change_sign)}' % cmi_debug )
+        #logging.info( f'%s - >> 31 DEBUG<< Symbol: {co_sym} / change_val orig: {change_val} type: {type(change_val)}' % cmi_debug )
+        pct_sign = next(extr_strs)     # DEPRECATED by Yahoo.com / 5.0-th <td> : % change / e.g "+" or "-"
+        pct_val = next(extr_strs)        # 5.1-th <td> : % change / e.g "210.0000%" WARN trailing "%" must be removed before casting to float
+        #logging.info( f'%s - >> 32 DEBUG<< Symbol: {co_sym} / pct_sign orig: {pct_sign} type: {type(pct_sign)}' % cmi_debug )
+        vol = next(extr_strs)            # 6th <td> : volume with scale indicator/ e.g "70.250k"
+        avg_vol = next(extr_strs)        # 6th <td> : Avg. vol over 3 months) / e.g "61,447"
+        mktcap = next(extr_strs)         # 7th <td> : Market cap with scale indicator / e.g "15.753B"
+        #peratio = next(extr_strs)        # 8th <td> : PEsratio TTM (Trailing 12 months) / e.g "N/A"
+        #mini_gfx = next(extr_strs)      # 9th <td> : IGNORED = mini-canvas graphic 52-week rnage current price range with scale (no TXT/strings avail)
 
-            ####################################################################
-            # now wrangle the data...
+        ####################################################################
+        # now wrangle the data...
 
-            co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )          # left justify TXT in DF & convert to raw string
+        co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )          # left justify TXT in DF & convert to raw string
 
-            # TODO: look at using f-string justifers to do this
-            co_name_lj = (re.sub('[\'\"]', '', co_name) )                   # remove " ' and strip leading/trailing spaces
-            co_name_lj = np.array2string(np.char.ljust(co_name_lj, 25) )    # left justify TXT in DF & convert to raw string
-            co_name_lj = (re.sub('[\']', '', co_name_lj) )                  # remove " ' and strip leading/trailing spaces
-            price_clean = float(price)
-            mktcap = (re.sub('[N\/A]', '0', mktcap))   # handle N/A
+        # TODO: look at using f-string justifers to do this
+        co_name_lj = (re.sub('[\'\"]', '', co_name) )                   # remove " ' and strip leading/trailing spaces
+        co_name_lj = np.array2string(np.char.ljust(co_name_lj, 25) )    # left justify TXT in DF & convert to raw string
+        co_name_lj = (re.sub('[\']', '', co_name_lj) )                  # remove " ' and strip leading/trailing spaces
+        price_clean = float(price)
+        mktcap = (re.sub('[N\/A]', '0', mktcap))   # handle N/A
 
-            #print ( f">>>DEBUG<<< : change_sign: {change_sign}" )
-            #print ( f">>>DEBUG<<< : change_val: {change_val}" )
-            #change_cl = re.sub('[\%\+\-]', '', change_val)
-            #print ( f">>>DEBUG<<< : change_cl: {change_cl}" )
-            change_clean = np.float(change_val)
+        #print ( f">>>DEBUG<<< : change_sign: {change_sign}" )
+        #print ( f">>>DEBUG<<< : change_val: {change_val}" )
+        #change_cl = re.sub('[\%\+\-]', '', change_val)
+        #print ( f">>>DEBUG<<< : change_cl: {change_cl}" )
+        change_clean = np.float(change_val)
 
-            TRILLIONS = re.search('T', mktcap)
-            BILLIONS = re.search('B', mktcap)
-            MILLIONS = re.search('M', mktcap)
+        TRILLIONS = re.search('T', mktcap)
+        BILLIONS = re.search('B', mktcap)
+        MILLIONS = re.search('M', mktcap)
 
-            if TRILLIONS:
-                mktcap_clean = np.float(re.sub('T', '', mktcap))
-                mb = "ST"
-                logging.info('%s - Small Cap/TRILLIONS. set ST' % cmi_debug )
+        if TRILLIONS:
+            mktcap_clean = np.float(re.sub('T', '', mktcap))
+            mb = "ST"
+            logging.info('%s - Small Cap/TRILLIONS. set ST' % cmi_debug )
 
-            if BILLIONS:
-                mktcap_clean = np.float(re.sub('B', '', mktcap))
-                mb = "SB"
-                logging.info('%s - Small cap/BILLIONS. set SB' % cmi_debug )
+        if BILLIONS:
+            mktcap_clean = np.float(re.sub('B', '', mktcap))
+            mb = "SB"
+            logging.info('%s - Small cap/BILLIONS. set SB' % cmi_debug )
 
-            if MILLIONS:
-                mktcap_clean = np.float(re.sub('M', '', mktcap))
-                mb = "SM"
-                logging.info('%s - Large cap/MILLIONS. set SM' % cmi_debug )
+        if MILLIONS:
+            mktcap_clean = np.float(re.sub('M', '', mktcap))
+            mb = "SM"
+            logging.info('%s - Large cap/MILLIONS. set SM' % cmi_debug )
 
-            if not TRILLIONS and not BILLIONS and not MILLIONS:
-                mktcap_clean = 0    # error condition - possible bad data
-                mb = "SZ"           # Zillions
-                logging.info('%s - bad mktcap data N/A setting to SZ' % cmi_debug )
-                # handle bad data in mktcap html page field
+        if not TRILLIONS and not BILLIONS and not MILLIONS:
+            mktcap_clean = 0    # error condition - possible bad data
+            mb = "SZ"           # Zillions
+            logging.info('%s - bad mktcap data N/A setting to SZ' % cmi_debug )
+            # handle bad data in mktcap html page field
 
-            if pct_val == "N/A":
-                pct_val = float(0.0)        # Bad data. FOund a filed with N/A instead of read num
-            else:
-                pct_cl = re.sub('[\%\+\-]', "", pct_val )
-                pct_clean = float(pct_cl)
+        if pct_val == "N/A":
+            pct_val = float(0.0)        # Bad data. FOund a filed with N/A instead of read num
+        else:
+            pct_cl = re.sub('[\%\+\-]', "", pct_val )
+            pct_clean = float(pct_cl)
 
-            self.data0 = [[ \
-                       x, \
-                       re.sub('\'', '', co_sym_lj), \
-                       co_name_lj, \
-                       np.float(re.sub('\,', '', price)), \
-                       change_clean, \
-                       pct_clean, \
-                       mktcap_clean, \
-                       mb, \
-                       time_now ]]
+        self.data0 = [[ \
+                   x, \
+                   re.sub('\'', '', co_sym_lj), \
+                   co_name_lj, \
+                   np.float(re.sub('\,', '', price)), \
+                   change_clean, \
+                   pct_clean, \
+                   mktcap_clean, \
+                   mb, \
+                   time_now ]]
 
-            self.df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time' ], index=[x] )
-            self.dg1_df0 = self.dg1_df0.append(self.df0)    # append this ROW of data into the REAL DataFrame
-            x+=1
+        self.df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time' ], index=[x] )
+        self.dg1_df0 = self.dg1_df0.append(self.df0)    # append this ROW of data into the REAL DataFrame
+        x+=1
         logging.info('%s - populated new DF0 dataset' % cmi_debug )
         return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
                         # sucess = lobal class accessor (y_topgainers.*_df0) populated & updated
