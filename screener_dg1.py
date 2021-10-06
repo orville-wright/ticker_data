@@ -82,7 +82,7 @@ class screener_dg1:
         x = 1                               # row counter leveraged for unique dataframe key
         print ( f">>>DEBUG<<< : td_rows: {self.td_tag_rows}" )
         for datarow in self.all_tag_tr:                  # BS4 generator object (nice, but has BS4 accessiblity limits)
-            for i in datarow.children:
+            for i in datarow.descendants:
                 print ( f">>>DEBUG<<< : {i}" )
 
             extr_strs = datarow.children.strings
