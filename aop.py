@@ -249,9 +249,9 @@ def main():
             nq.update_headers(qsymbol, "stocks")         # set path: header object. doesnt touch secret nasdaq cookies
             nq.form_api_endpoint(nq_symbol, "stocks")      # set API endpoint url - default GUESS asset_class=stocks
             ac = nq.learn_aclass(qsymbol)
-        	if ac != "stocks":
-        		logging.info( f"%s - Alter API endpoint to correct asset class endpoint {ac}" % cmi_debug )
-        		nq.form_api_endpoint(nq_symbol, ac)      # re-form API endpoint if default asset_class guess was wrong)
+            if ac != "stocks":
+                logging.info( f"%s - re-shape asset class endpoint to: {ac}" % cmi_debug )
+                nq.form_api_endpoint(nq_symbol, ac)      # re-form API endpoint if default asset_class guess was wrong)
             nq.get_nquote(qsymbol)             # get a live quote
             wrangle_errors = nq.build_data()   # wrangle & cleanse the data - lots done in here
             print ( f"{qsymbol:5}...", end="", flush=True )
@@ -578,7 +578,7 @@ def main():
         ac = nq.learn_aclass(nq_symbol)
         #
         if ac != "stocks":
-            logging.info( f"%s - Alter API endpoint to correct asset class endpoint {ac}" % cmi_debug )
+            logging.info( f"%s - re-shape asset class endpoint to: {ac}" % cmi_debug )
             nq.form_api_endpoint(nq_symbol, ac)      # re-form API endpoint if default asset_class guess was wrong)
         nq.get_nquote(nq_symbol.rstrip())
         wrangle_errors = nq.build_data()             # return num of data wrangeling errors we found & dealt with
