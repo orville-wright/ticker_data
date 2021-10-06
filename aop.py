@@ -256,7 +256,7 @@ def main():
             wrangle_errors = nq.build_data()   # wrangle & cleanse the data - lots done in here
 
             print ( f"{qsymbol:5}...", end="", flush=True )
-            logging.info( f"%s >>>>>DEBUG<<<<< - Begin market cap/scale logic cycle... {nq.asset_class}" % cmi_debug )
+            logging.info( f"%s - Begin market cap/scale logic cycle... {nq.asset_class}" % cmi_debug )
             if nq.asset_class == "etf":        # our Global attribute - is asset class is ETF? yes = Cant get stock-type data
                 logging.info( f"%s - {qsymbol} asset class is ETF" % cmi_debug )
                 wrangle_errors += 1
@@ -294,13 +294,14 @@ def main():
                     if i[1] >= nq.quote['mkt_cap']:
                         pass
                     else:
-                        wrangle_errors += 1          # insert market cap scale into DF @ column M_B for this symbol
-                        x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = i[0]
-                        #print ( f"/ Mkt cap scale: {i[0]} - Data issues: {wrangle_errors}" )
-                        logging.info( f"%s - Computed {nq.asset_class} Market cap scale as {i[0]}" % cmi_debug )
-                        cleansed_errors += 1
-                        print ( f"+", end="" )
-                        break
+                        if nq.asset_class == "stocks":
+                            x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = i[0]
+                            logging.info( f"%s - Computed {nq.asset_class} Market cap scale as {i[0]}" % cmi_debug )
+                            wrangle_errors += 1          # insert market cap scale into DF @ column M_B for this symbol
+                            cleansed_errors += 1
+                            print ( f"+", end="" )
+                            break
+            #
             finally:
                 cols += 1
                 if cols == 8:
