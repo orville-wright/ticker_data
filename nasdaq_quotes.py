@@ -151,7 +151,7 @@ class nquote:
         cmi_debug = __name__+"::"+self.learn_aclass.__name__+".#"+str(self.yti)
         logging.info( f"%s - Learn asset class using API endpoint: {self.info_url}" % cmi_debug )
         with self.js_session.get(self.info_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp1:
-            logging.info( f"%s - Extract json..." % cmi_debug )
+            logging.info( f"%s - Extract default guess data..." % cmi_debug )
             self.quote_json1 = json.loads(self.js_resp1.text)
             #figure out asset_class which defines which API endpoint to use...
             self.asset_class = -1
@@ -168,9 +168,6 @@ class nquote:
                     else:
                         logging.info( f'%s - Asset_class is NOT: [ {i} ] !' % cmi_debug )
                         test_info_url = ""
-
-            logging.info( f'%s - BAD symbol / Asset class not STOCKS or ETF !' % cmi_debug )
-            return -1
 
         logging.info( f"%s - Done" % cmi_debug )
         return i    # asset_class identifier  (stocks / etf)
