@@ -254,10 +254,8 @@ def main():
                 nq.form_api_endpoint(qsymbol, ac)      # re-form API endpoint if default asset_class guess was wrong)
             nq.get_nquote(qsymbol)             # get a live quote
             wrangle_errors = nq.build_data()   # wrangle & cleanse the data - lots done in here
-            print ( f"{qsymbol:5}...", end="", flush=True )
-            #print ( f"symbol: {qsymbol} ", end="", flush=True )
 
-            #if wrangle_errors == -1:           # bad symbol (not a regular stock)
+            print ( f"{qsymbol:5}...", end="", flush=True )
             if nq.asset_class == "etf":        # our Global attribute - is asset class is ETF? yes = Cant get stock-type data
                 logging.info( f"%s - {qsymbol} asset class is ETF" % cmi_debug )
                 wrangle_errors = 1
@@ -297,7 +295,7 @@ def main():
                         wrangle_errors += 1          # insert market cap scale into DF @ column M_B for this symbol
                         x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = i[0]
                         #print ( f"/ Mkt cap scale: {i[0]} - Data issues: {wrangle_errors}" )
-                        logging.info( f"%s - Computed {nq.asset_class} Market cap scale as {i[0]} / DF updated!" % cmi_debug )
+                        logging.info( f"%s - Computed {nq.asset_class} Market cap scale as {i[0]}" % cmi_debug )
                         print ( f"+  {wrangle_errors}", end="" )
                         cleansed_errors += 1
                         cols += 1
@@ -326,7 +324,7 @@ def main():
             if nq.asset_class == "stock" and y == 0:        # stock and market cap = 0
                 wrangle_errors += 2     # regular symbol with ZERO ($0) market cap is a bad data error
                 #print ( f"- INSERT missing data / Market cap: 0 / Mkt cap scale: UZ - Data issues: {wrangle_errors}" )
-                logging.info( f"%s - Fall thru saftey for Market cap {i[0]} / DF updated!" % cmi_debug )
+                logging.info( f"%s - Fall thru saftey for Market cap {i[0]}" % cmi_debug )
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = "UZ"
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
                 nq.quote.clear()               # make sure ephemerial quote{} is always empty before bailing out
