@@ -234,8 +234,8 @@ class shallow_combo:
         logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 40)
-        print ( self.combo_df.sort_values(by=['Pct_change'], ascending=False) )
-        return
+        #print ( self.combo_df.sort_values(by=['Pct_change'], ascending=False) )
+        return self.combo_df.sort_values(by=['Pct_change'], ascending=False)
 
     def combo_grouped(self):
         """Print a set of insights like Agerages and Mean etc"""
