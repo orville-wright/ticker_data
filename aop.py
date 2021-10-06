@@ -574,7 +574,9 @@ def main():
         #
         ac = nq.learn_aclass(nq_symbol)
         #
-        nq.form_api_endpoint(nq_symbol, ac)      # re-set API endpoint url now that we definatively KNONW the asset_class=stocks
+        if ac != "stocks":
+            logging.info( f"%s - Alter API endpoint to correct asset class endpoint {ac}" % cmi_debug )
+            nq.form_api_endpoint(nq_symbol, ac)      # re-form API endpoint if default asset_class guess was wrong)
         nq.get_nquote(nq_symbol.rstrip())
         wrangle_errors = nq.build_data()             # return num of data wrangeling errors we found & dealt with
         nq.build_df()
