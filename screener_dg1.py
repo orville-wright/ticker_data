@@ -110,7 +110,7 @@ class screener_dg1:
             price_clean = float(price)
             mktcap = (re.sub('[N\/A]', '0', mktcap))   # handle N/A
 
-            change_cl = re.sub('[\%+-]', '', change_val)
+            change_cl = re.sub('[\%\+\-]', '', change_val)
             change_clean = np.float(change_cl)
 
             TRILLIONS = re.search('T', mktcap)
@@ -141,7 +141,7 @@ class screener_dg1:
             if pct_val == "N/A":
                 pct_val = float(0.0)        # Bad data. FOund a filed with N/A instead of read num
             else:
-                pct_clean = re.sub('[\%+-]', "", pct_val )
+                pct_clean = re.sub('[\%\+\-]', "", pct_val )
                 pct_clean = float(pct_clean)
 
             self.data0 = [[ \
