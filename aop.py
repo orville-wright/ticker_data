@@ -290,8 +290,8 @@ def main():
                 print ( f"+", end="" )
                 cleansed_errors += 1
                 if nq.asset_class == "stocks":
-                    logging.info( f"%s - Compute {nq.asset_class} Mkt_cap scale..." % cmi_debug )
-                    for i in (("MT", 999999), ("LB", 10000), ("SB", 2000), ("LM", 500), ("SM", 50), ("TM", 10), ("UZ", 0)):
+                    logging.info( f"%s - Compute Mkt_cap scale tag..." % cmi_debug )
+                    for i in (("MT", 999999), ("LB", 10000), ("SB", 2000), ("LM", 500), ("SM", 50), ("TM", 10), ("UZ", 0), ("UZ", 0.0)):
                         if i[1] >= nq.quote['mkt_cap']:
                             pass
                         else:
