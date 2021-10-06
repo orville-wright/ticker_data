@@ -256,6 +256,7 @@ def main():
             wrangle_errors = nq.build_data()   # wrangle & cleanse the data - lots done in here
 
             print ( f"{qsymbol:5}...", end="", flush=True )
+            logging.info( f"%s - Begin market cap/scale logic cycle..." % cmi_debug )
             if nq.asset_class == "etf":        # our Global attribute - is asset class is ETF? yes = Cant get stock-type data
                 logging.info( f"%s - {qsymbol} asset class is ETF" % cmi_debug )
                 wrangle_errors = 1
