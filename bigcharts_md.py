@@ -255,8 +255,12 @@ class bc_quote:
         # 52 week HIGH date & value
         h = self.quote['high52w_t']                # e.g. '5.90 to 13.26'
         ht = h.partition(' on ')                   # seperator = ' to ' result is fast, light tupple
-        self.quote['high52w_p'] = float(ht[0])     # 52 Week HIGH (shuld be same as range52w_h)
-        self.quote['high52w_d'] = ht[2]            # date of 52 week HIGH
+        ht_cl = ht[0]
+        ht_cl = re.sub(',', '', ht_cl)
+        self.quote['high52w_p'] = float(ht_cl)     # 52 Week HIGH (shuld be same as range52w_h)
+        htt_cl = ht[2]
+        htt_cl = re.sub(',', '', htt_cl)
+        self.quote['high52w_d'] = htt_cl]            # date of 52 week HIGH
 
         # 52 week LOW date & value
         l = self.quote['low52w_t']                 # e.g. '5.90 to 13.26'
