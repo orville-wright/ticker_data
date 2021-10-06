@@ -35,7 +35,7 @@ class nquote:
     cycle = 0               # class thread loop counter
     args = []               # class dict to hold global args being passed in from main() methods
     js_session = ""         # main requests session
-    js_resp0 = ''           # session response handle for : self.quote_url
+    js_resp0 = ''           # session response handle for : dummy_session + Update_cookiues + do_simple_get
     js_resp1 = ''           # session response handle for : self.summary_url
     js_resp2 = ''           # session response handle for : self.watchlist_url
     js_resp3 = ''           # session response handle for : self.premarket_url
@@ -78,10 +78,9 @@ class nquote:
         cmi_debug = __name__+"::"+self.update_headers.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         self.symbol = symbol.upper()
-        self.path = "/api/quote/" + self.symbol + "/info?assetclass=" + asset_class
-        #self.nasdaq_headers['path'] = self.path
-        self.js_session.cookies.update({'path': self.path} )
-        logging.info( f"%s - cookies/headers [ path ] object set to: {self.path}" % self.path )
+        path = "/api/quote/" + self.symbol + "/info?assetclass=" + asset_class
+        self.js_session.cookies.update({'path': path} )
+        logging.info( f"%s - cookies/headers [path] object set to: {path}" % path )
         return
 
 # method 2
@@ -101,7 +100,7 @@ class nquote:
         cmi_debug = __name__+"::"+self.form_api_endpoint.__name__+".#"+str(self.yti)
         logging.info('%s - form API endpoint URL' % cmi_debug )
         self.symbol = symbol.upper()
-        self.quote_url = "https://api.nasdaq.com" + self.path
+        self.quote_url = "https://api.nasdaq.com/api/quote/" + self.symbol + "/info?assetclass=" + asset_class
         self.info_url = "https://api.nasdaq.com/api/quote/" + self.symbol + "/info?assetclass=" + asset_class
         self.summary_url = "https://api.nasdaq.com/api/quote/" + self.symbol + "/summary?assetclass=" + asset_class
         self.premarket_url = "https://api.nasdaq.com/api/quote/" + self.symbol + "/extended-trading?assetclass=" + asset_class + "&markettype=pre"
