@@ -249,7 +249,7 @@ def main():
             nq.update_headers(qsymbol, "stocks")         # set path: header object. doesnt touch secret nasdaq cookies
             ac = nq.learn_sym_aclass(qsymbol)
             nq.form_api_endpoint(qsymbol, ac)      # set API endpoint url - default GUESS asset_class=stocks
-            nq.get_nquote(qsymbol, ac)             # get a live quote
+            nq.get_nquote(qsymbol)             # get a live quote
             wrangle_errors = nq.build_data()   # wrangle & cleanse the data - lots done in here
             print ( f"{qsymbol:5}...", end="", flush=True )
             #print ( f"symbol: {qsymbol} ", end="", flush=True )
