@@ -259,7 +259,8 @@ def main():
             logging.info( f"%s >>>>>DEBUG<<<<< - Begin market cap/scale logic cycle... {nq.asset_class}" % cmi_debug )
             if nq.asset_class == "etf":        # our Global attribute - is asset class is ETF? yes = Cant get stock-type data
                 logging.info( f"%s - {qsymbol} asset class is ETF" % cmi_debug )
-                wrangle_errors = 1
+                print ( f">>>DEBUG<<< : Fuck you!!!" )
+                wrangle_errors += 1
                 unfixable_errors += 1
                 # print ( f"- UNFIXABLE data problem / Not regular stock / ETF Trust: EF / Data issues: {wrangle_errors}" )
                 # set default data for non-regualr stocks
@@ -268,8 +269,7 @@ def main():
                 break
             else:
                 pass
-                logging.info( f"%s - {qsymbol} asset class is STOCKS" % cmi_debug )
-                break
+                logging.info( f"%s - {qsymbol} asset class is {nq.asset_class}" % cmi_debug )
 
             #
             logging.info( f"%s - Test {nq.asset_class} Mkt_cap for NULLs..." % cmi_debug )
