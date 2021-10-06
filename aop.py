@@ -275,7 +275,7 @@ def main():
             except TypeError:
                 logging.info( f"%s - {nq.asset_class} Mkt_cap data is NULL / setting to: 0" % cmi_debug )
                 x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
-                print ( f"!", end="" )
+                print ( f"!!", end="" )
                 cleansed_errors += 2
                 y = 0
             except KeyError:
@@ -295,6 +295,7 @@ def main():
                         if nq.quote['mkt_cap'] == float(0):
                             x.combo_df.at[x.combo_df[x.combo_df['Symbol'] == xsymbol].index, 'M_B'] = "UZ"
                             logging.info( f"%s - Bad Market cap: [ {nq.quote['mkt_cap']} ] / scale set to: UZ" % cmi_debug )
+                            print ( f"+", end="" )
                             break
                         elif i[1] >= nq.quote['mkt_cap']:
                             pass
