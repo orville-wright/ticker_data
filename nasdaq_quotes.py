@@ -430,6 +430,9 @@ class nquote:
                 if self.asset_class == "stocks":
                     avg_vol = jsondata10['AverageVolume']['value']                      # e.g. "4,811,121" or N/A
                     oneyear_target = jsondata10['OneYrTarget']['value']                 # e.g. "$151.00"
+                else:
+                    avg_vol = jsondata10['FiftyDayAvgDailyVol']['value']                      # e.g. "4,811,121" or N/A
+                    oneyear_target = 0                 # e.g. "$151.00
                 #
                 beta = jsondata10['Beta']['value']                                  # e.g. 1.23
                 LII_week_hilo = jsondata10['FiftTwoWeekHighLow']['value']           # WARN: multi-field string needs splitting/wrangeling e.g. "$152.84/$105.92"
