@@ -75,7 +75,7 @@ class y_topgainers:
         logging.info('%s - Drop all rows from DF0' % cmi_debug )
         self.tg_df0.drop(self.tg_df0.index, inplace=True)
         x = 0      # OLD : x = 1    # row counter Also leveraged for unique dataframe key
-        print ( f"===== {len(self.tag_tbody.find_all('tr'))} =================" )
+        print ( f"===== Rows: {len(self.tag_tbody.find_all('tr'))} / data zones: {len(self.tag_tbody.find_all('tr'))} =================" )
         for j in self.tag_tbody.find_all('tr'):
             extr_strs = j.strings
             co_sym = next(extr_strs)         # 1 : ticker symbol info / e.g "NWAU"
