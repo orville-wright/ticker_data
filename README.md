@@ -1,7 +1,9 @@
 # ticker_data
 
-Date: 02 Oct 2021<br>
+Date: 06 Oct 2021<br>
 ** Major updates **<br>
+Bigcharts did a large data schema udpate to its quote zone, which broke the data extractors badly. Interstingly Bigcharts is a subsidary of marketwatch.com, which is a subsidiary of Dow Jones & Company, which is a property of News Corp (OMG). It's also odd that this schema update happened 1 week after nasdaq.com did their major data schema update. The extractors and data cleaners/wranglers are now fully updated and re-aligned with the new schema (which had some non-trivial internal changes).
+<br>
 <br>
 NASDAQ.com did a major release of their Live Quote API data model. NASDAQ pushed their update out on Sept 31st and it became live on Oct 1. This broke a lot of quote related code as NASDAQ.com has divided their Live quote data model into multiple API zones. The fix has been completed and the code is now re-aligned with NASDAQ.com new data model (which is a bit messy under the covers as it's now 4+ API zones & has inconsistencies in the json data structures across the 4 zones).<br>
 <br>
