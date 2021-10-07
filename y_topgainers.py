@@ -45,12 +45,15 @@ class y_topgainers:
         r = requests.get("https://finance.yahoo.com/gainers" )
         logging.info('%s - read html stream' % cmi_debug )
         self.soup = BeautifulSoup(r.text, 'html.parser')
-
         # ATTR style search. Results -> Dict
         # <tr tag in target merkup line has a very complex 'class=' but the attributes are unique. e.g. 'simpTblRow' is just one unique attribute
         logging.info('%s - save data object handle' % cmi_debug )
+        self.tag_tbody = self.soup.find('tbody')
         self.all_tag_tr = self.soup.find_all(attrs={"class": "simpTblRow"})   # simpTblRow
+        #self.tr_rows = self.tag_tbody.find(attrs={"class": "simpTblRow"})
+
         logging.info('%s - close url handle' % cmi_debug )
+        r.close()
         return
 
 
