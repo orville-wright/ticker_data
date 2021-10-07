@@ -72,21 +72,20 @@ class y_topgainers:
         logging.info('%s - Drop all rows from DF0' % cmi_debug )
         self.tg_df0.drop(self.tg_df0.index, inplace=True)
         x = 0      # OLD : x = 1    # row counter Also leveraged for unique dataframe key
-    	for j in self.tag_tbody.find_all('tr'):
-    		extr_strs = j.strings
-    		co_sym = next(extr_strs)         # 1 : ticker symbol info / e.g "NWAU"
-    		co_name = next(extr_strs)        # 2 : company name / e.g "Consumer Automotive Finance, Inc."
-    		price = next(extr_strs)          # 3 : price (Intraday) / e.g "0.0031"
-    		change_sign = next(extr_strs)    # 4 : $ change sign / e.g  "+0.0021"
-    		change_val = next(extr_strs)     # 5 : $ change / e.g  "+0.0021"
-    		pct_sign = next(extr_strs)       # 6 : % change / e.g "+" or "-"
-    		pct_val = next(extr_strs)        # 7 : change / e.g "210.0000%" WARN trailing "%" must be removed before casting to float
-    		vol = next(extr_strs)            # 8 : volume with scale indicator/ e.g "70.250k"
-    		avg_vol = next(extr_strs)        # 9 : Avg. vol over 3 months) / e.g "61,447"
-    		mktcap = next(extr_strs)         # 10 : Market cap with scale indicator / e.g "15.753B"
-    		peratio = next(extr_strs)        # 11 : PEsratio TTM (Trailing 12 months) / e.g "N/A"
-    		#mini_gfx = next(extr_strs)      # 9th <td> : IGNORED = mini-canvas graphic 52-week rnage current price range with scale (no TXT/strings avail)
-
+        for j in self.tag_tbody.find_all('tr'):
+            extr_strs = j.strings
+            co_sym = next(extr_strs)         # 1 : ticker symbol info / e.g "NWAU"
+            co_name = next(extr_strs)        # 2 : company name / e.g "Consumer Automotive Finance, Inc."
+            price = next(extr_strs)          # 3 : price (Intraday) / e.g "0.0031"
+            change_sign = next(extr_strs)    # 4 : $ change sign / e.g  "+0.0021"
+            change_val = next(extr_strs)     # 5 : $ change / e.g  "+0.0021"
+            pct_sign = next(extr_strs)       # 6 : % change / e.g "+" or "-"
+            pct_val = next(extr_strs)        # 7 : change / e.g "210.0000%" WARN trailing "%" must be removed before casting to float
+            vol = next(extr_strs)            # 8 : volume with scale indicator/ e.g "70.250k"
+            avg_vol = next(extr_strs)        # 9 : Avg. vol over 3 months) / e.g "61,447"
+            mktcap = next(extr_strs)         # 10 : Market cap with scale indicator / e.g "15.753B"
+            peratio = next(extr_strs)        # 11 : PEsratio TTM (Trailing 12 months) / e.g "N/A"
+            #mini_gfx = next(extr_strs)      # 9th <td> : IGNORED = mini-canvas graphic 52-week rnage current price range with scale (no TXT/strings avail)
 
             ####################################################################
             # now wrangle the data...
@@ -152,7 +151,7 @@ class y_topgainers:
 
         logging.info('%s - populated new DF0 dataset' % cmi_debug )
         return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
-                        # sucess = lobal class accessor (y_topgainers.*_df0) populated & updated
+                    # sucess = lobal class accessor (y_topgainers.*_df0) populated & updated
 
 # method #3
 # Hacking function - keep me arround for a while
