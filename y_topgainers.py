@@ -83,7 +83,7 @@ class y_topgainers:
                 # logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
                 y += 1
 
-    		print ( f"==============================================" )
+            print ( f"==============================================" )
             extr_strs = j.strings
             co_sym = next(extr_strs)         # 1 : ticker symbol info / e.g "NWAU"
             co_name = next(extr_strs)        # 2 : company name / e.g "Consumer Automotive Finance, Inc."
