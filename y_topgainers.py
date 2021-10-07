@@ -77,7 +77,7 @@ class y_topgainers:
         x = 0      # OLD : x = 1    # row counter Also leveraged for unique dataframe key
         # print ( f"===== Rows: {len(self.tag_tbody.find_all('tr'))}  =================" )
         z = 0
-        logging.info( f"%s - Processing symbol rows: {len(self.tag_tbody.find_all('tr'))} zero_test: {z.0%}" % cmi_debug )
+        logging.info( f"%s - Processing symbol rows: {len(self.tag_tbody.find_all('tr'))} zero_test: {z:.0%}" % cmi_debug )
         for j in self.tag_tbody.find_all('tr'):
             """
             y = 1
