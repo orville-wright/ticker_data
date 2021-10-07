@@ -76,9 +76,9 @@ class y_topgainers:
         self.tg_df0.drop(self.tg_df0.index, inplace=True)
         x = 0      # OLD : x = 1    # row counter Also leveraged for unique dataframe key
         # print ( f"===== Rows: {len(self.tag_tbody.find_all('tr'))}  =================" )
-        logging.info( f"{cmi_debug} - Processing symbol rows: {len(self.tag_tbody.find_all('tr'))} zero_test: %0 $0" )
         for j in self.tag_tbody.find_all('tr'):
             """
+            # >>>DEBUG<< for when yahoo.com changes data model...
             y = 1
             for i in j.find_all('td'):
             	print ( f"Data {y}: {i.text}" )
@@ -88,22 +88,22 @@ class y_topgainers:
             """
             extr_strs = j.strings
             #extr_strs = i.strings
-            co_sym = next(extr_strs)         # 1 : ticker symbol info / e.g "NWAU"
-            co_name = next(extr_strs)        # 2 : company name / e.g "Consumer Automotive Finance, Inc."
-            price = next(extr_strs)          # 3 : price (Intraday) / e.g "0.0031"
-            change_sign = next(extr_strs)    # 4 : $ change sign / e.g  "+0.0021"
+            co_sym = next(extr_strs)             # 1 : ticker symbol info / e.g "NWAU"
+            co_name = next(extr_strs)            # 2 : company name / e.g "Consumer Automotive Finance, Inc."
+            price = next(extr_strs)              # 3 : price (Intraday) / e.g "0.0031"
+            change_sign = next(extr_strs)        # 4 : $ change sign / e.g  "+0.0021"
             if change_sign == "+" or change_sign == "-":
                 change_val = next(extr_strs)     # 5 : $ change / e.g  "+0.0021"
             else:
                 change_val = change_sign
-                logging.info( f"{cmi_debug} - {co_sym} / re-align extractor head / no [+-] field for $0" )
-            pct_sign = next(extr_strs)       # 6 : % change / e.g "+" or "-"
+                logging.info( f"{cmi_debug} - {co_sym} / re-align extract head / no [+-] field for $0" )
+            pct_sign = next(extr_strs)           # 6 : % change / e.g "+" or "-"
             if pct_sign == "+" or pct_sign == "-":
                 pct_val = next(extr_strs)        # 7 : change / e.g "210.0000%" WARN trailing "%" must be removed before casting to float
             else:
                 z = 0
                 pct_val = pct_sign
-                logging.info( f"{cmi_debug} - {co_sym} / re-align extractor head / no [+-] field for %0" )
+                logging.info( f"{cmi_debug} - {co_sym} / re-align extract head / no [+-] field for %0" )
             vol = next(extr_strs)            # 8 : volume with scale indicator/ e.g "70.250k"
             avg_vol = next(extr_strs)        # 9 : Avg. vol over 3 months) / e.g "61,447"
             mktcap = next(extr_strs)         # 10 : Market cap with scale indicator / e.g "15.753B"
