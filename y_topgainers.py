@@ -76,8 +76,9 @@ class y_topgainers:
         self.tg_df0.drop(self.tg_df0.index, inplace=True)
         x = 0      # OLD : x = 1    # row counter Also leveraged for unique dataframe key
         for j in self.tag_tbody.find_all('tr'):
+            y = 1
             for i in j.find'td'):
-                print ( f"Data: {i.strings}" )
+                print ( f"Data {y}: {i.contents}" )
                 # logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
             print ( f"==============================================" )
             extr_strs = j.strings
