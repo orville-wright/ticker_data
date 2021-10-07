@@ -56,12 +56,6 @@ class y_topgainers:
         r.close()
         return
 
-
-    def dump_all_tag_tr(self):
-        print ( "Dumping ALL_TAG_TR..." )
-        return
-
-
 # method #2
     def build_tg_df0(self):
         """
@@ -74,7 +68,7 @@ class y_topgainers:
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         logging.info('%s - Drop all rows from DF0' % cmi_debug )
         self.tg_df0.drop(self.tg_df0.index, inplace=True)
-        x = 0      # OLD : x = 1    # row counter Also leveraged for unique dataframe key
+        x = 0   # row counter / = index_id for DataFrame
         # print ( f"===== Rows: {len(self.tag_tbody.find_all('tr'))}  =================" )
         for j in self.tag_tbody.find_all('tr'):
             """
@@ -87,10 +81,10 @@ class y_topgainers:
             print ( f"==============================================" )
             """
             extr_strs = j.strings
-            #extr_strs = i.strings
             co_sym = next(extr_strs)             # 1 : ticker symbol info / e.g "NWAU"
             co_name = next(extr_strs)            # 2 : company name / e.g "Consumer Automotive Finance, Inc."
             price = next(extr_strs)              # 3 : price (Intraday) / e.g "0.0031"
+
             change_sign = next(extr_strs)        # 4 : $ change sign / e.g  "+0.0021"
             if change_sign == "+" or change_sign == "-":
                 change_val = next(extr_strs)     # 5 : $ change / e.g  "+0.0021"
@@ -104,24 +98,18 @@ class y_topgainers:
                 z = 0
                 pct_val = pct_sign
                 logging.info( f"{cmi_debug} - {co_sym} / re-align extract head / no [+-] field for %0" )
+
             vol = next(extr_strs)            # 8 : volume with scale indicator/ e.g "70.250k"
             avg_vol = next(extr_strs)        # 9 : Avg. vol over 3 months) / e.g "61,447"
             mktcap = next(extr_strs)         # 10 : Market cap with scale indicator / e.g "15.753B"
             peratio = next(extr_strs)        # 11 : PEsratio TTM (Trailing 12 months) / e.g "N/A"
-            #mini_gfx = next(extr_strs)      # 9th <td> : IGNORED = mini-canvas graphic 52-week rnage current price range with scale (no TXT/strings avail)
+            #mini_gfx = next(extr_strs)      # 12th : IGNORED = mini-canvas graphic 52-week rnage (no TXT/strings avail)
 
             ####################################################################
             # now wrangle the data...
             co_sym_lj = f"{co_sym:<6}"          # left justify TXT in DF & convert to raw string
-            # co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )          # left justify TXT in DF & convert to raw string
-
-            # TODO: look at using f-string justifers to do this
-            #co_name_lj = f"{co_name_lj:<25}"                   # remove " ' and strip leading/trailing spaces
-            #co_name_lj = (re.sub('[\'\"]', '', co_name) )                   # remove " ' and strip leading/trailing spaces
-            #co_name_lj = f"{co_name_lj:<25}"                   # set field size to 25 chars MAX
             co_name_lj = np.array2string(np.char.ljust(co_name, 25) )    # left justify TXT in DF & convert to raw string
             co_name_lj = (re.sub('[\'\"]', '', co_name_lj) )                  # remove " ' and strip leading/trailing spaces
-
             price_clean = float(price)
             mktcap = (re.sub('[N\/A]', '0', mktcap))   # handle N/A
             change_clean = np.float(change_val)
@@ -174,7 +162,7 @@ class y_topgainers:
 
         logging.info('%s - populated new DF0 dataset' % cmi_debug )
         return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
-                    # sucess = lobal class accessor (y_topgainers.*_df0) populated & updated
+                        # sucess = lobal class accessor (y_topgainers.*_df0) populated & updated
 
 # method #3
 # Hacking function - keep me arround for a while

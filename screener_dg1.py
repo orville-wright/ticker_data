@@ -84,32 +84,35 @@ class screener_dg1:
         x = 0
         for j in self.tag_tbody.find_all('tr'):
             extr_strs = j.strings
-            co_sym = next(extr_strs)         # 1 : ticker symbol info / e.g "NWAU"
-            co_name = next(extr_strs)        # 2 : company name / e.g "Consumer Automotive Finance, Inc."
-            price = next(extr_strs)          # 3 : price (Intraday) / e.g "0.0031"
-            change_sign = next(extr_strs)    # 4 : $ change sign / e.g  "+0.0021"
-            change_val = next(extr_strs)     # 5 : $ change / e.g  "+0.0021"
-            pct_sign = next(extr_strs)       # 6 : % change / e.g "+" or "-"
-            pct_val = next(extr_strs)        # 7 : change / e.g "210.0000%" WARN trailing "%" must be removed before casting to float
+            co_sym = next(extr_strs)             # 1 : ticker symbol info / e.g "NWAU"
+            co_name = next(extr_strs)            # 2 : company name / e.g "Consumer Automotive Finance, Inc."
+            price = next(extr_strs)              # 3 : price (Intraday) / e.g "0.0031"
+
+            change_sign = next(extr_strs)        # 4 : $ change sign / e.g  "+0.0021"
+            if change_sign == "+" or change_sign == "-":
+                change_val = next(extr_strs)     # 5 : $ change / e.g  "+0.0021"
+            else:
+                change_val = change_sign
+                logging.info( f"{cmi_debug} - {co_sym} / re-align extract head / no [+-] field for $0" )
+            pct_sign = next(extr_strs)           # 6 : % change / e.g "+" or "-"
+            if pct_sign == "+" or pct_sign == "-":
+                pct_val = next(extr_strs)        # 7 : change / e.g "210.0000%" WARN trailing "%" must be removed before casting to float
+            else:
+                z = 0
+                pct_val = pct_sign
+                logging.info( f"{cmi_debug} - {co_sym} / re-align extract head / no [+-] field for %0" )
+
             vol = next(extr_strs)            # 8 : volume with scale indicator/ e.g "70.250k"
             avg_vol = next(extr_strs)        # 9 : Avg. vol over 3 months) / e.g "61,447"
             mktcap = next(extr_strs)         # 10 : Market cap with scale indicator / e.g "15.753B"
             peratio = next(extr_strs)        # 11 : PEsratio TTM (Trailing 12 months) / e.g "N/A"
-            #mini_gfx = next(extr_strs)      # 9th <td> : IGNORED = mini-canvas graphic 52-week rnage current price range with scale (no TXT/strings avail)
+            #mini_gfx = next(extr_strs)      # 12th : IGNORED = mini-canvas graphic 52-week rnage (no TXT/strings avail)
 
             ####################################################################
             # now wrangle the data...
-
             co_sym_lj = f"{co_sym:<6}"          # left justify TXT in DF & convert to raw string
-            # co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )          # left justify TXT in DF & convert to raw string
-
-            # TODO: look at using f-string justifers to do this
-            #co_name_lj = f"{co_name_lj:<25}"                   # remove " ' and strip leading/trailing spaces
-            #co_name_lj = (re.sub('[\'\"]', '', co_name) )                   # remove " ' and strip leading/trailing spaces
-            #co_name_lj = f"{co_name_lj:<25}"                   # set field size to 25 chars MAX
             co_name_lj = np.array2string(np.char.ljust(co_name, 25) )    # left justify TXT in DF & convert to raw string
             co_name_lj = (re.sub('[\'\"]', '', co_name_lj) )                  # remove " ' and strip leading/trailing spaces
-
             price_clean = float(price)
             mktcap = (re.sub('[N\/A]', '0', mktcap))   # handle N/A
             change_clean = np.float(change_val)
@@ -164,6 +167,7 @@ class screener_dg1:
         return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
                         # sucess = lobal class accessor (y_topgainers.*_df0) populated & updated
 
+# ##############################################################################
 # method #3
 # Hacking function - keep me arround for a while
     def prog_bar(self, x, y):
