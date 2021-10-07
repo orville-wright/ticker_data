@@ -103,7 +103,7 @@ class y_topgainers:
             else:
                 z = 0
                 pct_val = pct_sign
-                logging.info( f'%s - re-align extractor logic / no [+-] sign for {z:%}: {co_sym}' % cmi_debug )
+                logging.info( f'%s - re-align extractor logic / no [+-] sign for {z}: {co_sym}' % cmi_debug )
             vol = next(extr_strs)            # 8 : volume with scale indicator/ e.g "70.250k"
             avg_vol = next(extr_strs)        # 9 : Avg. vol over 3 months) / e.g "61,447"
             mktcap = next(extr_strs)         # 10 : Market cap with scale indicator / e.g "15.753B"
