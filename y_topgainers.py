@@ -97,7 +97,7 @@ class y_topgainers:
             if pct_sign == "+" or pct_sign == "-":
                 pct_val = next(extr_strs)        # 7 : change / e.g "210.0000%" WARN trailing "%" must be removed before casting to float
             else:
-                if pct_val = pct_sign
+                pct_val = pct_sign
             vol = next(extr_strs)            # 8 : volume with scale indicator/ e.g "70.250k"
             avg_vol = next(extr_strs)        # 9 : Avg. vol over 3 months) / e.g "61,447"
             mktcap = next(extr_strs)         # 10 : Market cap with scale indicator / e.g "15.753B"
