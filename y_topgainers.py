@@ -78,7 +78,7 @@ class y_topgainers:
         print ( f"===== Rows: {len(self.tag_tbody.find_all('tr'))}  =================" )
         for j in self.tag_tbody.find_all('tr'):
             y = 1
-            i = ( g for g in j.find_all('td')
+            i = ( g for g in j.find_all('td') )
             """
             for i in j.find_all('td'):
             	print ( f"Data {y}: {i.text}" )
