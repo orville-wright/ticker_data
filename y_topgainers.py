@@ -78,7 +78,7 @@ class y_topgainers:
         for j in self.tag_tbody.find_all('tr'):
             y = 1
             for i in j.find_all('td'):
-                print ( f"Data {y}: {i.strings}" )
+                print ( f"Data {y}: {i.string}" )
                 # logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
                 y += 1
 
