@@ -97,7 +97,7 @@ class y_topgainers:
             pct_sign = next(extr_strs)       # 6 : % change / e.g "+" or "-"
             if pct_sign == "+" or pct_sign == "-":
                 pct_val = next(extr_strs)        # 7 : change / e.g "210.0000%" WARN trailing "%" must be removed before casting to float
-                logging.info( f'%s - Skip-re-align extractor / no [+-] sign for %0 change: {co_sym}' % cmi_debug )
+                logging.info( f'%s - Skip-re-align extractor / no [+-] sign for %%0 change: {co_sym}' % cmi_debug )
             else:
                 pct_val = pct_sign
             vol = next(extr_strs)            # 8 : volume with scale indicator/ e.g "70.250k"
