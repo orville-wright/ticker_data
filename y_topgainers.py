@@ -88,7 +88,7 @@ class y_topgainers:
             extr_strs = j.strings
             """
             print ( f"i generator: {i}" )
-            extr_strs = i.contents
+            extr_strs = i.strings
             co_sym = next(extr_strs)         # 1 : ticker symbol info / e.g "NWAU"
             co_name = next(extr_strs)        # 2 : company name / e.g "Consumer Automotive Finance, Inc."
             price = next(extr_strs)          # 3 : price (Intraday) / e.g "0.0031"
