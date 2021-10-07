@@ -76,8 +76,7 @@ class y_topgainers:
         self.tg_df0.drop(self.tg_df0.index, inplace=True)
         x = 0      # OLD : x = 1    # row counter Also leveraged for unique dataframe key
         # print ( f"===== Rows: {len(self.tag_tbody.find_all('tr'))}  =================" )
-        z = 0
-        logging.info( f"{cmi_debug} - Processing symbol rows: {len(self.tag_tbody.find_all('tr'))} zero_test: {z:.0%}" )
+        logging.info( f"{cmi_debug} - Processing symbol rows: {len(self.tag_tbody.find_all('tr'))} zero_test: %0 $0" )
         for j in self.tag_tbody.find_all('tr'):
             """
             y = 1
@@ -97,14 +96,14 @@ class y_topgainers:
                 change_val = next(extr_strs)     # 5 : $ change / e.g  "+0.0021"
             else:
                 change_val = change_sign
-                logging.info( f'%s - re-align extractor logic / no [+-] sign for $0: {co_sym}' % cmi_debug )
+                logging.info( f"{cmi_debug} - {co_sym} / re-align extractor head / no [+-] field for $0" )
             pct_sign = next(extr_strs)       # 6 : % change / e.g "+" or "-"
             if pct_sign == "+" or pct_sign == "-":
                 pct_val = next(extr_strs)        # 7 : change / e.g "210.0000%" WARN trailing "%" must be removed before casting to float
             else:
                 z = 0
                 pct_val = pct_sign
-                logging.info( f'%s - re-align extractor logic / no [+-] sign for %%{z}: {co_sym}' % cmi_debug )
+                logging.info( f"{cmi_debug} - {co_sym} / re-align extractor head / no [+-] field for %0" )
             vol = next(extr_strs)            # 8 : volume with scale indicator/ e.g "70.250k"
             avg_vol = next(extr_strs)        # 9 : Avg. vol over 3 months) / e.g "61,447"
             mktcap = next(extr_strs)         # 10 : Market cap with scale indicator / e.g "15.753B"
