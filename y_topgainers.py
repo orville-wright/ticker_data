@@ -77,11 +77,11 @@ class y_topgainers:
         x = 0      # OLD : x = 1    # row counter Also leveraged for unique dataframe key
         print ( f"===== Rows: {len(self.tag_tbody.find_all('tr'))}  =================" )
         for j in self.tag_tbody.find_all('tr'):
-    		y = 1
-    		for i in j.find_all('td'):
-    			print ( f"Data {y}: {i.text}" )
-    			# logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
-    			y += 1
+        	y = 1
+        	for i in j.find_all('td'):
+        		print ( f"Data {y}: {i.text}" )
+        		# logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
+        		y += 1
 
     		print ( f"==============================================" )
             extr_strs = j.strings
