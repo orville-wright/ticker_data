@@ -78,17 +78,13 @@ class y_topgainers:
         print ( f"===== Rows: {len(self.tag_tbody.find_all('tr'))}  =================" )
         for j in self.tag_tbody.find_all('tr'):
             y = 1
-            i = ( g for g in j.find_all('td') )
-            """
             for i in j.find_all('td'):
             	print ( f"Data {y}: {i.text}" )
             	# logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
             	y += 1
             print ( f"==============================================" )
             extr_strs = j.strings
-            """
-            print ( f"i generator: {i}" )
-            extr_strs = i.strings
+            #extr_strs = i.strings
             co_sym = next(extr_strs)         # 1 : ticker symbol info / e.g "NWAU"
             co_name = next(extr_strs)        # 2 : company name / e.g "Consumer Automotive Finance, Inc."
             price = next(extr_strs)          # 3 : price (Intraday) / e.g "0.0031"
