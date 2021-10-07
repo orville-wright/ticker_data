@@ -77,6 +77,12 @@ class y_topgainers:
         x = 0      # OLD : x = 1    # row counter Also leveraged for unique dataframe key
         print ( f"===== Rows: {len(self.tag_tbody.find_all('tr'))}  =================" )
         for j in self.tag_tbody.find_all('tr'):
+            y = 1
+            for i in j.find_all('td'):
+            	print ( f"Data {y}: {i.text}" )
+            	# logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
+            	y += 1
+            print ( f"==============================================" )
             extr_strs = j.strings
             co_sym = next(extr_strs)         # 1 : ticker symbol info / e.g "NWAU"
             co_name = next(extr_strs)        # 2 : company name / e.g "Consumer Automotive Finance, Inc."
