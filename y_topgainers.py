@@ -89,9 +89,15 @@ class y_topgainers:
             co_name = next(extr_strs)        # 2 : company name / e.g "Consumer Automotive Finance, Inc."
             price = next(extr_strs)          # 3 : price (Intraday) / e.g "0.0031"
             change_sign = next(extr_strs)    # 4 : $ change sign / e.g  "+0.0021"
-            change_val = next(extr_strs)     # 5 : $ change / e.g  "+0.0021"
+            if change_sign == "+" or change_sign == "-":
+                change_val = next(extr_strs)     # 5 : $ change / e.g  "+0.0021"
+            else:
+                change_val = change_sign
             pct_sign = next(extr_strs)       # 6 : % change / e.g "+" or "-"
-            pct_val = next(extr_strs)        # 7 : change / e.g "210.0000%" WARN trailing "%" must be removed before casting to float
+            if pct_sign == "+ or pct_sign == "-":
+                pct_val = next(extr_strs)        # 7 : change / e.g "210.0000%" WARN trailing "%" must be removed before casting to float
+            else:
+                if pct_val = pct_sign
             vol = next(extr_strs)            # 8 : volume with scale indicator/ e.g "70.250k"
             avg_vol = next(extr_strs)        # 9 : Avg. vol over 3 months) / e.g "61,447"
             mktcap = next(extr_strs)         # 10 : Market cap with scale indicator / e.g "15.753B"
