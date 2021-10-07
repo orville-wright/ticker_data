@@ -76,7 +76,7 @@ class y_topgainers:
         self.tg_df0.drop(self.tg_df0.index, inplace=True)
         x = 0      # OLD : x = 1    # row counter Also leveraged for unique dataframe key
         for j in self.tag_tbody.find_all('tr'):
-            logging.info( f'%s - Data: {j.strings}' % cmi_debug )
+            logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
             extr_strs = j.strings
             co_sym = next(extr_strs)         # 1 : ticker symbol info / e.g "NWAU"
             co_name = next(extr_strs)        # 2 : company name / e.g "Consumer Automotive Finance, Inc."
