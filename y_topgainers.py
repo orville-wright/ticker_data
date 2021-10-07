@@ -94,7 +94,7 @@ class y_topgainers:
             else:
                 change_val = change_sign
             pct_sign = next(extr_strs)       # 6 : % change / e.g "+" or "-"
-            if pct_sign == "+ or pct_sign == "-":
+            if pct_sign == "+" or pct_sign == "-":
                 pct_val = next(extr_strs)        # 7 : change / e.g "210.0000%" WARN trailing "%" must be removed before casting to float
             else:
                 if pct_val = pct_sign
