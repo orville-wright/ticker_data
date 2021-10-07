@@ -71,35 +71,35 @@ class y_topgainers:
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         logging.info('%s - Drop all rows from DF0' % cmi_debug )
         self.tg_df0.drop(self.tg_df0.index, inplace=True)
-        x = 1    # row counter Also leveraged for unique dataframe key
-        for datarow in self.all_tag_tr:                  # BS4 generator object (nice, but has BS4 accessiblity limits)
-            extr_strs = datarow.strings
-            co_sym = next(extr_strs)         # 1st <td> : ticker symbol info / e.g "NWAU"
-            co_name = next(extr_strs)        # 2nd <td> : company name / e.g "Consumer Automotive Finance, Inc."
-            price = next(extr_strs)          # 3rd <td> : price (Intraday) / e.g "0.0031"
-            #logging.info( f'%s - >> 20 DEBUG<< Symbol: {co_sym} / price orig: {price} type: {type(price)}' % cmi_debug )
-            change_sign = next(extr_strs)    # 4.0-th <td> : $ change / e.g  "+0.0021"
-            change_val = next(extr_strs)     # 4.1-th <td> : $ change / e.g  "+0.0021"
-            #logging.info( f'%s - >> 30 DEBUG<< Symbol: {co_sym} / change_sign orig: {change_sign} type: {type(change_sign)}' % cmi_debug )
-            #logging.info( f'%s - >> 31 DEBUG<< Symbol: {co_sym} / change_val orig: {change_val} type: {type(change_val)}' % cmi_debug )
-            pct_sign = next(extr_strs)       # 5.0-th <td> : % change / e.g "+" or "-"
-            pct_val = next(extr_strs)        # 5.1-th <td> : % change / e.g "210.0000%" WARN trailing "%" must be removed before casting to float
-            #logging.info( f'%s - >> 32 DEBUG<< Symbol: {co_sym} / pct_sign orig: {pct_sign} type: {type(pct_sign)}' % cmi_debug )
-            vol = next(extr_strs)            # 6th <td> : volume with scale indicator/ e.g "70.250k"
-            avg_vol = next(extr_strs)        # 6th <td> : Avg. vol over 3 months) / e.g "61,447"
-            mktcap = next(extr_strs)         # 7th <td> : Market cap with scale indicator / e.g "15.753B"
-            peratio = next(extr_strs)        # 8th <td> : PEsratio TTM (Trailing 12 months) / e.g "N/A"
-            #mini_gfx = next(extr_strs)      # 9th <td> : IGNORED = mini-canvas graphic 52-week rnage current price range with scale (no TXT/strings avail)
+    	x = 0      # OLD : x = 1    # row counter Also leveraged for unique dataframe key
+    	for j in self.tag_tbody.find_all('tr'):
+    		extr_strs = j.strings
+    		co_sym = next(extr_strs)         # 1 : ticker symbol info / e.g "NWAU"
+    		co_name = next(extr_strs)        # 2 : company name / e.g "Consumer Automotive Finance, Inc."
+    		price = next(extr_strs)          # 3 : price (Intraday) / e.g "0.0031"
+    		change_sign = next(extr_strs)    # 4 : $ change sign / e.g  "+0.0021"
+    		change_val = next(extr_strs)     # 5 : $ change / e.g  "+0.0021"
+    		pct_sign = next(extr_strs)       # 6 : % change / e.g "+" or "-"
+    		pct_val = next(extr_strs)        # 7 : change / e.g "210.0000%" WARN trailing "%" must be removed before casting to float
+    		vol = next(extr_strs)            # 8 : volume with scale indicator/ e.g "70.250k"
+    		avg_vol = next(extr_strs)        # 9 : Avg. vol over 3 months) / e.g "61,447"
+    		mktcap = next(extr_strs)         # 10 : Market cap with scale indicator / e.g "15.753B"
+    		peratio = next(extr_strs)        # 11 : PEsratio TTM (Trailing 12 months) / e.g "N/A"
+    		#mini_gfx = next(extr_strs)      # 9th <td> : IGNORED = mini-canvas graphic 52-week rnage current price range with scale (no TXT/strings avail)
+
 
             ####################################################################
             # now wrangle the data...
-
-            co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )          # left justify TXT in DF & convert to raw string
+            co_sym_lj = f"{co_sym:<6}"          # left justify TXT in DF & convert to raw string
+            # co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )          # left justify TXT in DF & convert to raw string
 
             # TODO: look at using f-string justifers to do this
-            co_name_lj = (re.sub('[\'\"]', '', co_name) )                   # remove " ' and strip leading/trailing spaces
-            co_name_lj = np.array2string(np.char.ljust(co_name_lj, 25) )    # left justify TXT in DF & convert to raw string
-            co_name_lj = (re.sub('[\']', '', co_name_lj) )                  # remove " ' and strip leading/trailing spaces
+            #co_name_lj = f"{co_name_lj:<25}"                   # remove " ' and strip leading/trailing spaces
+            #co_name_lj = (re.sub('[\'\"]', '', co_name) )                   # remove " ' and strip leading/trailing spaces
+            #co_name_lj = f"{co_name_lj:<25}"                   # set field size to 25 chars MAX
+            co_name_lj = np.array2string(np.char.ljust(co_name, 25) )    # left justify TXT in DF & convert to raw string
+            co_name_lj = (re.sub('[\'\"]', '', co_name_lj) )                  # remove " ' and strip leading/trailing spaces
+
             price_clean = float(price)
             mktcap = (re.sub('[N\/A]', '0', mktcap))   # handle N/A
             change_clean = np.float(change_val)
@@ -110,30 +110,30 @@ class y_topgainers:
 
             if TRILLIONS:
                 mktcap_clean = np.float(re.sub('T', '', mktcap))
-                mb = "XT"
-                logging.info('%s - Mega Cap/TRILLIONS. set XT' % cmi_debug )
+                mb = "ST"
+                logging.info( f'%s - {x} / {co_sym_lj} Small Cap/TRILLIONS. set ST' % cmi_debug )
 
             if BILLIONS:
                 mktcap_clean = np.float(re.sub('B', '', mktcap))
-                mb = "LB"
-                logging.info('%s - Large cap/BILLIONS. set LB' % cmi_debug )
+                mb = "SB"
+                logging.info( f'%s - {x} / {co_sym_lj} Small cap/BILLIONS. set SB' % cmi_debug )
 
             if MILLIONS:
                 mktcap_clean = np.float(re.sub('M', '', mktcap))
-                mb = "LM"
-                logging.info('%s - Large cap/MILLIONS. set LM' % cmi_debug )
+                mb = "SM"
+                logging.info( f'%s - {x} / {co_sym_lj} Large cap/MILLIONS. set SM' % cmi_debug )
 
             if not TRILLIONS and not BILLIONS and not MILLIONS:
                 mktcap_clean = 0    # error condition - possible bad data
-                mb = "LZ"           # Zillions
-                logging.info('%s - bad mktcap data N/A setting to LZ' % cmi_debug )
+                mb = "SZ"           # Zillions
+                logging.info( f'%s - {x} / {co_sym_lj} bad mktcap data N/A setting to SZ' % cmi_debug )
                 # handle bad data in mktcap html page field
 
             if pct_val == "N/A":
                 pct_val = float(0.0)        # Bad data. FOund a filed with N/A instead of read num
             else:
-                pct_clean = re.sub('[\%,]', "", pct_val )
-                pct_clean = float(pct_clean)
+                pct_cl = re.sub('[\%\+\-]', "", pct_val )
+                pct_clean = float(pct_cl)
 
             self.data0 = [[ \
                        x, \
@@ -149,9 +149,10 @@ class y_topgainers:
             self.df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time' ], index=[x] )
             self.tg_df0 = self.tg_df0.append(self.df0)    # append this ROW of data into the REAL DataFrame
             x+=1
+
         logging.info('%s - populated new DF0 dataset' % cmi_debug )
         return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
-                        # sucess = lobal class accessor (y_topgainers.tg_df0) populated & updated
+                        # sucess = lobal class accessor (y_topgainers.*_df0) populated & updated
 
 # method #3
 # Hacking function - keep me arround for a while
