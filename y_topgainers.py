@@ -91,15 +91,15 @@ class y_topgainers:
             change_sign = next(extr_strs)    # 4 : $ change sign / e.g  "+0.0021"
             if change_sign == "+" or change_sign == "-":
                 change_val = next(extr_strs)     # 5 : $ change / e.g  "+0.0021"
-                logging.info( f'%s - Skip-re-align extractor / no [+-] sign for $0 change: {co_sym}' % cmi_debug )
             else:
                 change_val = change_sign
+                logging.info( f'%s - Skip-re-align extractor / no [+-] sign for $0 change: {co_sym}' % cmi_debug )
             pct_sign = next(extr_strs)       # 6 : % change / e.g "+" or "-"
             if pct_sign == "+" or pct_sign == "-":
                 pct_val = next(extr_strs)        # 7 : change / e.g "210.0000%" WARN trailing "%" must be removed before casting to float
-                logging.info( f'%s - Skip-re-align extractor / no [+-] sign for %%0 change: {co_sym}' % cmi_debug )
             else:
                 pct_val = pct_sign
+                logging.info( f'%s - Skip-re-align extractor / no [+-] sign for %%0 change: {co_sym}' % cmi_debug )
             vol = next(extr_strs)            # 8 : volume with scale indicator/ e.g "70.250k"
             avg_vol = next(extr_strs)        # 9 : Avg. vol over 3 months) / e.g "61,447"
             mktcap = next(extr_strs)         # 10 : Market cap with scale indicator / e.g "15.753B"
