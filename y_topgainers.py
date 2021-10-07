@@ -87,6 +87,7 @@ class y_topgainers:
             print ( f"==============================================" )
             extr_strs = j.strings
             """
+            print ( f"i generator: {i}" )
             extr_strs = i.text
             co_sym = next(extr_strs)         # 1 : ticker symbol info / e.g "NWAU"
             co_name = next(extr_strs)        # 2 : company name / e.g "Consumer Automotive Finance, Inc."
