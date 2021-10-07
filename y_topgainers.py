@@ -78,8 +78,8 @@ class y_topgainers:
         print ( f"===== {len(self.tag_tbody.find_all('tr'))} =================" )
         for j in self.tag_tbody.find_all('tr'):
             y = 1
-            for i in j.find_all('td'):
-                print ( f"Data {y}: {i.string}" )
+            for i in j.find_all('td').conent:
+                print ( f"Data {y}: {i.text}" )
                 # logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
                 y += 1
 
