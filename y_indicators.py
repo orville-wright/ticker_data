@@ -62,7 +62,7 @@ class y_techevents:
         self.te_all_url = "https://finance.yahoo.com/" + self.symbol + "?Technical=all"
         self.te_short_url = "https://finance.yahoo.com/" + self.symbol + "?Technical=short"
         self.te_mid_url = "https://finance.yahoo.com/" + self.symbol + "?Technical=intermediate"
-        self.info_long_url = "https://finance.yahoo.com/" + self.symbol + "?Technical=long"
+        self.te_long_url = "https://finance.yahoo.com/" + self.symbol + "?Technical=long"
         #
         logging.info( f"================================ Tech Events API endpoints ================================" )
         logging.info( f"{cmi_debug} - API endpoint #0: [ {self.te_url} ]" )
