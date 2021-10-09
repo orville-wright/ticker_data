@@ -90,11 +90,11 @@ class y_techevents:
             logging.info( f"{cmi_debug} - Main JSON data zone: {len(self.te_json00)} lines extracted / Done" )
             soup = BeautifulSoup(self.te_resp0.text, 'html.parser')
         #
-        self.te_zone = soup.find(attrs={"data-test": "tch-evnts"})
-        self.te_short = te_zone.button.find(attrs={"value": "short"})
-        self.te_mid = te_zone.button.find(attrs={"value": "intermediate"})
-        self.te_long = te_zone.button.find(attrs={"value": "long"})
-        self.te_srs_zone = self.te_zone.find(attrs={"class": "D(ib) Va(m) Mstart(30px) Fz(s)" )
+        self.te_zone = soup.find(attrs={"data-test": "tch-evnts"} )
+        self.te_short = te_zone.button.find(attrs={"value": "short"} )
+        self.te_mid = te_zone.button.find(attrs={"value": "intermediate"} )
+        self.te_long = te_zone.button.find(attrs={"value": "long"} )
+        self.te_srs_zone = self.te_zone.find(attrs={"class": "D(ib) Va(m) Mstart(30px) Fz(s)"} )
         self.te_srs_combo = self.te_srs_zone.strings
         return
 
@@ -201,7 +201,7 @@ class y_techevents:
             self.df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time' ], index=[x] )
             self.tg_df0 = self.tg_df0.append(self.df0)    # append this ROW of data into the REAL DataFrame
             x+=1
-            
+
             """
         logging.info('%s - populated new DF0 dataset' % cmi_debug )
         return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
