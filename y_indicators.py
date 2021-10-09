@@ -91,9 +91,10 @@ class y_techevents:
 
             #self.te_jsondata0 = json.loads(self.te_resp0.text)
         #
-        #self.te_zone = self.soup.find(attrs={"data-test": "tch-evnts"} )
+        #self.te_zone = self.soup.find("t"
+        self.te_zone = self.soup.find(attrs={"data-test": "tch-evnts"} )
         #self.te_zone = self.soup.find(attrs={"class": "D(ib) Va(m)"} )
-        self.te_zone = self.soup.find_all('button')
+        #self.te_zone = self.soup.find_all('button')
         print ( f">>>DEBUG<<< : te_zone :\n{self.te_zone}" )
         self.te_short = self.te_zone.find(attrs={"value": "short"} )
         self.te_mid = self.te_zone.find(attrs={"value": "intermediate"} )
