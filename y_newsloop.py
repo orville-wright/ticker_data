@@ -109,10 +109,6 @@ class y_newsfilter:
             f = url.read()
             logging.info('%s - read html stream' % cmi_debug )
             soup = BeautifulSoup(f, "html.parser")
-
-        logging.info('%s - ' % cmi_debug )
-        #
-        # fnl_tag_dataset = soup.find_all('a')
         tag_dataset = soup.div.find_all(attrs={'class': 'D(tbc)'} )
         logging.info('%s - close news article url handle' % cmi_debug )
         url.close()
