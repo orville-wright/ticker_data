@@ -542,11 +542,11 @@ def main():
         print ( f"========================= Technical Events for: {news_symbol} =========================" )
         te = y_techevents()
         te.form_api_endpoints(qsmbol)
-	    te.get_te_zones()
-	    te.build_data()
+        te.get_te_zones()
+        te.build_data()
         print ( " " )
         print ( f"========================= Technical Events for: {news_symbol} =========================" )
-        
+
 #################################################################################
 # 3 differnt methods to get a live quote ########################################
 # NOTE: These 3 routines are *examples* of how to get quotes from the 3 live quote classes::
