@@ -401,6 +401,7 @@ def main():
 # Summary ############### Technical Events info ##########################
     if args['qsymbol'] is not False:
         cmi_debug = __name__+"::tech_events.#1"
+        logging.info ( f"{cmi_debug} - CALLED" )
         te_symbol = args['qsymbol'].upper()
         print ( " " )
         print ( f"========================= Technical Events for: {news_symbol} =========================" )
