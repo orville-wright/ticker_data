@@ -92,9 +92,9 @@ class y_techevents:
             #self.te_jsondata0 = json.loads(self.te_resp0.text)
         #
         self.te_zone = soup.find(attrs={"data-test": "tch-evnts"} )
-        self.te_short = self.te_zone.button.find(attrs={"value": "short"} )
-        self.te_mid = self.te_zone.button.find(attrs={"value": "intermediate"} )
-        self.te_long = self.te_zone.button.find(attrs={"value": "long"} )
+        self.te_short = self.te_zone.find(attrs={"value": "short"} )
+        self.te_mid = self.te_zone.find(attrs={"value": "intermediate"} )
+        self.te_long = self.te_zone.find(attrs={"value": "long"} )
         self.te_srs_zone = self.te_zone.find(attrs={"class": "D(ib) Va(m) Mstart(30px) Fz(s)"} )
         self.te_srs_combo = self.te_srs_zone.strings
         return
