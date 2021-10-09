@@ -81,19 +81,19 @@ class y_techevents:
         the embedded webpage [finance.yahoo.com/chart/GOL?technical=short] html data table.
         Sabe JSON to class global attribute: self.te_resp0.text
         """
-
         cmi_debug = __name__+"::"+self.get_te_zones.__name__+".#"+str(self.yti)
         logging.info( f"{cmi_debug} - IN" )
         with requests.get( self.te_all_url, stream=True, timeout=5 ) as self.te_resp0:
             logging.info( f"{cmi_debug} - get() data / storing..." )
             self.soup = BeautifulSoup(self.te_resp0.text, 'html.parser')
             logging.info( f"{cmi_debug} - Main data zone: {len(self.soup)} lines extracted / Done" )
-            print ( f">>>DEBUG<<< : te_zone :\n{self.soup}" )
+            #print ( f">>>DEBUG<<< : te_zone :\n{self.soup}" )
 
             #self.te_jsondata0 = json.loads(self.te_resp0.text)
         #
         #self.te_zone = self.soup.find(attrs={"data-test": "tch-evnts"} )
-        self.te_zone = self.soup.find_all(attrs={"class": "D(ib) Va(m)"} )
+        print ( f">>>DEBUG<<< : te_zone :\n{self.soup}" )
+        self.te_zone = self.soup.find(attrs={"class": "D(ib) Va(m)"} )
         print ( f">>>DEBUG<<< : te_zone :\n{self.te_zone}" )
         self.te_short = self.te_zone.find(attrs={"value": "short"} )
         self.te_mid = self.te_zone.find(attrs={"value": "intermediate"} )
