@@ -68,10 +68,9 @@ class y_techevents:
         logging.info( f"================================ Tech Events API endpoints ================================" )
         logging.info( f"{cmi_debug} - API endpoint #0: [ {self.te_url} ]" )
         logging.info( f"{cmi_debug} - API endpoint #1: [ {self.te_all_url} ]" )
-        logging.info( f"{cmi_debug} - API endpoint #2: [ {self.te_all_url} ]" )
-        logging.info( f"{cmi_debug} - API endpoint #3: [ {self.te_short_url} ]" )
-        logging.info( f"{cmi_debug} - API endpoint #4: [ {self.te_mid_url} ]" )
-        logging.info( f"{cmi_debug} - API endpoint #5: [ {self.te_long_url} ]" )
+        logging.info( f"{cmi_debug} - API endpoint #1: [ {self.te_short_url} ]" )
+        logging.info( f"{cmi_debug} - API endpoint #3: [ {self.te_mid_url} ]" )
+        logging.info( f"{cmi_debug} - API endpoint #4: [ {self.te_long_url} ]" )
         return
 
 
@@ -89,6 +88,7 @@ class y_techevents:
             logging.info( f"{cmi_debug} - get() data / storing..." )
             self.soup = BeautifulSoup(self.te_resp0.text, 'html.parser')
             logging.info( f"{cmi_debug} - Main data zone: {len(self.soup)} lines extracted / Done" )
+            print ( f">>>DEBUG<<< : te_zone :\n{self.te_zone}" )
 
             #self.te_jsondata0 = json.loads(self.te_resp0.text)
         #
