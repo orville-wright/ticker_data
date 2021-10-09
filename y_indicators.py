@@ -58,11 +58,11 @@ class y_techevents:
         cmi_debug = __name__+"::"+self.form_api_endpoints.__name__+".#"+str(self.yti)
         logging.info( f"{cmi_debug} - form API endpoint URL(s)" )
         self.symbol = symbol.upper()
-        self.te_url = "https://finance.yahoo.com/" + self.symbol + "?Technical=" + asset_class
-        self.te_all_url = "https://finance.yahoo.com/" + self.symbol + "?Technical=all" + asset_class
-        self.te_short_url = "https://finance.yahoo.com/" + self.symbol + "?Technical=short" + asset_class
-        self.te_mid_url = "https://finance.yahoo.com/" + self.symbol + "?Technical=intermediate" + asset_class
-        self.info_long_url = "https://finance.yahoo.com/" + self.symbol + "?Technical=long" + asset_class
+        self.te_url = "https://finance.yahoo.com/" + self.symbol + "?Technical="
+        self.te_all_url = "https://finance.yahoo.com/" + self.symbol + "?Technical=all"
+        self.te_short_url = "https://finance.yahoo.com/" + self.symbol + "?Technical=short"
+        self.te_mid_url = "https://finance.yahoo.com/" + self.symbol + "?Technical=intermediate"
+        self.info_long_url = "https://finance.yahoo.com/" + self.symbol + "?Technical=long"
         #
         logging.info( f"================================ Tech Events API endpoints ================================" )
         logging.info( f"{cmi_debug} - API endpoint #0: [ {self.te_url} ]" )
