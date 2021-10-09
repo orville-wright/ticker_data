@@ -83,7 +83,7 @@ class y_techevents:
         """
         cmi_debug = __name__+"::"+self.get_te_zones.__name__+".#"+str(self.yti)
         logging.info( f"{cmi_debug} - IN" )
-        with requests.get( self.te_all_url, stream=True, timeout=5 ) as self.te_resp0:
+        with requests.get( self.te_short_url, stream=True, timeout=5 ) as self.te_resp0:
             logging.info( f"{cmi_debug} - get() data / storing..." )
             self.soup = BeautifulSoup(self.te_resp0.text, 'html.parser')
             logging.info( f"{cmi_debug} - Main data zone: {len(self.soup)} lines extracted / Done" )
