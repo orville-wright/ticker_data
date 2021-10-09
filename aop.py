@@ -539,13 +539,13 @@ def main():
         logging.info ( f"{cmi_debug} - CALLED" )
         te_symbol = args['qsymbol'].upper()
         print ( " " )
-        print ( f"========================= Technical Events for: {news_symbol} =========================" )
+        print ( f"========================= Technical Events for: {te_symbol} =========================" )
         te = y_techevents()
-        te.form_api_endpoints(qsmbol)
+        te.form_api_endpoints(te_symbol)
         te.get_te_zones()
         te.build_data()
         print ( " " )
-        print ( f"========================= Technical Events for: {news_symbol} =========================" )
+        print ( f"========================= Technical Events for: {te_symbol} =========================" )
 
 #################################################################################
 # 3 differnt methods to get a live quote ########################################
