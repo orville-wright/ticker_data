@@ -14,16 +14,23 @@ logging.basicConfig(level=logging.INFO)
 
 #####################################################
 
-class y_sindicators:
+class y_techevents:
     """
     Class to extract Simple Today/Short/Medium/Long term indicator data set from finance.yahoo.com
     """
 
     # global accessors
-    si_df0 = ""          # DataFrame - Full list of top gainers
-    si_df1 = ""          # DataFrame - Ephemerial list of top 10 gainers. Allways overwritten
-    si_df2 = ""          # DataFrame - Top 10 ever 10 secs for 60 secs
-    all_tag_tr = ""      # BS4 handle of the <tr> extracted data
+    te_resp0 = ""
+    te_jsondata0 = ""
+    te_zone = ""
+    te_short = ""
+    te_mid = ""
+    te_long = ""
+    te_srs_zone = ""
+    te_df0 = ""          # DataFrame - Full list of top gainers
+    te_df1 = ""          # DataFrame - Ephemerial list of top 10 gainers. Allways overwritten
+    te_df2 = ""          # DataFrame - Top 10 ever 10 secs for 60 secs
+    te_all_url = ""
     yti = 0
     cycle = 0           # class thread loop counter
 
@@ -31,59 +38,89 @@ class y_sindicators:
         cmi_debug = __name__+"::"+self.__init__.__name__
         logging.info( f"{cmi_debug} - Instantiate.#{yti}" )
         # init empty DataFrame with present colum names
-        self.si_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time'] )
-        self.si_df1 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time'] )
-        self.si_df2 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time'] )
+        self.te_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time'] )
+        self.te_df1 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time'] )
+        self.te_df2 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time'] )
         self.yti = yti
         return
 
+
 # method #1
-    def get_sindicator_data(self):
+    def form_api_endpoints(self, symbol):
         """
-        Connect to finance.yahoo.com and extract (scrape) the raw sring data out of
-        the embedded webpage [finance.yahoo.com/chart/GOL?technical=short] html data table.
-        Returns a BS4 handle
+        For Technical event Indicators endpoint for the req get()
+        This page is where the Free view into some technical idicators are show with full TEXT strings descriptions.
+        NOTE: This is a teaser page. Tech Events are only available to paid-for subscrption users. But the teaser page shows
+        a clutch of free indicators...So we'll take the free Tech Event indicators, for now.
+        1. Today, Short, intermediate, Long Term technical analysis
+        2. Support, Resistance, Stop loss levels
         """
-
-        cmi_debug = __name__+"::"+self.get_sindicator_data.__name__+".#"+str(self.yti)
-        logging.info( "{cmi_debig} - IN" )
-        r = requests.get("https://finance.yahoo.com/gainers" )
-        logging.info('%s - read html stream' % cmi_debug )
-        self.soup = BeautifulSoup(r.text, 'html.parser')
-        # ATTR style search. Results -> Dict
-        # <tr tag in target merkup line has a very complex 'class=' but the attributes are unique. e.g. 'simpTblRow' is just one unique attribute
-        logging.info('%s - save data object handle' % cmi_debug )
-        self.tag_tbody = self.soup.find('tbody')
-        self.all_tag_tr = self.soup.find_all(attrs={"class": "simpTblRow"})   # simpTblRow
-        #self.tr_rows = self.tag_tbody.find(attrs={"class": "simpTblRow"})
-
-        logging.info('%s - close url handle' % cmi_debug )
-        r.close()
+        cmi_debug = __name__+"::"+self.form_api_endpoints.__name__+".#"+str(self.yti)
+        logging.info( f"{cmi_debug} - form API endpoint URL(s)" )
+        self.symbol = symbol.upper()
+        self.te_url = "https://finance.yahoo.com/" + self.symbol + "?Technical=" + asset_class
+        self.te_all_url = "https://finance.yahoo.com/" + self.symbol + "?Technical=all" + asset_class
+        self.te_short_url = "https://finance.yahoo.com/" + self.symbol + "?Technical=short" + asset_class
+        self.te_mid_url = "https://finance.yahoo.com/" + self.symbol + "?Technical=intermediate" + asset_class
+        self.info_long_url = "https://finance.yahoo.com/" + self.symbol + "?Technical=long" + asset_class
+        #
+        logging.info( f"================================ Tech Events API endpoints ================================" )
+        logging.info( f"{cmi_debug} - API endpoint #0: [ {self.te_url} ]" )
+        logging.info( f"{cmi_debug} - API endpoint #1: [ {self.te_all_url} ]" )
+        logging.info( f"{cmi_debug} - API endpoint #2: [ {self.te_all_url} ]" )
+        logging.info( f"{cmi_debug} - API endpoint #3: [ {self.te_short_url} ]" )
+        logging.info( f"{cmi_debug} - API endpoint #4: [ {self.te_mid_url} ]" )
+        logging.info( f"{cmi_debug} - API endpoint #5: [ {self.te_long_url} ]" )
         return
 
+
 # method #2
-    def build_si_df0(self):
+    def get_te_zones(self):
+        """
+        Connect to finance.yahoo.com and extract (scrape) the raw JSON data out of
+        the embedded webpage [finance.yahoo.com/chart/GOL?technical=short] html data table.
+        Sabe JSON to class global attribute: self.te_resp0.text
+        """
+
+        cmi_debug = __name__+"::"+self.get_te_zones.__name__+".#"+str(self.yti)
+        logging.info( f"{cmi_debig} - IN" )
+        with requests.get( self.te_all_url, stream=True, timeout=5 ) as self.te_resp0:
+            logging.info( f"{cmi_debug} - get() data / storing..." )
+            self.te_jsondata0 = json.loads(self.te_resp0.text)
+            logging.info( f"{cmi_debug} - Main JSON data zone: {len(self.te_json00)} lines extracted / Done" )
+            soup = BeautifulSoup(self.te_resp0.text, 'html.parser')
+        #
+        self.te_zone = soup.find(attrs={"data-test": "tch-evnts"})
+        self.te_short = te_zone.button.find(attrs={"value": "short"})
+        self.te_mid = te_zone.button.find(attrs={"value": "intermediate"})
+        self.te_long = te_zone.button.find(attrs={"value": "long"})
+        self.te_srs_zone = self.te_zone.find(attrs={"class": "D(ib) Va(m) Mstart(30px) Fz(s)" )
+        self.te_srs_combo = self.te_srs_zone.strings
+        return
+
+
+# method #3
+    def build_te_data(self):
         """
         Build-out a fully populated Pandas DataFrame containg all the extracted/scraped fields from the
         html/markup table data Wrangle, clean/convert/format the data correctly.
         """
-
         cmi_debug = __name__+"::"+self.build_tg_df0.__name__+".#"+str(self.yti)
-        logging.info('%s - IN' % cmi_debug )
+        logging.info( f"{cmi_debug} - IN" )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
-        logging.info('%s - Drop all rows from DF0' % cmi_debug )
+        logging.info( f"{cmi_debug} - Drop all rows from DF0" )
         self.tg_df0.drop(self.tg_df0.index, inplace=True)
         x = 0   # row counter / = index_id for DataFrame
-        # print ( f"===== Rows: {len(self.tag_tbody.find_all('tr'))}  =================" )
-        for j in self.tag_tbody.find_all('tr'):
-            """
+        print ( f"===== Rows: {len(self.te_zone.find_all('button'))}  =================" )
+        for j in self.te_zone.find_all('button'):
             # >>>DEBUG<< for when yahoo.com changes data model...
             y = 1
-            for i in j.find_all('td'):
+            for i in j.children:
             	print ( f"Data {y}: {i.text}" )
             	# logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
             	y += 1
             print ( f"==============================================" )
+
             """
             extr_strs = j.strings
             co_sym = next(extr_strs)             # 1 : ticker symbol info / e.g "NWAU"
@@ -164,7 +201,8 @@ class y_sindicators:
             self.df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time' ], index=[x] )
             self.tg_df0 = self.tg_df0.append(self.df0)    # append this ROW of data into the REAL DataFrame
             x+=1
-
+            
+            """
         logging.info('%s - populated new DF0 dataset' % cmi_debug )
         return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
                         # sucess = lobal class accessor (y_topgainers.*_df0) populated & updated
