@@ -87,11 +87,11 @@ class y_techevents:
         logging.info( f"{cmi_debug} - IN" )
         with requests.get( self.te_all_url, stream=True, timeout=5 ) as self.te_resp0:
             logging.info( f"{cmi_debug} - get() data / storing..." )
-            soup = BeautifulSoup(self.te_resp0.text, 'html.parser')
+            self.soup = BeautifulSoup(self.te_resp0.text, 'html.parser')
             logging.info( f"{cmi_debug} - Main data zone: {len(soup)} lines extracted / Done" )
             #self.te_jsondata0 = json.loads(self.te_resp0.text)
         #
-        self.te_zone = soup.find(attrs={"data-test": "tch-evnts"} )
+        self.te_zone = self.soup.find(attrs={"data-test": "tch-evnts"} )
         self.te_short = self.te_zone.find(attrs={"value": "short"} )
         self.te_mid = self.te_zone.find(attrs={"value": "intermediate"} )
         self.te_long = self.te_zone.find(attrs={"value": "long"} )
