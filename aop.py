@@ -398,19 +398,6 @@ def main():
         print ( f"Current day average $ gain: ${averages.iloc[-1]['Prc_change'].round(2)}" )
         print ( f"Current day percent gain:   %{averages.iloc[-1]['Pct_change'].round(2)}" )
 
-# Summary ############### Technical Events info ##########################
-    if args['qsymbol'] is not False:
-        cmi_debug = __name__+"::tech_events.#1"
-        logging.info ( f"{cmi_debug} - CALLED" )
-        te_symbol = args['qsymbol'].upper()
-        print ( " " )
-        print ( f"========================= Technical Events for: {news_symbol} =========================" )
-        te = y_techevents()
-        te.form_api_endpoints(qsmbol)
-	    te.get_te_zones()
-	    te.build_data()
-        print ( " " )
-        print ( f"========================= Technical Events for: {news_symbol} =========================" )
 
 # ML / NLP section #############################################################
 
@@ -546,6 +533,20 @@ def main():
         nlp_summary()
         print ( f" " )
 
+# Technical Events ############### Technical Events info ##########################
+    if args['qsymbol'] is not False:
+        cmi_debug = __name__+"::tech_events.#1"
+        logging.info ( f"{cmi_debug} - CALLED" )
+        te_symbol = args['qsymbol'].upper()
+        print ( " " )
+        print ( f"========================= Technical Events for: {news_symbol} =========================" )
+        te = y_techevents()
+        te.form_api_endpoints(qsmbol)
+	    te.get_te_zones()
+	    te.build_data()
+        print ( " " )
+        print ( f"========================= Technical Events for: {news_symbol} =========================" )
+        
 #################################################################################
 # 3 differnt methods to get a live quote ########################################
 # NOTE: These 3 routines are *examples* of how to get quotes from the 3 live quote classes::
