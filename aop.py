@@ -33,6 +33,7 @@ from bigcharts_md import bc_quote
 from marketwatch_md import mw_quote
 from ml_yahoofinews import yfnews_reader
 from ml_urlhinter import url_hinter
+from y_indicators import y_techevents
 
 # Globals
 work_inst = 0
@@ -396,6 +397,19 @@ def main():
         print ( " " )
         print ( f"Current day average $ gain: ${averages.iloc[-1]['Prc_change'].round(2)}" )
         print ( f"Current day percent gain:   %{averages.iloc[-1]['Pct_change'].round(2)}" )
+
+# Summary ############### Technical Events info ##########################
+    if args['qsymbol'] is not False:
+        cmi_debug = __name__+"::tech_events.#1"
+        te_symbol = args['qsymbol'].upper()
+        print ( " " )
+        print ( f"========================= Technical Events for: {news_symbol} =========================" )
+        te = y_techevents()
+        te.form_api_endpoints(qsmbol)
+	    te.get_te_zones()
+	    te.build_data()
+        print ( " " )
+        print ( f"========================= Technical Events for: {news_symbol} =========================" )
 
 # ML / NLP section #############################################################
 
