@@ -87,9 +87,9 @@ class y_techevents:
         logging.info( f"{cmi_debug} - IN" )
         with requests.get( self.te_all_url, stream=True, timeout=5 ) as self.te_resp0:
             logging.info( f"{cmi_debug} - get() data / storing..." )
-            self.te_jsondata0 = json.loads(self.te_resp0.text)
             logging.info( f"{cmi_debug} - Main JSON data zone: {len(self.te_json00)} lines extracted / Done" )
             soup = BeautifulSoup(self.te_resp0.text, 'html.parser')
+            #self.te_jsondata0 = json.loads(self.te_resp0.text)
         #
         self.te_zone = soup.find(attrs={"data-test": "tch-evnts"} )
         self.te_short = te_zone.button.find(attrs={"value": "short"} )
