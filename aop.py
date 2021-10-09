@@ -540,7 +540,7 @@ def main():
         te_symbol = args['qsymbol'].upper()
         print ( " " )
         print ( f"========================= Technical Events for: {te_symbol} =========================" )
-        te = y_techevents()
+        te = y_techevents(1)
         te.form_api_endpoints(te_symbol)
         te.get_te_zones()
         te.build_data()
