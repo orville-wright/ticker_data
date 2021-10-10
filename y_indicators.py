@@ -118,7 +118,7 @@ class y_techevents:
         logging.info( f"{cmi_debug} - Drop all rows from DF0" )
         #self.tg_df0.drop(self.tg_df0.index, inplace=True)
         x = 0   # row counter / = index_id for DataFrame
-        print ( f"===== Rows: {len(self.te_zone.find_all('button'))}  =================" )
+        print ( f"===== Rows: {len(self.te_zone)}  =================" )
         #for j in self.te_zone.find_all('button'):
         for j in self.te_zone:
             # >>>DEBUG<< for when yahoo.com changes data model...
