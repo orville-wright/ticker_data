@@ -534,7 +534,6 @@ def main():
         print ( f" " )
 
 # Technical Events ############### Technical Events info ##########################
-    """
     if args['qsymbol'] is not False:
         cmi_debug = __name__+"::tech_events.#1"
         logging.info ( f"{cmi_debug} - CALLED" )
@@ -547,8 +546,7 @@ def main():
         te.build_data()
         print ( " " )
         print ( f"========================= Technical Events for: {te_symbol} =========================" )
-    """
-    
+
 #################################################################################
 # 3 differnt methods to get a live quote ########################################
 # NOTE: These 3 routines are *examples* of how to get quotes from the 3 live quote classes::
