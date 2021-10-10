@@ -112,7 +112,7 @@ class y_techevents:
         Build-out a fully populated Pandas DataFrame containg all the extracted/scraped fields from the
         html/markup table data Wrangle, clean/convert/format the data correctly.
         """
-        cmi_debug = __name__+"::"+self.build_tg_df0.__name__+".#"+str(self.yti)
+        cmi_debug = __name__+"::"+self.build_te_data.__name__+".#"+str(self.yti)
         logging.info( f"{cmi_debug} - IN" )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         logging.info( f"{cmi_debug} - Drop all rows from DF0" )
