@@ -124,7 +124,7 @@ class y_techevents:
             # >>>DEBUG<< for when yahoo.com changes data model...
             y = 1
             for i in j.descendants:
-            	print ( f"Data {y}: {i.text}" )
+            	print ( f"Data {y}: {i.contents}" )
             	# logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
             	y += 1
             print ( f"==============================================" )
