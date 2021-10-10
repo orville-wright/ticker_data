@@ -543,7 +543,7 @@ def main():
         te = y_techevents(1)
         te.form_api_endpoints(te_symbol)
         te.get_te_zones()
-        te.build_data()
+        te.build_te_data()
         print ( " " )
         print ( f"========================= Technical Events for: {te_symbol} =========================" )
 
