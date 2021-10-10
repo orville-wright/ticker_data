@@ -98,11 +98,11 @@ class y_techevents:
         self.te_zone = self.soup.find_all('button' )
         #self.te_zone = self.soup.find_all('button')
         print ( f"\n>>>DEBUG<<< : te_zone :\n{self.te_zone}" )
-        self.te_short = self.te_zone.find(attrs={"value": "short"} )
-        self.te_mid = self.te_zone.find(attrs={"value": "intermediate"} )
-        self.te_long = self.te_zone.find(attrs={"value": "long"} )
-        self.te_srs_zone = self.te_zone.find(attrs={"class": "D(ib) Va(m) Mstart(30px) Fz(s)"} )
-        self.te_srs_combo = self.te_srs_zone.strings
+        # self.te_short = self.te_zone.find(attrs={"value": "short"} )
+        # self.te_mid = self.te_zone.find(attrs={"value": "intermediate"} )
+        # self.te_long = self.te_zone.find(attrs={"value": "long"} )
+        # self.te_srs_zone = self.te_zone.find(attrs={"class": "D(ib) Va(m) Mstart(30px) Fz(s)"} )
+        # self.te_srs_combo = self.te_srs_zone.strings
         return
 
 
@@ -119,7 +119,8 @@ class y_techevents:
         self.tg_df0.drop(self.tg_df0.index, inplace=True)
         x = 0   # row counter / = index_id for DataFrame
         print ( f"===== Rows: {len(self.te_zone.find_all('button'))}  =================" )
-        for j in self.te_zone.find_all('button'):
+        #for j in self.te_zone.find_all('button'):
+        for j in self.te_zone:
             # >>>DEBUG<< for when yahoo.com changes data model...
             y = 1
             for i in j.children:
