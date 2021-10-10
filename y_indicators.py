@@ -93,7 +93,8 @@ class y_techevents:
         #
         #self.te_zone = self.soup.find('tch-evnts' )
         #self.te_zone = self.soup.find(attrs={"data-test": "tch-evnts"} )
-        self.te_zone = self.soup.find_all(attrs={"class": "Mt(10px)"} )
+        #self.te_zone = self.soup.find_all(attrs={"class": "Mt(10px)"} )
+        self.te_zone = self.soup.find_all(attrs={"class": "D(ib) Pos(r)"} )
         #self.te_zone = self.soup.find_all('button')
         print ( f">>>DEBUG<<< : te_zone :\n{self.te_zone}" )
         self.te_short = self.te_zone.find(attrs={"value": "short"} )
