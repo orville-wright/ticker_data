@@ -121,10 +121,10 @@ class y_techevents:
         x = 0   # row counter / = index_id for DataFrame
         print ( f"===== Rows: {len(self.te_lizones)}  =================" )
         #for j in self.te_zone.find_all('button'):
-        for j in self.te_lizones.strings:
+        for j in self.te_lizones:
             # >>>DEBUG<< for when yahoo.com changes data model...
             y = 1
-            for i in j:
+            for i in j.strings:
             	print ( f"Data {y}: {i}" )
             	# logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
             	y += 1
