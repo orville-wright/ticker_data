@@ -127,9 +127,9 @@ class y_techevents:
             # >>>DEBUG<< for when yahoo.com changes data model...
             y = 1
             for i in j:
-            	print ( f"Data {y}: {i}" )
-                print ( f"Tech Event: {i.text}" )
-                if i.select('svg[RotateZ(180deg)]') is not None:
+            print ( f"Data {y}: {i}" )
+            print ( f"Tech Event: {i.text}" )
+            if i.select('svg[RotateZ(180deg)]') is not None:
                     print ( f"==== GREEN UP ====" )
                 else:
                     print ( f"==== RED DOWN ====" )
