@@ -33,7 +33,7 @@ from bigcharts_md import bc_quote
 from marketwatch_md import mw_quote
 from ml_yahoofinews import yfnews_reader
 from ml_urlhinter import url_hinter
-from y_indicators import y_techevents
+from y_techevents import y_techevents
 
 # Globals
 work_inst = 0
