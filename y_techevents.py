@@ -95,7 +95,7 @@ class y_techevents:
         #self.te_zone = self.soup.find(attrs={"data-test": "tch-evnts"} )
         self.te_zone = self.soup.find(attrs={"id": "chrt-evts-mod"} )
         self.te_lizones = self.te_zone.li.find_all()
-        self.te_zone_title = self.te_lizones.find_all(attrs={"class": "IbBlock"} )
+        # self.te_zone_title = self.te_lizones.find(attrs={"class": "IbBlock"} )
         #self.te_zone_i = self.soup.button.find_all()
         #self.te_zone_l = self.soup.find_all('button')
         print ( f"\n>>>DEBUG<<< : te_zone :\n{self.te_zone}" )
@@ -121,10 +121,10 @@ class y_techevents:
         x = 0   # row counter / = index_id for DataFrame
         print ( f"===== <li> zones: {len(self.te_lizones)}  =================" )
         #for j in self.te_zone.find_all('button'):
-        for j in self.te_zone_title:
+        for j in self.te_lizones:
             # >>>DEBUG<< for when yahoo.com changes data model...
             y = 1
-            for i in j.strings:
+            for i in j.find_all(attrs={"class": "IbBlock"} ):
             	print ( f"Data {y}: {i}" )
             	# logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
             	y += 1
