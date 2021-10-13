@@ -93,10 +93,11 @@ class y_techevents:
         #
         #self.te_zone = self.soup.find('tch-evnts' )
         #self.te_zone = self.soup.find(attrs={"data-test": "tch-evnts"} )
-        #self.te_zone = self.soup.find_all(attrs={"class": "Mt(10px)"} )
         self.te_zone = self.soup.find(attrs={"id": "chrt-evts-mod"} )
-        #self.te_zone = self.soup.button.find_all()
-        #self.te_zone = self.soup.find_all('button')
+        self.te_zones = self.te_zone.li
+        self.te_zone_s = self.te_zone.li
+        self.te_zone_i = self.soup.button.find_all()
+        self.te_zone_l = self.soup.find_all('button')
         print ( f"\n>>>DEBUG<<< : te_zone :\n{self.te_zone}" )
         # self.te_short = self.te_zone.find(attrs={"value": "short"} )
         # self.te_mid = self.te_zone.find(attrs={"value": "intermediate"} )
@@ -120,7 +121,7 @@ class y_techevents:
         x = 0   # row counter / = index_id for DataFrame
         print ( f"===== Rows: {len(self.te_zone)}  =================" )
         #for j in self.te_zone.find_all('button'):
-        for j in self.te_zone:
+        for j in self.te_zones:
             # >>>DEBUG<< for when yahoo.com changes data model...
             y = 1
             for i in j.descendants:
