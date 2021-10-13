@@ -94,8 +94,8 @@ class y_techevents:
         #self.te_zone = self.soup.find('tch-evnts' )
         #self.te_zone = self.soup.find(attrs={"data-test": "tch-evnts"} )
         self.te_zone = self.soup.find(attrs={"id": "chrt-evts-mod"} )
-        self.te_zones = self.te_zone.li
-        self.te_zone_s = self.te_zone.li.find_all()
+        self.te_zones = self.te_zone.li.find_all()
+        #self.te_zone_s = self.te_zone.li.find_all()
         #self.te_zone_i = self.soup.button.find_all()
         #self.te_zone_l = self.soup.find_all('button')
         print ( f"\n>>>DEBUG<<< : te_zone :\n{self.te_zone}" )
