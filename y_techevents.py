@@ -125,7 +125,7 @@ class y_techevents:
         for j in self.te_lizones:
             # >>>DEBUG<< for when yahoo.com changes data model...
             y = 1
-            for i in j.a.text:
+            for i in j:
             	print ( f"Data {y}: {i}" )
             	# logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
             	y += 1
