@@ -130,11 +130,11 @@ class y_techevents:
             print ( f"Data {y}: {i}" )
             print ( f"Tech Event: {i.text}" )
             if i.select('svg[RotateZ(180deg)]') is not None:
-                    print ( f"==== GREEN UP ====" )
-                else:
-                    print ( f"==== RED DOWN ====" )
-            	# logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
-            	y += 1
+                print ( f"==== GREEN UP ====" )
+            else:
+                print ( f"==== RED DOWN ====" )
+                # logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
+            y += 1
             print ( f"==============================================" )
 
             """
