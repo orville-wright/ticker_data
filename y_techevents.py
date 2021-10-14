@@ -128,11 +128,13 @@ class y_techevents:
             y = 1
             for i in j:
                 #print ( f"Data {y}: {i}" )
-                print ( f"Tech Event: {i.svg}" )
+                #print ( f"Tech Event: {i.svg}" )
                 red = i.svg.parent.contents
-                grn = re.search('RotateZ', str(red) )
-                print ( f"RED:   {red}" )
-                print ( f"GREEN: {grn}" )
+                red_down = re.search('RotateZ', str(red) )
+                if red_down:
+                    print ( f"=== RED / DOWN ===" )
+                else:
+                    print ( f"=== GREEN / UP ===" )
                 # logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
                 y += 1
             print ( f"==============================================" )
