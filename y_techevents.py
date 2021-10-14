@@ -136,7 +136,7 @@ class y_techevents:
                     print ( f"=== {red.text}" )
                 else:
                     print ( f"=== GREEN / UP BULLISH ===" )
-                    print ( f"=== {red.text}" )
+                    print ( f"=== {red.strings}" )
                 # logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
                 y += 1
             print ( f"==============================================" )
