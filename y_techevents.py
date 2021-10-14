@@ -85,7 +85,7 @@ class y_techevents:
         #
         self.te_zone = self.soup.find(attrs={"id": "chrt-evts-mod"} )
         self.te_lizones = self.te_zone.find_all('li')
-        self.te_today = self.te_zone.find_all(attrs={"class": "Fz(xs) Mb(4px)} )
+        self.te_today = self.te_zone.find_all(attrs={"class": "Fz(xs) Mb(4px)"} )
         print ( f"===============================================================" )
         print ( f"\n>>>DEBUG<<< : tetoday : {len(self.te_today)}  \n{self.te_today}" )
         print ( f"===============================================================" )
