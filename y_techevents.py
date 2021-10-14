@@ -129,10 +129,10 @@ class y_techevents:
             for i in j:
                 #print ( f"Data {y}: {i}" )
                 print ( f"Tech Event: {i.svg}" )
-                red = i.svg.find(class_ = "RotateZ") )
-                #grn = i.svg.find(class_ = "RotateZ(180deg)" )
+                red = i.svg.find(class_ = "RotateZ")
+                grn = i.svg.find(class_ = "RotateZ(180deg)" )
                 print ( f"RED:   {red}" )
-                #print ( f"GREEN: {grn}" )
+                print ( f"GREEN: {grn}" )
 
                 # logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
                 y += 1
