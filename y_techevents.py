@@ -87,12 +87,16 @@ class y_techevents:
         self.te_lizones = self.te_zone.find_all('li')
         self.te_today = self.te_zone.find(attrs={"class": "Fz(xs) Mb(4px)"} )
         print ( f"===============================================================" )
-        print ( f">>>DEBUG<<< : te_today : {len(self.te_today)}" )
+        print ( f">>>DEBUG<<< : te_today" )
         print ( f"{self.te_today}" )
         print ( f"===============================================================" )
-        print ( f">>>DEBUG<<< : te_today_next_sibling: {len(self.te_today.next_sibling)}" )
+        print ( f">>>DEBUG<<< : te_today_next_sibling" )
         print ( f"===============================================================" )
         print ( f"{self.te_today.next_sibling}" )
+        print ( f"===============================================================" )
+        print ( f">>>DEBUG<<< : te_today_next_element" )
+        print ( f"===============================================================" )
+        print ( f"{self.te_today.next_element}" )
         print ( f"===============================================================" )
         return
 
