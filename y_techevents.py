@@ -107,10 +107,9 @@ class y_techevents:
         logging.info( f"{cmi_debug} - Drop all rows from DF0" )
         #self.tg_df0.drop(self.tg_df0.index, inplace=True)
         x = 0   # row counter / = index_id for DataFrame
-        print ( f"===== <li> zones: {len(self.te_lizones)}  =================" )
         for j in self.te_lizones:
             # >>>DEBUG<< for when yahoo.com changes data model...
-            y = 1
+            #y = 1
             for i in j:
                 te_strings = i.strings
                 red = i.svg.parent.contents
@@ -120,10 +119,10 @@ class y_techevents:
                     print ( f"=== RED / DOWN / BEARISH ===" )
                 else:
                     print ( f"=== {next(te_strings)} / {next(te_strings)}" )
-                    print ( f"=== GREEN / UP BULLISH ===" )
+                    print ( f"=== GREEN / UP / BULLISH ===" )
                 # logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
-                y += 1
-            print ( f"==============================================" )
+                #y += 1
+            print ( f"================================" )
 
             """
             extr_strs = j.strings
