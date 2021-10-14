@@ -129,7 +129,7 @@ class y_techevents:
             for i in j:
                 #print ( f"Data {y}: {i}" )
                 print ( f"Tech Event: {i.svg}" )
-                red = i.select('svg[RotateZ]')
+                red = i.find('RotateZ')
                 print ( f"RED: {red}" )
                 # logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
                 y += 1
