@@ -576,7 +576,7 @@ def main():
         #
         # add Tech Events Sentiment to quote dict{}
         for i in te.te_sentiment.items():
-            print ( f"{i}"
+            print ( f"{i}" )
             print ( f"===========================" )
 
         print ( " " )
