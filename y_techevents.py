@@ -133,7 +133,7 @@ class y_techevents:
                 red_down = re.search('RotateZ', str(red) )
                 if red_down:
                     print ( f"=== RED / DOWN / BEARISH ===" )
-                    print ( f"=== {red.text}" )
+                    print ( f"=== {red.strings}" )
                 else:
                     print ( f"=== GREEN / UP BULLISH ===" )
                     print ( f"=== {red.strings}" )
