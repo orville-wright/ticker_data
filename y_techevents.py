@@ -121,15 +121,15 @@ class y_techevents:
                 if red_down:
                     print ( f"=== {te_sml} / {te_timeframe}" )
                     print ( f"=== RED / DOWN / BEARISH ===" )
-                    te_sentiment.update({y: (te_sml, te_timeframe, "Red", "Down", "Bearish")} )
+                    self.te_sentiment.update({y: (te_sml, te_timeframe, "Red", "Down", "Bearish")} )
                 elif grey_neutral:
                     print ( f"=== {te_sml} / {te_timeframe}" )
                     print ( f"=== GREY / SIDEWAYS / NEUTRAL ===" )
-                    te_sentiment.update({y: (te_sml, te_timeframe, "Grey", "Sideways", "Neutral")} )
+                    self.te_sentiment.update({y: (te_sml, te_timeframe, "Grey", "Sideways", "Neutral")} )
                 else:
                     print ( f"=== {te_sml} / {te_timeframe}" )
                     print ( f"=== GREEN / UP / BULLISH ===" )
-                    te_sentiment.update({y: (te_sml, te_timeframe, "Green", "Up, ""Bullish")} )
+                    self.te_sentiment.update({y: (te_sml, te_timeframe, "Green", "Up, ""Bullish")} )
                 # logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
                 y += 1
             print ( f"========================" )
