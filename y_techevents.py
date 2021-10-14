@@ -107,10 +107,9 @@ class y_techevents:
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         logging.info( f"{cmi_debug} - Drop all rows from DF0" )
         #self.tg_df0.drop(self.tg_df0.index, inplace=True)
-        x = 0   # row counter / = index_id for DataFrame
+        x = y = 0   # row counter / = index_id for DataFrame
         for j in self.te_lizones:
             # >>>DEBUG<< for when yahoo.com changes data model...
-            y = 0
             for i in j:
                 te_strings = i.strings
                 te_sml = next(te_strings)
