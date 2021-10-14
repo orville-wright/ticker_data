@@ -87,25 +87,11 @@ class y_techevents:
             logging.info( f"{cmi_debug} - get() data / storing..." )
             self.soup = BeautifulSoup(self.te_resp0.text, 'html.parser')
             logging.info( f"{cmi_debug} - Main data zone: {len(self.soup)} lines extracted / Done" )
-            #print ( f">>>DEBUG<<< : te_zone :\n{self.soup}" )
-
-            #self.te_jsondata0 = json.loads(self.te_resp0.text)
         #
-        #self.te_zone = self.soup.find('tch-evnts' )
-        #self.te_zone = self.soup.find(attrs={"data-test": "tch-evnts"} )
         self.te_zone = self.soup.find(attrs={"id": "chrt-evts-mod"} )
         self.te_lizones = self.te_zone.find_all('li')
         self.te_title = self.te_zone.find_all(attrs={"class": "IbBlock W(60%)"} )
-        #self.te_azones= self.te_lizones.a
-        # self.te_zone_title = self.te_lizones.find(attrs={"class": "IbBlock"} )
-        #self.te_zone_i = self.soup.button.find_all()
-        #self.te_zone_l = self.soup.find_all('button')
-        print ( f"\n>>>DEBUG<<< : te_zone : {len(self.te_zone)}  \n{self.te_zone}" )
-        # self.te_short = self.te_zone.find(attrs={"value": "short"} )
-        # self.te_mid = self.te_zone.find(attrs={"value": "intermediate"} )
-        # self.te_long = self.te_zone.find(attrs={"value": "long"} )
-        # self.te_srs_zone = self.te_zone.find(attrs={"class": "D(ib) Va(m) Mstart(30px) Fz(s)"} )
-        # self.te_srs_combo = self.te_srs_zone.strings
+        #print ( f"\n>>>DEBUG<<< : te_zone : {len(self.te_zone)}  \n{self.te_zone}" )
         return
 
 
@@ -122,12 +108,10 @@ class y_techevents:
         #self.tg_df0.drop(self.tg_df0.index, inplace=True)
         x = 0   # row counter / = index_id for DataFrame
         print ( f"===== <li> zones: {len(self.te_lizones)}  =================" )
-        #for j in self.te_zone.find_all('button'):
         for j in self.te_lizones:
             # >>>DEBUG<< for when yahoo.com changes data model...
             y = 1
             for i in j:
-                #print ( f"Data {y}: {i}" )
                 te_strings = i.strings
                 red = i.svg.parent.contents
                 red_down = re.search('RotateZ', str(red) )
