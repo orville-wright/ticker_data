@@ -130,9 +130,9 @@ class y_techevents:
                 #print ( f"Data {y}: {i}" )
                 print ( f"Tech Event: {i.svg}" )
                 red = i.svg.parent.contents
-                #grn = i.svg.parent.contents
+                grn = red[4]
                 print ( f"RED:   {red}" )
-                #print ( f"GREEN: {grn}" )
+                print ( f"GREEN: {grn}" )
 
                 # logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
                 y += 1
