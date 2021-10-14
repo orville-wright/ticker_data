@@ -539,13 +539,12 @@ def main():
         logging.info ( f"{cmi_debug} - CALLED" )
         te_symbol = args['qsymbol'].upper()
         print ( " " )
-        print ( f"=============== Technical Events for: {te_symbol} ===============" )
+        print ( f"==== Technical Events for: {te_symbol} ====" )
         te = y_techevents(1)
         te.form_api_endpoints(te_symbol)
         te.get_te_zones()
         te.build_te_data()
         print ( " " )
-        print ( f"=============== Technical Events for: {te_symbol} ===============" )
 
 #################################################################################
 # 3 differnt methods to get a live quote ########################################
@@ -574,6 +573,12 @@ def main():
         nq.get_nquote(nq_symbol.rstrip())
         wrangle_errors = nq.build_data()             # return num of data wrangeling errors we found & dealt with
         nq.build_df()
+        #
+        # add Tech Events Sentiment to quote dict{}
+        for i in te.te_sentiment.items():
+            print ( f"{i}"
+            print ( f"===========================" )
+
         print ( " " )
         print ( f"Get Nasdaq.com quote for: {nq_symbol}" )
         if nq.quote.get("symbol") is not None:

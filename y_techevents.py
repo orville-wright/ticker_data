@@ -21,6 +21,7 @@ class y_techevents:
     """
 
     # global accessors
+    te_sentiment = {}   # Dit contains a tuple of elements, e.g. (te_sml, te_timeframe, "Grey", "Sideways", "Neutral")
     te_resp0 = ""
     te_jsondata0 = ""
     te_zone = ""
@@ -109,24 +110,29 @@ class y_techevents:
         x = 0   # row counter / = index_id for DataFrame
         for j in self.te_lizones:
             # >>>DEBUG<< for when yahoo.com changes data model...
-            #y = 1
+            y = 0
             for i in j:
                 te_strings = i.strings
+                te_sml = next(te_strings)
+                te_timeframe = next(te_strings)
                 red = i.svg.parent.contents
                 red_down = re.search('180deg', str(red) )
                 grey_neutral = re.search('90deg', str(red) )
                 if red_down:
-                    print ( f"=== {next(te_strings)} / {next(te_strings)}" )
-                    print ( f"=== RED / DOWN / BEARISH sentiment ===" )
+                    print ( f"=== {te_sml} / {te_timeframe}" )
+                    print ( f"=== RED / DOWN / BEARISH ===" )
+                    te_sentiment = {y: (te_sml, te_timeframe, "Red", "Down", "Bearish") }
                 elif grey_neutral:
-                    print ( f"=== {next(te_strings)} / {next(te_strings)}" )
-                    print ( f"=== GREY / SIDEWAYS / NEUTRAL  sentiment ===" )
+                    print ( f"=== {te_sml} / {te_timeframe}" )
+                    print ( f"=== GREY / SIDEWAYS / NEUTRAL ===" )
+                    te_sentiment = {y: (te_sml, te_timeframe, "Grey", "Sideways", "Neutral") }
                 else:
-                    print ( f"=== {next(te_strings)} / {next(te_strings)}" )
-                    print ( f"=== GREEN / UP / BULLISH  sentiment ===" )
+                    print ( f"=== {te_sml} / {te_timeframe}" )
+                    print ( f"=== GREEN / UP / BULLISH ===" )
+                    te_sentiment = {y: (te_sml, te_timeframe, "Green", "Up, ""Bullish") }
                 # logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
-                #y += 1
-            print ( f"============================" )
+                y += 1
+            print ( f"========================" )
 
             """
             extr_strs = j.strings
