@@ -130,7 +130,7 @@ class y_techevents:
                 else:
                     print ( f"=== {te_sml} / {te_timeframe}" )
                     print ( f"=== GREEN / UP / BULLISH ===" )
-                    self.te_sentiment.update({y: (te_sml, te_timeframe, "Green", "Up, ""Bullish")} )
+                    self.te_sentiment.update({y: (te_sml, te_timeframe, "Green", "Up", "Bullish")} )
                     y += 1
                 # logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
 
