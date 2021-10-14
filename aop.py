@@ -581,9 +581,9 @@ def main():
         te.form_api_endpoints(nq_symbol)
         te.get_te_zones()
         te.build_te_data()
-        nq.quote.update({short_term=te.te_sentiment[0][4]}
-        nq.quote.update({med_term=te.te_sentiment[1][4]}
-        nq.quote.update({long_term=te.te_sentiment[2][4]}
+        nq.quote.update({"short_term": te.te_sentiment[0][4]} )
+        nq.quote.update({"med_term": te.te_sentiment[1][4]} )
+        nq.quote.update({"long_term": te.te_sentiment[2][4]} )
         #
         """
         print ( f"==== Build Tech Events Sentiment =====" )
