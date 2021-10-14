@@ -122,7 +122,7 @@ class y_techevents:
                     print ( f"=== GREEN / UP / BULLISH ===" )
                 # logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
                 #y += 1
-            print ( f"================================" )
+            print ( f"============================" )
 
             """
             extr_strs = j.strings
