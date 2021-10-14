@@ -129,7 +129,7 @@ class y_techevents:
             for i in j:
                 #print ( f"Data {y}: {i}" )
                 print ( f"Tech Event: {i.svg}" )
-                red = i.svg.find(class_)
+                red = i.svg.parent.contents
                 #grn = i.svg.parent.contents
                 print ( f"RED:   {red}" )
                 #print ( f"GREEN: {grn}" )
