@@ -90,13 +90,9 @@ class y_techevents:
         print ( f">>>DEBUG<<< : te_today" )
         print ( f"{self.te_today}" )
         print ( f"===============================================================" )
-        print ( f">>>DEBUG<<< : te_today_next_sibling" )
-        print ( f"===============================================================" )
-        print ( f"{self.te_today.next_sibling}" )
-        print ( f"===============================================================" )
-        print ( f">>>DEBUG<<< : te_today_next_element" )
-        print ( f"===============================================================" )
         print ( f"{self.te_today.next_element}" )
+        print ( f"===============================================================" )
+        print ( f"{self.te_today.next_element.next_element}" )
         print ( f"===============================================================" )
         return
 
