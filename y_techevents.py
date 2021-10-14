@@ -132,11 +132,11 @@ class y_techevents:
                 red = i.svg.parent.contents
                 red_down = re.search('RotateZ', str(red) )
                 if red_down:
+                    print ( f"=== {next(te_strings)} / {next(te_strings)}" )
                     print ( f"=== RED / DOWN / BEARISH ===" )
-                    print ( f"=== {next(te_strings)}" )
                 else:
+                    print ( f"=== {next(te_strings)} / {next(te_strings)}" )
                     print ( f"=== GREEN / UP BULLISH ===" )
-                    print ( f"=== {next(te_strings)}" )
                 # logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
                 y += 1
             print ( f"==============================================" )
