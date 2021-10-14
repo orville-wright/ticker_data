@@ -133,10 +133,10 @@ class y_techevents:
                 red_down = re.search('RotateZ', str(red) )
                 if red_down:
                     print ( f"=== RED / DOWN / BEARISH ===" )
-                    print ( f"=== {te_li_strs}" )
+                    print ( f"=== {te_li_strs(next)}" )
                 else:
                     print ( f"=== GREEN / UP BULLISH ===" )
-                    print ( f"=== {te_li_strs}" )
+                    print ( f"=== {te_li_strs(next)}" )
                 # logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
                 y += 1
             print ( f"==============================================" )
