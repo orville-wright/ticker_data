@@ -87,6 +87,7 @@ class y_techevents:
         self.te_lizones = self.te_zone.find_all('li')
         #self.te_today = self.te_zone.find(attrs={"class": "Fz(xs) Mb(4px)"} )
         self.te_today = self.te_zone.find(attrs={"class": "W(1/4)--mobp W(1/2) IbBox"} )
+        self.te_today_pat = self.te_zone.find(attrs={"class": "Mb(4px) Whs(nw)"} )
         print ( f"===============================================================" )
         print ( f">>>DEBUG<<< : te_today" )
         print ( f"{self.te_today}" )
@@ -97,7 +98,7 @@ class y_techevents:
         print ( f"===============================================================" )
         print ( f"{self.te_today.next_element.next_sibling}" )
         print ( f"===============================================================" )
-        print ( f"{self.te_today.next_sibling.next_sibling}" )
+        print ( f"{self.te_today_pat}" )
         print ( f"===============================================================" )
         return
 
