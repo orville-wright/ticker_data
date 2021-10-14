@@ -127,8 +127,10 @@ class y_techevents:
             # >>>DEBUG<< for when yahoo.com changes data model...
             y = 1
             for i in j:
-                print ( f"Data {y}: {i}" )
+                #print ( f"Data {y}: {i}" )
                 print ( f"Tech Event: {i.svg}" )
+                red = i.select('svg[RotateZ]')
+                print ( f"RED: {red}" )
                 # logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
                 y += 1
             print ( f"==============================================" )
