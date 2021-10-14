@@ -133,7 +133,8 @@ class y_techevents:
                 grn = list(red)
                 print ( f"RED:   {red}" )
                 print ( f"GREEN: {grn}" )
-
+                print ( f"RED:   {type(red)}" )
+                print ( f"GREEN: {type(grn)}" )
                 # logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
                 y += 1
             print ( f"==============================================" )
