@@ -92,7 +92,7 @@ class y_techevents:
         print ( f"===============================================================" )
         print ( f">>>DEBUG<<< : te_today_next_sibling: {len(self.te_today.next_sibling)}" )
         print ( f"===============================================================" )
-        print ( f"{len(self.te_today.next_sibling)}" )
+        print ( f"{self.te_today.next_sibling}" )
         print ( f"===============================================================" )
         return
 
