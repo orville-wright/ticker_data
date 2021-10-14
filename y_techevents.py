@@ -128,7 +128,7 @@ class y_techevents:
             y = 1
             for i in j:
                 #print ( f"Data {y}: {i}" )
-                te_li_strs = i.a.strings
+                te_li_strs = i.strings
                 red = i.svg.parent.contents
                 red_down = re.search('RotateZ', str(red) )
                 if red_down:
