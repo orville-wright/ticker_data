@@ -534,6 +534,7 @@ def main():
         print ( f" " )
 
 # Technical Events ############### Technical Events info ##########################
+    """
     if args['qsymbol'] is not False:
         cmi_debug = __name__+"::tech_events.#1"
         logging.info ( f"{cmi_debug} - CALLED" )
@@ -545,6 +546,7 @@ def main():
         te.get_te_zones()
         te.build_te_data()
         print ( " " )
+    """
 
 #################################################################################
 # 3 differnt methods to get a live quote ########################################
@@ -575,9 +577,14 @@ def main():
         nq.build_df()
         #
         # add Tech Events Sentiment to quote dict{}
+        te = y_techevents(2)
+        te.form_api_endpoints(nq_symbol)
+        te.get_te_zones()
+        te.build_te_data()
+        print ( f"==== Build Tech Events Sentiment =====" )
         for i in te.te_sentiment.items():
             print ( f"{i}" )
-            print ( f"===========================" )
+            print ( f"================ DONE ================" )
 
         print ( " " )
         print ( f"Get Nasdaq.com quote for: {nq_symbol}" )
