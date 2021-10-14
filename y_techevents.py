@@ -130,7 +130,7 @@ class y_techevents:
                 #print ( f"Data {y}: {i}" )
                 print ( f"Tech Event: {i.svg}" )
                 red = i.svg.parent.contents
-                grn = red.split(',')
+                grn = list(red)
                 print ( f"RED:   {red}" )
                 print ( f"GREEN: {grn[4]}" )
 
