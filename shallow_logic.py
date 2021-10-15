@@ -335,7 +335,7 @@ class combo_logic:
                 wrangle_errors += 1
                 unfixable_errors += 1     # set default data for non-regualr stocks
                 print ( f"!!", end="" )
-                fixchars = 2
+                fixchars += 2
                 self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
                 self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'M_B'] = 'EF'
             else:
@@ -351,14 +351,14 @@ class combo_logic:
                 self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
                 print ( f"!!", end="" )
                 cleansed_errors += 2
-                fixchars = 2
+                fixchars += 2
                 y = 0
             except KeyError:
                 logging.info( f"{cmi_debug} - {nq.asset_class} Mkt_cap key is NULL / setting to: 0" )
                 self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
                 cleansed_errors += 1
                 print ( f"!", end="" )
-                fixchars = 1
+                fixchars += 1
                 y = 0
             else:
                 logging.info( f"{cmi_debug} - Set {nq.asset_class} Mkt_cap to: {nq.quote['mkt_cap']}" )
@@ -387,12 +387,12 @@ class combo_logic:
                             break
             # nice column/rows status bar to show the hard work we are grinding on...
             finally:
-                if fixchars < 3: print ( f" " )
                 cols += 1
                 if cols == 8:       # 8 symbols per row
                     print ( f" " )  # onlhy print 8 symbols per row
                     cols = 1
                 else:
+                    if fixchars < 3: print ( f" " )
                     print ( f" / ", end="" )
 
             logging.info( f"{cmi_debug} ================ end quote: {qsymbol} : {loop_count} ====================" )
