@@ -304,7 +304,7 @@ class combo_logic:
         # Find/fix missing data in nasdaq.com unusual volume DF - i.e. market_cap info
         uvol_badata = self.combo_df[self.combo_df['Mkt_cap'].isna()]
         up_symbols = uvol_badata['Symbol'].tolist()
-        nq = nquote(3, args)                   # setup an nasdaq quote dict
+        nq = nquote(3, self.args)                   # setup an nasdaq quote dict
         nq.init_dummy_session()                # setup request session - note: will set nasdaq magic cookie
         total_wrangle_errors = 0               # usefull counters
         unfixable_errors = 0
