@@ -394,6 +394,7 @@ class combo_logic:
                     cols = 1
                 else:
                     print ( f" / ", end="" )
+                    fixchars = 0
 
             logging.info( f"{cmi_debug} ================ end quote: {qsymbol} : {loop_count} ====================" )
             total_wrangle_errors = total_wrangle_errors + wrangle_errors
