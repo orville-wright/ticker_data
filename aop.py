@@ -27,7 +27,7 @@ from y_toplosers import y_toplosers
 from screener_dg1 import screener_dg1
 from nasdaq_uvoljs import un_volumes
 from nasdaq_quotes import nquote
-from shallow_logic import shallow_combo
+from shallow_logic import combo_logic
 from ml_cvbow import y_bow
 from bigcharts_md import bc_quote
 from marketwatch_md import mw_quote
@@ -225,9 +225,11 @@ def main():
     """
 
     if args['bool_deep'] is True and args['bool_scr'] is True and args['bool_uvol'] is True:
+        x = combo_logic(1, med_large_mega_gainers, small_cap_dataset, un_vol_activity, args )
+        x.polish_combo_df(1)
 
         # FIRST, merge Small_cap + med + large + mega into a single DF
-        x = shallow_combo(1, med_large_mega_gainers, small_cap_dataset, un_vol_activity, args )
+        """
         x.prepare_combo_df()
         # Find/fix missing data in nasdaq.com unusual volume DF - i.e. market_cap info
         uvol_badata = x.combo_df[x.combo_df['Mkt_cap'].isna()]
@@ -322,7 +324,7 @@ def main():
 
         print ( " " )
         print  ( f"Symbols scanned: {loop_count-1} / Issues: {cleansed_errors} / Repaired: {total_wrangle_errors} / Unfixbale: {unfixable_errors}" )
-
+        """
 # generate FINAL combo list ################################################################################
 # combine all the findings into 1 place - single source of truth
 
