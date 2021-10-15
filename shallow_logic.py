@@ -299,7 +299,7 @@ class combo_logic:
         cmi_debug = __name__+"::"+self.polish_combo_df.__name__+".#"+str(self.inst_uid)+"."+str(me)
         logging.info( f"{cmi_debug} - CALLED" )
 
-        prepare_combo_df()      # FIRST, merge Small_cap + med + large + mega into a single DF
+        self.prepare_combo_df()      # FIRST, merge Small_cap + med + large + mega into a single DF
 
         # Find/fix missing data in nasdaq.com unusual volume DF - i.e. market_cap info
         uvol_badata = self.combo_df[self.combo_df['Mkt_cap'].isna()]
