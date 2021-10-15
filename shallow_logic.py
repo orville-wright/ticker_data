@@ -387,7 +387,7 @@ class combo_logic:
                             break
             # nice column/rows status bar to show the hard work we are grinding on...
             finally:
-                if fixchars <= 2: print ( f" " )
+                if fixchars < 3: print ( f" ", end="" )
                 cols += 1
                 if cols == 8:       # 8 symbols per row
                     print ( f" " )  # onlhy print 8 symbols per row
