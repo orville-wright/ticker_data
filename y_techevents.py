@@ -88,6 +88,7 @@ class y_techevents:
         #self.te_today = self.te_zone.find(attrs={"class": "Fz(xs) Mb(4px)"} )
         self.te_today = self.te_zone.find(attrs={"class": "W(1/4)--mobp W(1/2) IbBox"} )
         self.te_today_pat = self.te_zone.find(attrs={"class": "Mb(4px) Whs(nw)"} )
+        """
         print ( f"===============================================================" )
         print ( f">>>DEBUG<<< : te_today" )
         print ( f"{self.te_today}" )
@@ -100,6 +101,7 @@ class y_techevents:
         print ( f"===============================================================" )
         print ( f"{self.te_today_pat}" )
         print ( f"===============================================================" )
+        """
         return
 
 
@@ -119,6 +121,8 @@ class y_techevents:
         logging.info( f"{cmi_debug} - IN" )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         logging.info( f"{cmi_debug} - Scan quote Tech Event indicators" )
+        te_today = self.te_today.next_element.next_element.string
+        print ( f"Tech event pattern today: {te_today}" )
         y = 0
         for j in self.te_lizones:
             for i in j:
