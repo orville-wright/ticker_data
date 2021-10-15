@@ -434,21 +434,6 @@ def main():
         nlp_summary()
         print ( f" " )
 
-# Technical Events ############### Technical Events info ##########################
-    """
-    if args['qsymbol'] is not False:
-        cmi_debug = __name__+"::tech_events.#1"
-        logging.info ( f"{cmi_debug} - CALLED" )
-        te_symbol = args['qsymbol'].upper()
-        print ( " " )
-        print ( f"==== Technical Events for: {te_symbol} ====" )
-        te = y_techevents(1)
-        te.form_api_endpoints(te_symbol)
-        te.get_te_zones()
-        te.build_te_data()
-        print ( " " )
-    """
-
 #################################################################################
 # 3 differnt methods to get a live quote ########################################
 # NOTE: These 3 routines are *examples* of how to get quotes from the 3 live quote classes::
@@ -482,13 +467,6 @@ def main():
         te.form_api_endpoints(nq_symbol)
         te.get_te_zones()
         te.build_te_data()
-        """
-        print ( f"==== Tech Events Sentiment =====" )
-        for i in te.te_sentiment.items():
-            print ( f"{i}" )
-            print ( f"================ DONE ================" )
-        print ( " " )
-        """
         nq.quote.update({"today_only": te.te_sentiment[0][2]} )
         nq.quote.update({"short_term": te.te_sentiment[1][2]} )
         nq.quote.update({"med_term": te.te_sentiment[2][2]} )
