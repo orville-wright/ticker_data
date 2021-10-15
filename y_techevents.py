@@ -108,16 +108,17 @@ class y_techevents:
 # method #3
     def build_te_data(self):
         """
-        Build-out a Technical Events dict
+        Build-out Perfromance Outlook Technical Events dict
         Dict structure: { key: (embeded 5 element tuple) }
         e.g. {0: (te_sml, te_timeframe, "Grey", "Sideways", "Neutral") }
-        1.  Short/Medium/Long data zone tag
-        2.  Time frame that is this Tech Event covers (days/weeks/months)
+        1.  tme_sml : (Short/Medium/Long)
+        2.  tm_timeframe : Time frame that this Tech Event covers (days/weeks/months)
         3.  Tech Event Indicator: Red/Grey/Green   * not included in final dict
         4.  Tech Event Indicator: Down/Sideways/Up *  not included in final dict
         5.  Tech Event Indicator: Bearish/Neutral/Bullish
         """
         cmi_debug = __name__+"::"+self.build_te_data.__name__+".#"+str(self.yti)
+
         logging.info( f"{cmi_debug} - IN" )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         logging.info( f"{cmi_debug} - Scan quote Tech Event indicators" )
@@ -133,14 +134,15 @@ class y_techevents:
                 red_down = re.search('180deg', str(red) )
                 grey_neutral = re.search('90deg', str(red) )
                 if red_down:        # Red Bearish
-                    self.te_sentiment.update({y: (te_sml, te_timeframe, "Red", "Down", "Bearish")} )
+                    self.te_sentiment.update({y: (te_sml, te_timeframe, "Bearish")} )
                     y += 1
                 elif grey_neutral:  # Grey Neutral
-                    self.te_sentiment.update({y: (te_sml, te_timeframe, "Grey", "Sideways", "Neutral")} )
+                    self.te_sentiment.update({y: (te_sml, te_timeframe, "Neutral")} )
                     y += 1
                 else:               # Green Bullish
-                    self.te_sentiment.update({y: (te_sml, te_timeframe, "Green", "Up", "Bullish")} )
+                    self.te_sentiment.update({y: (te_sml, te_timeframe, "Bullish")} )
                     y += 1
 
+        self.te_sentiment.update({y: ("Today", "1D", te_today)} )
         logging.info('%s - populated new Tech Event dict' % cmi_debug )
         return y        # number of rows inserted into Tech events dict

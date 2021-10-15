@@ -588,9 +588,10 @@ def main():
             print ( f"================ DONE ================" )
         print ( " " )
         """
-        nq.quote.update({"short_term": te.te_sentiment[0][4]} )
-        nq.quote.update({"med_term": te.te_sentiment[1][4]} )
-        nq.quote.update({"long_term": te.te_sentiment[2][4]} )
+        nq.quote.update({"short_term": te.te_sentiment[0][2]} )
+        nq.quote.update({"med_term": te.te_sentiment[1][2]} )
+        nq.quote.update({"long_term": te.te_sentiment[2][2]} )
+        nq.quote.update({"today_only": te.te_sentiment[3][2]} )
         #
         print ( f"Get Nasdaq.com quote for: {nq_symbol}" )
         if nq.quote.get("symbol") is not None:
