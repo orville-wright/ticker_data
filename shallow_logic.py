@@ -296,7 +296,7 @@ class combo_logic:
         & collection process... becasue exchange data is not 100% reliable as we collect it in real time (surprisingly!)
         """
 
-        cmi_debug = __name__+"::"+self.polish_combo_df.__name__+".#"+str(self.inst_uid)+"."+f{me}
+        cmi_debug = __name__+"::"+self.polish_combo_df.__name__+".#"+str(self.inst_uid)+"."+str(me)
         logging.info( f"{cmi_debug} - CALLED" )
 
         prepare_combo_df()      # FIRST, merge Small_cap + med + large + mega into a single DF
