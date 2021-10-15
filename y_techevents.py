@@ -125,6 +125,8 @@ class y_techevents:
         te_today = self.te_today.next_element.next_element.string
         print ( f"Tech event pattern today: {te_today}" )
         y = 0
+        self.te_sentiment.update({y: ("Today", "1D", te_today)} )
+        y += 1
         for j in self.te_lizones:
             for i in j:
                 te_strings = i.strings
@@ -143,6 +145,5 @@ class y_techevents:
                     self.te_sentiment.update({y: (te_sml, te_timeframe, "Bullish")} )
                     y += 1
 
-        self.te_sentiment.update({y: ("Today", "1D", te_today)} )
         logging.info('%s - populated new Tech Event dict' % cmi_debug )
         return y        # number of rows inserted into Tech events dict
