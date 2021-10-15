@@ -132,17 +132,22 @@ class y_techevents:
                 te_strings = i.strings
                 te_sml = next(te_strings)
                 te_timeframe = next(te_strings)
-                red = i.svg.parent.contents
-                red_down = re.search('180deg', str(red) )
-                grey_neutral = re.search('90deg', str(red) )
-                if red_down:        # Red Bearish
-                    self.te_sentiment.update({y: (te_sml, te_timeframe, "Bearish")} )
-                    y += 1
-                elif grey_neutral:  # Grey Neutral
-                    self.te_sentiment.update({y: (te_sml, te_timeframe, "Neutral")} )
-                    y += 1
-                else:               # Green Bullish
-                    self.te_sentiment.update({y: (te_sml, te_timeframe, "Bullish")} )
+                if i.svg is not None:
+                    red = i.svg.parent.contents
+                    red_down = re.search('180deg', str(red) )
+                    grey_neutral = re.search('90deg', str(red) )
+                    if red_down:        # Red Bearish
+                        self.te_sentiment.update({y: (te_sml, te_timeframe, "Bearish")} )
+                        y += 1
+                    elif grey_neutral:  # Grey Neutral
+                        self.te_sentiment.update({y: (te_sml, te_timeframe, "Neutral")} )
+                        y += 1
+                    else:               # Green Bullish
+                        self.te_sentiment.update({y: (te_sml, te_timeframe, "Bullish")} )
+                        y += 1
+                else:
+                    pass
+                    self.te_sentiment.update({y: (te_sml, te_timeframe, "N/A")} )
                     y += 1
 
         logging.info('%s - populated new Tech Event dict' % cmi_debug )
