@@ -446,10 +446,12 @@ class nquote:
             # wrangle, clean, cast & prepare the data ##############################################
             logging.info('%s - Begin heavy data wrangle workloads...' % cmi_debug )
             kc = 1
-            for kk in [co_sym, co_name, price, price_net, price_pct, arrow_updown, \
+            wrangle_work = [co_sym, co_name, price, price_net, price_pct, arrow_updown, \
                     price_timestamp, vol_abs, open_price, open_volume, open_updown, \
                     prev_close, mkt_cap, today_hilo, avg_vol, oneyear_target, beta, \
-                    LII_week_hilo]:
+                    LII_week_hilo]
+
+            for kk in iter(wrangle_work):
                     print ( f"{kc}: {kk}" )
                     kc += 1
 
