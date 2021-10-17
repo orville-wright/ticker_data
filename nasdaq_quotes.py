@@ -452,7 +452,7 @@ class nquote:
                     LII_week_hilo]
 
             for kk in iter(wrangle_work):
-                    print ( f"{'_'+kk}: {kk}" )
+                    print ( f"{kb+kk}: {kk}" )
                     kc += 1
 
             co_sym_lj = co_sym.strip()
