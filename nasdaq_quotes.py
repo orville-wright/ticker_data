@@ -449,7 +449,7 @@ class nquote:
                     price_timestamp, vol_abs, pen_price, open_volume, open_updown, \
                     prev_close, mkt_cap, today_hilo, avg_vol, oneyear_target, beta, \
                     LII_week_hilo]:
-                    print ( f"{kk})
+                    print ( f"{kk}" )
                     
             co_sym_lj = co_sym.strip()
             #co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )          # left justify TXT & convert to raw string
