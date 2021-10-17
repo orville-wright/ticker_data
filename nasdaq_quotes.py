@@ -445,16 +445,21 @@ class nquote:
             ########################################################################################
             # wrangle, clean, cast & prepare the data ##############################################
             logging.info('%s - Begin heavy data wrangle workloads...' % cmi_debug )
+
+            # >>> debug helper support <<<
+            def f_xray(template):
+                retrun eval( f"f'{template'" )
+
+            template_a = "List key: {lk_name}"
             kc = 0
-            wrangle_work = [co_sym, co_name, price, price_net, price_pct, arrow_updown, \
+            working_on = [co_sym, co_name, price, price_net, price_pct, arrow_updown, \
                     price_timestamp, vol_abs, open_price, open_volume, open_updown, \
                     prev_close, mkt_cap, today_hilo, avg_vol, oneyear_target, beta, \
                     LII_week_hilo]
 
-            for kk in iter(wrangle_work):
-                    print ( f"{'kk'}: {kk}" )
-                    kc += 1
-
+            for lk_name in working_on:
+                print ( f_xray(template_a) )
+    
             co_sym_lj = co_sym.strip()
             #co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )          # left justify TXT & convert to raw string
 
