@@ -450,7 +450,7 @@ class nquote:
                     price_timestamp, vol_abs, open_price, open_volume, open_updown, \
                     prev_close, mkt_cap, today_hilo, avg_vol, oneyear_target, beta, \
                     LII_week_hilo]:
-                    print ( f"{kk.index(kk)}: {kk}" )
+                    print ( f"{kc}: {kk}" )
                     kc += 1
 
             co_sym_lj = co_sym.strip()
