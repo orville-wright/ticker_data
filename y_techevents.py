@@ -109,7 +109,6 @@ class y_techevents:
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         logging.info( f"{cmi_debug} - Scan quote Tech Event indicators" )
         te_today = self.te_today.next_element.next_element.string
-        print ( f"Tech event pattern today: {te_today}" )
         y = 0
         self.te_sentiment.update({y: ("Today", "1D", te_today)} )
         y += 1
