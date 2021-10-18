@@ -448,26 +448,6 @@ class nquote:
 
             # >>> debug helper support <<<
             #
-            def f_xray(template):
-                z = template
-                y = f"'{template}'"
-                h = repr(z)
-                j = eval(f"repr(y)")
-                #h = f"'{y}'"
-                print ( f"Incomming: template: {template}" )
-                print ( f"Incomming: z: {z}" )
-                print ( f"Incomming: y: {y}" )
-                print ( f"Incomming: h: {h}" )
-                print ( f"Incomming: j: {j}" )
-                #print ( f"Incomming: eval_z: {eval(z)}" )
-                ouj = eval(j)
-                #ouy = eval(y)
-                ouh = eval(h)
-                #ouz = eval(z)
-                print ( f">>> ouj: {ouj} <<< / >> ouh: {ouh} << / >>> / ouy: --- <<< /  y: {y} << / >>> z: {z} <<< / >>> h: {h} <<< / >>> j: {j} <<<" )
-                return ouh
-
-            template_a = "List key: {name}"
             kc = 0
             working_on = [co_sym, co_name, price, price_net, price_pct, arrow_updown ]
             #working_on = ['co_sym', 'co_name', 'price', 'price_net', 'price_pct', 'arrow_updown' ]
@@ -475,7 +455,7 @@ class nquote:
             #        prev_close, mkt_cap, today_hilo, avg_vol, oneyear_target, beta, \
             #        LII_week_hilo]
             for name in working_on:
-                print ( f"{f_xray(repr(name))} / {name}" )
+                print ( f">>>> {repr(name)} / {name}" )
 
             #
             #
