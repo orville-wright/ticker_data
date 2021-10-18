@@ -450,7 +450,7 @@ class nquote:
             #
             def f_xray(template):
                 z = template
-                y = f"f'{template}'"
+                y = f"'{template}'"
                 h = f"'{y}'"
                 print ( f"Incomming: template: {template}" )
                 print ( f"Incomming: y_template: {y}" )
@@ -461,7 +461,8 @@ class nquote:
 
             template_a = "List key: {name}"
             kc = 0
-            working_on = ['co_sym', 'co_name', 'price', 'price_net', 'price_pct', 'arrow_updown' ]
+            working_on = [co_sym, co_name, price, price_net, price_pct, arrow_updown ]
+            #working_on = ['co_sym', 'co_name', 'price', 'price_net', 'price_pct', 'arrow_updown' ]
             #        price_timestamp, vol_abs, open_price, open_volume, open_updown, \
             #        prev_close, mkt_cap, today_hilo, avg_vol, oneyear_target, beta, \
             #        LII_week_hilo]
