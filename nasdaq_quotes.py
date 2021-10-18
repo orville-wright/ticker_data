@@ -452,12 +452,13 @@ class nquote:
             kc = 0
             #working_on = [co_sym, co_name, price, price_net, price_pct, arrow_updown ]
             working_on = ['co_sym', 'co_name', 'price', 'price_net', 'price_pct', 'arrow_updown' ]
+            xx = iter(working_on)
             #        price_timestamp, vol_abs, open_price, open_volume, open_updown, \
             #        prev_close, mkt_cap, today_hilo, avg_vol, oneyear_target, beta, \
             #        LII_week_hilo]
             for name in working_on:
                 #xx = (i for i in working_on )
-                print ( f">>>> {next(working_on)} / {eval(name)}" )
+                print ( f">>>> {next(xx)} / {eval(name)}" )
 
             #
             #
