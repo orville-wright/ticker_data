@@ -446,21 +446,16 @@ class nquote:
             # wrangle, clean, cast & prepare the data ##############################################
             logging.info('%s - Begin heavy data wrangle workloads...' % cmi_debug )
 
-            # >>> debug helper support <<<
+            # >>> DEBUG Xray helper <<<
             #
-
-            kc = 0
-            #working_on = [co_sym, co_name, price, price_net, price_pct, arrow_updown ]
             working_on = ['co_sym', 'co_name', 'price', 'price_net', 'price_pct', 'arrow_updown' ]
+                    price_timestamp, vol_abs, open_price, open_volume, open_updown, \
+                    prev_close, mkt_cap, today_hilo, avg_vol, oneyear_target, beta, \
+                    LII_week_hilo]
             xx = iter(working_on)
-            #        price_timestamp, vol_abs, open_price, open_volume, open_updown, \
-            #        prev_close, mkt_cap, today_hilo, avg_vol, oneyear_target, beta, \
-            #        LII_week_hilo]
             for name in working_on:
-                #xx = (i for i in working_on )
-                print ( f">>>> {next(xx)} / {eval(name)}" )
-
-            #
+                print ( f"{next(xx)} / {eval(name)}" )
+            # >>> DEBUG Xray helper <<<
             #
             co_sym_lj = co_sym.strip()
             #co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )          # left justify TXT & convert to raw string
