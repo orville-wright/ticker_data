@@ -448,6 +448,7 @@ class nquote:
 
             # >>> debug helper support <<<
             #
+
             kc = 0
             working_on = [co_sym, co_name, price, price_net, price_pct, arrow_updown ]
             #working_on = ['co_sym', 'co_name', 'price', 'price_net', 'price_pct', 'arrow_updown' ]
@@ -455,7 +456,8 @@ class nquote:
             #        prev_close, mkt_cap, today_hilo, avg_vol, oneyear_target, beta, \
             #        LII_week_hilo]
             for name in working_on:
-                print ( f">>>> {repr(name)} / {name}" )
+                xx = (f"f'{name}'")
+                print ( f">>>> {xx} / {name}" )
 
             #
             #
