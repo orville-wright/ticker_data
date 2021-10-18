@@ -460,12 +460,12 @@ class nquote:
                 print ( f"Incomming: h: {h}" )
                 print ( f"Incomming: j: {j}" )
                 #print ( f"Incomming: eval_z: {eval(z)}" )
-                ouz = eval(z)
+                ouj = eval(j)
                 #ouy = eval(y)
                 ouh = eval(h)
                 #ouz = eval(z)
-                print ( f">>> ouy: --- <<< / >> ouh: {ouh} << / >>> / ouz: --- <<< /  y: {y} << / >>> z: {z} <<< / >>> h: {h} <<< / >>> j: {j} <<<" )
-                return ouh
+                print ( f">>> ouj: {ouj} <<< / >> ouh: {ouh} << / >>> / ouz: --- <<< /  y: {y} << / >>> z: {z} <<< / >>> h: {h} <<< / >>> j: {j} <<<" )
+                return ouj
 
             template_a = "List key: {name}"
             kc = 0
