@@ -460,7 +460,7 @@ class nquote:
                 print ( f"Incomming: h: {h}" )
                 print ( f"Incomming: j: {j}" )
                 #print ( f"Incomming: eval_z: {eval(z)}" )
-                #ouz = eval(z)
+                ouz = eval(z)
                 #ouy = eval(y)
                 ouh = eval(h)
                 #ouz = eval(z)
