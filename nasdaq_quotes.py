@@ -448,7 +448,7 @@ class nquote:
 
             # >>> debug helper support <<<
             def f_xray(template):
-                retrun eval( f"f'{template'" )
+                return eval( f"f'{template'" )
 
             template_a = "List key: {lk_name}"
             kc = 0
@@ -459,7 +459,7 @@ class nquote:
 
             for lk_name in working_on:
                 print ( f_xray(template_a) )
-    
+
             co_sym_lj = co_sym.strip()
             #co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )          # left justify TXT & convert to raw string
 
