@@ -449,9 +449,10 @@ class nquote:
             # >>> debug helper support <<<
             #
             def f_xray(template):
-                z = f"'{template}'"
+                z = template
+                y = f"'{template}'"
                 out = eval(z)
-                print ( f">>> out: {out} <<< >>> z: {z} <<< ")
+                print ( f">>> out: {out} <<< / >>> y: {y} << / >>> z: {z} <<< ")
                 return out
 
             template_a = "List key: {name}"
