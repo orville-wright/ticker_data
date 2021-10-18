@@ -455,16 +455,16 @@ class nquote:
                 j = f"{z}"
                 #h = f"'{y}'"
                 print ( f"Incomming: template: {template}" )
-                print ( f"Incomming: y_template: {y}" )
-                print ( f"Incomming: eval_y: {eval(y)}" )
-                print ( f"Incomming: eval_h: {eval(h)}" )
-                #print ( f"Incomming: eval_z: {eval(z)}" )
+                print ( f"Incomming: z: {z}" )
+                print ( f"Incomming: y: {y}" )
                 print ( f"Incomming: h: {h}" )
+                print ( f"Incomming: j: {j}" )
+                #print ( f"Incomming: eval_z: {eval(z)}" )
                 #ouz = eval(z)
                 ouy = eval(y)
                 ouh = eval(h)
                 ouz = eval(z)
-                print ( f">>> ouy: {ouy} <<< / >> ouz: {ouz} << / >>> / ouh: {ouh} <<< /  y: {y} << / >>> z: {z} <<< / >>> h: {h} <<< / >>> j: {j} <<<")
+                print ( f">>> ouy: {ouy} <<< / >> ouh: {ouh} << / >>> / ouz: {ouz} <<< /  y: {y} << / >>> z: {z} <<< / >>> h: {h} <<< / >>> j: {j} <<<")
                 return ouz
 
             template_a = "List key: {name}"
