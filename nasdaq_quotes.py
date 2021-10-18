@@ -452,7 +452,7 @@ class nquote:
                 z = template
                 y = f"'{template}'"
                 h = repr(z)
-                j = eval(repr(y))
+                j = eval(f"repr(y)")
                 #h = f"'{y}'"
                 print ( f"Incomming: template: {template}" )
                 print ( f"Incomming: z: {z}" )
@@ -460,7 +460,7 @@ class nquote:
                 print ( f"Incomming: h: {h}" )
                 print ( f"Incomming: j: {j}" )
                 #print ( f"Incomming: eval_z: {eval(z)}" )
-                ouz = eval(self.z)
+                ouz = eval(z)
                 #ouy = eval(y)
                 ouh = eval(h)
                 #ouz = eval(z)
