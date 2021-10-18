@@ -454,7 +454,7 @@ class nquote:
                         'LII_week_hilo']
             xx = iter(working_on)
             for name in working_on:
-                print ( f"{next(xx)} / {eval(name)}" )
+                print ( f"{next(xx)} / {name}" )
             # >>> DEBUG Xray helper <<<
             #
             co_sym_lj = co_sym.strip()
