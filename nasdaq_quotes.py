@@ -449,6 +449,7 @@ class nquote:
             # >>> debug helper support <<<
             #
             def f_xray(template):
+                print ( f"Incomming: template: {template}" )
                 z = template
                 y = f"'{template}'"
                 out = eval(z)
