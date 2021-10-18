@@ -447,6 +447,7 @@ class nquote:
             logging.info('%s - Begin heavy data wrangle workloads...' % cmi_debug )
 
             # >>> debug helper support <<<
+            """
             def f_xray(template):
                 return eval( f"f'{template}'" )
 
@@ -458,7 +459,8 @@ class nquote:
                     LII_week_hilo]
             for name in working_on:
                 print ( f_xray(template_a) )
-
+            """
+            
             co_sym_lj = co_sym.strip()
             #co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )          # left justify TXT & convert to raw string
 
