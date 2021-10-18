@@ -460,7 +460,7 @@ class nquote:
                     prev_close, mkt_cap, today_hilo, avg_vol, oneyear_target, beta, \
                     LII_week_hilo]
             for name in working_on:
-                print ( "{f_xray(name)} / {name}" )
+                print ( f"{f_xray(name)} / {name}" )
 
             #
             #
