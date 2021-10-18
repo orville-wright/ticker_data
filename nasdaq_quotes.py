@@ -453,8 +453,8 @@ class nquote:
                         'prev_close', 'mkt_cap', 'today_hilo', 'avg_vol', 'oneyear_target', 'beta', \
                         'LII_week_hilo']
             xx = iter(working_on)
-            for name in working_on:
-                print ( f"{next(xx)} / {eval(name)}" )
+            for name in iter(working_on):
+                print ( f"{next(name)} / {eval(name)}" )
             # >>> DEBUG Xray helper <<<
             #
             co_sym_lj = co_sym.strip()
