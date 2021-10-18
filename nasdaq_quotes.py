@@ -464,8 +464,8 @@ class nquote:
                 ouy = eval(y)
                 ouh = eval(h)
                 #ouz = eval(z)
-                print ( f">>> ouy: {ouy} <<< / >> ouh: {ouh} << / >>> / ouz: --- <<< /  y: {y} << / >>> z: {z} <<< / >>> h: {h} <<< / >>> j: {j} <<<")
-                return ouz
+                print ( f">>> ouy: {ouy} <<< / >> ouh: {ouh} << / >>> / ouz: eval(f"f'{z}'}) <<< /  y: {y} << / >>> z: {z} <<< / >>> h: {h} <<< / >>> j: {j} <<<")
+                return ouy
 
             template_a = "List key: {name}"
             kc = 0
