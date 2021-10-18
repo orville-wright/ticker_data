@@ -448,14 +448,15 @@ class nquote:
 
             # >>> DEBUG Xray helper <<<
             #
-            working_on = ['co_sym', 'co_name', 'price', 'price_net', 'price_pct', 'arrow_updown', \
+            if self.args['bool_xray'] is True:
+                work_on = ['co_sym', 'co_name', 'price', 'price_net', 'price_pct', 'arrow_updown', \
                         'price_timestamp', 'vol_abs', 'open_price', 'open_volume', 'open_updown', \
                         'prev_close', 'mkt_cap', 'today_hilo', 'avg_vol', 'oneyear_target', 'beta', \
                         'LII_week_hilo']
-            xx = iter(working_on)
-            for name in iter(working_on):
-                print ( f"{next(name)} / {eval(name)}" )
-            # >>> DEBUG Xray helper <<<
+                xx = iter(work_on)
+                for name in work_on:
+                    print ( f"{next(xx)} / {eval(name)}" )
+                # >>> DEBUG Xray helper <<<
             #
             co_sym_lj = co_sym.strip()
             #co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )          # left justify TXT & convert to raw string
