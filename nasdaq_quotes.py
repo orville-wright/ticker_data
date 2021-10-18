@@ -457,7 +457,6 @@ class nquote:
                 xx = iter(work_on)
                 for name in work_on:
                     print ( f"{next(xx)} / {eval(name)}" )
-            print ( f"===============================================================" )
             #
             # >>> DEBUG Xray OFF <<<
             #
