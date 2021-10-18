@@ -454,9 +454,9 @@ class nquote:
                 #h = f"'{y}'"
                 print ( f"Incomming: template: {template}" )
                 print ( f"Incomming: y_template: {y}" )
-                ouz = eval(z)
+                #ouz = eval(z)
                 ouy = eval(y)
-                print ( f">>> ouy: {ouy} <<< / >> oua: {ouz} << / >>> y: {y} << / >>> z: {z} <<< ")
+                print ( f">>> ouy: {ouy} <<< / >> oua: << / >>> y: {y} << / >>> z: {z} <<< ")
                 return out
 
             template_a = "List key: {name}"
