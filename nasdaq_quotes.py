@@ -446,8 +446,9 @@ class nquote:
             # wrangle, clean, cast & prepare the data ##############################################
             logging.info('%s - Begin heavy data wrangle workloads...' % cmi_debug )
 
-            # >>> DEBUG Xray helper <<<
+            # >>> DEBUG Xray ON <<<
             #
+            print ( f"\n================= Nasdaq quote data : raw uncleansed =================" )
             if self.args['bool_xray'] is True:
                 work_on = ['co_sym', 'co_name', 'price', 'price_net', 'price_pct', 'arrow_updown', \
                         'price_timestamp', 'vol_abs', 'open_price', 'open_volume', 'open_updown', \
@@ -456,7 +457,9 @@ class nquote:
                 xx = iter(work_on)
                 for name in work_on:
                     print ( f"{next(xx)} / {eval(name)}" )
-                # >>> DEBUG Xray helper <<<
+            print ( f"===============================================================" )
+            #
+            # >>> DEBUG Xray OFF <<<
             #
             co_sym_lj = co_sym.strip()
             #co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )          # left justify TXT & convert to raw string
