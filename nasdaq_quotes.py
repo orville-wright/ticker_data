@@ -448,8 +448,8 @@ class nquote:
 
             # >>> DEBUG Xray ON <<<
             #
-            print ( f"\n================= Nasdaq quote data : raw uncleansed =================" )
             if self.args['bool_xray'] is True:
+                print ( f"\n================= Nasdaq quote data : raw uncleansed =================" )
                 work_on = ['co_sym', 'co_name', 'price', 'price_net', 'price_pct', 'arrow_updown', \
                         'price_timestamp', 'vol_abs', 'open_price', 'open_volume', 'open_updown', \
                         'prev_close', 'mkt_cap', 'today_hilo', 'avg_vol', 'oneyear_target', 'beta', \
