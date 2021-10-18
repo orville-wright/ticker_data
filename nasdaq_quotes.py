@@ -458,7 +458,7 @@ class nquote:
                 print ( f"Incomming: y_template: {y}" )
                 print ( f"Incomming: eval_y: {eval(y)}" )
                 print ( f"Incomming: eval_h: {eval(h)}" )
-                print ( f"Incomming: eval_h: {eval(z)}" )
+                #print ( f"Incomming: eval_z: {eval(z)}" )
                 print ( f"Incomming: h: {h}" )
                 #ouz = eval(z)
                 ouy = eval(y)
