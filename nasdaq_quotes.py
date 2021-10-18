@@ -452,7 +452,7 @@ class nquote:
                 z = template
                 y = f"'{template}'"
                 h = repr(y)
-                j = eval(repr{y))
+                j = eval(repr(y))
                 #h = f"'{y}'"
                 print ( f"Incomming: template: {template}" )
                 print ( f"Incomming: z: {z}" )
