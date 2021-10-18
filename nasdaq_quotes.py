@@ -452,11 +452,13 @@ class nquote:
                 z = template
                 y = f"'{template}'"
                 h = f"'{z}'"
+                j = f"{z}"
                 #h = f"'{y}'"
                 print ( f"Incomming: template: {template}" )
                 print ( f"Incomming: y_template: {y}" )
                 print ( f"Incomming: eval_y_template: {eval(y)}" )
                 print ( f"Incomming: eval_z_template: {eval(h)}" )
+                print ( f"Incomming: eval_z_template: {eval(j)}" )
                 #ouz = eval(z)
                 ouy = eval(y)
                 ouz = eval(z)
