@@ -457,7 +457,7 @@ class nquote:
             #        LII_week_hilo]
             for name in working_on:
                 xx = (i for i in working_on )
-                print ( f">>>> {next(xx)} / {name}" )
+                print ( f">>>> {next(xx)} / {eval(name)}" )
 
             #
             #
