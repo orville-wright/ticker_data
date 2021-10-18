@@ -448,7 +448,7 @@ class nquote:
 
             # >>> debug helper support <<<
             def f_xray(template):
-                return eval( f"f'{template'" )
+                return eval( f"f'{template}'" )
 
             template_a = "List key: {lk_name}"
             kc = 0
