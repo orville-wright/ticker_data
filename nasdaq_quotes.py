@@ -451,11 +451,12 @@ class nquote:
             def f_xray(template):
                 z = template
                 y = f"'{template}'"
-                z = f"f'{y}'"
+                z = f"'{y}'"
                 print ( f"Incomming: template: {template}" )
                 print ( f"Incomming: y_template: {y}" )
-                out = eval(y)
-                print ( f">>> out: {out} <<< / >>> y: {y} << / >>> z: {z} <<< ")
+                ouy = eval(y)
+                ouz = eval(z)
+                print ( f">>> ouy: {ouy} <<< / >> oua: {ouz} << / >>> y: {y} << / >>> z: {z} <<< ")
                 return out
 
             template_a = "List key: {name}"
