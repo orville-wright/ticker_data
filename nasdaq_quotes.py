@@ -451,7 +451,7 @@ class nquote:
             def f_xray(template):
                 z = template
                 y = f"'{template}'"
-                z = y
+                z = f"f'{y}'"
                 print ( f"Incomming: template: {template}" )
                 print ( f"Incomming: y_template: {y}" )
                 out = eval(y)
