@@ -456,7 +456,7 @@ class nquote:
             #        prev_close, mkt_cap, today_hilo, avg_vol, oneyear_target, beta, \
             #        LII_week_hilo]
             for name in working_on:
-                xx = (i for i in (name) )
+                xx = (i for i in working_on )
                 print ( f">>>> {next(xx)} / {name}" )
 
             #
