@@ -243,7 +243,8 @@ def main():
         cmi_debug = __name__+"::Tech_events_all.#1"
         te_targets = x.combo_listall_ranked()
         for xte in te_targets['Symbol'].tolist():
-            print { f"xte: {xte}" )
+            print ( f"xte: {xte}" )
+            
             """
             nq = nquote(5, args)
             nq.init_dummy_session()                      # note: this will set nasdaq magic cookie
