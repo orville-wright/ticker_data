@@ -307,8 +307,6 @@ def main():
     if args['bool_te'] is True:
         cmi_debug = __name__+"::Tech_events_all.#1"
         te_targets = x.combo_listall_ranked()
-        #nq = nquote(5, args)
-        #nq.init_dummy_session()                      # note: this will set nasdaq magic cookie
         cols = 1
         te = y_techevents(3)
         print ( f"===== Tech Events performance Sentiment ==============================" )
@@ -316,41 +314,17 @@ def main():
         for xte in te_targets['Symbol'].tolist():
             nq_symbol = xte.strip().upper()
             print ( f"{xte}...", end="" )
-            """
-            nq.update_headers(nq_symbol, "stocks")         # set path: header object. doesnt touch secret nasdaq cookies
-            nq.form_api_endpoint(nq_symbol, "stocks")      # set API endpoint url - default GUESS asset_class=stocks
-            ac = nq.learn_aclass(nq_symbol)
-            if ac != "stocks":
-                logging.info( f"%s - re-shape asset class endpoint to: {ac}" % cmi_debug )
-                nq.form_api_endpoint(nq_symbol, ac)      # re-form API endpoint if default asset_class guess was wrong)
-            nq.get_nquote(nq_symbol.rstrip())
-            wrangle_errors = nq.build_data()             # return num of data wrangeling errors we found & dealt with
-            if wrangle_errors == 0: print ( f"+", end="" )      # no errors. GOOD
-            if wrangle_errors == -1: print ( f"-", end="" )     # major FAIL
-            if wrangle_errors > 0: print ( f"{wrangle_errors}", end="" )    # number of errors
-            nq.build_df()
-            """
             te.form_api_endpoints(nq_symbol)
             te_status = te.get_te_zones()
-            if te_status != 0:
-                te.te_is_bad()
-                print ( f"!", end="" )      # FAIL : cant get te_zone data
+            if te_status != 0:              # FAIL : cant get te_zone data
+                te.te_is_bad()              # FAIL : build FAILURE dict
+                te.build_te_df(1)           # FAIL: insert failure status into DataFrame for this symbol
+                print ( f"!", end="" )
                 logging.info( f"{cmi_debug} - FAILED to get Tech Event data: Clear all dicts" )
-                #nq.quote.clear()
                 te.te_sentiment.clear()
             else:
                 print ( f"^", end="" )     # GOOD : suceeded to get TE indicators
             te.build_te_data()
-            """
-            self.te_sentiment.update({0: ("today_only", "1D", "N/A")} )
-            self.te_sentiment.update({1: ("short_term", "2W - 6W", "N/A")} )
-            self.te_sentiment.update({2: ("med_term", "6W - 9M", "N/A")} )
-            self.te_sentiment.update({3: ("long_term", "9M+", "N/A")} )
-            nq.quote.update({"today_only": te.te_sentiment[0][2]} )
-            nq.quote.update({"short_term": te.te_sentiment[1][2]} )
-            nq.quote.update({"med_term": te.te_sentiment[2][2]} )
-            nq.quote.update({"long_term": te.te_sentiment[3][2]} )
-            """
             te.build_te_df(1)
             cols += 1
             if cols == 8:
@@ -365,6 +339,8 @@ def main():
     else:
         pass
 
+    print ( f"\n===== Tech Events DICT ==============================" )
+    print ( f"{te.te_sentiment}" )
 
 # ML / NLP section #############################################################
 
