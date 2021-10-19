@@ -175,7 +175,7 @@ class y_techevents:
         """
         Reset DataFrame index to be sequential, sarting from 0
         """
-        cmi_debug = __name__+"::"+self.reset_te_df0.__name__+".#"+str(self.yti)+"."+str(me)
+        cmi_debug = __name__+"::"+self.reset_te_df0.__name__+".#"+str(self.yti)
         logging.info( f"{cmi_debug} - CALLED" )
         self.te_df0.reset_index(inplace=True, drop=True)
         logging.info( f"{cmi_debug} - completed" )
