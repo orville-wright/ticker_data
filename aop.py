@@ -309,10 +309,13 @@ def main():
         te_targets = x.combo_listall_ranked()
         nq = nquote(5, args)
         nq.init_dummy_session()                      # note: this will set nasdaq magic cookie
+        cols = 1
         te = y_techevents(3)
+        print ( f"===== Tech Events performance Sentiment ==============================" )
         print ( f"Tech Events Perf candidates: {te_targets['Symbol'].tolist()}" )
         for xte in te_targets['Symbol'].tolist():
             nq_symbol = xte.strip().upper()
+            print ( f"{xte}...", end="" )
             nq.update_headers(nq_symbol, "stocks")         # set path: header object. doesnt touch secret nasdaq cookies
             nq.form_api_endpoint(nq_symbol, "stocks")      # set API endpoint url - default GUESS asset_class=stocks
             ac = nq.learn_aclass(nq_symbol)
@@ -321,6 +324,7 @@ def main():
                 nq.form_api_endpoint(nq_symbol, ac)      # re-form API endpoint if default asset_class guess was wrong)
             nq.get_nquote(nq_symbol.rstrip())
             wrangle_errors = nq.build_data()             # return num of data wrangeling errors we found & dealt with
+            print ( f"{wrangle_errors}" )
             nq.build_df()
             te.form_api_endpoints(nq_symbol)
             te.get_te_zones()
@@ -330,6 +334,11 @@ def main():
             nq.quote.update({"med_term": te.te_sentiment[2][2]} )
             nq.quote.update({"long_term": te.te_sentiment[3][2]} )
             te.build_te_df(1)
+            if cols = 8:
+                print ( f" " )  # onlhy print 8 symbols per row
+                cols = 1
+            else:
+                print ( f" / ", end="" )
 
         te.reset_te_df0()
         print ( f"===== Tech Events performance Sentiment ==============================" )
