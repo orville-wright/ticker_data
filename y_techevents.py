@@ -173,7 +173,7 @@ class y_techevents:
         """
         # self.te_df0.drop(self.te_df0.index, inplace=True)        # ensure the DF is empty
         logging.info( f"{cmi_debug} - Populate DF with Tech Events emphemerial dict data" )
-        self.te_df0 = self.pd.DataFrame.from_dict(self.sentiment, orient='index', columns=['Term', 'Window', 'Sentiment'])
+        self.te_df0 = pd.DataFrame.from_dict(self.te_sentiment, orient='index', columns=['Term', 'Window', 'Sentiment'])
 
         #self.quote_df0 = pd.DataFrame(self.data0, columns=[ 'Symbol', 'Co_name', 'arrow_updown', 'Cur_price', 'Prc_change', 'Pct_change', 'Open_price', 'Prev_close', 'Vol', 'Mkt_cap', 'Exch_timestamp', 'Time' ] )
         logging.info('%s - Tech Event DF created' % cmi_debug )
