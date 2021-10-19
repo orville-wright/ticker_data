@@ -334,7 +334,7 @@ def main():
             nq.quote.update({"med_term": te.te_sentiment[2][2]} )
             nq.quote.update({"long_term": te.te_sentiment[3][2]} )
             te.build_te_df(1)
-            if cols = 8:
+            if cols == 8:
                 print ( f" " )  # onlhy print 8 symbols per row
                 cols = 1
             else:
