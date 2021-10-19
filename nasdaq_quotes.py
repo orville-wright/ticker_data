@@ -279,11 +279,11 @@ class nquote:
             try:
                 y = self.jsondata11['summaryData']      # summary
             except TypeError:
-                logging.info( f"%s - Probe #10 (summary): NULL data @: [data][summaryData]" % cmi_debug )
+                logging.info( f"%s - Probe #10 (API=summary): NULL data @: [data][summaryData]" % cmi_debug )
                 jd10_null_errors = 1 + len(jd_10)       # everything in data set is BAD
                 return jd10_null_errors
             except KeyError:
-                logging.info( f"%s - Probe #10 (summary): NULL key @: [data][summaryData]" % cmi_debug )
+                logging.info( f"%s - Probe #10 (API=summary): NULL key @: [data][summaryData]" % cmi_debug )
                 jd10_null_errors = 1 + len(jd_10)       # everything in data set is BAD
                 return jd10_null_errors
             else:
@@ -292,10 +292,10 @@ class nquote:
                     try:
                         y = x[i]
                     except TypeError:
-                        logging.info( f"%s - Probe #10 (summary): NULL data @: [{i}]" % cmi_debug )
+                        logging.info( f"%s - Probe #10 (API=summary): NULL data @: [{i}]" % cmi_debug )
                         jd10_null_errors += 1
                     except KeyError:
-                        logging.info( f"%s - Probe #10 (summary): NULL key @: [{i}]" % cmi_debug )
+                        logging.info( f"%s - Probe #10 (API=summary): NULL key @: [{i}]" % cmi_debug )
                         jd10_null_errors += 1
                     else:
                         z += 1
@@ -320,14 +320,14 @@ class nquote:
                 try:
                     y = x[i]
                 except TypeError:
-                    logging.info( f"%s - Probe #20 (watchlist): NULL data @: [{i}]" % cmi_debug )
+                    logging.info( f"%s - Probe #20 (API=watchlist): NULL data @: [{i}]" % cmi_debug )
                     jd20_null_errors += 1
                 except KeyError:
-                    logging.info( f"%s - Probe #20 (watchlist): NULL KEY data @: [{i}]" % cmi_debug )
+                    logging.info( f"%s - Probe #20 (API=watchlist): NULL KEY data @: [{i}]" % cmi_debug )
                     jd20_null_errors += 1
                 else:
                     z += 1
-            logging.info( f"%s - NULL probe 20 (API=watchlist) / errors: {jd20_null_errors} / 8" % cmi_debug )
+            logging.info( f"%s - NULL probe 20 (Probe #30 (API=premarket) / errors: {jd20_null_errors} / 8" % cmi_debug )
             return jd20_null_errors
 
             # ZONE #3 watchlist zone....########################################
@@ -342,11 +342,11 @@ class nquote:
             try:
                 y = self.jsondata30['infoTable']['rows'][0]     # premarket
             except TypeError:
-                logging.info( f"%s - Probe #30 (premarket): NULL data @: [infoTable][rows][0]" % cmi_debug )
+                logging.info( f"%s - Probe #30 (API=premarket): NULL data @: [infoTable][rows][0]" % cmi_debug )
                 jd31_null_errors = 1 + len(jd_30)               # everything in data set is BAD
                 return jd31_null_errors
             except KeyError:
-                logging.info( f"%s - Probe #30 (premarket): NULL key @: [infoTable][rows][0]" % cmi_debug )
+                logging.info( f"%s - Probe #30 (API=premarket): NULL key @: [infoTable][rows][0]" % cmi_debug )
                 jd31_null_errors = 1 + len(jd_30)               # everything in data set is BAD
                 return jd31_null_errors
             else:
@@ -355,10 +355,10 @@ class nquote:
                     try:
                         y = x[i]
                     except TypeError:
-                        logging.info( f"%s - Probe #31 (premarket): NULL data @: [{i}]" % cmi_debug )
+                        logging.info( f"%s - Probe #31 (API=premarket): NULL data @: [{i}]" % cmi_debug )
                         jd31_null_errors += 1
                     except KeyError:
-                        logging.info( f"%s - Probe #31 (premarket): NULL key @: [{i}]" % cmi_debug )
+                        logging.info( f"%s - Probe #31 (API=premarket): NULL key @: [{i}]" % cmi_debug )
                         jd31_null_errors += 1
                     else:
                         z += 1
