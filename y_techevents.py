@@ -211,7 +211,8 @@ class y_techevents:
                time_now ]]
         # self.te_df0.drop(self.te_df0.index, inplace=True)        # ensure the DF is empty
         logging.info( f"{cmi_debug} - Populate DF with Tech Events emphemerial dict data" )
-        self.te_df0 = pd.DataFrame(data0, columns=[ 'Symbol', 'Today', 'Short', 'Mid', 'Long', 'Time' ] )
+        te_temp_df0 = pd.DataFrame(data0, columns=[ 'Symbol', 'Today', 'Short', 'Mid', 'Long', 'Time' ] )
+        te_df0 = te_df0.append(te_temp_df0, ignore_index=True)
         logging.info( f"{cmi_debug} - Tech Event DF created" )
 
         return
