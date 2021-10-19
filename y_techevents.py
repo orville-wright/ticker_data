@@ -149,33 +149,25 @@ class y_techevents:
 
         print ( f"Sentiment dict" )
         print ( f"{self.te_sentiment}" )
-        """
+
         y = 0
         y += 1
-            ####################################################################
-            # craft final data structure.
-            # NOTE: globally accessible and used by quote DF and quote DICT
-            symbol=self.symbol
-            logging.info( f"%s - Build Dataframe dataset: {symbol}" % cmi_debug )        # so we can access it natively if needed, without using pandas
-            data0 = [[ \
-               symbol, \
-               self.te_sentiment[0], \
-               arrow_updown, \
-               np.float(price_cl), \
-               price_net_cl, \
-               price_pct_cl, \
-               open_price_cl, \
-               np.float(prev_close_cl), \
-               np.float(vol_abs_cl), \
-               mkt_cap_cl, \
-               price_timestamp, \
+        ####################################################################
+        # craft final data structure.
+        # NOTE: globally accessible and used by quote DF and quote DICT
+        logging.info( f"%s - Build Dataframe dataset: {symbol}" % cmi_debug )        # so we can access it natively if needed, without using pandas
+        data0 = [[ \
+           self.symbol, \
+           self.te_sentiment[0][2], \
+           self.te_sentiment[1][2], \
+           self.te_sentiment[2][2], \
+           self.te_sentiment[3][2], \
                time_now ]]
-        """
         # self.te_df0.drop(self.te_df0.index, inplace=True)        # ensure the DF is empty
         logging.info( f"{cmi_debug} - Populate DF with Tech Events emphemerial dict data" )
-        self.te_df0 = pd.DataFrame.from_dict(self.te_sentiment, orient='index', columns=['Term', 'Window', 'Sentiment'])
-
-        #self.quote_df0 = pd.DataFrame(self.data0, columns=[ 'Symbol', 'Co_name', 'arrow_updown', 'Cur_price', 'Prc_change', 'Pct_change', 'Open_price', 'Prev_close', 'Vol', 'Mkt_cap', 'Exch_timestamp', 'Time' ] )
+        # self.te_df0 = pd.DataFrame.from_dict(self.te_sentiment, orient='index', columns=['Term', 'Window', 'Sentiment'])
+        # self.te_df0 = pd.DataFrame.from_dict(self.te_sentiment, columns=['Term', 'Window', 'Sentiment'])
+        self.te_df0 = pd.DataFrame(self.data0, columns=[ 'Symbol', 'Today', 'Short', 'Mid', 'Long', 'Time' ] )
         logging.info('%s - Tech Event DF created' % cmi_debug )
 
         return
