@@ -38,7 +38,7 @@ class y_techevents:
     def __init__(self, yti):
         cmi_debug = __name__+"::"+self.__init__.__name__
         logging.info( f"{cmi_debug} - Instantiate.#{yti}" )
-        # init empty DataFrame with present colum names
+        self.te_df0 = pd.DataFrame(columns=[ 'Symbol', 'Today', 'Short', 'Mid', 'Long', 'Time' ] )  # init empty DF with preset columns
         self.yti = yti
         return
 
