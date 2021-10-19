@@ -45,6 +45,7 @@ parser.add_argument('-a','--allnews', help='ML/NLP News sentiment AI for all sto
 parser.add_argument('-c','--cycle', help='Ephemerial top 10 every 10 secs for 60 secs', action='store_true', dest='bool_tenten60', required=False, default=False)
 parser.add_argument('-d','--deep', help='Deep converged multi data list', action='store_true', dest='bool_deep', required=False, default=False)
 parser.add_argument('-n','--newsai', help='ML/NLP News sentiment AI for 1 stock', action='store', dest='newsymbol', required=False, default=False)
+parser.add_argument('-p','--perf', help='Tech event performance sentiment', action='store_true', dest='bool_te', required=False, default=False)
 parser.add_argument('-q','--quote', help='Get ticker price action quote', action='store', dest='qsymbol', required=False, default=False)
 parser.add_argument('-s','--screen', help='Small cap screener logic', action='store_true', dest='bool_scr', required=False, default=False)
 parser.add_argument('-t','--tops', help='show top ganers/losers', action='store_true', dest='bool_tops', required=False, default=False)
@@ -236,6 +237,39 @@ def main():
         x.rank_caps()
         print ( f"{x.combo_listall_ranked()}" )
 
+
+# Get the TSML performance Sentiment for all stocks in combo DF ######################
+    if args['bool_te'] is True:
+        cmi_debug = __name__+"::Tech_events_all.#1"
+        te_targets = x.combo_listall_ranked()
+        for xte in te_targets['Symbol'].tolist():
+            nq = nquote(5, args)
+            nq.init_dummy_session()                      # note: this will set nasdaq magic cookie
+            nq_symbol = args['xte'].upper()
+            nq.update_headers(nq_symbol, "stocks")         # set path: header object. doesnt touch secret nasdaq cookies
+            nq.form_api_endpoint(nq_symbol, "stocks")      # set API endpoint url - default GUESS asset_class=stocks
+            ac = nq.learn_aclass(nq_symbol)
+            if ac != "stocks":
+                logging.info( f"%s - re-shape asset class endpoint to: {ac}" % cmi_debug )
+                nq.form_api_endpoint(nq_symbol, ac)      # re-form API endpoint if default asset_class guess was wrong)
+            nq.get_nquote(nq_symbol.rstrip())
+            wrangle_errors = nq.build_data()             # return num of data wrangeling errors we found & dealt with
+            nq.build_df()
+            te = y_techevents(3)
+            te.form_api_endpoints(nq_symbol)
+            te.get_te_zones()
+            te.build_te_data()
+            nq.quote.update({"today_only": te.te_sentiment[0][2]} )
+            nq.quote.update({"short_term": te.te_sentiment[1][2]} )
+            nq.quote.update({"med_term": te.te_sentiment[2][2]} )
+            nq.quote.update({"long_term": te.te_sentiment[3][2]} )
+            te.build_te_df(1)
+
+        te.reset_te_df0()
+        print ( f"===== Tech Events performance Sentiment ==============================" )
+        print ( f"{te.te_df0}" )
+
+
 # Summarize combo list key findings ##################################################################
         # Curious Outliers
         temp_1 = x.combo_df.sort_values(by=['Pct_change'], ascending=False)
@@ -406,7 +440,8 @@ def main():
 
         nlp_summary()
         print ( f" " )
-
+        print ( " " )
+        print ( "========================= Tech Events performance Sentiment =========================" )
 
 # Read the news for just 1 stock symbol
     """
@@ -433,6 +468,8 @@ def main():
 
         nlp_summary()
         print ( f" " )
+
+
 
 #################################################################################
 # 3 differnt methods to get a live quote ########################################
