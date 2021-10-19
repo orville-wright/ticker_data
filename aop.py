@@ -485,6 +485,7 @@ def main():
             print ( f"Not a regular symbol - prob Trust, ETF etc" )
 
         te.build_te_df(1)
+        te.reset_te_df0()
         print ( f"===== TE DF ==========================================================" )
         print ( f"{te.te_df0}" )
 

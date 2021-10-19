@@ -166,7 +166,18 @@ class y_techevents:
         # self.te_df0.drop(self.te_df0.index, inplace=True)        # ensure the DF is empty
         logging.info( f"{cmi_debug} - Populate DF with Tech Events emphemerial dict data" )
         self.te_df0 = pd.DataFrame(data0, columns=[ 'Symbol', 'Today', 'Short', 'Mid', 'Long', 'Time' ] )
-        self.te_df0.reset_index(inplace=True, drop=True)
         logging.info( f"{cmi_debug} - Tech Event DF created" )
+
+        return
+
+
+    def reset_te_df0(self):
+        """
+        Reset DataFrame index to be sequential, sarting from 0
+        """
+        cmi_debug = __name__+"::"+self.reset_te_df0.__name__+".#"+str(self.yti)+"."+str(me)
+        logging.info( f"{cmi_debug} - CALLED" )
+        self.te_df0.reset_index(inplace=True, drop=True)
+        logging.info( f"{cmi_debug} - completed" )
 
         return
