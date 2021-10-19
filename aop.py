@@ -514,14 +514,14 @@ def main():
         success = te.get_te_zones(2)
         if success == 0:
             te.build_te_data()
-            te_into_nquote(nq)
+            te.te_into_nquote(nq)
             #nq.quote.update({"today_only": te.te_sentiment[0][2]} )
             #nq.quote.update({"short_term": te.te_sentiment[1][2]} )
             #nq.quote.update({"med_term": te.te_sentiment[2][2]} )
             #nq.quote.update({"long_term": te.te_sentiment[3][2]} )
         else:
             te.te_is_bad()      # FORCE Tech Events to be N/A
-            te_into_nquote(nq)
+            te.te_into_nquote(nq)
         #
         print ( f"Get Nasdaq.com quote for: {nq_symbol}" )
         if nq.quote.get("symbol") is not None:
