@@ -94,18 +94,12 @@ class y_techevents:
             self.te_lizones = self.te_zone.find_all('li')
             #logging.info( f"{cmi_debug} - Data zone #3: {len(self.te_lizones)} lines extracted / Done" )
         except AttributeError as ae_inst:
-            if ae_inst.__cause__ is None:
+            if ae_inst.__cause__ is None:       # interrogate error raised - was it for [NoneType]
                 logging.info( f"{cmi_debug} - Data zone #3 / SCAN FAIL - EMPTY BS4 data" )
                 return -1
                 #self.te_today = self.te_zone.find(attrs={"class": "Fz(xs) Mb(4px)"}
             else:
-                logging.info( f"{cmi_debug} - Data zone #3 / Unknown FAIL" )
-                print ( f"TYPE: {type(ae_inst)}" )
-                print ( f"DICT:   {ae_inst.__cause__}" )
-                print ( f"KEYS:   {ae_inst.__repr__}" )
-                print ( f"VALUES: {ae_inst.__str__}" )
-                print ( f"VALUES: {ae_inst.args}" )
-                print ( f"DIR:    {dir(ae_inst)}" )
+                logging.info( f"{cmi_debug} - Data zone #3 / FAIL : {ae_inst.__cause__}" )
                 return -2
         else:
             logging.info( f"{cmi_debug} - Data zone #4: [today]" )

@@ -511,12 +511,15 @@ def main():
         # add Tech Events Sentiment to quote dict{}
         te = y_techevents(2)
         te.form_api_endpoints(nq_symbol)
-        te.get_te_zones(2)
-        te.build_te_data()
-        nq.quote.update({"today_only": te.te_sentiment[0][2]} )
-        nq.quote.update({"short_term": te.te_sentiment[1][2]} )
-        nq.quote.update({"med_term": te.te_sentiment[2][2]} )
-        nq.quote.update({"long_term": te.te_sentiment[3][2]} )
+        success = te.get_te_zones(2)
+        if success == 0:
+            te.build_te_data()
+            nq.quote.update({"today_only": te.te_sentiment[0][2]} )
+            nq.quote.update({"short_term": te.te_sentiment[1][2]} )
+            nq.quote.update({"med_term": te.te_sentiment[2][2]} )
+            nq.quote.update({"long_term": te.te_sentiment[3][2]} )
+        else:
+            te.te_is_bad()      # FORCE Tech Events to be N/A
         #
         print ( f"Get Nasdaq.com quote for: {nq_symbol}" )
         if nq.quote.get("symbol") is not None:
@@ -534,6 +537,7 @@ def main():
         te.reset_te_df0()
         print ( f"===== TE DF ==========================================================" )
         print ( f"{te.te_df0}" )
+
 
     """
     EXAMPLE #2
