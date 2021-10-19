@@ -142,16 +142,16 @@ class y_techevents:
 
 
     def build_te_df(self, me):
+        """
+        Add a ROW into the sentiment DataFrame
+        ROW is for current symbol last worked on, so method must *only* be called after
+        you have sucessfullu built & populated the Tech Events sentiment dict.
+        """
+
         cmi_debug = __name__+"::"+self.build_te_df.__name__+".#"+str(self.yti)+"."+str(me)
         logging.info( f"{cmi_debug} - CALLED" )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         logging.info( f"{cmi_debug} - Create Tech Event Perf DataFrame" )
-
-        print ( f"Sentiment dict" )
-        print ( f"{self.te_sentiment}" )
-
-        y = 0
-        y += 1
         ####################################################################
         # craft final data structure.
         # NOTE: globally accessible and used by quote DF and quote DICT
@@ -165,9 +165,8 @@ class y_techevents:
                time_now ]]
         # self.te_df0.drop(self.te_df0.index, inplace=True)        # ensure the DF is empty
         logging.info( f"{cmi_debug} - Populate DF with Tech Events emphemerial dict data" )
-        # self.te_df0 = pd.DataFrame.from_dict(self.te_sentiment, orient='index', columns=['Term', 'Window', 'Sentiment'])
-        # self.te_df0 = pd.DataFrame.from_dict(self.te_sentiment, columns=['Term', 'Window', 'Sentiment'])
         self.te_df0 = pd.DataFrame(data0, columns=[ 'Symbol', 'Today', 'Short', 'Mid', 'Long', 'Time' ] )
+        self.te.df0.reset_index(inplace=True, drop=True)
         logging.info( f"{cmi_debug} - Tech Event DF created" )
 
         return
