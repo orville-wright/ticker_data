@@ -492,7 +492,7 @@ def main():
     10 data fields provided
     """
     if args['qsymbol'] is not False:
-        nq = nquote(4, args)                         # setup an emphemerial dict
+        nq = nquote(4, args)                         # NAsdaq quote instance
         nq.init_dummy_session()                      # note: this will set nasdaq magic cookie
         nq_symbol = args['qsymbol'].upper()
         logging.info( f"%s - Get Nasdaq.com quote for symbol {nq_symbol}" % cmi_debug )

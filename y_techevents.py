@@ -229,3 +229,16 @@ class y_techevents:
         logging.info( f"{cmi_debug} - completed" )
 
         return
+
+    def te_into_nquote(self, nqinst):
+        """
+        Push the core Tech Event Indicators into their location within the nasdaq quote dict
+        """
+        cmi_debug = __name__+"::"+self.te_into_nquote.__name__+".#"+str(self.yti)
+        logging.info( f"{cmi_debug} - CALLED" )
+        nqinst.quote.update({"today_only": self.te_sentiment[0][2]} )
+        nqinst.quote.update({"short_term": self.te_sentiment[1][2]} )
+        nqinst.quote.update({"med_term": self.te_sentiment[2][2]} )
+        nqinst.quote.update({"long_term": self.te_sentiment[3][2]} )
+        logging.info( f"{cmi_debug} - completed" )
+        return
