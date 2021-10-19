@@ -110,7 +110,7 @@ class y_techevents:
 
 
 # method #3
-    def build_te_data(self):
+    def build_te_data(self, me):
         """
         Build-out Perfromance Outlook Technical Events dict
         Dict structure: { key: (embeded 5 element tuple) }
@@ -121,7 +121,7 @@ class y_techevents:
         4.  Tech Event Indicator: Down/Sideways/Up *  not included in final dict
         5.  Tech Event Indicator: Bearish/Neutral/Bullish
         """
-        cmi_debug = __name__+"::"+self.build_te_data.__name__+".#"+str(self.yti)
+        cmi_debug = __name__+"::"+self.build_te_data.__name__+".#"+str(self.yti)+"."+str(me)
 
         logging.info( f"{cmi_debug} - CALLED" )
         time_now = time.strftime("%H:%M:%S", time.localtime() )

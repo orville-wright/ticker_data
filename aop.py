@@ -323,8 +323,8 @@ def main():
                 te.te_sentiment.clear()
             else:
                 print ( f"+", end="" )     # GOOD : suceeded to get TE indicators
-            te.build_te_data()
-            te.build_te_df(1)
+                te.build_te_data(1)
+                te.build_te_df(2)
             cols += 1
             if cols == 8:
                 print ( f" " )  # onlhy print 8 symbols per row
@@ -511,7 +511,7 @@ def main():
         te.form_api_endpoints(nq_symbol)
         success = te.get_te_zones(2)
         if success == 0:
-            te.build_te_data()
+            te.build_te_data(2)
             te.te_into_nquote(nq)
             #nq.quote.update({"today_only": te.te_sentiment[0][2]} )
             #nq.quote.update({"short_term": te.te_sentiment[1][2]} )
