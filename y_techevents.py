@@ -104,6 +104,8 @@ class y_techevents:
                 print ( f"DICT:   {ae_inst.__dict__}" )
                 print ( f"KEYS:   {ae_inst.__dict__.keys()}" )
                 print ( f"VALUES: {ae_inst.__dict__.values()}" )
+                print ( f"DIR:    {dir(ae_inst)}" )
+
                 return -2
         else:
             logging.info( f"{cmi_debug} - Data zone #4: [today]" )
