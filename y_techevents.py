@@ -23,7 +23,7 @@ class y_techevents:
     # global accessors
     symbol = ""         # class global
     te_sentiment = {}   # Dict contains a tuple of elements, e.g. (te_sml, te_timeframe, "Grey", "Sideways", "Neutral")
-    self.te_df0 = ""
+    te_df0 = ""
     te_resp0 = ""
     te_jsondata0 = ""
     te_zone = ""
