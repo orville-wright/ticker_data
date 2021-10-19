@@ -167,7 +167,7 @@ class y_techevents:
         logging.info( f"{cmi_debug} - Populate DF with Tech Events emphemerial dict data" )
         # self.te_df0 = pd.DataFrame.from_dict(self.te_sentiment, orient='index', columns=['Term', 'Window', 'Sentiment'])
         # self.te_df0 = pd.DataFrame.from_dict(self.te_sentiment, columns=['Term', 'Window', 'Sentiment'])
-        self.te_df0 = pd.DataFrame(self.data0, columns=[ 'Symbol', 'Today', 'Short', 'Mid', 'Long', 'Time' ] )
+        self.te_df0 = pd.DataFrame(data0, columns=[ 'Symbol', 'Today', 'Short', 'Mid', 'Long', 'Time' ] )
         logging.info( f"{cmi_debug} - Tech Event DF created" )
 
         return
