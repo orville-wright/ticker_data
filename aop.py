@@ -242,12 +242,10 @@ def main():
     if args['bool_te'] is True:
         cmi_debug = __name__+"::Tech_events_all.#1"
         te_targets = x.combo_listall_ranked()
+        nq = nquote(5, args)
+        nq.init_dummy_session()                      # note: this will set nasdaq magic cookie
+        te = y_techevents(3)
         for xte in te_targets['Symbol'].tolist():
-            print ( f"xte: {xte}" )
-            
-            """
-            nq = nquote(5, args)
-            nq.init_dummy_session()                      # note: this will set nasdaq magic cookie
             nq_symbol = xte.upper()
             nq.update_headers(nq_symbol, "stocks")         # set path: header object. doesnt touch secret nasdaq cookies
             nq.form_api_endpoint(nq_symbol, "stocks")      # set API endpoint url - default GUESS asset_class=stocks
@@ -258,7 +256,6 @@ def main():
             nq.get_nquote(nq_symbol.rstrip())
             wrangle_errors = nq.build_data()             # return num of data wrangeling errors we found & dealt with
             nq.build_df()
-            te = y_techevents(3)
             te.form_api_endpoints(nq_symbol)
             te.get_te_zones()
             te.build_te_data()
@@ -268,10 +265,9 @@ def main():
             nq.quote.update({"long_term": te.te_sentiment[3][2]} )
             te.build_te_df(1)
 
-            te.reset_te_df0()
-            print ( f"===== Tech Events performance Sentiment ==============================" )
-            print ( f"{te.te_df0}" )
-            """
+        te.reset_te_df0()
+        print ( f"===== Tech Events performance Sentiment ==============================" )
+        print ( f"{te.te_df0}" )
 
 # Summarize combo list key findings ##################################################################
         # Curious Outliers
