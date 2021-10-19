@@ -23,6 +23,7 @@ class y_techevents:
     # global accessors
     symbol = ""         # class global
     te_sentiment = {}   # Dict contains a tuple of elements, e.g. (te_sml, te_timeframe, "Grey", "Sideways", "Neutral")
+    self.te_df0 = ""
     te_resp0 = ""
     te_jsondata0 = ""
     te_zone = ""
@@ -148,7 +149,6 @@ class y_techevents:
 
         print ( f"Sentiment dict" )
         print ( f"{self.te_sentiment}" )
-
         """
         y = 0
         y += 1
@@ -156,10 +156,10 @@ class y_techevents:
             # craft final data structure.
             # NOTE: globally accessible and used by quote DF and quote DICT
             symbol=self.symbol
-            logging.info( f"%s - Build global Dataframe list: {symbol}" % cmi_debug )        # so we can access it natively if needed, without using pandas
-            self.data0 = [[ \
-               co_sym_lj, \
-               co_name_lj, \
+            logging.info( f"%s - Build Dataframe dataset: {symbol}" % cmi_debug )        # so we can access it natively if needed, without using pandas
+            data0 = [[ \
+               symbol, \
+               self.te_sentiment[0], \
                arrow_updown, \
                np.float(price_cl), \
                price_net_cl, \
@@ -170,13 +170,12 @@ class y_techevents:
                mkt_cap_cl, \
                price_timestamp, \
                time_now ]]
-
-        logging.info('%s - Drop ephemeral DF' % cmi_debug )
-        #self.quote_df0.drop(self.quote_df0.index, inplace=True)        # ensure the DF is empty
-
-        logging.info('%s - Populate DF with new quote data' % cmi_debug )
-        self.quote_df0 = pd.DataFrame(self.data0, columns=[ 'Symbol', 'Co_name', 'arrow_updown', 'Cur_price', 'Prc_change', 'Pct_change', 'Open_price', 'Prev_close', 'Vol', 'Mkt_cap', 'Exch_timestamp', 'Time' ] )
-        logging.info('%s - Quote DF created' % cmi_debug )
         """
+        # self.te_df0.drop(self.te_df0.index, inplace=True)        # ensure the DF is empty
+        logging.info( f"{cmi_debug} - Populate DF with Tech Events emphemerial dict data" )
+        self.te_df0 = self.pd.DataFrame.from_dict(self.sentiment, orient='index', columns=['Term', 'Window', 'Sentiment'])
+
+        #self.quote_df0 = pd.DataFrame(self.data0, columns=[ 'Symbol', 'Co_name', 'arrow_updown', 'Cur_price', 'Prc_change', 'Pct_change', 'Open_price', 'Prev_close', 'Vol', 'Mkt_cap', 'Exch_timestamp', 'Time' ] )
+        logging.info('%s - Tech Event DF created' % cmi_debug )
 
         return

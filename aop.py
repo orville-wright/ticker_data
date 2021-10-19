@@ -485,6 +485,8 @@ def main():
             print ( f"Not a regular symbol - prob Trust, ETF etc" )
 
         te.build_te_df(1)
+        print ( f"===== TE DF ==========================================================" )
+        print ( f"{te.te_df0}" )
 
     """
     EXAMPLE #2
