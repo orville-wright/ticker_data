@@ -327,7 +327,7 @@ class nquote:
                     jd20_null_errors += 1
                 else:
                     z += 1
-            logging.info( f"%s - NULL probe 20 (Probe #30 (API=premarket) / errors: {jd20_null_errors} / 8" % cmi_debug )
+            logging.info( f"%s - NULL probe 20 (API=watchlist) / errors: {jd20_null_errors} / 8" % cmi_debug )
             return jd20_null_errors
 
             # ZONE #3 watchlist zone....########################################
