@@ -87,7 +87,7 @@ class y_techevents:
         #
         logging.info( f"{cmi_debug} - Data zone #2: [chrt-evts-mod]..." )
         self.te_zone = self.soup.find(attrs={"id": "chrt-evts-mod"} )
-        logging.info( f"{cmi_debug} - Data zone #2: {len(self.te_zone)} lines extracted / Done" )
+        #logging.info( f"{cmi_debug} - Data zone #2: {len(self.te_zone)} lines extracted / Done" )
 
         logging.info( f"{cmi_debug} - Data zone #3: [<li>]..." )
         self.te_lizones = self.te_zone.find_all('li')
