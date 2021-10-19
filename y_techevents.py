@@ -83,13 +83,21 @@ class y_techevents:
         with requests.get( self.te_all_url, stream=True, timeout=5 ) as self.te_resp0:
             logging.info( f"{cmi_debug} - get() data / storing..." )
             self.soup = BeautifulSoup(self.te_resp0.text, 'html.parser')
-            logging.info( f"{cmi_debug} - Main data zone: {len(self.soup)} lines extracted / Done" )
+            logging.info( f"{cmi_debug} - Entire page data zone: {len(self.soup)} lines extracted / Done" )
         #
+        logging.info( f"{cmi_debug} - Data zone #1: [chrt-evts-mod]:", end="" )
         self.te_zone = self.soup.find(attrs={"id": "chrt-evts-mod"} )
+        logging.info( f"{len(self.te_zone)} lines extracted / Done" )
+
+        logging.info( f"{cmi_debug} - Data zone #2: [<li>]:", end="" )
         self.te_lizones = self.te_zone.find_all('li')
+        logging.info( f"{len(self.te_lizones)} lines extracted / Done" )
+
         #self.te_today = self.te_zone.find(attrs={"class": "Fz(xs) Mb(4px)"} )
+        logging.info( f"{cmi_debug} - Data zone #3: [today]" )
         self.te_today = self.te_zone.find(attrs={"class": "W(1/4)--mobp W(1/2) IbBox"} )
-        self.te_today_pat = self.te_zone.find(attrs={"class": "Mb(4px) Whs(nw)"} )
+        #logging.info( f"{cmi_debug} - Data zone #3: [today]" )
+        #self.te_today_pat = self.te_zone.find(attrs={"class": "Mb(4px) Whs(nw)"} )
         return
 
 
