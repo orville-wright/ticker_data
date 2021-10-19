@@ -57,7 +57,7 @@ class y_techevents:
         logging.info( f"{cmi_debug} - form API endpoint URL(s)" )
         self.symbol = symbol.upper()
         self.te_url = "https://finance.yahoo.com/chart/" + self.symbol + "?Technical="
-        self.te_all_url = "https://finance.yahoo.com/quote/" + self.symbol + "?p=" + self.symbol
+        self.te_all_url = "https://finance.yahoo.com/quote/" + self.symbol + "?p=" + self.symbol + "&.tsrc=fin-srch"
         self.te_short_url = "https://finance.yahoo.com/chart/" + self.symbol + "?Technical=short"
         self.te_mid_url = "https://finance.yahoo.com/chart/" + self.symbol + "?Technical=intermediate"
         self.te_long_url = "https://finance.yahoo.com/chart/" + self.symbol + "?Technical=long"
@@ -65,7 +65,7 @@ class y_techevents:
         logging.info( f"================================ Tech Events API endpoints ================================" )
         logging.info( f"{cmi_debug} - API endpoint #0: [ {self.te_url} ]" )
         logging.info( f"{cmi_debug} - API endpoint #1: [ {self.te_all_url} ]" )
-        logging.info( f"{cmi_debug} - API endpoint #1: [ {self.te_short_url} ]" )
+        logging.info( f"{cmi_debug} - API endpoint #2: [ {self.te_short_url} ]" )
         logging.info( f"{cmi_debug} - API endpoint #3: [ {self.te_mid_url} ]" )
         logging.info( f"{cmi_debug} - API endpoint #4: [ {self.te_long_url} ]" )
         return
