@@ -329,7 +329,12 @@ def main():
             if wrangle_errors > 0: print ( f"{wrangle_errors}", end="" )
             nq.build_df()
             te.form_api_endpoints(nq_symbol)
-            te.get_te_zones()
+            te_status = te.get_te_zones()
+            if te_status is not 0:
+                te.te_is_bad()
+                print ( f"!", end="" )
+            else:
+                print ( f"-", end="*" )
             te.build_te_data()
             nq.quote.update({"today_only": te.te_sentiment[0][2]} )
             nq.quote.update({"short_term": te.te_sentiment[1][2]} )

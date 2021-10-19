@@ -90,15 +90,22 @@ class y_techevents:
         #logging.info( f"{cmi_debug} - Data zone #2: {len(self.te_zone)} lines extracted / Done" )
 
         logging.info( f"{cmi_debug} - Data zone #3: [<li>]..." )
-        self.te_lizones = self.te_zone.find_all('li')
-        #logging.info( f"{cmi_debug} - Data zone #3: {len(self.te_lizones)} lines extracted / Done" )
-
-        #self.te_today = self.te_zone.find(attrs={"class": "Fz(xs) Mb(4px)"} )
-        logging.info( f"{cmi_debug} - Data zone #4: [today]" )
-        self.te_today = self.te_zone.find(attrs={"class": "W(1/4)--mobp W(1/2) IbBox"} )
-        #logging.info( f"{cmi_debug} - Data zone #3: [today]" )
-        #self.te_today_pat = self.te_zone.find(attrs={"class": "Mb(4px) Whs(nw)"} )
-        return
+        try:
+            self.te_lizones = self.te_zone.find_all('li')
+            #logging.info( f"{cmi_debug} - Data zone #3: {len(self.te_lizones)} lines extracted / Done" )
+        except AttributeError as ae_inst:
+            if type(ae_inst) == 'NoneType':
+                logging.info( f"{cmi_debug} - Data zone #3 / SCAN FAIL - EMPTY BS4 data" )
+                return -1
+                #self.te_today = self.te_zone.find(attrs={"class": "Fz(xs) Mb(4px)"}
+            else:
+                return -1
+        else:
+            logging.info( f"{cmi_debug} - Data zone #4: [today]" )
+            self.te_today = self.te_zone.find(attrs={"class": "W(1/4)--mobp W(1/2) IbBox"} )
+            #logging.info( f"{cmi_debug} - Data zone #3: [today]" )
+            #self.te_today_pat = self.te_zone.find(attrs={"class": "Mb(4px) Whs(nw)"} )
+            return 0
 
 
 # method #3
@@ -147,6 +154,37 @@ class y_techevents:
 
         logging.info('%s - populated new Tech Event dict' % cmi_debug )
         return y        # number of rows inserted into Tech events dict
+
+
+
+# method #3
+    def te_is_bad(self):
+        """
+        Build a Technical Events dict showing all [ BAD / N/A ] indicators
+        This method is leveraged if we experince issues scraping the TE indicators from the
+        the Tech performance page/zones becasue they are flakey & unreliable. (yahoo wants you
+        to pay for premium serivce to get access to them).
+        Dict structure: { key: (embeded 5 element tuple) }
+        e.g. {0: (te_sml, te_timeframe, "Grey", "Sideways", "Neutral") }
+        1.  tme_sml : (Short/Medium/Long)
+        2.  tm_timeframe : Time frame that this Tech Event covers (days/weeks/months)
+        3.  Tech Event Indicator: - set to N/A
+        4.  Tech Event Indicator: - set to N/A
+        5.  Tech Event Indicator: - set to N/A
+        """
+        cmi_debug = __name__+"::"+self.te_is_bad.__name__+".#"+str(self.yti)
+
+        logging.info( f"{cmi_debug} - CALLED" )
+        time_now = time.strftime("%H:%M:%S", time.localtime() )
+        logging.info( f"{cmi_debug} - Set ALL Tech Event indicators to BAD: N/A" )
+        te_today = "N/A"
+        self.te_sentiment.update({0: ("today_only", "1D", "N/A")} )
+        self.te_sentiment.update({1: ("short_term", "2W - 6W", "N/A")} )
+        self.te_sentiment.update({2: ("med_term", "6W - 9M", "N/A")} )
+        self.te_sentiment.update({3: ("long_term", "9M+", "N/A")} )
+        logging.info( f"{cmi_debug} - populated dict as BAD data: All values set to N/A" )
+        return 4        # number of rows inserted into Tech events dict
+
 
 
     def build_te_df(self, me):
