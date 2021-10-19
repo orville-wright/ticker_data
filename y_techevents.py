@@ -155,7 +155,7 @@ class y_techevents:
         ####################################################################
         # craft final data structure.
         # NOTE: globally accessible and used by quote DF and quote DICT
-        logging.info( f"%s - Build Dataframe dataset: {symbol}" % cmi_debug )        # so we can access it natively if needed, without using pandas
+        logging.info( f"{cmi_debug} - Build Dataframe dataset: {self.symbol}" )        # so we can access it natively if needed, without using pandas
         data0 = [[ \
            self.symbol, \
            self.te_sentiment[0][2], \
@@ -168,6 +168,6 @@ class y_techevents:
         # self.te_df0 = pd.DataFrame.from_dict(self.te_sentiment, orient='index', columns=['Term', 'Window', 'Sentiment'])
         # self.te_df0 = pd.DataFrame.from_dict(self.te_sentiment, columns=['Term', 'Window', 'Sentiment'])
         self.te_df0 = pd.DataFrame(self.data0, columns=[ 'Symbol', 'Today', 'Short', 'Mid', 'Long', 'Time' ] )
-        logging.info('%s - Tech Event DF created' % cmi_debug )
+        logging.info( f"{cmi_debug} - Tech Event DF created" )
 
         return
