@@ -72,13 +72,13 @@ class y_techevents:
 
 
 # method #2
-    def get_te_zones(self):
+    def get_te_zones(self, me):
         """
         Connect to finance.yahoo.com and extract (scrape) the raw JSON data out of
         the embedded webpage [finance.yahoo.com/chart/GOL?technical=short] html data table.
         Sabe JSON to class global attribute: self.te_resp0.text
         """
-        cmi_debug = __name__+"::"+self.get_te_zones.__name__+".#"+str(self.yti)
+        cmi_debug = __name__+"::"+self.get_te_zones.__name__+".#"+str(self.yti)+"."+str(me)
         logging.info( f"{cmi_debug} - IN" )
         with requests.get( self.te_all_url, stream=True, timeout=5 ) as self.te_resp0:
             logging.info( f"{cmi_debug} - get() data / storing..." )
@@ -94,13 +94,13 @@ class y_techevents:
             self.te_lizones = self.te_zone.find_all('li')
             #logging.info( f"{cmi_debug} - Data zone #3: {len(self.te_lizones)} lines extracted / Done" )
         except AttributeError as ae_inst:
-            if type(ae_inst) == 'NoneType':
+            if type(ae_inst) == None:
                 logging.info( f"{cmi_debug} - Data zone #3 / SCAN FAIL - EMPTY BS4 data" )
                 return -1
                 #self.te_today = self.te_zone.find(attrs={"class": "Fz(xs) Mb(4px)"}
             else:
-                logging.info( f"{cmi_debug} - Data zone #3 / Unknown FAIL - {ae_inst}" )
-                return -1
+                logging.info( f"{cmi_debug} - Data zone #3 / Unknown FAIL - {ae_inst[0]}" )
+                return -2
         else:
             logging.info( f"{cmi_debug} - Data zone #4: [today]" )
             self.te_today = self.te_zone.find(attrs={"class": "W(1/4)--mobp W(1/2) IbBox"} )

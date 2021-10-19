@@ -315,7 +315,7 @@ def main():
             nq_symbol = xte.strip().upper()
             print ( f"{xte}...", end="" )
             te.form_api_endpoints(nq_symbol)
-            te_status = te.get_te_zones()
+            te_status = te.get_te_zones(1)
             if te_status != 0:              # FAIL : cant get te_zone data
                 te.te_is_bad()              # FAIL : build FAILURE dict
                 te.build_te_df(1)           # FAIL: insert failure status into DataFrame for this symbol
@@ -511,7 +511,7 @@ def main():
         # add Tech Events Sentiment to quote dict{}
         te = y_techevents(2)
         te.form_api_endpoints(nq_symbol)
-        te.get_te_zones()
+        te.get_te_zones(2)
         te.build_te_data()
         nq.quote.update({"today_only": te.te_sentiment[0][2]} )
         nq.quote.update({"short_term": te.te_sentiment[1][2]} )
