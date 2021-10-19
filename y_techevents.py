@@ -147,7 +147,7 @@ class y_techevents:
         logging.info( f"{cmi_debug} - Create Tech Event Perf DataFrame" )
 
         print ( f"Sentiment dict" )
-        print ( f"{te.sentiment}" )
+        print ( f"{self.te_sentiment}" )
 
         """
         y = 0
