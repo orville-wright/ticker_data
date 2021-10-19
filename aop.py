@@ -247,7 +247,7 @@ def main():
         te = y_techevents(3)
         print ( f"Tech Events Perf candidates: {te_targets['Symbol'].tolist()}" )
         for xte in te_targets['Symbol'].tolist():
-            nq_symbol = xte.upper()
+            nq_symbol = xte.strip().upper()
             nq.update_headers(nq_symbol, "stocks")         # set path: header object. doesnt touch secret nasdaq cookies
             nq.form_api_endpoint(nq_symbol, "stocks")      # set API endpoint url - default GUESS asset_class=stocks
             ac = nq.learn_aclass(nq_symbol)
