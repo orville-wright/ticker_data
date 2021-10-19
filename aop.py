@@ -336,7 +336,7 @@ def main():
                 te.te_is_bad()
                 print ( f"!", end="" )      # FAIL : cant get te_zone data
                 logging.info( f"{cmi_debug} - FAILED to get Tech Event data: Clear all dicts" )
-                nq.quote.clear()
+                #nq.quote.clear()
                 te.te_sentiment.clear()
             else:
                 print ( f"^", end="" )     # GOOD : suceeded to get TE indicators
