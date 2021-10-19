@@ -309,8 +309,7 @@ def main():
         te_targets = x.combo_listall_ranked()
         cols = 1
         te = y_techevents(3)
-        print ( f"===== Tech Events performance Sentiment ==============================" )
-        print ( f"Tech Events Perf candidates: {te_targets['Symbol'].tolist()}" )
+        print ( f"\n===== Build Tech Events performance Sentiment ==============================" )
         for xte in te_targets['Symbol'].tolist():
             nq_symbol = xte.strip().upper()
             print ( f"{xte}...", end="" )
@@ -323,7 +322,7 @@ def main():
                 logging.info( f"{cmi_debug} - FAILED to get Tech Event data: Clear all dicts" )
                 te.te_sentiment.clear()
             else:
-                print ( f"^", end="" )     # GOOD : suceeded to get TE indicators
+                print ( f"+", end="" )     # GOOD : suceeded to get TE indicators
             te.build_te_data()
             te.build_te_df(1)
             cols += 1
