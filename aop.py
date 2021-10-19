@@ -330,7 +330,7 @@ def main():
             nq.build_df()
             te.form_api_endpoints(nq_symbol)
             te_status = te.get_te_zones()
-            if te_status is not 0:
+            if te_status != 0:
                 te.te_is_bad()
                 print ( f"!", end="" )
                 nq.quote.clear()
