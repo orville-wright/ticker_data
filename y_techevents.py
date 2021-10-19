@@ -91,7 +91,7 @@ class y_techevents:
 
         logging.info( f"{cmi_debug} - Data zone #3: [<li>]..." )
         self.te_lizones = self.te_zone.find_all('li')
-        logging.info( f"{cmi_debug} - Data zone #3: {len(self.te_lizones)} lines extracted / Done" )
+        #logging.info( f"{cmi_debug} - Data zone #3: {len(self.te_lizones)} lines extracted / Done" )
 
         #self.te_today = self.te_zone.find(attrs={"class": "Fz(xs) Mb(4px)"} )
         logging.info( f"{cmi_debug} - Data zone #4: [today]" )
