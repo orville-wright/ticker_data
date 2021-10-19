@@ -333,6 +333,8 @@ def main():
             if te_status is not 0:
                 te.te_is_bad()
                 print ( f"!", end="" )
+                nq.quote.clear()
+                te.sentiment.clear()
             else:
                 print ( f"-", end="*" )
             te.build_te_data()
