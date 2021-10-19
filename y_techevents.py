@@ -21,7 +21,8 @@ class y_techevents:
     """
 
     # global accessors
-    te_sentiment = {}   # Dit contains a tuple of elements, e.g. (te_sml, te_timeframe, "Grey", "Sideways", "Neutral")
+    symbol = ""         # class global
+    te_sentiment = {}   # Dict contains a tuple of elements, e.g. (te_sml, te_timeframe, "Grey", "Sideways", "Neutral")
     te_resp0 = ""
     te_jsondata0 = ""
     te_zone = ""
@@ -105,7 +106,7 @@ class y_techevents:
         """
         cmi_debug = __name__+"::"+self.build_te_data.__name__+".#"+str(self.yti)
 
-        logging.info( f"{cmi_debug} - IN" )
+        logging.info( f"{cmi_debug} - CALLED" )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         logging.info( f"{cmi_debug} - Scan quote Tech Event indicators" )
         te_today = self.te_today.next_element.next_element.string
@@ -137,3 +138,45 @@ class y_techevents:
 
         logging.info('%s - populated new Tech Event dict' % cmi_debug )
         return y        # number of rows inserted into Tech events dict
+
+
+    def build_te_df(self, me):
+        cmi_debug = __name__+"::"+self.build_te_df.__name__+".#"+str(self.yti)+"."+str(me)
+        logging.info( f"{cmi_debug} - CALLED" )
+        time_now = time.strftime("%H:%M:%S", time.localtime() )
+        logging.info( f"{cmi_debug} - Create Tech Event Perf DataFrame" )
+
+        print ( f"Sentiment dict" )
+        print ( f"{te.sentiment}" )
+
+        """
+        y = 0
+        y += 1
+            ####################################################################
+            # craft final data structure.
+            # NOTE: globally accessible and used by quote DF and quote DICT
+            symbol=self.symbol
+            logging.info( f"%s - Build global Dataframe list: {symbol}" % cmi_debug )        # so we can access it natively if needed, without using pandas
+            self.data0 = [[ \
+               co_sym_lj, \
+               co_name_lj, \
+               arrow_updown, \
+               np.float(price_cl), \
+               price_net_cl, \
+               price_pct_cl, \
+               open_price_cl, \
+               np.float(prev_close_cl), \
+               np.float(vol_abs_cl), \
+               mkt_cap_cl, \
+               price_timestamp, \
+               time_now ]]
+
+        logging.info('%s - Drop ephemeral DF' % cmi_debug )
+        #self.quote_df0.drop(self.quote_df0.index, inplace=True)        # ensure the DF is empty
+
+        logging.info('%s - Populate DF with new quote data' % cmi_debug )
+        self.quote_df0 = pd.DataFrame(self.data0, columns=[ 'Symbol', 'Co_name', 'arrow_updown', 'Cur_price', 'Prc_change', 'Pct_change', 'Open_price', 'Prev_close', 'Vol', 'Mkt_cap', 'Exch_timestamp', 'Time' ] )
+        logging.info('%s - Quote DF created' % cmi_debug )
+        """
+
+        return

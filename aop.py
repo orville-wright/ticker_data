@@ -484,6 +484,8 @@ def main():
         else:
             print ( f"Not a regular symbol - prob Trust, ETF etc" )
 
+        te.build_te_df(1)
+
     """
     EXAMPLE #2
     bigcharts.marketwatch.com - data via BS4 scraping
