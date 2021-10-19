@@ -243,6 +243,8 @@ def main():
         cmi_debug = __name__+"::Tech_events_all.#1"
         te_targets = x.combo_listall_ranked()
         for xte in te_targets['Symbol'].tolist():
+            print { f"xte: {xte}" )
+            """
             nq = nquote(5, args)
             nq.init_dummy_session()                      # note: this will set nasdaq magic cookie
             nq_symbol = xte.upper()
@@ -265,10 +267,10 @@ def main():
             nq.quote.update({"long_term": te.te_sentiment[3][2]} )
             te.build_te_df(1)
 
-        te.reset_te_df0()
-        print ( f"===== Tech Events performance Sentiment ==============================" )
-        print ( f"{te.te_df0}" )
-
+            te.reset_te_df0()
+            print ( f"===== Tech Events performance Sentiment ==============================" )
+            print ( f"{te.te_df0}" )
+            """
 
 # Summarize combo list key findings ##################################################################
         # Curious Outliers
