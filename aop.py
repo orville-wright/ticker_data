@@ -306,7 +306,7 @@ def main():
 # Get the TSML performance Sentiment for all stocks in combo DF ######################
     if args['bool_te'] is True:
         cmi_debug = __name__+"::Tech_events_all.#1"
-        te_targets = x.combo_listall_ranked()
+        te_targets = x.list_uniques()
         cols = 1
         te = y_techevents(3)
         print ( f"\n===== Build Tech Events performance Sentiment ==============================" )
@@ -331,12 +331,11 @@ def main():
                 cols = 1
             else:
                 print ( f" / ", end="" )
+            te.te_sentiment.clear()
 
         te.reset_te_df0()
         print ( f"\n===== Tech Events performance Sentiment ==============================" )
         print ( f"{te.te_df0}" )
-        print ( f"\n===== Tech Events DICT ==============================" )
-        print ( f"{te.te_sentiment}" )
     else:
         pass
 

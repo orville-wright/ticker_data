@@ -233,19 +233,28 @@ class combo_logic:
         Print the full contents of the combo DataFrame with DUPES
         Sorted by % Change
         """
-
         cmi_debug = __name__+"::"+self.combo_listall.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 40)
         return self.combo_df
 
+    def list_uniques(self):
+        """
+        Print the full contents of the combo DataFrame with DUPES removes
+        NOT sorted
+        """
+        cmi_debug = __name__+"::"+self.combo_listall.__name__+".#"+str(self.inst_uid)
+        logging.info('%s - IN' % cmi_debug )
+        pd.set_option('display.max_rows', None)
+        pd.set_option('max_colwidth', 40)
+        return self.combo_df.drop_duplicates(subset=['Symbol'])
+
     def combo_listall_ranked(self):
         """
         Print the full contents of the combo DataFrame with DUPES
         Sorted by % Change
         """
-
         cmi_debug = __name__+"::"+self.combo_listall_ranked.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
@@ -258,7 +267,6 @@ class combo_logic:
         Print a set of insights like Agerages and Mean etc
         Sorted by % Change & grouped by Insights
         """
-
         cmi_debug = __name__+"::"+self.combo_grouped.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
@@ -273,7 +281,6 @@ class combo_logic:
         Print the full contents of the combo DataFrame with the DUPES tagged & sorted by % Change.
         Will only list the dupes unless you have called tag_dupes() first, and then youll get the full DF
         """
-
         cmi_debug = __name__+"::"+self.combo_dupes_only_listall.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
@@ -291,11 +298,11 @@ class combo_logic:
 
     def polish_combo_df(self, me):
         """
-        Clean, Polish & Wax the main Combo DataFrame. We do a lot of heavy DF data generation/manipulation/insertion
-        Fill-out key collumn data that missing, incomplete and/or not reliable due to errors in initial data exttraction
+        Clean, Polish & Wax the main Combo DataFrame.
+        We do a lot of heavy DF data generation/manipulation/insertion here.
+        Fill-out key collumn data thats missing, incomplete and/or not reliable due to errors in initial data exttraction
         & collection process... becasue exchange data is not 100% reliable as we collect it in real time (surprisingly!)
         """
-
         cmi_debug = __name__+"::"+self.polish_combo_df.__name__+".#"+str(self.inst_uid)+"."+str(me)
         logging.info( f"{cmi_debug} - CALLED" )
 
