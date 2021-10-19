@@ -336,11 +336,12 @@ def main():
         te.reset_te_df0()
         print ( f"\n===== Tech Events performance Sentiment ==============================" )
         print ( f"{te.te_df0}" )
+        print ( f"\n===== Tech Events DICT ==============================" )
+        print ( f"{te.te_sentiment}" )
     else:
         pass
 
-    print ( f"\n===== Tech Events DICT ==============================" )
-    print ( f"{te.te_sentiment}" )
+
 
 # ML / NLP section #############################################################
 
