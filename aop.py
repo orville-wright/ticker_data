@@ -324,7 +324,9 @@ def main():
                 nq.form_api_endpoint(nq_symbol, ac)      # re-form API endpoint if default asset_class guess was wrong)
             nq.get_nquote(nq_symbol.rstrip())
             wrangle_errors = nq.build_data()             # return num of data wrangeling errors we found & dealt with
-            print ( f"{wrangle_errors}" )
+            if wrangle_errors == 0: print ( f"+", end="" )
+            if wrangle_errors == -1: print ( f"-", end="" )
+            if wrangle_errors > 0: print ( f"{wrangle_errors}", end="" )
             nq.build_df()
             te.form_api_endpoints(nq_symbol)
             te.get_te_zones()
@@ -334,6 +336,7 @@ def main():
             nq.quote.update({"med_term": te.te_sentiment[2][2]} )
             nq.quote.update({"long_term": te.te_sentiment[3][2]} )
             te.build_te_df(1)
+            cols += 1
             if cols == 8:
                 print ( f" " )  # onlhy print 8 symbols per row
                 cols = 1
