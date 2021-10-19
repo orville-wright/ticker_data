@@ -102,7 +102,7 @@ class y_techevents:
                 logging.info( f"{cmi_debug} - Data zone #3 / Unknown FAIL" )
                 print ( f"TYPE: {type(ae_inst)}" )
                 print ( f"DICT:   {ae_inst.__cause__}" )
-                print ( f"KEYS:   {ae_inst.__repr__" )
+                print ( f"KEYS:   {ae_inst.__repr__}" )
                 print ( f"VALUES: {ae_inst.__str__}" )
                 print ( f"VALUES: {ae_inst.args}" )
                 print ( f"DIR:    {dir(ae_inst)}" )
