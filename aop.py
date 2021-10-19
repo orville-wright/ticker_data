@@ -324,19 +324,20 @@ def main():
                 nq.form_api_endpoint(nq_symbol, ac)      # re-form API endpoint if default asset_class guess was wrong)
             nq.get_nquote(nq_symbol.rstrip())
             wrangle_errors = nq.build_data()             # return num of data wrangeling errors we found & dealt with
-            if wrangle_errors == 0: print ( f"+", end="" )
-            if wrangle_errors == -1: print ( f"-", end="" )
-            if wrangle_errors > 0: print ( f"{wrangle_errors}", end="" )
+            if wrangle_errors == 0: print ( f"+", end="" )      # no errors. GOOD
+            if wrangle_errors == -1: print ( f"-", end="" )     # major FAIL
+            if wrangle_errors > 0: print ( f"{wrangle_errors}", end="" )    # number of errors
             nq.build_df()
             te.form_api_endpoints(nq_symbol)
             te_status = te.get_te_zones()
             if te_status != 0:
                 te.te_is_bad()
-                print ( f"!", end="" )
+                print ( f"!", end="" )      # FAIL : cant get te_zone data
+                logging.info( f"{cmi_debug} - FAILED to get Tech Event data: Clear all dicts" )
                 nq.quote.clear()
-                te.sentiment.clear()
+                te.te_sentiment.clear()
             else:
-                print ( f"-", end="*" )
+                print ( f"=", end="^" )     # GOOD : suceeded to get TE indicators
             te.build_te_data()
             nq.quote.update({"today_only": te.te_sentiment[0][2]} )
             nq.quote.update({"short_term": te.te_sentiment[1][2]} )
