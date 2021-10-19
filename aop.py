@@ -245,6 +245,7 @@ def main():
         nq = nquote(5, args)
         nq.init_dummy_session()                      # note: this will set nasdaq magic cookie
         te = y_techevents(3)
+        print ( f"Tech Events Perf candidates: {te_targets['Symbol'].tolist()}" )
         for xte in te_targets['Symbol'].tolist():
             nq_symbol = xte.upper()
             nq.update_headers(nq_symbol, "stocks")         # set path: header object. doesnt touch secret nasdaq cookies
