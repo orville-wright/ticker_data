@@ -85,13 +85,13 @@ class y_techevents:
             self.soup = BeautifulSoup(self.te_resp0.text, 'html.parser')
             logging.info( f"{cmi_debug} - Entire page data zone: {len(self.soup)} lines extracted / Done" )
         #
-        logging.info( f"{cmi_debug} - Data zone #1: [chrt-evts-mod]:", end="" )
+        logging.info( f"{cmi_debug} - Data zone #1: [chrt-evts-mod]..." )
         self.te_zone = self.soup.find(attrs={"id": "chrt-evts-mod"} )
-        logging.info( f"{len(self.te_zone)} lines extracted / Done" )
+        logging.info( f"{cmi_debug} - Data zone #1: {len(self.te_zone)} lines extracted / Done" )
 
-        logging.info( f"{cmi_debug} - Data zone #2: [<li>]:", end="" )
+        logging.info( f"{cmi_debug} - Data zone #2: [<li>]..." )
         self.te_lizones = self.te_zone.find_all('li')
-        logging.info( f"{len(self.te_lizones)} lines extracted / Done" )
+        logging.info( f"{cmi_debug} - Data zone #2: {len(self.te_lizones)} lines extracted / Done" )
 
         #self.te_today = self.te_zone.find(attrs={"class": "Fz(xs) Mb(4px)"} )
         logging.info( f"{cmi_debug} - Data zone #3: [today]" )
