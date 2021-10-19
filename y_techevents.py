@@ -99,7 +99,7 @@ class y_techevents:
                 return -1
                 #self.te_today = self.te_zone.find(attrs={"class": "Fz(xs) Mb(4px)"}
             else:
-                logging.info( f"{cmi_debug} - Data zone #3 / Unknown FAIL - {ae_inst}" )
+                logging.info( f"{cmi_debug} - Data zone #3 / Unknown FAIL - type: {type(ae_inst)}" )
                 return -2
         else:
             logging.info( f"{cmi_debug} - Data zone #4: [today]" )
