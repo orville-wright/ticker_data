@@ -334,12 +334,10 @@ def main():
             te.te_sentiment.clear()
 
         te.reset_te_df0()
-        print ( f"\n\n\n" )
+        print ( f"\n\n" )
         print ( f"======= Hottest stocks BULLISH outlook across all ranges ============" )
         hot_result = te.te_df0[(te.te_df0['Today'] == 'Bullish') & (te.te_df0['Short'] == 'Bullish') & (te.te_df0['Mid'] == 'Bullish') & (te.te_df0['Long'] == 'Bullish')]
-        pretty_hot = te.te_df0[te.te_df0.isin({'Symbol': [], 'Today': ['Bullish'], 'Short': ['Bullish'], 'Mid': ['Bullish'], 'Long': ['Bullish']})]
         print ( f"{hot_result}" )
-        print ( f"{pretty_hot}" )
         print ( f"---------------------------------------------------------------------" )
     else:
         pass
