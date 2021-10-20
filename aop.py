@@ -338,7 +338,8 @@ def main():
         #print ( f"{te.te_df0}" )
         #mask = {'Today': ['Bullish'], 'Short': ['Bullish'], 'Mid': ['Bullish'], 'Long': ['Bullish']}
         #print ( f"{te.te_df0.isin(mask)}" )
-        print ( f"{te.te_df0[te.te_df0['Today', 'Short', 'Mid', 'Long'] = 'Bullish']}" )
+        hot_result = te.te_df0[te.te_df0['Today', 'Short', 'Mid', 'Long'] = 'Bullish']
+        print ( f"{hot_result}" )
     else:
         pass
 
