@@ -336,7 +336,7 @@ def main():
         te.reset_te_df0()
         print ( f"\n===== Tech Events performance Sentiment ==============================" )
         #print ( f"{te.te_df0}" )
-        mask = {'Today': 'Bullish', 'Short': 'Bullish', 'Mid': 'Bullish', 'Long': 'Bullish'}
+        mask = {'Today': ['Bullish'], 'Short': ['Bullish'], 'Mid': ['Bullish'], 'Long': ['Bullish']}
         print ( f"{te.te_df0.isin(mask)}" )
     else:
         pass
