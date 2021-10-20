@@ -337,10 +337,11 @@ def main():
         print ( f"\n===== Tech Events performance Sentiment ==============================" )
         #print ( f"{te.te_df0}" )
         #mask = {'Today': ['Bullish'], 'Short': ['Bullish'], 'Mid': ['Bullish'], 'Long': ['Bullish']}
-        print ( f"{te.te_df0.isin({'Today': ['Bullish'], 'Short': ['Bullish'], 'Mid': ['Bullish'], 'Long': ['Bullish']})}" )
+        #print ( f"{te.te_df0.isin({'Today': ['Bullish'], 'Short': ['Bullish'], 'Mid': ['Bullish'], 'Long': ['Bullish']})}" )
+        hot_result = te.te_df0[(te.te_df0['Today'] == 'Bullish') & (te.te_df0['Short'] == 'Bullish') & (te.te_df0['Mid'] == 'Bullish') & (te.te_df0['Long'] == 'Bullish')]
         #print ( f"{te.te_df0.isin('mask')}" )
         #hot_result = (te.te_df0['Today', 'Short', 'Mid', 'Long'] == 'Bullish')
-        #print ( f"{hot_result}" )
+        print ( f"{hot_result}" )
     else:
         pass
 
