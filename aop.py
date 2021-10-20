@@ -309,7 +309,7 @@ def main():
         te_targets = x.list_uniques()
         cols = 1
         te = y_techevents(3)
-        print ( f"\n===== Build Tech Events performance Sentiment ==============================" )
+        print ( f"\n===== Build Bullish/Bearish Outlook Sentiment ==============================" )
         for xte in te_targets['Symbol'].tolist():
             nq_symbol = xte.strip().upper()
             print ( f"{xte}...", end="" )
@@ -334,14 +334,10 @@ def main():
             te.te_sentiment.clear()
 
         te.reset_te_df0()
-        print ( f"\n===== Tech Events performance Sentiment ==============================" )
-        #print ( f"{te.te_df0}" )
-        #mask = {'Today': ['Bullish'], 'Short': ['Bullish'], 'Mid': ['Bullish'], 'Long': ['Bullish']}
-        #print ( f"{te.te_df0.isin({'Today': ['Bullish'], 'Short': ['Bullish'], 'Mid': ['Bullish'], 'Long': ['Bullish']})}" )
+        print ( f"======= Hottest stocks BULLISH outlook across all ranges ============" )
         hot_result = te.te_df0[(te.te_df0['Today'] == 'Bullish') & (te.te_df0['Short'] == 'Bullish') & (te.te_df0['Mid'] == 'Bullish') & (te.te_df0['Long'] == 'Bullish')]
-        #print ( f"{te.te_df0.isin('mask')}" )
-        #hot_result = (te.te_df0['Today', 'Short', 'Mid', 'Long'] == 'Bullish')
-        print ( f"{hot_result}" )
+        print ( f"{hot_result.reset_index(inplace=True, drop=True)}" )
+        print ( f"---------------------------------------------------------------------" )
     else:
         pass
 
