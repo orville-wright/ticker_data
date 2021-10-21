@@ -175,17 +175,18 @@ class y_techevents:
         print ( f"\n===== Build Bullish/Bearish outlook summary ==============================" )
         for this_sym in te_source['Symbol'].tolist():       # list of symbols to work on
             nq_symbol = this_sym.strip().upper()            # clearn each symbol (DF pads out with spaces)
-            print ( f"{this_sym}...", end="" )
+            print ( f"{this_sym}...", end="", flush=True )
             self.form_api_endpoints(nq_symbol)
             te_status = self.get_te_zones(me)
             if te_status != 0:                              # FAIL : cant get te_zone data
                 self.te_is_bad()                            # FAIL : build a FAILURE dict
                 self.build_te_df(me)                        # FAIL: insert failure status into DataFrame for this symbol
-                print ( f"!", end="" )
+                print ( f"!", end="", flush=True )
                 logging.info( f"{cmi_debug} - FAILED to get Tech Event data: Clear all dicts" )
                 self.te_sentiment.clear()
+                cols += 1
             else:
-                print ( f"+", end="" )      # GOOD : suceeded to get TE indicators
+                print ( f"+", end="", flush=True )      # GOOD : suceeded to get TE indicators
                 self.build_te_data(me)
                 self.build_te_df(me+1)      # debug helper, since we call method multiple times
                 cols += 1
@@ -194,7 +195,7 @@ class y_techevents:
                 print ( f" " )              # only print 8 symbols per row
                 cols = 1
             else:
-                print ( f" / ", end="" )
+                print ( f" / ", end="", flush=True )
             self.te_sentiment.clear()
 
         self.reset_te_df0()
