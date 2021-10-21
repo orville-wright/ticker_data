@@ -207,12 +207,14 @@ class y_techevents:
                 print ( f" / ", end="", flush=True )
             self.te_sentiment.clear()
 
+        """
         self.reset_te_df0()
         print ( f"\n\n" )
         print ( f"======= Hottest stocks BULLISH outlook across all ranges ============" )
         hot_result = self.te_df0[(self.te_df0['Today'] == 'Bullish') & (self.te_df0['Short'] == 'Bullish') & (self.te_df0['Mid'] == 'Bullish') & (self.te_df0['Long'] == 'Bullish')]
         print ( f"{hot_result}" )
         print ( f"---------------------------------------------------------------------" )
+        """
         return
 
 

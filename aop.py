@@ -305,50 +305,12 @@ def main():
 
 # Get the TSML performance Sentiment for all stocks in combo DF ######################
     if args['bool_te'] is True:
-        cmi_debug = __name__+"::Tech_events_all.#2"
-        te = y_techevents(4)
-        te.build_te_summary(x, 1)       # x = main INSTANCE:: combo_logic
-    else:
-        pass
-
-        """
         cmi_debug = __name__+"::Tech_events_all.#1"
-        te_targets = x.list_uniques()
-        cols = 1
-        te = y_techevents(3)
-        print ( f"\n===== Build Bullish/Bearish Outlook Sentiment ==============================" )
-        for xte in te_targets['Symbol'].tolist():
-            nq_symbol = xte.strip().upper()
-            print ( f"{xte}...", end="" )
-            te.form_api_endpoints(nq_symbol)
-            te_status = te.get_te_zones(1)
-            if te_status != 0:              # FAIL : cant get te_zone data
-                te.te_is_bad()              # FAIL : build FAILURE dict
-                te.build_te_df(1)           # FAIL: insert failure status into DataFrame for this symbol
-                print ( f"!", end="" )
-                logging.info( f"{cmi_debug} - FAILED to get Tech Event data: Clear all dicts" )
-                te.te_sentiment.clear()
-            else:
-                print ( f"+", end="" )     # GOOD : suceeded to get TE indicators
-                te.build_te_data(1)
-                te.build_te_df(2)
-            cols += 1
-            if cols == 8:
-                print ( f" " )  # onlhy print 8 symbols per row
-                cols = 1
-            else:
-                print ( f" / ", end="" )
-            te.te_sentiment.clear()
-
-        te.reset_te_df0()
-        print ( f"\n\n" )
-        print ( f"======= Hottest stocks BULLISH outlook across all ranges ============" )
-        hot_result = te.te_df0[(te.te_df0['Today'] == 'Bullish') & (te.te_df0['Short'] == 'Bullish') & (te.te_df0['Mid'] == 'Bullish') & (te.te_df0['Long'] == 'Bullish')]
-        print ( f"{hot_result}" )
-        print ( f"---------------------------------------------------------------------" )
+        te = y_techevents(1)
+        te.build_te_summary(x, 1)       # x = main INSTANCE:: combo_logic
+        print ( f"{te.te_df}" )
     else:
         pass
-    """
 
 
 # ML / NLP section #############################################################
