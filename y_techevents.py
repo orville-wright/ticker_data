@@ -157,8 +157,55 @@ class y_techevents:
         return y        # number of rows inserted into Tech events dict
 
 
+# method #4
+    def build_te_summary(self, combo_df, me):
+        """
+        Build a Perfromance Outlook Technical Events DataFrame that is...
+        A nice eary to read summary table
+        With Quick to identify stats on BUllish/Bearish Outlook
+        And can be quickly visually correlated to the Master Summary DataFrame
+        """
+        cmi_debug = __name__+"::"+self.build_te_summary.__name__+".#"+str(self.yti)+"."+str(me)
 
-# method #3
+        logging.info( f"{cmi_debug} - CALLED" )
+        time_now = time.strftime("%H:%M:%S", time.localtime() )
+        te_source = combo_df.list_uniques()    # work on the combo DataFrame (unique only, no DUPES)
+
+        cols = 1
+        print ( f"\n===== Build Bullish/Bearish outlook summary ==============================" )
+        for this_sym in te_source['Symbol'].tolist():       # list of symbols to work on
+            nq_symbol = this_sym.strip().upper()            # clearn each symbol (DF pads out with spaces)
+            print ( f"{this_sym}...", end="" )
+            self.form_api_endpoints(nq_symbol)
+            te_status = te.get_te_zones(1)
+            if te_status != 0:                              # FAIL : cant get te_zone data
+                self.te_is_bad()                            # FAIL : build a FAILURE dict
+                self.build_te_df(me)                        # FAIL: insert failure status into DataFrame for this symbol
+                print ( f"!", end="" )
+                logging.info( f"{cmi_debug} - FAILED to get Tech Event data: Clear all dicts" )
+                self.te_sentiment.clear()
+            else:
+                print ( f"+", end="" )      # GOOD : suceeded to get TE indicators
+                self.build_te_data(me)
+                self.build_te_df(me+1)      # debug helper, since we call method multiple times
+            cols += 1
+            if cols == 8:
+                print ( f" " )              # onlhy print 8 symbols per row
+                cols = 1
+            else:
+                print ( f" / ", end="" )
+            self.te_sentiment.clear()
+
+        self.reset_te_df0()
+        print ( f"\n\n" )
+        print ( f"======= Hottest stocks BULLISH outlook across all ranges ============" )
+        hot_result = self.te_df0[(self.te_df0['Today'] == 'Bullish') & (self.te_df0['Short'] == 'Bullish') & (self.te_df0['Mid'] == 'Bullish') & (self.te_df0['Long'] == 'Bullish')]
+        print ( f"{hot_result}" )
+        print ( f"---------------------------------------------------------------------" )
+        return
+
+
+# method #5
     def te_is_bad(self):
         """
         Build a Technical Events dict showing all [ BAD / N/A ] indicators
@@ -187,7 +234,7 @@ class y_techevents:
         return 4        # number of rows inserted into Tech events dict
 
 
-
+# method #6
     def build_te_df(self, me):
         """
         Add a ROW into the sentiment DataFrame
@@ -215,10 +262,9 @@ class y_techevents:
         te_temp_df0 = pd.DataFrame(data0, columns=[ 'Symbol', 'Today', 'Short', 'Mid', 'Long', 'Time' ] )
         self.te_df0 = self.te_df0.append(te_temp_df0, ignore_index=True)
         logging.info( f"{cmi_debug} - Tech Event DF created" )
-
         return
 
-
+# method #7
     def reset_te_df0(self):
         """
         Reset DataFrame index to be sequential, sarting from 0
@@ -227,9 +273,10 @@ class y_techevents:
         logging.info( f"{cmi_debug} - CALLED" )
         self.te_df0.reset_index(inplace=True, drop=True)
         logging.info( f"{cmi_debug} - completed" )
-
         return
 
+
+# method #8
     def te_into_nquote(self, nqinst):
         """
         Push the core Tech Event Indicators into their location within the nasdaq quote dict

@@ -305,6 +305,13 @@ def main():
 
 # Get the TSML performance Sentiment for all stocks in combo DF ######################
     if args['bool_te'] is True:
+        cmi_debug = __name__+"::Tech_events_all.#2"
+        te = y_techevents(4)
+        te.build_te_summary(x, 1)       # x = main INSTANCE:: combo_logic
+    else:
+        pass
+
+        """
         cmi_debug = __name__+"::Tech_events_all.#1"
         te_targets = x.list_uniques()
         cols = 1
@@ -341,7 +348,7 @@ def main():
         print ( f"---------------------------------------------------------------------" )
     else:
         pass
-
+    """
 
 
 # ML / NLP section #############################################################
