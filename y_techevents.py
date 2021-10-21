@@ -135,9 +135,9 @@ class y_techevents:
         y = 0
         self.te_sentiment.update({y: ("Today", "1D", te_today)} )
         y += 1
+        bullcount = 0
         for j in self.te_lizones:
             for i in j:
-                bullcount = 0
                 te_strings = i.strings
                 te_sml = next(te_strings)
                 te_timeframe = next(te_strings)
@@ -267,7 +267,7 @@ class y_techevents:
            self.te_sentiment[1][2], \
            self.te_sentiment[2][2], \
            self.te_sentiment[3][2], \
-           self.te_sentiment[4][0], \
+           self.te_sentiment[4], \
                time_now ]]
         # self.te_df0.drop(self.te_df0.index, inplace=True)        # ensure the DF is empty
         logging.info( f"{cmi_debug} - Populate DF with Tech Events emphemerial dict data" )
