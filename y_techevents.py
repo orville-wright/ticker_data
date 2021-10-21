@@ -240,7 +240,7 @@ class y_techevents:
         self.te_sentiment.update({1: ("short_term", "2W - 6W", "N/A")} )
         self.te_sentiment.update({2: ("med_term", "6W - 9M", "N/A")} )
         self.te_sentiment.update({3: ("long_term", "9M+", "N/A")} )
-        self.te_sentiment.update({4: 0)} )
+        self.te_sentiment.update({4: 0})
         logging.info( f"{cmi_debug} - populated dict as BAD data: All values set to N/A" )
         return 4        # number of rows inserted into Tech events dict
 
