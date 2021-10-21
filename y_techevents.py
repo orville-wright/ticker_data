@@ -177,7 +177,7 @@ class y_techevents:
             nq_symbol = this_sym.strip().upper()            # clearn each symbol (DF pads out with spaces)
             print ( f"{this_sym}...", end="" )
             self.form_api_endpoints(nq_symbol)
-            te_status = self.get_te_zones(1)
+            te_status = self.get_te_zones(me)
             if te_status != 0:                              # FAIL : cant get te_zone data
                 self.te_is_bad()                            # FAIL : build a FAILURE dict
                 self.build_te_df(me)                        # FAIL: insert failure status into DataFrame for this symbol
@@ -188,9 +188,10 @@ class y_techevents:
                 print ( f"+", end="" )      # GOOD : suceeded to get TE indicators
                 self.build_te_data(me)
                 self.build_te_df(me+1)      # debug helper, since we call method multiple times
-            cols += 1
+                cols += 1
+
             if cols == 8:
-                print ( f" " )              # onlhy print 8 symbols per row
+                print ( f" " )              # only print 8 symbols per row
                 cols = 1
             else:
                 print ( f" / ", end="" )
