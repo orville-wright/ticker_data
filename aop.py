@@ -308,7 +308,7 @@ def main():
         cmi_debug = __name__+"::Tech_events_all.#1"
         te = y_techevents(1)
         te.build_te_summary(x, 1)       # x = main INSTANCE:: combo_logic
-        print ( f"{te.te_df}" )
+        print ( f"{te.te_df0}" )
     else:
         pass
 
