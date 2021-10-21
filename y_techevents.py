@@ -132,11 +132,11 @@ class y_techevents:
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         logging.info( f"{cmi_debug} - Scan quote Tech Event indicators" )
         bullcount = 0
-        y = 0
-        y += 1
+        y = 0   # current dict index
         te_today = self.te_today.next_element.next_element.string
         self.te_sentiment.update({y: ("Today", "1D", te_today)} )
         if te_today == "Bullish": bullcount += 1
+        y += 1  # incr dict index
         for j in self.te_lizones:
             for i in j:
                 te_strings = i.strings
@@ -148,14 +148,14 @@ class y_techevents:
                     grey_neutral = re.search('90deg', str(red) )
                     if red_down:        # Red Bearish
                         self.te_sentiment.update({y: (te_sml, te_timeframe, "Bearish")} )
-                        y += 1
+                        y += 1          # incre dict index
                     elif grey_neutral:  # Grey Neutral
                         self.te_sentiment.update({y: (te_sml, te_timeframe, "Neutral")} )
-                        y += 1
+                        y += 1          # incre dict index
                     else:               # Green Bullish
                         self.te_sentiment.update({y: (te_sml, te_timeframe, "Bullish")} )
                         bullcount += 1
-                        y += 1
+                        y += 1          # incre dict index
                 else:
                     pass
                     self.te_sentiment.update({y: (te_sml, te_timeframe, "N/A")} )
@@ -263,7 +263,7 @@ class y_techevents:
         # NOTE: globally accessible and used by quote DF and quote DICT
         logging.info( f"{cmi_debug} - Build Dataframe dataset: {self.symbol}" )        # so we can access it natively if needed, without using pandas
         print ( f"{self.te_sentiment}" )
-        
+
         data0 = [[ \
            self.symbol, \
            self.te_sentiment[0][2], \
