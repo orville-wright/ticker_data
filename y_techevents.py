@@ -262,8 +262,6 @@ class y_techevents:
         # craft final data structure.
         # NOTE: globally accessible and used by quote DF and quote DICT
         logging.info( f"{cmi_debug} - Build Dataframe dataset: {self.symbol}" )        # so we can access it natively if needed, without using pandas
-        print ( f"{self.te_sentiment}" )
-
         data0 = [[ \
            self.symbol, \
            self.te_sentiment[0][2], \
