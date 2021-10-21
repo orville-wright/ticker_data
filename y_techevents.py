@@ -177,7 +177,7 @@ class y_techevents:
             nq_symbol = this_sym.strip().upper()            # clearn each symbol (DF pads out with spaces)
             print ( f"{this_sym}...", end="" )
             self.form_api_endpoints(nq_symbol)
-            te_status = te.get_te_zones(1)
+            te_status = self.get_te_zones(1)
             if te_status != 0:                              # FAIL : cant get te_zone data
                 self.te_is_bad()                            # FAIL : build a FAILURE dict
                 self.build_te_df(me)                        # FAIL: insert failure status into DataFrame for this symbol
