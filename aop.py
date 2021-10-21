@@ -309,8 +309,8 @@ def main():
         te = y_techevents(1)
         te.build_te_summary(x, 1)       # x = main INSTANCE:: combo_logic
         print ( f"\n\n" )
-        print ( f"======= Hottest stocks with BULLISH outlook across all ranges ============" )
-        print ( f"{te.te_df0.sort_values(by=['Bullish'], ascending=False)}" )
+        print ( f"================== Hottest BULLISH stocks ==================" )
+        print ( f"{te.te_df0[['Symbol', 'Today', 'Short', 'Mid', 'Long', 'Bullish']].sort_values(by=['Bullish'], ascending=False)}" )
         print ( f"---------------------------------------------------------------------" )
     else:
         pass
