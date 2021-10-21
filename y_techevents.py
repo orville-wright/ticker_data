@@ -22,7 +22,12 @@ class y_techevents:
 
     # global accessors
     symbol = ""         # class global
-    te_sentiment = {}   # Dict contains a tuple of elements, e.g. (te_sml, te_timeframe, "Grey", "Sideways", "Neutral")
+    te_sentiment = {}   # Dict contains Tech Events elements...e.g.
+                        # 0: ("today_only", "1D", Bullish/Bearish/Neutral or N/A )
+                        # 1: ("short_term", "2W - 6W", Bullish/Bearish/Neutral or N/A )
+                        # 2: ("med_term", "6W - 9M", Bullish/Bearish/Neutral or N/A )
+                        # 3: ("long_term", "9M+", Bullish/Bearish/Neutral or N/A )
+                        # 4: count_of_Bullish
     te_df0 = ""
     te_resp0 = ""
     te_jsondata0 = ""
@@ -38,7 +43,7 @@ class y_techevents:
     def __init__(self, yti):
         cmi_debug = __name__+"::"+self.__init__.__name__
         logging.info( f"{cmi_debug} - Instantiate.#{yti}" )
-        self.te_df0 = pd.DataFrame(columns=[ 'Symbol', 'Today', 'Short', 'Mid', 'Long', 'Time' ] )  # init empty DF with preset columns
+        self.te_df0 = pd.DataFrame(columns=[ 'Symbol', 'Today', 'Short', 'Mid', 'Long', 'Bullish', 'Time' ] )  # init empty DF with preset columns
         self.yti = yti
         return
 
@@ -132,6 +137,7 @@ class y_techevents:
         y += 1
         for j in self.te_lizones:
             for i in j:
+                bullcount = 0
                 te_strings = i.strings
                 te_sml = next(te_strings)
                 te_timeframe = next(te_strings)
@@ -147,12 +153,14 @@ class y_techevents:
                         y += 1
                     else:               # Green Bullish
                         self.te_sentiment.update({y: (te_sml, te_timeframe, "Bullish")} )
+                        bullcount += 1
                         y += 1
                 else:
                     pass
                     self.te_sentiment.update({y: (te_sml, te_timeframe, "N/A")} )
                     y += 1
 
+        self.te_sentiment.update({y: bullcount} )
         logging.info('%s - populated new Tech Event dict' % cmi_debug )
         return y        # number of rows inserted into Tech events dict
 
@@ -232,6 +240,7 @@ class y_techevents:
         self.te_sentiment.update({1: ("short_term", "2W - 6W", "N/A")} )
         self.te_sentiment.update({2: ("med_term", "6W - 9M", "N/A")} )
         self.te_sentiment.update({3: ("long_term", "9M+", "N/A")} )
+        self.te_sentiment.update({4: 0)} )
         logging.info( f"{cmi_debug} - populated dict as BAD data: All values set to N/A" )
         return 4        # number of rows inserted into Tech events dict
 
@@ -258,10 +267,11 @@ class y_techevents:
            self.te_sentiment[1][2], \
            self.te_sentiment[2][2], \
            self.te_sentiment[3][2], \
+           self.te_sentiment[4][0], \
                time_now ]]
         # self.te_df0.drop(self.te_df0.index, inplace=True)        # ensure the DF is empty
         logging.info( f"{cmi_debug} - Populate DF with Tech Events emphemerial dict data" )
-        te_temp_df0 = pd.DataFrame(data0, columns=[ 'Symbol', 'Today', 'Short', 'Mid', 'Long', 'Time' ] )
+        te_temp_df0 = pd.DataFrame(data0, columns=[ 'Symbol', 'Today', 'Short', 'Mid', 'Long', 'Bullish', 'Time' ] )
         self.te_df0 = self.te_df0.append(te_temp_df0, ignore_index=True)
         logging.info( f"{cmi_debug} - Tech Event DF created" )
         return
@@ -289,5 +299,6 @@ class y_techevents:
         nqinst.quote.update({"short_term": self.te_sentiment[1][2]} )
         nqinst.quote.update({"med_term": self.te_sentiment[2][2]} )
         nqinst.quote.update({"long_term": self.te_sentiment[3][2]} )
+        nqinst.quote.update({"Bull_count": self.te_sentiment[4][0]} )
         logging.info( f"{cmi_debug} - completed" )
         return
