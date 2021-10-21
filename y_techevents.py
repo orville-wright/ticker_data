@@ -299,6 +299,6 @@ class y_techevents:
         nqinst.quote.update({"short_term": self.te_sentiment[1][2]} )
         nqinst.quote.update({"med_term": self.te_sentiment[2][2]} )
         nqinst.quote.update({"long_term": self.te_sentiment[3][2]} )
-        nqinst.quote.update({"Bull_count": self.te_sentiment[4][0]} )
+        nqinst.quote.update({"Bull_count": self.te_sentiment[4] )
         logging.info( f"{cmi_debug} - completed" )
         return
