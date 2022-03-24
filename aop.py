@@ -323,7 +323,7 @@ def main():
         print ( f"========== Hottest stocks Bullish status =============" )
         print ( f"{te.te_df0[['Symbol', 'Today', 'Short', 'Mid', 'Long', 'Bullish']].sort_values(by=['Bullish'], ascending=False)}" )
         print ( f"------------------------------------------------------" )
-        x.list_uniques()
+        print ( x.list_uniques() )
     else:
         pass
 
