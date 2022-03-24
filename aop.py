@@ -318,12 +318,11 @@ def main():
         # would be good to check if this symbol is also in the UNUSUAL UP table also.
         #     If it is, then add Vol_pct to table also
         #     Also add Index # from main Full Combo table  (make visual lookup quicker/easier)
-        #
+        #  te_uniques = x.list_uniques()
         print ( f"\n\n" )
         print ( f"========== Hottest stocks Bullish status =============" )
         print ( f"{te.te_df0[['Symbol', 'Today', 'Short', 'Mid', 'Long', 'Bullish']].sort_values(by=['Bullish'], ascending=False)}" )
         print ( f"------------------------------------------------------" )
-        print ( x.list_uniques() )
     else:
         pass
 
