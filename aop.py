@@ -321,7 +321,7 @@ def main():
         #  te_uniques = x.list_uniques()
         print ( f"\n\n" )
         print ( f"========== Hottest stocks Bullish status =============" )
-        print ( f"{te.te_df0[['Symbol', 'Today', 'Short', 'Mid', 'Long', 'Bullish']].sort_values(by=['Bullish'], ascending=False)}" )
+        print ( f"{te.te_df0[['Symbol', 'Today', 'Short', 'Mid', 'Long', 'Bullcount', 'Senti']].sort_values(by=['Bullcount'], ascending=False)}" )
         print ( f"------------------------------------------------------" )
     else:
         pass
