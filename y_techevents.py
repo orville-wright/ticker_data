@@ -185,7 +185,7 @@ class y_techevents:
     def build_te_summary(self, combo_df, me):
         """
         Build a Perfromance Outlook Technical Events DataFrame that is...
-        A nice eary to read summary table
+        A nice easy to read summary table
         With Quick to identify stats on BUllish/Bearish Outlook
         And can be quickly visually correlated to the Master Summary DataFrame
         """
@@ -231,7 +231,8 @@ class y_techevents:
         Build a Technical Events dict showing all [ BAD / N/A ] indicators
         This method is leveraged if we experince issues scraping the TE indicators from the
         the Tech performance page/zones becasue they are flakey & unreliable. (yahoo wants you
-        to pay for premium serivce to get access to them).
+        to pay for premium serivce to get access to them). Also, some tickers dont contain TE data
+        (for example: some ETF's, Funds, Trusts)
         Dict structure: { key: (embeded 5 element tuple) }
         e.g. {0: (te_sml, te_timeframe, "Grey", "Sideways", "Neutral") }
         1.  tme_sml : (Short/Medium/Long)
@@ -244,13 +245,14 @@ class y_techevents:
 
         logging.info( f"{cmi_debug} - CALLED" )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
-        logging.info( f"{cmi_debug} - Set ALL Tech Event indicators to BAD: N/A" )
+        logging.info( f"{cmi_debug} - Set ALL Tech Event indicators to BAD: N/A and 0" )
         te_today = "N/A"
         self.te_sentiment.update({0: ("today_only", "1D", "N/A")} )
         self.te_sentiment.update({1: ("short_term", "2W - 6W", "N/A")} )
         self.te_sentiment.update({2: ("med_term", "6W - 9M", "N/A")} )
         self.te_sentiment.update({3: ("long_term", "9M+", "N/A")} )
         self.te_sentiment.update({4: 0})
+        self.te_sentiment.update({5: 0})
         logging.info( f"{cmi_debug} - populated dict as BAD data: All values set to N/A" )
         return 4        # number of rows inserted into Tech events dict
 
