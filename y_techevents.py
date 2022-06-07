@@ -44,7 +44,7 @@ class y_techevents:
     def __init__(self, yti):
         cmi_debug = __name__+"::"+self.__init__.__name__
         logging.info( f"{cmi_debug} - Instantiate.#{yti}" )
-        self.te_df0 = pd.DataFrame(columns=[ 'Symbol', 'Today', 'Short', 'Mid', 'Long', 'Bullish', 'Time' ] )  # init empty DF with preset columns
+        self.te_df0 = pd.DataFrame(columns=[ 'Symbol', 'Today', 'Short', 'Mid', 'Long', 'Bullcount', 'Senti', 'Time' ] )  # init empty DF with preset columns
         self.yti = yti
         return
 
@@ -278,10 +278,11 @@ class y_techevents:
            self.te_sentiment[2][2], \
            self.te_sentiment[3][2], \
            self.te_sentiment[4], \
-               time_now ]]
+           self.te_sentiment[5], \
+           time_now ]]
         # self.te_df0.drop(self.te_df0.index, inplace=True)        # ensure the DF is empty
         logging.info( f"{cmi_debug} - Populate DF with Tech Events emphemerial dict data" )
-        te_temp_df0 = pd.DataFrame(data0, columns=[ 'Symbol', 'Today', 'Short', 'Mid', 'Long', 'Bullish', 'Time' ] )
+        te_temp_df0 = pd.DataFrame(data0, columns=[ 'Symbol', 'Today', 'Short', 'Mid', 'Long', 'Bullcount', 'Senti', 'Time' ] )
         self.te_df0 = self.te_df0.append(te_temp_df0, ignore_index=True)
         logging.info( f"{cmi_debug} - Tech Event DF created" )
         return
@@ -310,5 +311,6 @@ class y_techevents:
         nqinst.quote.update({"med_term": self.te_sentiment[2][2]} )
         nqinst.quote.update({"long_term": self.te_sentiment[3][2]} )
         nqinst.quote.update({"Bull_count": self.te_sentiment[4]} )
+        nqinst.quote.update({"Senti_algo": self.te_sentiment[5]} )
         logging.info( f"{cmi_debug} - completed" )
         return
