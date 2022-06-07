@@ -145,7 +145,8 @@ class y_techevents:
         # get live sentiment for today's trading session
         te_today = self.te_today.next_element.next_element.string
         self.te_sentiment.update({y: ("Today", "1D", te_today)} )
-        if te_today == "Bullish": bullcount += 1
+        if te_today == "Bullish":
+            bullcount += 1
             rankalgo += 4
         if te_today == "Bearish": rankalgo += -2
         if te_today == "Neutral": bullcount += 1
