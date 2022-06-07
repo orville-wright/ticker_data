@@ -121,18 +121,17 @@ class y_techevents:
         Build-out Perfromance Outlook Technical Events dict
         Dict structure: { key: (embeded 5 element tuple) }
         e.g. {0: (te_sml, te_timeframe, "Grey", "Sideways", "Neutral") }
-        1.  tme_sml : (Short/Medium/Long)
-        2.  tm_timeframe : Time frame that this Tech Event covers (days/weeks/months)
-        3.  Tech Event Indicator: Red/Grey/Green   * not included in final dict
-        4.  Tech Event Indicator: Down/Sideways/Up *  not included in final dict
-        5.  Tech Event Indicator: Bearish/Neutral/Bullish
+            1.  tme_sml : (Short/Medium/Long)
+            2.  tm_timeframe : Time frame that this Tech Event covers (days/weeks/months)
+            3.  Tech Event Indicator: Red/Grey/Green   * not included in final dict
+            4.  Tech Event Indicator: Down/Sideways/Up *  not included in final dict
+            5.  Tech Event Indicator: Bearish/Neutral/Bullish
 
         sentiment ranking algo
-        BUllish = 4
-        Neutral = 1
-        N/A = 0
-        Bearish = -2
-
+            BUllish = 4
+            Neutral = 1
+            N/A = 0
+            Bearish = -2
         """
         cmi_debug = __name__+"::"+self.build_te_data.__name__+".#"+str(self.yti)+"."+str(me)
 
@@ -141,11 +140,19 @@ class y_techevents:
         logging.info( f"{cmi_debug} - Scan quote Tech Event indicators" )
         bullcount = 0
         rankalgo = 0
-        y = 0   # current dict index
+        y = 0   # current dict key index
+
+        # get live sentiment for today's trading session
         te_today = self.te_today.next_element.next_element.string
         self.te_sentiment.update({y: ("Today", "1D", te_today)} )
         if te_today == "Bullish": bullcount += 1
-        y += 1  # incr dict index
+            rankalgo += 4
+        if te_today == "Bearish": rankalgo += -2
+        if te_today == "Neutral": bullcount += 1
+        if te_today == "N/A": bullcount += 0
+        y += 1  # incr dict key index
+
+        # get historical sentiment
         for j in self.te_lizones:
             for i in j:
                 te_strings = i.strings
