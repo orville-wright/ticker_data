@@ -149,8 +149,8 @@ class y_techevents:
             bullcount += 1
             rankalgo += 4
         if te_today == "Bearish": rankalgo += -2
-        if te_today == "Neutral": bullcount += 1
-        if te_today == "N/A": bullcount += 0
+        if te_today == "Neutral": rankalgo += 1
+        if te_today == "N/A": rankalgo += 0
         y += 1  # incr dict key index
 
         # get historical sentiment
