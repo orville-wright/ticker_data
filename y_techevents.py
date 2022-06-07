@@ -28,6 +28,7 @@ class y_techevents:
                         # 2: ("med_term", "6W - 9M", Bullish/Bearish/Neutral or N/A )
                         # 3: ("long_term", "9M+", Bullish/Bearish/Neutral or N/A )
                         # 4: count_of_Bullish
+                        # 5: Tech sentiment computed ranking
     te_df0 = ""
     te_resp0 = ""
     te_jsondata0 = ""
@@ -125,6 +126,13 @@ class y_techevents:
         3.  Tech Event Indicator: Red/Grey/Green   * not included in final dict
         4.  Tech Event Indicator: Down/Sideways/Up *  not included in final dict
         5.  Tech Event Indicator: Bearish/Neutral/Bullish
+
+        sentiment ranking algo
+        BUllish = 4
+        Neutral = 1
+        N/A = 0
+        Bearish = -2
+
         """
         cmi_debug = __name__+"::"+self.build_te_data.__name__+".#"+str(self.yti)+"."+str(me)
 
@@ -132,6 +140,7 @@ class y_techevents:
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         logging.info( f"{cmi_debug} - Scan quote Tech Event indicators" )
         bullcount = 0
+        rankalgo = 0
         y = 0   # current dict index
         te_today = self.te_today.next_element.next_element.string
         self.te_sentiment.update({y: ("Today", "1D", te_today)} )
@@ -148,20 +157,26 @@ class y_techevents:
                     grey_neutral = re.search('90deg', str(red) )
                     if red_down:        # Red Bearish
                         self.te_sentiment.update({y: (te_sml, te_timeframe, "Bearish")} )
+                        rankalgo += -2
                         y += 1          # incre dict index
                     elif grey_neutral:  # Grey Neutral
                         self.te_sentiment.update({y: (te_sml, te_timeframe, "Neutral")} )
+                        rankalgo += 1
                         y += 1          # incre dict index
                     else:               # Green Bullish
                         self.te_sentiment.update({y: (te_sml, te_timeframe, "Bullish")} )
                         bullcount += 1
+                        rankalgo += 4
                         y += 1          # incre dict index
                 else:
                     pass
                     self.te_sentiment.update({y: (te_sml, te_timeframe, "N/A")} )
+                    rankalgo += 0
                     y += 1
 
         self.te_sentiment.update({y: bullcount} )
+        y += 1         # advance dict pointer
+        self.te_sentiment.update({y: rankalgo} )
         logging.info('%s - populated new Tech Event dict' % cmi_debug )
         return y        # number of rows inserted into Tech events dict
 
