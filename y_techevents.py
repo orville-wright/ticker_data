@@ -127,12 +127,33 @@ class y_techevents:
             4.  Tech Event Indicator: Down/Sideways/Up *  not included in final dict
             5.  Tech Event Indicator: Bearish/Neutral/Bullish
 
-        sentiment ranking algo
-            BUllish = 4
-            Neutral = 1
-            N/A = 0
-            Bearish = -2
+        Bull-Bear sentiment ranking algo
+        ================================
+        TODO: add positional weightings to Bullish/Bearish algo
+
+            Bullish = +4  (current algo: all timframee windows)
+            TODO*   = +5 (Today)
+                    = +4 (Short/mid/long)
+
+            Neutral = +1 (current algo: all timframee windows)
+            TOFDO*  = keep as +1 for all
+
+            N/A     = 0
+            TODO*   = Keep, but need smater logic why N/A's are surfacing
+
+            Bearish = -4  (current algo: all timframee windows)
+            TODO*   = -5 (Today)
+                    = -4 (short)
+                    = -4 (mid)
+                    = -3 (long)
         """
+        # algo hinter Dict with embeded tuple
+        bb_weights = { 'Bullish': (Today, 5, Short, 4, Mid, 4, Long, 4),
+                        'Neutral': (Today, 1, Short, 1, Mid, 1, Long, 1),
+                        'N/A': (Today, 0, Short, 0, Mid, 0, Long, 0),
+                        'Bearish': (Today, -5, Short, -4, Mid, -4, Long, -3)
+                        }
+
         cmi_debug = __name__+"::"+self.build_te_data.__name__+".#"+str(self.yti)+"."+str(me)
 
         logging.info( f"{cmi_debug} - CALLED" )
@@ -145,6 +166,12 @@ class y_techevents:
         # get live sentiment for today's trading session
         te_today = self.te_today.next_element.next_element.string
         self.te_sentiment.update({y: ("Today", "1D", te_today)} )
+        #
+        timeframe_window = bb_weights.get(te_today)    # select typple index that matches timeframe
+        z = y+1
+        rankalgo = timeframe_window[z]                 # get weighting for @pos TODAY
+        #
+
         if te_today == "Bullish":
             bullcount += 1
             rankalgo += 4
@@ -163,18 +190,33 @@ class y_techevents:
                     red = i.svg.parent.contents
                     red_down = re.search('180deg', str(red) )
                     grey_neutral = re.search('90deg', str(red) )
-                    if red_down:        # Red Bearish
+                    if red_down:        # Red = Bearish
                         self.te_sentiment.update({y: (te_sml, te_timeframe, "Bearish")} )
                         rankalgo += -2
+                        #
+                        timeframe_window = bb_weights.get('Bearish')    # select typple index that matches timeframe
+                        z = y+1
+                        rankalgo = timeframe_window[z]                 # get weighting for @pos
+                        #
                         y += 1          # incre dict index
-                    elif grey_neutral:  # Grey Neutral
+                    elif grey_neutral:  # Grey = Neutral
                         self.te_sentiment.update({y: (te_sml, te_timeframe, "Neutral")} )
                         rankalgo += 1
+                        #
+                        timeframe_window = bb_weights.get(' Neutral')    # select typple index that matches timeframe
+                        z = y+1
+                        rankalgo = timeframe_window[z]                 # get weighting for @pos
+                        #
                         y += 1          # incre dict index
-                    else:               # Green Bullish
+                    else:               # Green = Bullish
                         self.te_sentiment.update({y: (te_sml, te_timeframe, "Bullish")} )
                         bullcount += 1
                         rankalgo += 4
+                        #
+                        timeframe_window = bb_weights.get('Bullish')    # select typple index that matches timeframe
+                        z = y+1
+                        rankalgo = timeframe_window[z]                 # get weighting for @pos
+                        #
                         y += 1          # incre dict index
                 else:
                     pass
