@@ -199,18 +199,20 @@ class y_techevents:
                     red_down = re.search('180deg', str(red) )
                     grey_neutral = re.search('90deg', str(red) )
                     if red_down:        # Red = Bearish
+                        te_bb_state = 'Bearish'
                         self.te_sentiment.update({y: (te_sml, te_timeframe, "Bearish")} )
 
                         # positional ranking algo
-                        timeframe_window = bb_weights.get(te_timeframe)    # select typple index that matches timeframe
+                        timeframe_window = bb_weights.get(te_sml)    # select typple index that matches timeframe
                         z = y+1
                         rankalgo = timeframe_window[z]                 # get rank weighting for @pos TODAY
-                        logging.info( f"{cmi_debug} - y_col:{y} / te_timeframe:{te_timeframe} / rank:{rankalgo}" )
+                        logging.info( f"{cmi_debug} - y_col:{y} / te_sml:{te_sml} / rank:{rankalgo}" )
                         if te_timeframe == "Bullish": bullcount += 1
                         #
 
                         y += 1          # incre dict index (timeframe column)
                     elif grey_neutral:  # Grey = Neutral
+                        te_bb_state = 'Neutral'
                         self.te_sentiment.update({y: (te_sml, te_timeframe, "Neutral")} )
 
                         # positional ranking algo
@@ -223,6 +225,7 @@ class y_techevents:
 
                         y += 1          # incre dict index
                     else:               # Green = Bullish
+                        te_bb_state = 'Bullish'
                         self.te_sentiment.update({y: (te_sml, te_timeframe, "Bullish")} )
 
                         # positional ranking algo
@@ -237,6 +240,7 @@ class y_techevents:
                         y += 1          # incre dict index
                 else:
                     pass
+                    te_bb_state = 'N/A'
                     self.te_sentiment.update({y: (te_sml, te_timeframe, "N/A")} )
                     rankalgo += 0
                     y += 1
