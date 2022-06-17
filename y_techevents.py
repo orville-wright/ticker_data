@@ -131,6 +131,11 @@ class y_techevents:
         ================================
         TODO: add positional weightings to Bullish/Bearish algo
 
+            col:0 = today
+            col:1 = short / 2W - 6W
+            col:2 / mid / 6W - 9W
+            col:3 / long / 9M
+
             Bullish = +4  (current algo: all timframee windows)
             TODO*   = +5 (Today)
                     = +4 (Short/mid/long)
@@ -151,10 +156,10 @@ class y_techevents:
         #logging.disable(20)                 # DISABLE Logging
 
         # algo hinter Dict with embeded tuple
-        bb_weights = { 'Bullish': ('Today', 5, 'Short', 4, 'Mid', 4, 'Long', 4),
-                        'Neutral': ('Today', 1, 'Short', 1, 'Mid', 1, 'Long', 1),
-                        'N/A': ('Today', 0, 'Short', 0, 'Mid', 0, 'Long', 0),
-                        'Bearish': ('Today', -5, 'Short', -4, 'Mid', -4, 'Long', -3)
+        bb_weights = { 'Bullish': ('Today', 5, '2W - 6W', 4, '6W - 9W', 4, '9M+', 4),
+                        'Neutral': ('Today', 1, '2W - 6W', 1, '6W - 9W', 1, '9M+', 1),
+                        'N/A': ('Today', 0, '2W - 6W', 0, '6W - 9W', 0, '9M+', 0),
+                        'Bearish': ('Today', -5, '2W - 6W', -4, '6W - 9W', -4, '9M+', -3)
                         }
 
         cmi_debug = __name__+"::"+self.build_te_data.__name__+".#"+str(self.yti)+"."+str(me)
