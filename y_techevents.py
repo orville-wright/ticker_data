@@ -206,7 +206,7 @@ class y_techevents:
                         timeframe_window = bb_weights.get(te_sml)    # select typple index that matches timeframe
                         z = y+1
                         rankalgo = timeframe_window[z]                 # get rank weighting for @pos TODAY
-                        logging.info( f"{cmi_debug} - #2 - y_col:{y} / BB:{te_bb_state} / rank:{rankalgo}" )
+                        logging.info( f"{cmi_debug} - #2 - y_col:{y} / {te_timeframe}:{te_bb_state} / rank:{rankalgo}" )
                         #
 
                         y += 1          # incre dict index (timeframe column)
@@ -218,7 +218,7 @@ class y_techevents:
                         timeframe_window = bb_weights.get(te_timeframe)    # select typple index that matches timeframe
                         z = y+1
                         rankalgo = timeframe_window[z]                 # get rank weighting for @pos TODAY
-                        logging.info( f"{cmi_debug} - #3 - y_col:{y} / BB:{te_bb_state} / rank:{rankalgo}" )
+                        logging.info( f"{cmi_debug} - #3 - y_col:{y} / {te_timeframe}:{te_bb_state} / rank:{rankalgo}" )
                         #
 
                         y += 1          # incre dict index
@@ -229,7 +229,7 @@ class y_techevents:
                         # positional ranking algo
                         timeframe_window = bb_weights.get(te_timeframe)    # select typple index that matches timeframe
                         z = y+1
-                        logging.info( f"{cmi_debug} - #4 - y_col:{y} / BB:{te_bb_state} / rank:{rankalgo}" )
+                        logging.info( f"{cmi_debug} - #4 - y_col:{y} / {te_timeframe}:{te_bb_state} / rank:{rankalgo}" )
                         rankalgo = timeframe_window[z]                 # get rank weighting for @pos TODAY
                         bullcount += 1
                         #
@@ -239,7 +239,7 @@ class y_techevents:
                     pass
                     te_bb_state = 'N/A'
                     self.te_sentiment.update({y: (te_sml, te_timeframe, "N/A")} )
-                    logging.info( f"{cmi_debug} - #5 - y_col:{y} / BB:{te_bb_state} / rank:{rankalgo}" )
+                    logging.info( f"{cmi_debug} - #5 - y_col:{y} / {te_timeframe}:{te_bb_state} / rank:{rankalgo}" )
                     rankalgo = timeframe_window[z]                 # get rank weighting for @pos TODAY
                     y += 1
 
