@@ -207,7 +207,7 @@ class y_techevents:
                         te_term = bb_term.get(te_sml)                     # decode yahoo time periods -> Short_Med_Lon_N/A
                         bb_getrank = bb_weights.get('te_bb_state')    # select typple index that matches timeframe
                         z = y+3
-                        logging.info( f"{cmi_debug} - #1 - y_col:{y} / te_term:{te_term}: / BB_state:{te_bb_state} / rank:{rankalgo}" )
+                        logging.info( f"{cmi_debug} - #3 - y_col:{y} / te_term:{te_term}: / BB_state:{te_bb_state} / tuple idx:{z} / tuple:{bb_getrank}" )
                         rankalgo = bb_getrank[z]                    # get rank weighting TUPLE for @pos
                         self.te_sentiment.update({y: (te_sml, te_timeframe, "Bearish")} )
                         y += 1          # incre dict index (timeframe column)
@@ -217,7 +217,7 @@ class y_techevents:
                         te_term = bb_term.get(te_sml)                     # decode yahoo time periods -> Short_Med_Lon_N/A
                         bb_getrank = bb_weights.get('te_bb_state')    # select typple index that matches timeframe
                         z = y+3
-                        logging.info( f"{cmi_debug} - #2 - y_col:{y} / te_term:{te_term}: / BB_state:{te_bb_state} / rank:{rankalgo}" )
+                        logging.info( f"{cmi_debug} - #3 - y_col:{y} / te_term:{te_term}: / BB_state:{te_bb_state} / tuple idx:{z} / tuple:{bb_getrank}" )
                         rankalgo = bb_getrank[z]                    # get rank weighting for @pos
                         self.te_sentiment.update({y: (te_sml, te_timeframe, "Neutral")} )
                         y += 1          # incre dict index
@@ -227,7 +227,7 @@ class y_techevents:
                         te_term = bb_term.get(te_sml)                     # decode yahoo time periods -> Short_Med_Lon_N/A
                         bb_getrank = bb_weights.get('te_bb_state')    # select TUPLE that matches timeframe
                         z = y+3
-                        logging.info( f"{cmi_debug} - #3 - y_col:{y} / te_term:{te_term}: / BB_state:{te_bb_state} / rank:{rankalgo}" )
+                        logging.info( f"{cmi_debug} - #3 - y_col:{y} / te_term:{te_term}: / BB_state:{te_bb_state} / tuple idx:{z} / tuple:{bb_getrank}" )
                         rankalgo = bb_getrank[z]                    # get rank weighting for @pos from TUPLE
                         self.te_sentiment.update({y: (te_sml, te_timeframe, "Bullish")} )
                         bullcount += 1                                   # ONLY relevant b/c we found BULLISH indicator
@@ -239,7 +239,7 @@ class y_techevents:
                     te_term = bb_term.get(te_sml)
                     bb_getrank = bb_weights.get('te_bb_state')    # select typple index that matches timeframe
                     z = y+3
-                    logging.info( f"{cmi_debug} - #4 - y_col:{y} / te_term:{te_term}: / BB_state:{te_bb_state} / rank:{rankalgo}" )
+                    logging.info( f"{cmi_debug} - #3 - y_col:{y} / te_term:{te_term}: / BB_state:{te_bb_state} / tuple idx:{z} / tuple:{bb_getrank}" )
                     rankalgo = timeframe_window[z]                    # get rank weighting for @pos
                     self.te_sentiment.update({y: (te_sml, te_timeframe, "N/A")} )
                     y += 1
