@@ -162,9 +162,9 @@ class y_techevents:
                         'Bearish': ('Today', -5, 'Short', -4, 'Med', -4, 'Long', -3)
                         }
 
-        bb_term = { '2W - 6W': 'Short',
-                    '6W - 9W': 'Mid',
-                    '9M+': 'Long',
+        bb_term = { 'Short Term': 'Short',
+                    'Mid Term': 'Mid',
+                    'Long Term': 'Long',
                     'N/A': 'N/A'
                     }
 
