@@ -187,7 +187,7 @@ class y_techevents:
         """
 
         y += 1  # done with TODAY . Now incr dict key index
-
+        z = 0
         # get historical sentiment
         for j in self.te_lizones:
             for i in j:
@@ -242,6 +242,7 @@ class y_techevents:
                     logging.info( f"{cmi_debug} - #5 - y_col:{y} / {te_timeframe}:{te_bb_state} / rank:{rankalgo}" )
                     rankalgo = timeframe_window[z]                 # get rank weighting for @pos TODAY
                     y += 1
+                    z = 0
 
         self.te_sentiment.update({y: bullcount} )
         y += 1         # advance dict pointer
