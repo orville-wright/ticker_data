@@ -156,11 +156,17 @@ class y_techevents:
         #logging.disable(20)                 # DISABLE Logging
 
         # algo hinter Dict with embeded tuple
-        bb_weights = { 'Bullish': ('Today', 5, '2W - 6W', 4, '6W - 9W', 4, '9M+', 4),
-                        'Neutral': ('Today', 1, '2W - 6W', 1, '6W - 9W', 1, '9M+', 1),
-                        'N/A': ('Today', 0, '2W - 6W', 0, '6W - 9W', 0, '9M+', 0),
-                        'Bearish': ('Today', -5, '2W - 6W', -4, '6W - 9W', -4, '9M+', -3)
+        bb_weights = { 'Bullish': ('Today', 5, 'Short', 4, 'Med', 4, 'Long', 4),
+                        'Neutral': ('Today', 1, 'Short', 1, 'Med', 1, 'Long', 1),
+                        'N/A': ('Today', 0, 'Short', 0, 'Med', 0, 'Long', 0),
+                        'Bearish': ('Today', -5, 'Short', -4, 'Med', -4, 'Long', -3)
                         }
+
+        bb_term = { '2W - 6W': 'Short',
+                    '6W - 9W': 'Mid',
+                    '9M+': 'Long',
+                    'N/A': 'N/A'
+                    }
 
         cmi_debug = __name__+"::"+self.build_te_data.__name__+".#"+str(self.yti)+"."+str(me)
 
@@ -169,28 +175,20 @@ class y_techevents:
         logging.info( f"{cmi_debug} - Scan quote Tech Event indicators" )
         bullcount = 0
         rankalgo = 0
-        y = 0   # current dict key index
+        y = 0   # current dict key index (i.e. column we are working on)
 
         # get live sentiment for today's trading session
         te_today = self.te_today.next_element.next_element.string
         self.te_sentiment.update({y: ("Today", "1D", te_today)} )
 
         # positional ranking algo
-        timeframe_window = bb_weights.get(te_today)    # select typple index that matches timeframe
+        timeframe_window = bb_weights.get(te_today)    # get typple @ index = Bull-Bear State
         z = y+1
         rankalgo = timeframe_window[z]                 # get rank weighting for @pos TODAY
         logging.info( f"{cmi_debug} - #1 - y_col:{y} / te_today:{te_today} / rank:{rankalgo}" )
         if te_today == "Bullish": bullcount += 1
         #
-
-        """
-            # this is all now done by the dict/tuple hineter logic
-            rankalgo += 4
-        if te_today == "Bearish": rankalgo += -2
-        if te_today == "Neutral": rankalgo += 1
-        if te_today == "N/A": rankalgo += 0
-        """
-
+        # Auto ranking algo, set
         y += 1  # done with TODAY . Now incr dict key index
         z = 0
         # get historical sentiment
@@ -206,48 +204,35 @@ class y_techevents:
                     if red_down:        # Red = Bearish
                         te_bb_state = 'Bearish'
                         self.te_sentiment.update({y: (te_sml, te_timeframe, "Bearish")} )
-
-                        # positional ranking algo
-                        timeframe_window = bb_weights.get(te_sml)    # select typple index that matches timeframe
+                        te_term = bb_term.get(te_sml)                     # decode yahoo time periods -> Short_Med_Lon_N/A
+                        timeframe_window = bb_weights.get('te_bb_state')    # select typple index that matches timeframe
                         z = y+1
-                        rankalgo = timeframe_window[z]                 # get rank weighting for @pos TODAY
-                        logging.info( f"{cmi_debug} - #2 te_strings:{te_strings}" )
-                        logging.info( f"{cmi_debug} - #2 - y_col:{y} / {te_timeframe}:{te_bb_state} / rank:{rankalgo}" )
-                        #
-
+                        rankalgo = timeframe_window[z]                    # get rank weighting for @pos TODAY
+                        logging.info( f"{cmi_debug} - #2 - y_col:{y} / te_term:{te_term}: / BB_state:{te_bb_state} / rank:{rankalgo}" )
                         y += 1          # incre dict index (timeframe column)
                     elif grey_neutral:  # Grey = Neutral
                         te_bb_state = 'Neutral'
                         self.te_sentiment.update({y: (te_sml, te_timeframe, "Neutral")} )
-
-                        # positional ranking algo
-                        timeframe_window = bb_weights.get(te_timeframe)    # select typple index that matches timeframe
+                        te_term = bb_term.get(te_sml)                     # decode yahoo time periods -> Short_Med_Lon_N/A 
+                        timeframe_window = bb_weights.get(te_bb_state)    # select typple index that matches timeframe
                         z = y+1
-                        rankalgo = timeframe_window[z]                 # get rank weighting for @pos TODAY
-                        logging.info( f"{cmi_debug} - #3 te_strings:{te_strings}" )
+                        rankalgo = timeframe_window[z]                   # get rank weighting for @pos TODAY
                         logging.info( f"{cmi_debug} - #3 - y_col:{y} / {te_timeframe}:{te_bb_state} / rank:{rankalgo}" )
-                        #
-
                         y += 1          # incre dict index
                     else:               # Green = Bullish
                         te_bb_state = 'Bullish'
                         self.te_sentiment.update({y: (te_sml, te_timeframe, "Bullish")} )
-
-                        # positional ranking algo
-                        timeframe_window = bb_weights.get(te_timeframe)    # select typple index that matches timeframe
+                        te_term = bb_term.get(te_sml)                     # decode yahoo time periods -> Short_Med_Lon_N/A
+                        timeframe_window = bb_weights.get(te_bb_state)    # select typple index that matches timeframe
                         z = y+1
-                        logging.info( f"{cmi_debug} - #4 te_strings:{te_strings}" )
                         logging.info( f"{cmi_debug} - #4 - y_col:{y} / {te_timeframe}:{te_bb_state} / rank:{rankalgo}" )
-                        rankalgo = timeframe_window[z]                 # get rank weighting for @pos TODAY
-                        bullcount += 1
-                        #
-
+                        rankalgo = timeframe_window[z]                   # get rank weighting for @pos TODAY
+                        bullcount += 1                                   ONLY relevant b/c we found BULLISH indicator
                         y += 1          # incre dict index
                 else:
                     pass
                     te_bb_state = 'N/A'
                     self.te_sentiment.update({y: (te_sml, te_timeframe, "N/A")} )
-                    logging.info( f"{cmi_debug} - #5 te_strings:{te_strings}" )
                     logging.info( f"{cmi_debug} - #5 - y_col:{y} / {te_timeframe}:{te_bb_state} / rank:{rankalgo}" )
                     rankalgo = timeframe_window[z]                 # get rank weighting for @pos TODAY
                     y += 1
