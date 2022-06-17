@@ -103,15 +103,15 @@ class y_techevents:
             if ae_inst.__cause__ is None:       # interrogate error raised - was it for [NoneType]
                 logging.info( f"{cmi_debug} - Data zone #3 / SCAN FAIL - EMPTY BS4 data" )
                 return -1
-                #self.te_today = self.te_zone.find(attrs={"class": "Fz(xs) Mb(4px)"}
+                #self.bb_today = self.te_zone.find(attrs={"class": "Fz(xs) Mb(4px)"}
             else:
                 logging.info( f"{cmi_debug} - Data zone #3 / FAIL : {ae_inst.__cause__}" )
                 return -2
         else:
             logging.info( f"{cmi_debug} - Data zone #4: [today]" )
-            self.te_today = self.te_zone.find(attrs={"class": "W(1/4)--mobp W(1/2) IbBox"} )
+            self.bb_today = self.te_zone.find(attrs={"class": "W(1/4)--mobp W(1/2) IbBox"} )
             #logging.info( f"{cmi_debug} - Data zone #3: [today]" )
-            #self.te_today_pat = self.te_zone.find(attrs={"class": "Mb(4px) Whs(nw)"} )
+            #self.bb_today_pat = self.te_zone.find(attrs={"class": "Mb(4px) Whs(nw)"} )
             return 0
 
 
@@ -186,18 +186,20 @@ class y_techevents:
         rankalgo = 0
         y = 0   # current dict key index (i.e. column we are working on)
 
-        # TODAY is treated slightly differnt, becasue its the FIRST element & we know that
-        # get live sentiment for today's trading session
-        te_today = self.te_today.next_element.next_element.string
-        self.te_sentiment.update({y: ("Today", "1D", te_today)} )
+        #
+        # Auto ranking algo
+        # FIRST elemet...
+        # TODAY is treated slightly differnt, becasue its the FIRST element & we know this...no need to guess col/pos
+        bb_today = self.bb_today.next_element.next_element.string    # get the Bull/Bear sentimewnt
+        self.te_sentiment.update({y: ("Today", "1D", bb_today)} )
         te_term = bb_term.get('Today')                     # decode yahoo time periods -> Short_Med_Lon_N/A
-        bb_getrank = bb_weights.get(te_today)       # select DICT index that matches timeframe : result -> DICT
-        z = bb_getrank.get(te_term)                 # get algo ranking weight for this col/term tag
-        logging.info( f"{cmi_debug} - #1 - y_col:{y} / te_term:{te_term}: / BB_state:{te_today} / algo rank:{z}" )
-        timeframe_window = bb_weights.get(te_today)    # get typple @ index = Bull-Bear State
-        rankalgo = z                 # get rank weighting for @pos TODAY
-        logging.info( f"{cmi_debug} - #0 - y_col:{y} / te_today:{te_today} / rank:{rankalgo}" )
-        if te_today == "Bullish": bullcount += 1
+        bb_getrank = bb_weights.get(bb_today)              # select DICT index that matches timeframe : result -> DICT
+        z = bb_getrank.get(te_term)                        # get algo ranking weight for this col/term tag (which is TODAY)
+        logging.info( f"{cmi_debug} - #0 - y_col:{y} / te_term:{te_term}: / BB_state:{bb_today} / algo rank:{z}" )
+        timeframe_window = bb_weights.get(bb_today)        # get typple @ index = Bull-Bear State
+        rankalgo += z                                       # get rank weighting for @pos TODAY
+        logging.info( f"{cmi_debug} - #0 - y_col:{y} / bb_today:{bb_today} / rank:{rankalgo}" )
+        if bb_today == "Bullish": bullcount += 1
 
         #
         # Auto ranking algo, set
@@ -218,11 +220,9 @@ class y_techevents:
                         logging.info( f"{cmi_debug} - #1 - y_col:{y} / looking for term: {te_sml} / decoded into:{bb_term.get(te_sml)}" )
                         te_term = bb_term.get(te_sml)                     # decode yahoo time periods -> Short_Med_Lon_N/A
                         bb_getrank = bb_weights.get(te_bb_state)    # select DICT index that matches timeframe : result -> DICT
-                        # z = y+3
                         z = bb_getrank.get(te_term)                 # get algo ranking weight for this col/term tag
                         logging.info( f"{cmi_debug} - #1 - y_col:{y} / te_term:{te_term}: / BB_state:{te_bb_state} / algo rank:{z}" )
-                        # rankalgo = bb_getrank[z]                    # get rank weighting TUPLE for @pos
-                        rankalgo = z
+                        rankalgo += z
                         self.te_sentiment.update({y: (te_sml, te_timeframe, "Bearish")} )
                         y += 1          # incre dict index (timeframe column)
                     elif grey_neutral:  # Grey = Neutral
@@ -230,11 +230,9 @@ class y_techevents:
                         logging.info( f"{cmi_debug} - #2 - y_col:{y} / looking for term: {te_sml} / decoded into:{bb_term.get(te_sml)}" )
                         te_term = bb_term.get(te_sml)                     # decode yahoo time periods -> Short_Med_Lon_N/A
                         bb_getrank = bb_weights.get(te_bb_state)    # select typple index that matches timeframe
-                        # z = y+3
                         z = bb_getrank.get(te_term)                 # get algo ranking weight for this col/term tag
                         logging.info( f"{cmi_debug} - #2 - y_col:{y} / te_term:{te_term}: / BB_state:{te_bb_state} / algo rank:{z}" )
-                        # rankalgo = bb_getrank[z]                    # get rank weighting for @pos
-                        rankalgo = z
+                        rankalgo += z
                         self.te_sentiment.update({y: (te_sml, te_timeframe, "Neutral")} )
                         y += 1          # incre dict index
                     else:               # Green = Bullish
@@ -242,11 +240,9 @@ class y_techevents:
                         logging.info( f"{cmi_debug} - #3 - y_col:{y} / looking for term: {te_sml} / decoded into:{bb_term.get(te_sml)}" )
                         te_term = bb_term.get(te_sml)                     # decode yahoo time periods -> Short_Med_Lon_N/A
                         bb_getrank = bb_weights.get(te_bb_state)    # select TUPLE that matches timeframe
-                        # z = y+3
                         z = bb_getrank.get(te_term)                 # get algo ranking weight for this col/term tag
                         logging.info( f"{cmi_debug} - #3 - y_col:{y} / te_term:{te_term}: / BB_state:{te_bb_state} / algo rank:{z}" )
-                        # rankalgo = bb_getrank[z]                    # get rank weighting for @pos from TUPLE
-                        rankalgo = z
+                        rankalgo += z
                         self.te_sentiment.update({y: (te_sml, te_timeframe, "Bullish")} )
                         bullcount += 1                                   # ONLY relevant b/c we found BULLISH indicator
                         y += 1          # incre dict index
@@ -256,11 +252,9 @@ class y_techevents:
                     logging.info( f"{cmi_debug} - #4 - y_col:{y} / looking for term: {te_sml} / decoded into:{bb_term.get(te_sml)}" )
                     te_term = bb_term.get(te_sml)
                     bb_getrank = bb_weights.get(te_bb_state)    # select typple index that matches timeframe
-                    # z = y+3
                     z = bb_getrank.get(te_term)                 # get algo ranking weight for this col/term tag
                     logging.info( f"{cmi_debug} - #4 - y_col:{y} / te_term:{te_term}: / BB_state:{te_bb_state} / algo rank:{z}" )
-                    # rankalgo = timeframe_window[z]                    # get rank weighting for @pos
-                    rankalgo = z
+                    rankalgo += z
                     self.te_sentiment.update({y: (te_sml, te_timeframe, "N/A")} )
                     y += 1
                     z = 0
@@ -339,7 +333,7 @@ class y_techevents:
         logging.info( f"{cmi_debug} - CALLED" )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         logging.info( f"{cmi_debug} - Set ALL Tech Event indicators to BAD: N/A and 0" )
-        te_today = "N/A"
+        bb_today = "N/A"
         self.te_sentiment.update({0: ("today_only", "1D", "N/A")} )
         self.te_sentiment.update({1: ("short_term", "2W - 6W", "N/A")} )
         self.te_sentiment.update({2: ("med_term", "6W - 9M", "N/A")} )
