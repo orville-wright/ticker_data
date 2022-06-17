@@ -213,7 +213,7 @@ class y_techevents:
                     elif grey_neutral:  # Grey = Neutral
                         te_bb_state = 'Neutral'
                         self.te_sentiment.update({y: (te_sml, te_timeframe, "Neutral")} )
-                        te_term = bb_term.get(te_sml)                     # decode yahoo time periods -> Short_Med_Lon_N/A 
+                        te_term = bb_term.get(te_sml)                     # decode yahoo time periods -> Short_Med_Lon_N/A
                         timeframe_window = bb_weights.get(te_bb_state)    # select typple index that matches timeframe
                         z = y+1
                         rankalgo = timeframe_window[z]                   # get rank weighting for @pos TODAY
@@ -227,7 +227,7 @@ class y_techevents:
                         z = y+1
                         logging.info( f"{cmi_debug} - #4 - y_col:{y} / {te_timeframe}:{te_bb_state} / rank:{rankalgo}" )
                         rankalgo = timeframe_window[z]                   # get rank weighting for @pos TODAY
-                        bullcount += 1                                   ONLY relevant b/c we found BULLISH indicator
+                        bullcount += 1                                   # ONLY relevant b/c we found BULLISH indicator
                         y += 1          # incre dict index
                 else:
                     pass
