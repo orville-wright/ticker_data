@@ -163,7 +163,7 @@ class y_techevents:
                         }
 
         bb_term = { 'Short Term': 'Short',
-                    'Mid Term': 'Mid',
+                    'Mid Term': 'Med',
                     'Long Term': 'Long',
                     'N/A': 'N/A'
                     }
@@ -203,7 +203,7 @@ class y_techevents:
                     grey_neutral = re.search('90deg', str(red) )
                     if red_down:        # Red = Bearish
                         te_bb_state = 'Bearish'
-                        logging.info( f"{cmi_debug} - #1 - y_col:{y} / looking for term code: {te_sml}" )
+                        logging.info( f"{cmi_debug} - #1 - y_col:{y} / looking for term: {te_sml} / decoded into:{bb_term.get(te_sml)}" )
                         te_term = bb_term.get(te_sml)                     # decode yahoo time periods -> Short_Med_Lon_N/A
                         timeframe_window = bb_weights.get('te_bb_state')    # select typple index that matches timeframe
                         z = y+1
@@ -213,7 +213,7 @@ class y_techevents:
                         y += 1          # incre dict index (timeframe column)
                     elif grey_neutral:  # Grey = Neutral
                         te_bb_state = 'Neutral'
-                        logging.info( f"{cmi_debug} - #2 - y_col:{y} / looking for term code: {te_sml}" )
+                        logging.info( f"{cmi_debug} - #1 - y_col:{y} / looking for term: {te_sml} / decoded into:{bb_term.get(te_sml)}" )
                         te_term = bb_term.get(te_sml)                     # decode yahoo time periods -> Short_Med_Lon_N/A
                         timeframe_window = bb_weights.get(te_bb_state)    # select typple index that matches timeframe
                         z = y+1
@@ -223,7 +223,7 @@ class y_techevents:
                         y += 1          # incre dict index
                     else:               # Green = Bullish
                         te_bb_state = 'Bullish'
-                        logging.info( f"{cmi_debug} - #3 - y_col:{y} / looking for term code: {te_sml}" )
+                        logging.info( f"{cmi_debug} - #1 - y_col:{y} / looking for term: {te_sml} / decoded into:{bb_term.get(te_sml)}" )
                         te_term = bb_term.get(te_sml)                     # decode yahoo time periods -> Short_Med_Lon_N/A
                         timeframe_window = bb_weights.get(te_bb_state)    # select typple index that matches timeframe
                         z = y+1
@@ -235,7 +235,7 @@ class y_techevents:
                 else:
                     pass
                     te_bb_state = 'N/A'
-                    logging.info( f"{cmi_debug} - #4 - y_col:{y} / looking for term code: {te_sml}" )
+                    logging.info( f"{cmi_debug} - #1 - y_col:{y} / looking for term: {te_sml} / decoded into:{bb_term.get(te_sml)}" )
                     te_term = bb_term.get(te_sml)
                     logging.info( f"{cmi_debug} - #4 - y_col:{y} / te_term:{te_term}: / BB_state:{te_bb_state} / rank:{rankalgo}" )
                     rankalgo = timeframe_window[z]                 # get rank weighting for @pos TODAY
