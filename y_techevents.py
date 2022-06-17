@@ -127,43 +127,11 @@ class y_techevents:
             4.  Tech Event Indicator: Down/Sideways/Up *  not included in final dict
             5.  Tech Event Indicator: Bearish/Neutral/Bullish
 
-        Bull-Bear sentiment ranking algo
-        ================================
-        TODO: add positional weightings to Bullish/Bearish algo
-
-            col:0 = today
-            col:1 = short / 2W - 6W
-            col:2 / mid / 6W - 9W
-            col:3 / long / 9M
-
-            Bullish = +4  (current algo: all timframee windows)
-            TODO*   = +5 (Today)
-                    = +4 (Short/mid/long)
-
-            Neutral = +1 (current algo: all timframee windows)
-            TOFDO*  = keep as +1 for all
-
-            N/A     = 0
-            TODO*   = Keep, but need smater logic why N/A's are surfacing
-
-            Bearish = -4  (current algo: all timframee windows)
-            TODO*   = -5 (Today)
-                    = -4 (short)
-                    = -4 (mid)
-                    = -3 (long)
         """
-        logging.disable(0)                   # ENABLE Log level = INFO
+        #logging.disable(0)                   # ENABLE Log level = INFO
         #logging.disable(20)                 # DISABLE Logging
 
-        # algo hinter Dict with embeded tuple
-        """
-        bb_weights = { 'Bullish': ('Today', 5, 'Short', 4, 'Med', 4, 'Long', 4),
-                        'Neutral': ('Today', 1, 'Short', 1, 'Med', 1, 'Long', 1),
-                        'N/A': ('Today', 0, 'Short', 0, 'Med', 0, 'Long', 0),
-                        'Bearish': ('Today', -5, 'Short', -4, 'Med', -4, 'Long', -3)
-                        }
-        """
-
+        # algo hinters
         bb_weights = { 'Bullish': {'Today': 5, 'Short': 4, 'Med': 4, 'Long': 4},
                         'Neutral': {'Today': 1, 'Short': 1, 'Med': 1, 'Long': 1},
                         'N/A': {'Today': 0, 'Short': 0, 'Med': 0, 'Long': 0},
@@ -202,7 +170,8 @@ class y_techevents:
         if bb_today == "Bullish": bullcount += 1
 
         #
-        # Auto ranking algo, set
+        # Auto ranking algo,
+        # figurre out what COL we are in, what the BB statue is and apply a weighting from HINTER table
         y += 1  # done with TODAY . Now incr dict key index
         z = 0
         # get historical sentiment
@@ -263,8 +232,8 @@ class y_techevents:
         y += 1         # advance dict pointer
         self.te_sentiment.update({y: rankalgo} )
         logging.info('%s - populated new Tech Event dict' % cmi_debug )
-        #logging.disable(0)                   # ENABLE Log level = INFO
-        logging.disable(20)                   # DISABLE Logging
+        #logging.disable(0)                   # ENABLE Logging
+        #logging.disable(20)                  # DISABLE Logging
         return y        # number of rows inserted into Tech events dict
 
 
