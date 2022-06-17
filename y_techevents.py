@@ -135,7 +135,7 @@ class y_techevents:
         bb_weights = { 'Bullish': {'Today': 5, 'Short': 4, 'Med': 4, 'Long': 4},
                         'Neutral': {'Today': 1, 'Short': 1, 'Med': 1, 'Long': 1},
                         'N/A': {'Today': 0, 'Short': 0, 'Med': 0, 'Long': 0},
-                        'Bearish': {'Today': -5, 'Short': -4, 'Med': -4, 'Long': -3}
+                        'Bearish': {'Today': -5, 'Short': -4, 'Med': -3, 'Long': -2}
                         }
 
         bb_term = { 'Today': 'Today',
