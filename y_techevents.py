@@ -174,7 +174,7 @@ class y_techevents:
         timeframe_window = bb_weights.get(te_today)    # select typple index that matches timeframe
         z = y+1
         rankalgo = timeframe_window[z]                 # get rank weighting for @pos TODAY
-        logging.info( f"{cmi_debug} - y_col:{y} / te_today:{te_today} / rank:{rankalgo}" )
+        logging.info( f"{cmi_debug} - #1 - y_col:{y} / te_today:{te_today} / rank:{rankalgo}" )
         if te_today == "Bullish": bullcount += 1
         #
 
@@ -206,7 +206,7 @@ class y_techevents:
                         timeframe_window = bb_weights.get(te_sml)    # select typple index that matches timeframe
                         z = y+1
                         rankalgo = timeframe_window[z]                 # get rank weighting for @pos TODAY
-                        logging.info( f"{cmi_debug} - y_col:{y} / te_sml:{te_sml} / rank:{rankalgo}" )
+                        logging.info( f"{cmi_debug} - #2 - y_col:{y} / te_sml:{te_sml} / rank:{rankalgo}" )
                         if te_timeframe == "Bullish": bullcount += 1
                         #
 
@@ -219,7 +219,7 @@ class y_techevents:
                         timeframe_window = bb_weights.get(te_timeframe)    # select typple index that matches timeframe
                         z = y+1
                         rankalgo = timeframe_window[z]                 # get rank weighting for @pos TODAY
-                        logging.info( f"{cmi_debug} - y_col:{y} / te_timeframe:{te_timeframe} / rank:{rankalgo}" )
+                        logging.info( f"{cmi_debug} - #3 - y_col:{y} / te_sml:{te_sml} / rank:{rankalgo}" )
                         if te_timeframe == "Bullish": bullcount += 1
                         #
 
@@ -231,9 +231,8 @@ class y_techevents:
                         # positional ranking algo
                         timeframe_window = bb_weights.get(te_timeframe)    # select typple index that matches timeframe
                         z = y+1
-                        logging.info( f"{cmi_debug} - y_col:{y} / te_timeframe:{te_timeframe} / rank:{rankalgo}" )
+                        logging.info( f"{cmi_debug} - #4 - y_col:{y} / te_sml:{te_sml} / rank:{rankalgo}" )
                         rankalgo = timeframe_window[z]                 # get rank weighting for @pos TODAY
-                        logging.info( f"{cmi_debug} - y_col:{y} / te_timeframe:{te_timeframe} / rank:{rankalgo}" )
                         if te_timeframe == "Bullish": bullcount += 1
                         #
 
@@ -242,7 +241,8 @@ class y_techevents:
                     pass
                     te_bb_state = 'N/A'
                     self.te_sentiment.update({y: (te_sml, te_timeframe, "N/A")} )
-                    rankalgo += 0
+                    logging.info( f"{cmi_debug} - #5 - y_col:{y} / te_sml:{te_sml} / rank:{rankalgo}" )
+                    rankalgo = timeframe_window[z]                 # get rank weighting for @pos TODAY
                     y += 1
 
         self.te_sentiment.update({y: bullcount} )
