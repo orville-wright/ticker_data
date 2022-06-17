@@ -228,6 +228,7 @@ class y_techevents:
                         # positional ranking algo
                         timeframe_window = bb_weights.get(te_timeframe)    # select typple index that matches timeframe
                         z = y+1
+                        logging.info( f"{cmi_debug} - y_col:{y} / te_timeframe:{te_timeframe} / rank:{rankalgo}" )
                         rankalgo = timeframe_window[z]                 # get rank weighting for @pos TODAY
                         logging.info( f"{cmi_debug} - y_col:{y} / te_timeframe:{te_timeframe} / rank:{rankalgo}" )
                         if te_timeframe == "Bullish": bullcount += 1
