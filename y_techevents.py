@@ -148,10 +148,10 @@ class y_techevents:
                     = -3 (long)
         """
         # algo hinter Dict with embeded tuple
-        bb_weights = { 'Bullish': (Today, 5, Short, 4, Mid, 4, Long, 4),
-                        'Neutral': (Today, 1, Short, 1, Mid, 1, Long, 1),
-                        'N/A': (Today, 0, Short, 0, Mid, 0, Long, 0),
-                        'Bearish': (Today, -5, Short, -4, Mid, -4, Long, -3)
+        bb_weights = { 'Bullish': ('Today', 5, 'Short', 4, 'Mid', 4, 'Long', 4),
+                        'Neutral': ('Today', 1, 'Short', 1, 'Mid', 1, 'Long', 1),
+                        'N/A': ('Today', 0, 'Short', 0, 'Mid', 0, 'Long', 0),
+                        'Bearish': ('Today', -5, 'Short', -4, 'Mid', -4, 'Long', -3)
                         }
 
         cmi_debug = __name__+"::"+self.build_te_data.__name__+".#"+str(self.yti)+"."+str(me)
@@ -166,7 +166,9 @@ class y_techevents:
         # get live sentiment for today's trading session
         te_today = self.te_today.next_element.next_element.string
         self.te_sentiment.update({y: ("Today", "1D", te_today)} )
+
         #
+        logging.info( f"{cmi_debug} - y:{y} / te_today:{te_today}" )
         timeframe_window = bb_weights.get(te_today)    # select typple index that matches timeframe
         z = y+1
         rankalgo = timeframe_window[z]                 # get weighting for @pos TODAY
