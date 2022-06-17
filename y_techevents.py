@@ -147,6 +147,9 @@ class y_techevents:
                     = -4 (mid)
                     = -3 (long)
         """
+        #logging.disable(0)                  # Log level = OFF
+        logging.disable(20)                 # Log lvel = INFO
+
         # algo hinter Dict with embeded tuple
         bb_weights = { 'Bullish': ('Today', 5, 'Short', 4, 'Mid', 4, 'Long', 4),
                         'Neutral': ('Today', 1, 'Short', 1, 'Mid', 1, 'Long', 1),
@@ -168,7 +171,7 @@ class y_techevents:
         self.te_sentiment.update({y: ("Today", "1D", te_today)} )
 
         #
-        logging.info( f"{cmi_debug} - y:{y} / te_today:{te_today}" )
+        logging.info( f"{cmi_debug} - y:{y}  te_today:{te_today}" )
         timeframe_window = bb_weights.get(te_today)    # select typple index that matches timeframe
         z = y+1
         rankalgo = timeframe_window[z]                 # get weighting for @pos TODAY
@@ -230,6 +233,8 @@ class y_techevents:
         y += 1         # advance dict pointer
         self.te_sentiment.update({y: rankalgo} )
         logging.info('%s - populated new Tech Event dict' % cmi_debug )
+        logging.disable(0)                  # Log level = OFF
+        #logging.disable(20)                 # Log lvel = INFO
         return y        # number of rows inserted into Tech events dict
 
 
