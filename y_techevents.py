@@ -150,7 +150,7 @@ class y_techevents:
         	rankalgo += z                               # set ranking
         	self.te_sentiment.update({y: (te_sml, te_timeframe, bull_bear)} )
         	y += 1
-        return
+            return
 
         # algo hinters
         bb_weights = { 'Bullish': {'Today': 5, 'Short': 4, 'Med': 4, 'Long': 4},
