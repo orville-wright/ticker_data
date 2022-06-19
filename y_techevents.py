@@ -134,6 +134,10 @@ class y_techevents:
         #logging.disable(0)                   # ENABLE Log level = INFO
         #logging.disable(20)                 # DISABLE Logging
 
+        # method vars
+        y = 0
+        z = 0
+        rankalgo = 0
 
         def algo_te_autorank(bull_bear):
             # Helper method, since we do this 4 x ~50 ticker_sybols
@@ -142,14 +146,14 @@ class y_techevents:
             # this data in some important places
             # bull_bear:
             #       Bullish, Bearish, Neutral, N/A
-            logging.info( f"{cmi_debug} - y_col:{y} / need term: {te_sml} / translated:{bb_term.get(te_sml)}" )
-            te_term = bb_term.get(te_sml)               # decode yahoo time period -> Short_Med_Long_N/A
-            bb_getrank = bb_weights.get(te_bb_state)    # select DICT index that matches timeframe : result -> DICT
-            z = bb_getrank.get(te_term)                 # get algo ranking weight for this col/term timeframe
-            logging.info( f"{cmi_debug} - y_col:{y} / te_term:{te_term}: / BB_state:{te_bb_state} / algo rank:{z}" )
-            rankalgo += z                               # set ranking
-            self.te_sentiment.update({y: (te_sml, te_timeframe, bull_bear)} )
-            y += 1
+            logging.info( f"{cmi_debug} - y_col:{self.y} / need term: {self.te_sml} / translated:{bb_term.get(self.te_sml)}" )
+            self.te_term = bb_term.get(self.te_sml)               # decode yahoo time period -> Short_Med_Long_N/A
+            bb_getrank = bb_weights.get(self.te_bb_state)    # select DICT index that matches timeframe : result -> DICT
+            self.z = bb_getrank.get(self.te_term)                 # get algo ranking weight for this col/term timeframe
+            logging.info( f"{cmi_debug} - y_col:{self.y} / te_term:{self.te_term}: / BB_state:{self.te_bb_state} / algo rank:{self.z}" )
+            self.rankalgo += z                               # set ranking
+            self.te_sentiment.update({self.y: (self.te_sml, self.te_timeframe, bull_bear)} )
+            self.y += 1
             return
 
         # algo hinters
