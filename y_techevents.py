@@ -201,6 +201,8 @@ class y_techevents:
                     red_down = re.search('180deg', str(red) )
                     grey_neutral = re.search('90deg', str(red) )
                     if red_down:             # Red = Bearish
+                        algo_te_autorank('Bearish')
+                        """
                         te_bb_state = 'Bearish'
                         logging.info( f"{cmi_debug} - #1 - y_col:{y} / looking for term: {te_sml} / decoded into:{bb_term.get(te_sml)}" )
                         te_term = bb_term.get(te_sml)               # decode yahoo time period -> Short_Med_Long_N/A
@@ -210,6 +212,7 @@ class y_techevents:
                         rankalgo += z                               # set ranking
                         self.te_sentiment.update({y: (te_sml, te_timeframe, "Bearish")} )
                         y += 1                                      # incr dict/index (timeframe column)
+                        """
                     elif grey_neutral:      # Grey = Neutral
                         te_bb_state = 'Neutral'
                         logging.info( f"{cmi_debug} - #2 - y_col:{y} / looking for term: {te_sml} / decoded into:{bb_term.get(te_sml)}" )
