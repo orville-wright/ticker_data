@@ -260,7 +260,7 @@ class combo_logic:
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 40)
         unique_s = self.combo_df.drop_duplicates(subset=['Symbol'])     # only look at dupes in symbol colum
-        return unique_s['Symbol']
+        return unique_s['Symbol'].sort_values(by=['Symbol'])
 
     def combo_listall_ranked(self):
         """
