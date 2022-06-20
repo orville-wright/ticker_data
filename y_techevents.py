@@ -134,27 +134,29 @@ class y_techevents:
         #logging.disable(0)                   # ENABLE Log level = INFO
         #logging.disable(20)                 # DISABLE Logging
 
-        # method vars
-        y = 0
-        z = 0
-        rankalgo = 0
-
-        def algo_te_autorank(bull_bear):
+        def algo_te_autorank(bull_bear, y, te_sml, rankalgo, te_timeframe, bullcount):
             # Helper method, since we do this 4 x ~50 ticker_sybols
             # figurre out which Technical indiciator we are looking at, which column we
             # are in, and what the current Bill_Bear code is...: then track some stats & store
             # this data in some important places
             # bull_bear:
             #       Bullish, Bearish, Neutral, N/A
-            logging.info( f"{cmi_debug} - y_col:{self.y} / need term: {self.te_sml} / translated:{bb_term.get(self.te_sml)}" )
-            self.te_term = bb_term.get(self.te_sml)               # decode yahoo time period -> Short_Med_Long_N/A
-            bb_getrank = bb_weights.get(self.te_bb_state)    # select DICT index that matches timeframe : result -> DICT
-            self.z = bb_getrank.get(self.te_term)                 # get algo ranking weight for this col/term timeframe
-            logging.info( f"{cmi_debug} - y_col:{self.y} / te_term:{self.te_term}: / BB_state:{self.te_bb_state} / algo rank:{self.z}" )
-            self.rankalgo += z                               # set ranking
-            self.te_sentiment.update({self.y: (self.te_sml, self.te_timeframe, bull_bear)} )
-            self.y += 1
-            return
+            te_bb_state = bull_bear
+            y = y
+            te_sml = tme_sml
+            rankalgo = rankalgo
+            bullcount = bullcount
+            te_timeframe = te_timeframe
+            logging.info( f"{cmi_debug} - #1 - y_col:{y} / looking for term: {te_sml} / decoded into:{bb_term.get(te_sml)}" )
+            te_term = bb_term.get(te_sml)               # decode yahoo time period -> Short_Med_Long_N/A
+            bb_getrank = bb_weights.get(te_bb_state)    # select DICT index that matches timeframe : result -> DICT
+            z = bb_getrank.get(te_term)                 # get algo ranking weight for this col/term timeframe
+            logging.info( f"{cmi_debug} - #1 - y_col:{y} / te_term:{te_term}: / BB_state:{te_bb_state} / algo rank:{z}" )
+            rankalgo += z                               # set ranking
+            self.te_sentiment.update({y: (te_sml, te_timeframe, "Bearish")} )
+            if bull_bear = 'Bullish': bullcount += 1
+            y += 1                                      # incr dict/index (timeframe column)
+            return (y, rankalgo, bullcount)
 
         # algo hinters
         bb_weights = { 'Bullish': {'Today': 5, 'Short': 4, 'Med': 4, 'Long': 4},
@@ -205,7 +207,7 @@ class y_techevents:
                     red_down = re.search('180deg', str(red) )
                     grey_neutral = re.search('90deg', str(red) )
                     if red_down:             # Red = Bearish
-                        algo_te_autorank('Bearish')
+                        y, rankalgo, bullcount = algo_te_autorank('Bearish', y, te_sml, rankalgo, te_timeframe, bullcount)
                         """
                         te_bb_state = 'Bearish'
                         logging.info( f"{cmi_debug} - #1 - y_col:{y} / looking for term: {te_sml} / decoded into:{bb_term.get(te_sml)}" )
