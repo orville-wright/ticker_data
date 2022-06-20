@@ -153,7 +153,7 @@ class y_techevents:
             z = bb_getrank.get(te_term)                 # get algo ranking weight for this col/term timeframe
             logging.info( f"{cmi_debug} - #1 - y_col:{y} / te_term:{te_term}: / BB_state:{te_bb_state} / algo rank:{z}" )
             rankalgo += z                               # set ranking
-            self.te_sentiment.update({y: (te_sml, te_timeframe, "Bearish")} )
+            self.te_sentiment.update({y: (te_sml, te_timeframe, te_bb_state)} )
             if bull_bear is 'Bullish': bullcount += 1
             y += 1                                      # incr dict/index (timeframe column)
             return (y, rankalgo, bullcount)
