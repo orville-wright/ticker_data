@@ -143,7 +143,7 @@ class y_techevents:
             #       Bullish, Bearish, Neutral, N/A
             te_bb_state = bull_bear
             y = y
-            te_sml = tme_sml
+            te_sml = te_sml
             rankalgo = rankalgo
             bullcount = bullcount
             te_timeframe = te_timeframe
