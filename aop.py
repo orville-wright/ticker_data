@@ -326,7 +326,7 @@ def main():
         #
         # HACKING : show uniques from COMBO def
         print ( f"***** Hacking ***** " )
-        print ( f"{x.unique_symbols().sort_values(by=['Symbol'])}" )
+        print ( f"{x.unique_symbols()}" )
     else:
         pass
 
