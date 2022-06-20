@@ -241,14 +241,14 @@ class combo_logic:
 
     def list_uniques(self):
         """
-        Print the full contents of the combo DataFrame with DUPES removes
+        Print the full contents of the combo DataFrame with DUPES removed
         NOT sorted
         """
         cmi_debug = __name__+"::"+self.combo_listall.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 40)
-        return self.combo_df.drop_duplicates(subset=['Symbol'])
+        return self.combo_df.drop_duplicates(subset=['Symbol'])    # only look at dupes in symbol colum
 
     def combo_listall_ranked(self):
         """
