@@ -135,12 +135,12 @@ class y_techevents:
         #logging.disable(20)                 # DISABLE Logging
 
         def algo_te_autorank(bull_bear, y, te_sml, rankalgo, te_timeframe, bullcount):
-            # Helper method, since we do this 4 x ~50 ticker_sybols
-            # figurre out which Technical indiciator we are looking at, which column we
-            # are in, and what the current Bill_Bear code is...: then track some stats & store
-            # this data in some important places
-            # bull_bear:
-            #       Bullish, Bearish, Neutral, N/A
+            # PRIVATE: Helper method, since we do this 4 x ~50 ticker_sybols
+            #       figurre out which Technical indiciator we are looking at, which column we
+            #       are in, and what the current Bill_Bear code is...: then track some stats & store
+            #       this data in some important places
+            #       bull_bear:
+            #               Bullish, Bearish, Neutral, N/A
             te_bb_state = bull_bear
             y = y
             te_sml = te_sml
@@ -220,6 +220,8 @@ class y_techevents:
                         y += 1                                      # incr dict/index (timeframe column)
                         """
                     elif grey_neutral:      # Grey = Neutral
+                        y, rankalgo, bullcount = algo_te_autorank('Neutral', y, te_sml, rankalgo, te_timeframe, bullcount)
+                        """
                         te_bb_state = 'Neutral'
                         logging.info( f"{cmi_debug} - #2 - y_col:{y} / looking for term: {te_sml} / decoded into:{bb_term.get(te_sml)}" )
                         te_term = bb_term.get(te_sml)               # decode yahoo time periods -> Short_Med_Lon_N/A
@@ -229,7 +231,10 @@ class y_techevents:
                         rankalgo += z                               # set ranking
                         self.te_sentiment.update({y: (te_sml, te_timeframe, "Neutral")} )
                         y += 1                                      # incr dict/index (timeframe column)
+                        """
                     else:                  # Green = Bullish
+                        y, rankalgo, bullcount = algo_te_autorank('Bullish', y, te_sml, rankalgo, te_timeframe, bullcount)
+                        """
                         te_bb_state = 'Bullish'
                         logging.info( f"{cmi_debug} - #3 - y_col:{y} / looking for term: {te_sml} / decoded into:{bb_term.get(te_sml)}" )
                         te_term = bb_term.get(te_sml)               # decode yahoo time periods -> Short_Med_Lon_N/A
@@ -240,8 +245,11 @@ class y_techevents:
                         self.te_sentiment.update({y: (te_sml, te_timeframe, "Bullish")} )
                         bullcount += 1                              # keep count of BULLISH
                         y += 1                                      # incr dict/index (timeframe column)
+                        """
                 else:
                     pass
+                    y, rankalgo, bullcount = algo_te_autorank('N/A', y, te_sml, rankalgo, te_timeframe, bullcount)
+                    """
                     te_bb_state = 'N/A'                           # capture symbols that dont have any data or bad data. force = "N/A"
                     logging.info( f"{cmi_debug} - #4 - y_col:{y} / looking for term: {te_sml} / decoded into:{bb_term.get(te_sml)}" )
                     te_term = bb_term.get(te_sml)                 # decode yahoo time periods -> Short_Med_Lon_N/A
@@ -251,6 +259,7 @@ class y_techevents:
                     rankalgo += z                                 # set ranking
                     self.te_sentiment.update({y: (te_sml, te_timeframe, "N/A")} )
                     y += 1
+                    """
                     z = 0
 
         self.te_sentiment.update({y: bullcount} )
