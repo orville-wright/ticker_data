@@ -327,7 +327,6 @@ def main():
         # HACKING : show uniques from COMBO def
         print ( f"***** Hacking ***** " )
         print ( f"{x.unique_symbols().sort_values(by=['Symbol'])}" )
-        # self.combo_df.sort_values(by=['Pct_change'], ascending=False)
     else:
         pass
 
