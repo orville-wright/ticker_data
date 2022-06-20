@@ -208,58 +208,13 @@ class y_techevents:
                     grey_neutral = re.search('90deg', str(red) )
                     if red_down:             # Red = Bearish
                         y, rankalgo, bullcount = algo_te_autorank('Bearish', y, te_sml, rankalgo, te_timeframe, bullcount)
-                        """
-                        te_bb_state = 'Bearish'
-                        logging.info( f"{cmi_debug} - #1 - y_col:{y} / looking for term: {te_sml} / decoded into:{bb_term.get(te_sml)}" )
-                        te_term = bb_term.get(te_sml)               # decode yahoo time period -> Short_Med_Long_N/A
-                        bb_getrank = bb_weights.get(te_bb_state)    # select DICT index that matches timeframe : result -> DICT
-                        z = bb_getrank.get(te_term)                 # get algo ranking weight for this col/term timeframe
-                        logging.info( f"{cmi_debug} - #1 - y_col:{y} / te_term:{te_term}: / BB_state:{te_bb_state} / algo rank:{z}" )
-                        rankalgo += z                               # set ranking
-                        self.te_sentiment.update({y: (te_sml, te_timeframe, "Bearish")} )
-                        y += 1                                      # incr dict/index (timeframe column)
-                        """
                     elif grey_neutral:      # Grey = Neutral
                         y, rankalgo, bullcount = algo_te_autorank('Neutral', y, te_sml, rankalgo, te_timeframe, bullcount)
-                        """
-                        te_bb_state = 'Neutral'
-                        logging.info( f"{cmi_debug} - #2 - y_col:{y} / looking for term: {te_sml} / decoded into:{bb_term.get(te_sml)}" )
-                        te_term = bb_term.get(te_sml)               # decode yahoo time periods -> Short_Med_Lon_N/A
-                        bb_getrank = bb_weights.get(te_bb_state)    # select DICT index that matches timeframe : result -> DICT
-                        z = bb_getrank.get(te_term)                 # get algo ranking weight for this col/term timeframe
-                        logging.info( f"{cmi_debug} - #2 - y_col:{y} / te_term:{te_term}: / BB_state:{te_bb_state} / algo rank:{z}" )
-                        rankalgo += z                               # set ranking
-                        self.te_sentiment.update({y: (te_sml, te_timeframe, "Neutral")} )
-                        y += 1                                      # incr dict/index (timeframe column)
-                        """
                     else:                  # Green = Bullish
                         y, rankalgo, bullcount = algo_te_autorank('Bullish', y, te_sml, rankalgo, te_timeframe, bullcount)
-                        """
-                        te_bb_state = 'Bullish'
-                        logging.info( f"{cmi_debug} - #3 - y_col:{y} / looking for term: {te_sml} / decoded into:{bb_term.get(te_sml)}" )
-                        te_term = bb_term.get(te_sml)               # decode yahoo time periods -> Short_Med_Lon_N/A
-                        bb_getrank = bb_weights.get(te_bb_state)    # select DICT index that matches timeframe : result -> DICT
-                        z = bb_getrank.get(te_term)                 # get algo ranking weight for this col/term timeframe
-                        logging.info( f"{cmi_debug} - #3 - y_col:{y} / te_term:{te_term}: / BB_state:{te_bb_state} / algo rank:{z}" )
-                        rankalgo += z                               # set ranking
-                        self.te_sentiment.update({y: (te_sml, te_timeframe, "Bullish")} )
-                        bullcount += 1                              # keep count of BULLISH
-                        y += 1                                      # incr dict/index (timeframe column)
-                        """
                 else:
                     pass
                     y, rankalgo, bullcount = algo_te_autorank('N/A', y, te_sml, rankalgo, te_timeframe, bullcount)
-                    """
-                    te_bb_state = 'N/A'                           # capture symbols that dont have any data or bad data. force = "N/A"
-                    logging.info( f"{cmi_debug} - #4 - y_col:{y} / looking for term: {te_sml} / decoded into:{bb_term.get(te_sml)}" )
-                    te_term = bb_term.get(te_sml)                 # decode yahoo time periods -> Short_Med_Lon_N/A
-                    bb_getrank = bb_weights.get(te_bb_state)      # select DICT index that matches timeframe : result -> DICT
-                    z = bb_getrank.get(te_term)                   # get algo ranking weight for this col/term timeframe
-                    logging.info( f"{cmi_debug} - #4 - y_col:{y} / te_term:{te_term}: / BB_state:{te_bb_state} / algo rank:{z}" )
-                    rankalgo += z                                 # set ranking
-                    self.te_sentiment.update({y: (te_sml, te_timeframe, "N/A")} )
-                    y += 1
-                    """
                     z = 0
 
         self.te_sentiment.update({y: bullcount} )
