@@ -154,7 +154,7 @@ class y_techevents:
             logging.info( f"{cmi_debug} - #1 - y_col:{y} / te_term:{te_term}: / BB_state:{te_bb_state} / algo rank:{z}" )
             rankalgo += z                               # set ranking
             self.te_sentiment.update({y: (te_sml, te_timeframe, "Bearish")} )
-            if bull_bear = 'Bullish': bullcount += 1
+            if bull_bear == 'Bullish': bullcount += 1
             y += 1                                      # incr dict/index (timeframe column)
             return (y, rankalgo, bullcount)
 
