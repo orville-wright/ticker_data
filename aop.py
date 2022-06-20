@@ -303,10 +303,10 @@ def main():
 
 
 
-# Get the TSML performance Sentiment for all stocks in combo DF ######################
+# Get the Bull/Bear Technical performance Sentiment for all stocks in combo DF ######################
     """
-    Bullish/Neutral/Bearish indicators for each symbol
-    Data availability is inconsistent and randomly unreliable.
+    Bullish/Neutral/Bearish Technical indicators for each symbol
+    Yahoo.com data is inconsistent and randomly unreliable (for Bull/Bear/Neutral state).
     Yahoo wants you to PAY for this info, so they make it difficult to extract.
     """
     if args['bool_te'] is True:
@@ -323,6 +323,10 @@ def main():
         print ( f"========== Hottest stocks Bullish status =============" )
         print ( f"{te.te_df0[['Symbol', 'Today', 'Short', 'Mid', 'Long', 'Bullcount', 'Senti']].sort_values(by=['Bullcount', 'Senti'], ascending=False)}" )
         print ( f"------------------------------------------------------" )
+        #
+        # HACKING : show uniques from COMBO def
+        print ( f"***** Hacking ***** " )
+        print ( f"{x.list_uniques()}" )
     else:
         pass
 
