@@ -327,7 +327,9 @@ def main():
         # HACKING : show uniques from COMBO def
         print ( f"***** Hacking ***** " )
         c_uniques = x.unique_symbols()
-        print ( f"{c_uniques.loc[:,'Symbol']}" )
+        te.te_df0.merge(c_uniques, left_on='Symbol', right_on='Symbol')
+        print ( f"{te.te_df0}" )        
+        #print ( f"{c_uniques.loc[:,'Symbol']}" )
     else:
         pass
 
