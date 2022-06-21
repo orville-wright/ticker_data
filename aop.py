@@ -239,10 +239,10 @@ def main():
 # Summarize combo list key findings ##################################################################
         # Curious Outliers
         # temp_1 = x.combo_df.sort_values(by=['Pct_change'], ascending=False)
-        # temp_1 = x.combo_df.sort_values(by=['Symbol'])                      # sort by sumbol name (so dupes are linearly grouped)
-        # temp_1.reset_index(inplace=True, drop=True)                         # reset index
+        # temp_1 = x.combo_df.sort_values(by=['Symbol'])                        # sort by sumbol name (so dupes are linearly grouped)
+        # temp_1.reset_index(inplace=True, drop=True)                           # reset index
         temp_1 = x.combo_df.sort_values(by=['Pct_change'], ascending=False)     # sort by %
-        temp_2 = x.combo_listall_nodupes()                                  # dupes by SYMBOL only
+        temp_2 = x.combo_listall_nodupes()                                      # dupes by SYMBOL only
         print ( " " )
         print ( "========== ** OUTLIERS ** : Unusual UP volume + Top Gainers by +5% ================================" )
         print ( " " )
