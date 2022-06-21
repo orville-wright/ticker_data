@@ -228,15 +228,11 @@ def main():
     if args['bool_deep'] is True and args['bool_scr'] is True and args['bool_uvol'] is True:
         x = combo_logic(1, med_large_mega_gainers, small_cap_dataset, un_vol_activity, args )
         x.polish_combo_df(1)
-        print ( " " )
-        print ( f"================= >>COMBO<< Full list of intersting market observations ==================" )
         x.tag_dupes()
         x.tag_uniques()
         x.rank_hot()
         x.rank_unvol()
         x.rank_caps()
-        print ( f"{x.combo_listall_ranked()}" )
-
 
 # Summarize combo list key findings ##################################################################
         # Curious Outliers
@@ -244,7 +240,10 @@ def main():
         print ( " " )
         print ( "========== ** OUTLIERS ** : Unusual UP volume + Top Gainers by +5% ================================" )
         print ( " " )
-        print ( f"{temp_1[temp_1.duplicated(['Symbol'])]}" )    # duples in the df mean a curious outlier
+        print ( f"{temp_1[temp_1.duplicated(['Symbol'], keep='first')]}" )    # DUPLES in the DF = a curious outlier
+        print ( " " )
+        print ( f"================= >>COMBO<< Full list of intersting market observations ==================" )
+        print ( f"{x.combo_listall_nodupes()}" )
 
         if len(x.rx) == 0:      # # hottest stock with lowest price overall
             print ( " " )       # empty list[] = no stock found yet (prob very early in trading morning)
@@ -328,7 +327,7 @@ def main():
         print ( f"***** Hacking ***** " )
         c_uniques = x.unique_symbols()
         te.te_df0.merge(c_uniques, left_on='Symbol', right_on='Symbol')
-        print ( f"{te.te_df0}" )        
+        print ( f"{te.te_df0}" )
         #print ( f"{c_uniques.loc[:,'Symbol']}" )
     else:
         pass

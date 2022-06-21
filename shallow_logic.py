@@ -202,9 +202,9 @@ class combo_logic:
 
     def rank_unvol(self):
         """
-        Isolate all Unusual Vol stocks only, and tag_rank them with 3xx (e.g. 300, 301, 302)
+        Isolate all Unusual Vol stocks only.
+        tag_rank them with code: 3xx (e.g. 300, 301, 302)
         """
-
         z = list(self.combo_df.sort_values(by=['Cur_price'], ascending=True).loc[self.combo_df['Insights'] == "^ Unusual vol only"].index)
         y = 300
         for i in z:
@@ -215,10 +215,12 @@ class combo_logic:
 
     def rank_caps(self):
         """
-        isolate all non-*Hot* stocks and all non-Unusual Vol stocks, and tag_rank them  with 2xx (e.g. 200, 201, 202, 203)
-        WARN: This is a cheap way to find/select criteria. MUST call this ranking method last for this to work correctly.
+        isolate all non-*Hot* stocks and all non-Unusual Vol stocks.
+        tag_rank them with code: 2xx (e.g. 200, 201, 202, 203)
+        WARNING:
+            This is a cheap way to find/select criteria.
+            MUST call this ranking method last for this to work correctly.
         """
-
         z = list(self.combo_df.sort_values(by=['Cur_price'], ascending=True).loc[self.combo_df['rank'] == "" ].index)
         y = 200
         for i in z:
@@ -227,11 +229,11 @@ class combo_logic:
             y += 1
         return self.combo_df
 
-
     def combo_listall(self):
         """
-        Print the full contents of the combo DataFrame with DUPES
-        Sorted by % Change
+        Print the full contents of the combo DataFrame. All comumns. Not sorted.
+        WARNING:
+        DF contains DUPLICATE rows b/c **Hot** stocks appear multiple times.
         """
         cmi_debug = __name__+"::"+self.combo_listall.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
@@ -239,10 +241,36 @@ class combo_logic:
         pd.set_option('max_colwidth', 40)
         return self.combo_df
 
+    def combo_listall_ranked(self):
+        """
+        Print the full contents of the combo DataFrame. Sorted by % Change
+        WARNING:
+        DF contains DUPLICATE rows b/c **Hot** stocks appear multiple times.
+        """
+        cmi_debug = __name__+"::"+self.combo_listall_ranked.__name__+".#"+str(self.inst_uid)
+        logging.info('%s - IN' % cmi_debug )
+        pd.set_option('display.max_rows', None)
+        pd.set_option('max_colwidth', 40)
+        #print ( self.combo_df.sort_values(by=['Pct_change'], ascending=False) )
+        return self.combo_df.sort_values(by=['Pct_change'], ascending=False)
+
+    def combo_listall_nodupes(self):
+        """
+        Print the full combo DataFrame.
+        DUPLES REMOVED. Sorted by % Change
+        """
+        cmi_debug = __name__+"::"+self.combo_listall_ranked.__name__+".#"+str(self.inst_uid)
+        logging.info('%s - IN' % cmi_debug )
+        pd.set_option('display.max_rows', None)
+        pd.set_option('max_colwidth', 40)
+        c = self.combo_df.drop_duplicates(subset=['Symbol'], keep='first')    # only look at dupes in symbol colum
+        return c.sort_values(by=['Pct_change'], ascending=False)
+
     def list_uniques(self):
         """
         Print the full contents of the combo DataFrame with DUPES removed
         NOT sorted
+        note: method can be deleted. It is replcaed by unique_symbols
         """
         cmi_debug = __name__+"::"+self.combo_listall.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
@@ -261,19 +289,6 @@ class combo_logic:
         pd.set_option('max_colwidth', 40)
         unique_s = self.combo_df.drop_duplicates(subset=['Symbol'], keep='first')     # only look at dupes in symbol colum
         return unique_s.sort_values(by=['Symbol'])
-        #return unique_s[:,'Symbol'].sort_values(by=['Symbol'])
-
-    def combo_listall_ranked(self):
-        """
-        Print the full contents of the combo DataFrame with DUPES
-        Sorted by % Change
-        """
-        cmi_debug = __name__+"::"+self.combo_listall_ranked.__name__+".#"+str(self.inst_uid)
-        logging.info('%s - IN' % cmi_debug )
-        pd.set_option('display.max_rows', None)
-        pd.set_option('max_colwidth', 40)
-        #print ( self.combo_df.sort_values(by=['Pct_change'], ascending=False) )
-        return self.combo_df.sort_values(by=['Pct_change'], ascending=False)
 
     def combo_grouped(self):
         """
@@ -313,7 +328,7 @@ class combo_logic:
         """
         Clean, Polish & Wax the main Combo DataFrame.
         We do a lot of heavy DF data generation/manipulation/insertion here.
-        Fill-out key collumn data thats missing, incomplete and/or not reliable due to errors in initial data exttraction
+        Fill-out key collumn data thats missing, incomplete and/or not reliable due to errors in initial data extraction
         & collection process... becasue exchange data is not 100% reliable as we collect it in real time (surprisingly!)
         """
         cmi_debug = __name__+"::"+self.polish_combo_df.__name__+".#"+str(self.inst_uid)+"."+str(me)
