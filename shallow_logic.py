@@ -277,7 +277,7 @@ class combo_logic:
         logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 40)
-        return self.combo_df.drop_duplicates(subset=['Symbol'])    # only look at dupes in symbol colum
+        return self.combo_df.drop_duplicates(subset=['Symbol'], keep='first')    # only look at dupes in symbol colum
 
     def unique_symbols(self):
         """
