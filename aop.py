@@ -237,14 +237,15 @@ def main():
 # Summarize combo list key findings ##################################################################
         # Curious Outliers
         # temp_1 = x.combo_df.sort_values(by=['Pct_change'], ascending=False)
-        temp_1 = x.combo_df.sort_values(by=['Symbol'])
-        temp_1.reset_index(inplace=True, drop=True)                         # reset index each time so its guaranteed sequential
-        temp_1 = temp_1.sort_values(by=['Pct_change'], ascending=False)
+        temp_1 = x.combo_df.sort_values(by=['Symbol'])                      # sort by sumbol name (so dupes are linearly grouped)
+        temp_1.reset_index(inplace=True, drop=True)                         # reset index
+        temp_1 = temp_1.sort_values(by=['Pct_change'], ascending=False)     # sort by %
+        temp_2 = x.combo_listall_nodupes()
         print ( " " )
         print ( "========== ** OUTLIERS ** : Unusual UP volume + Top Gainers by +5% ================================" )
         print ( " " )
         # print ( f"{temp_1[temp_1.duplicated(['Symbol'], keep='first')]}" )    # DUPLES in the DF = a curious outlier
-        print ( f"{temp_1[temp_1.duplicated(['Symbol'], keep='last')]}" )    # DUPLES in the DF = a curious outlier
+        print ( f"{temp_1[temp_1.duplicated(['Symbol'], keep='last')]}" )       # DUPLES in the DF = a curious outlier
         print ( " " )
         print ( f"================= >>COMBO<< Full list of intersting market observations ==================" )
         print ( f"{x.combo_listall_nodupes()}" )
