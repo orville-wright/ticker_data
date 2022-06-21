@@ -233,13 +233,14 @@ def main():
         x.rank_hot()
         x.rank_unvol()
         x.rank_caps()
-        x.reindex_combo_df()
+        x.combo_df.sort_values(by=['Symbol'])         # sort by sumbol name (so dupes are linearly grouped)
+        x.reindex_combo_df()                          # re-order a new index (PERMENANT write)
 
 # Summarize combo list key findings ##################################################################
         # Curious Outliers
         # temp_1 = x.combo_df.sort_values(by=['Pct_change'], ascending=False)
-        temp_1 = x.combo_df.sort_values(by=['Symbol'])                      # sort by sumbol name (so dupes are linearly grouped)
-        temp_1.reset_index(inplace=True, drop=True)                         # reset index
+        # temp_1 = x.combo_df.sort_values(by=['Symbol'])                      # sort by sumbol name (so dupes are linearly grouped)
+        # temp_1.reset_index(inplace=True, drop=True)                         # reset index
         temp_1 = temp_1.sort_values(by=['Pct_change'], ascending=False)     # sort by %
         temp_2 = x.combo_listall_nodupes()                                  # dupes by SYMBOL only
         print ( " " )
