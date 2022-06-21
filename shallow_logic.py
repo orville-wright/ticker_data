@@ -252,14 +252,14 @@ class combo_logic:
 
     def unique_symbols(self):
         """
-        Print a list of UNIQUE symbols from the combo DataFrame with DUPES removed
-        NOT sorted
+        Build a DF of UNIQUE symbols from the combo DataFrame with DUPES remove
+        (keep the FIRST instance of each dupe discovered. Sort by Symbol
         """
         cmi_debug = __name__+"::"+self.combo_listall.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 40)
-        unique_s = self.combo_df.drop_duplicates(subset=['Symbol'])     # only look at dupes in symbol colum
+        unique_s = self.combo_df.drop_duplicates(subset=['Symbol'], keep='first')     # only look at dupes in symbol colum
         return unique_s.sort_values(by=['Symbol'])
         #return unique_s[:,'Symbol'].sort_values(by=['Symbol'])
 
