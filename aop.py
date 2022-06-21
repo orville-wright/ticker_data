@@ -240,7 +240,8 @@ def main():
         print ( " " )
         print ( "========== ** OUTLIERS ** : Unusual UP volume + Top Gainers by +5% ================================" )
         print ( " " )
-        print ( f"{temp_1[temp_1.duplicated(['Symbol'], keep='first')]}" )    # DUPLES in the DF = a curious outlier
+        # print ( f"{temp_1[temp_1.duplicated(['Symbol'], keep='first')]}" )    # DUPLES in the DF = a curious outlier
+        print ( f"{temp_1[temp_1.duplicated(['Symbol'], keep='last')]}" )    # DUPLES in the DF = a curious outlier
         print ( " " )
         print ( f"================= >>COMBO<< Full list of intersting market observations ==================" )
         print ( f"{x.combo_listall_nodupes()}" )

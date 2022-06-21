@@ -323,6 +323,19 @@ class combo_logic:
 
         return
 
+    def reindex_combo_df(self):
+        """
+        Make combo_df index numbering linear; starting from 0, 1, 2, 3, 4...
+        WANRING:
+        This will write the new index INTO the exiting combo DF. Its a permenant change.
+        Only do this if you are very sure you must do this NOW...!
+        """
+        cmi_debug = __name__+"::"+self.reindex_combo_df.__name__+".#"+str(self.inst_uid)
+        logging.info('%s - IN' % cmi_debug )
+        self.combo_df.reset_index(inplace=True, drop=True)                         # reset index each time so its guaranteed sequential
+        #self.combo_df = temp_df.sort_values(by=['Pct_change'], ascending=False )   # ensure sorted combo DF is avail as class global attr
+        #self.combo_dupes = self.combo_df.duplicated(['Symbol']).to_frame()         # convert Bool SERIES > DF & make avail as class global attr DF
+        return
 
     def polish_combo_df(self, me):
         """
