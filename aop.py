@@ -236,7 +236,9 @@ def main():
 
 # Summarize combo list key findings ##################################################################
         # Curious Outliers
-        temp_1 = x.combo_df.sort_values(by=['Pct_change'], ascending=False)
+        temp_1 = x.combo_df.sort_values(by=['Symbol'])
+        temp_1.reset_index(inplace=True, drop=True)                         # reset index each time so its guaranteed sequential
+        temp_1.combo_df.sort_values(by=['Pct_change'], ascending=False)
         print ( " " )
         print ( "========== ** OUTLIERS ** : Unusual UP volume + Top Gainers by +5% ================================" )
         print ( " " )
