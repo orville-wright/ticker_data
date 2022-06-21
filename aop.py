@@ -233,6 +233,7 @@ def main():
         x.rank_hot()
         x.rank_unvol()
         x.rank_caps()
+        x.reindex_combo_df()
 
 # Summarize combo list key findings ##################################################################
         # Curious Outliers
@@ -240,7 +241,7 @@ def main():
         temp_1 = x.combo_df.sort_values(by=['Symbol'])                      # sort by sumbol name (so dupes are linearly grouped)
         temp_1.reset_index(inplace=True, drop=True)                         # reset index
         temp_1 = temp_1.sort_values(by=['Pct_change'], ascending=False)     # sort by %
-        temp_2 = x.combo_listall_nodupes()
+        temp_2 = x.combo_listall_nodupes()                                  # dupes by SYMBOL only
         print ( " " )
         print ( "========== ** OUTLIERS ** : Unusual UP volume + Top Gainers by +5% ================================" )
         print ( " " )
@@ -248,7 +249,8 @@ def main():
         print ( f"{temp_1[temp_1.duplicated(['Symbol'], keep='last')]}" )       # DUPLES in the DF = a curious outlier
         print ( " " )
         print ( f"================= >>COMBO<< Full list of intersting market observations ==================" )
-        print ( f"{x.combo_listall_nodupes()}" )
+        #print ( f"{x.combo_listall_nodupes()}" )
+        print ( f"{temp_2.sort_values(by=['Pct_change'], ascending=False)}" )
 
         if len(x.rx) == 0:      # # hottest stock with lowest price overall
             print ( " " )       # empty list[] = no stock found yet (prob very early in trading morning)
