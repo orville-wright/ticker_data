@@ -256,10 +256,10 @@ class combo_logic:
 
     def combo_listall_nodupes(self):
         """
-        Print the full combo DataFrame.
-        DUPLES REMOVED. Sorted by % Change
+        Print the entire combo DataFrame.
+        DUPES REMOVED. Sorted by % Change
         """
-        cmi_debug = __name__+"::"+self.combo_listall_ranked.__name__+".#"+str(self.inst_uid)
+        cmi_debug = __name__+"::"+self.combo_listall_nodupes.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 40)
@@ -272,7 +272,7 @@ class combo_logic:
         NOT sorted
         note: method can be deleted. It is replcaed by unique_symbols
         """
-        cmi_debug = __name__+"::"+self.combo_listall.__name__+".#"+str(self.inst_uid)
+        cmi_debug = __name__+"::"+self.list_uniques.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 40)
@@ -283,7 +283,7 @@ class combo_logic:
         Build a DF of UNIQUE symbols from the combo DataFrame with DUPES remove
         (keep the FIRST instance of each dupe discovered. Sort by Symbol
         """
-        cmi_debug = __name__+"::"+self.combo_listall.__name__+".#"+str(self.inst_uid)
+        cmi_debug = __name__+"::"+self.unique_symbols.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 40)
