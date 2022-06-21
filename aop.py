@@ -327,9 +327,10 @@ def main():
         # HACKING : show uniques from COMBO def
         print ( f"***** Hacking ***** " )
         # might not be necessary now, since I've changed the logic surrounding COMBO DF dupes.
-        c_uniques = x.unique_symbols()
+        # c_uniques = x.unique_symbols()
+        c_uniques = x.combo_listall_nodupes()
         te.te_df0.merge(c_uniques, left_on='Symbol', right_on='Symbol')
-        x.combo_listall_nodupes
+        # x.combo_listall_nodupes
         print ( f"{te.te_df0}" )
     else:
         pass
