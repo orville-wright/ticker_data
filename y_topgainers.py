@@ -78,8 +78,8 @@ class y_topgainers:
             y = 1
             for i in j.find_all('td'):
             	print ( f"Data {y}: {i.text}" )
-                # logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
-            y += 1
+                logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
+                y += 1
             print ( f"==============================================" )
             # >>>DEBUG<< for when yahoo.com changes data model...
 
@@ -152,7 +152,7 @@ class y_topgainers:
                        x, \
                        re.sub('\'', '', co_sym_lj), \
                        co_name_lj, \
-                       float(re.sub('\,', '', price)), \
+                       float(re.sub('\,', '', price_clean)), \
                        change_clean, \
                        pct_clean, \
                        mktcap_clean, \
