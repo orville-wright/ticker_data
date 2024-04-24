@@ -115,24 +115,24 @@ class y_topgainers:
             co_name_lj = (re.sub('[\'\"]', '', co_name_lj) )                  # remove " ' and strip leading/trailing spaces
             price_clean = float(price)
             mktcap = (re.sub('[N\/A]', '0', mktcap))   # handle N/A
-            change_clean = np.float(change_val)
+            change_clean = float(change_val)
 
             TRILLIONS = re.search('T', mktcap)
             BILLIONS = re.search('B', mktcap)
             MILLIONS = re.search('M', mktcap)
 
             if TRILLIONS:
-                mktcap_clean = np.float(re.sub('T', '', mktcap))
+                mktcap_clean = float(re.sub('T', '', mktcap))
                 mb = "ST"
                 logging.info( f'%s - {x} / {co_sym_lj} Small Cap/TRILLIONS. set ST' % cmi_debug )
 
             if BILLIONS:
-                mktcap_clean = np.float(re.sub('B', '', mktcap))
+                mktcap_clean = float(re.sub('B', '', mktcap))
                 mb = "SB"
                 logging.info( f'%s - {x} / {co_sym_lj} Small cap/BILLIONS. set SB' % cmi_debug )
 
             if MILLIONS:
-                mktcap_clean = np.float(re.sub('M', '', mktcap))
+                mktcap_clean = float(re.sub('M', '', mktcap))
                 mb = "SM"
                 logging.info( f'%s - {x} / {co_sym_lj} Large cap/MILLIONS. set SM' % cmi_debug )
 
@@ -152,7 +152,7 @@ class y_topgainers:
                        x, \
                        re.sub('\'', '', co_sym_lj), \
                        co_name_lj, \
-                       np.float(re.sub('\,', '', price)), \
+                       float(re.sub('\,', '', price)), \
                        change_clean, \
                        pct_clean, \
                        mktcap_clean, \
