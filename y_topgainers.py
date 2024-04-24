@@ -73,6 +73,7 @@ class y_topgainers:
         # >>>DEBUG<< for when yahoo.com changes data model...
         print ( f"===== Rows: {len(self.tag_tbody.find_all('tr'))}  =================" )
         for j in self.tag_tbody.find_all('tr'):
+            """
             # >>>DEBUG<< for when yahoo.com changes data model...
             y = 1
             for i in j.find_all('td'):
@@ -81,6 +82,7 @@ class y_topgainers:
                 y += 1
             print ( f"==============================================" )
             # >>>DEBUG<< for when yahoo.com changes data model...
+            """
 
             extr_strs = j.strings
             co_sym = next(extr_strs)             # 1 : ticker symbol info / e.g "NWAU"
@@ -159,10 +161,10 @@ class y_topgainers:
                        mb, \
                        time_now ]]
 
-            logging.info( f'%s - tg_df0.data0: {self.data0}' % cmi_debug )
+            #logging.info( f'%s - tg_df0.data0: {self.data0}' % cmi_debug )
 
             self.df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time' ], index=[x] )
-            self.tg_df0 = self.tg_df0.append(self.df0)    # append this ROW of data into the REAL DataFrame
+            self.tg_df0 = self.tg_df0._append(self.df0)    # append this ROW of data into the REAL DataFrame
             x+=1
 
         logging.info('%s - populated new DF0 dataset' % cmi_debug )

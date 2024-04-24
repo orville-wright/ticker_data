@@ -107,17 +107,17 @@ class y_toplosers:
             MILLIONS = re.search('M', mktcap)
 
             if TRILLIONS:
-                mktcap_clean = np.float(re.sub('T', '', mktcap))
+                mktcap_clean = float(re.sub('T', '', mktcap))
                 mb = "T"
                 logging.info('%s - found TRILLIONS. set T' % cmi_debug )
 
             if BILLIONS:
-                mktcap_clean = np.float(re.sub('B', '', mktcap))
+                mktcap_clean = float(re.sub('B', '', mktcap))
                 mb = "B"
                 logging.info('%s - found BILLIONS. set B' % cmi_debug )
 
             if MILLIONS:
-                mktcap_clean = np.float(re.sub('M', '', mktcap))
+                mktcap_clean = float(re.sub('M', '', mktcap))
                 mb = "M"
                 logging.info('%s - found MILLIONS. set M' % cmi_debug )
 
@@ -130,22 +130,23 @@ class y_toplosers:
             if pct == "N/A":            # Bad data. FOund a filed with N/A instead of read num
                 pct = "1.0"
 
-            pct = np.float(re.sub('[\-+,%]', '', pct))
-            change = np.float(re.sub('[\-+,%]', '', change))
-            #np.float(re.sub('[\+,]', '', change)), \
+            pct = float(re.sub('[\-+,%]', '', pct))
+            change = float(re.sub('[\-+,%]', '', change))
+            #float(re.sub('[\+,]', '', change)), \
 
-            # note: Pandas DataFrame : top_loserers pre-initalized as EMPYT
+            # note: Pandas DataFrame : top_loserers pre-initalized as EMPTY
             # Data treatment:
             # Data is extracted as raw strings, so needs wrangeling...
             #    price - stip out any thousand "," seperators and cast as true decimal via numpy
             #    change - strip out chars '+' and ',' and cast as true decimal via numpy
             #    pct - strip out chars '+ and %' and cast as true decimal via numpy
             #    mktcap - strio out 'B' Billions & 'M' Millions
+                       #float(re.sub('\,', '', price)), \
             self.data0 = [[ \
                        x, \
                        re.sub('\'', '', co_sym_lj), \
                        co_name_lj, \
-                       np.float(re.sub('\,', '', price)), \
+                       price, \
                        change, \
                        pct, \
                        mktcap_clean, \
@@ -153,7 +154,7 @@ class y_toplosers:
                        time_now ]]
 
             self.df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time' ], index=[x] )
-            self.tg_df0 = self.tg_df0.append(self.df0)    # append this ROW of data into the REAL DataFrame
+            self.tg_df0 = self.tg_df0._append(self.df0)    # append this ROW of data into the REAL DataFrame
             x+=1
         logging.info('%s - populated new DF0 dataset' % cmi_debug )
         return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
