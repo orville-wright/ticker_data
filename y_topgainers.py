@@ -73,11 +73,10 @@ class y_topgainers:
         # >>>DEBUG<< for when yahoo.com changes data model...
         print ( f"===== Rows: {len(self.tag_tbody.find_all('tr'))}  =================" )
         for j in self.tag_tbody.find_all('tr'):
-            
             # >>>DEBUG<< for when yahoo.com changes data model...
             y = 1
             for i in j.find_all('td'):
-            	print ( f"Data {y}: {i.text}" )
+                print ( f"Data {y}: {i.text}" )
                 logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
                 y += 1
             print ( f"==============================================" )
@@ -148,16 +147,19 @@ class y_topgainers:
                 pct_cl = re.sub('[\%\+\-,]', "", pct_val )
                 pct_clean = float(pct_cl)
 
+                       #float(re.sub('\,', '', price_clean)), \
             self.data0 = [[ \
                        x, \
                        re.sub('\'', '', co_sym_lj), \
                        co_name_lj, \
-                       float(re.sub('\,', '', price_clean)), \
+                       price_clean, \
                        change_clean, \
                        pct_clean, \
                        mktcap_clean, \
                        mb, \
                        time_now ]]
+
+            logging.info( f'%s - tg_df0.data0: {self.data0}' % cmi_debug )
 
             self.df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time' ], index=[x] )
             self.tg_df0 = self.tg_df0.append(self.df0)    # append this ROW of data into the REAL DataFrame
