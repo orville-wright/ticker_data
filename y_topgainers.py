@@ -78,10 +78,11 @@ class y_topgainers:
             y = 1
             for i in j.find_all('td'):
             	print ( f"Data {y}: {i.text}" )
-            	# logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
-                y += 1
-
+                # logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
+            y += 1
             print ( f"==============================================" )
+            # >>>DEBUG<< for when yahoo.com changes data model...
+
             extr_strs = j.strings
             co_sym = next(extr_strs)             # 1 : ticker symbol info / e.g "NWAU"
             co_name = next(extr_strs)            # 2 : company name / e.g "Consumer Automotive Finance, Inc."
