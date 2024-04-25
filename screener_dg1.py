@@ -90,25 +90,25 @@ class screener_dg1:
             co_name = next(extr_strs)            # 2 : company name / e.g "Consumer Automotive Finance, Inc."
             price = next(extr_strs)              # 3 : price (Intraday) / e.g "0.0031"
 
-            change_sign = next(extr_strs)        # 4 : $ change sign / e.g  "+0.0021"
+            change_sign = next(extr_strs)        # 4.0 : $ change sign [+/-] / e.g  "+0.0021"
             if change_sign == "+" or change_sign == "-":
-                change_val = next(extr_strs)     # 5 : $ change / e.g  "+0.0021"
+                change_val = next(extr_strs)     # 4.1 : $ change value / e.g  "+0.0021"
             else:
                 change_val = change_sign
-                logging.info( f"{cmi_debug} - {co_sym} / re-align extract head / no [+-] field for $0" )
-            pct_sign = next(extr_strs)           # 6 : % change / e.g "+" or "-"
+                logging.info( f"{cmi_debug} - {co_sym} / re-align extractor / Found no [+-] tag for $0" )
+            pct_sign = next(extr_strs)           # 5.0 : % change sign [+/-] / e.g "+%12.3"
             if pct_sign == "+" or pct_sign == "-":
-                pct_val = next(extr_strs)        # 7 : change / e.g "210.0000%" WARN trailing "%" must be removed before casting to float
+                pct_val = next(extr_strs)        # 5.1 : change / e.g "210.0000%" WARN trailing "%" must be removed before casting to float
             else:
                 z = 0
                 pct_val = pct_sign
-                logging.info( f"{cmi_debug} - {co_sym} / re-align extract head / no [+-] field for %0" )
+                logging.info( f"{cmi_debug} - {co_sym} / re-align extractor / Found no [+-] tag for %0" )
 
-            vol = next(extr_strs)            # 8 : volume with scale indicator/ e.g "70.250k"
-            avg_vol = next(extr_strs)        # 9 : Avg. vol over 3 months) / e.g "61,447"
-            mktcap = next(extr_strs)         # 10 : Market cap with scale indicator / e.g "15.753B"
-            peratio = next(extr_strs)        # 11 : PEsratio TTM (Trailing 12 months) / e.g "N/A"
-            #mini_gfx = next(extr_strs)      # 12th : IGNORED = mini-canvas graphic 52-week rnage (no TXT/strings avail)
+            vol = next(extr_strs)            # 6 : volume with scale indicator/ e.g "70.250k"
+            avg_vol = next(extr_strs)        # 7 : Avg. vol over 3 months) / e.g "61,447"
+            mktcap = next(extr_strs)         # 8 : Market cap with scale indicator / e.g "15.753B"
+            peratio = next(extr_strs)        # 9 : PE ratio TTM (Trailing 12 months) / e.g "N/A"
+            #mini_gfx = next(extr_strs)      # 10 : IGNORED = mini-canvas graphic 52-week rnage (no TXT/strings avail)
 
             ####################################################################
             # now wrangle the data...
@@ -145,12 +145,11 @@ class screener_dg1:
                 # handle bad data in mktcap html page field
 
             if pct_val == "N/A":
-                pct_val = float(0.0)        # Bad data. FOund a filed with N/A instead of read num
+                pct_val = float(0.0)        # Bad data : Found a field with N/A instead of real num
             else:
                 pct_cl = re.sub('[\%\+\-]', "", pct_val )
                 pct_clean = float(pct_cl)
 
-                       #float(re.sub('\,', '', price_clean)), \
             self.list_data = [[ \
                        x, \
                        re.sub('\'', '', co_sym_lj), \
@@ -256,6 +255,10 @@ class screener_dg1:
         lowestprice = self.dg1_df1['Cur_price'].min()
         minv = self.dg1_df1['Cur_price'].idxmin()
         lowsym = self.dg1_df1.loc[minv, ['Symbol']][0]
+        
+        print ( f"lossym: {lowsym}: / DF {self.dg1_df1.loc[minv, ['Symbol']]}" )
+        #ser.iloc[pos]
+        
         lowconame = self.dg1_df1.loc[minv, ['Co_name']][0]
 
         # Allways make sure this is key #1 in the recommendations dict
