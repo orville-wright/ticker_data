@@ -97,11 +97,13 @@ class y_toplosers:
             avg_vol = next(extr_strings)
             mktcap = next(extr_strings)
 
-            co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )      # left justify TXT in DF & convert to raw string
-
-            co_name_lj = (re.sub('[\'\"]', '', co_name) )    # remove " ' and strip leading/trailing spaces
+            co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )         # left justify TXT in DF & convert to raw string
+            co_name_lj = (re.sub('[\'\"]', '', co_name) )                  # remove " ' and strip leading/trailing spaces
             co_name_lj = np.array2string(np.char.ljust(co_name_lj, 25) )   # left justify TXT in DF & convert to raw string
-            co_name_lj = (re.sub('[\']', '', co_name_lj) )    # remove " ' and strip leading/trailing spaces
+            co_name_lj = (re.sub('[\']', '', co_name_lj) )                 # remove " ' and strip leading/trailing spaces
+
+            price_cl = (re.sub('\,', '', price))                           # remove ,
+            price_clean = float(price_cl)
 
             TRILLIONS = re.search('T', mktcap)
             BILLIONS = re.search('B', mktcap)
@@ -147,7 +149,7 @@ class y_toplosers:
                        x, \
                        re.sub('\'', '', co_sym_lj), \
                        co_name_lj, \
-                       price, \
+                       price_clean, \
                        change, \
                        pct, \
                        mktcap_clean, \
