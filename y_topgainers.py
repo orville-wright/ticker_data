@@ -66,8 +66,7 @@ class y_topgainers:
         cmi_debug = __name__+"::"+self.build_tg_df0.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
-        logging.info('%s - Drop all rows from DF0' % cmi_debug )
-        #self.tg_df0.drop(self.tg_df0.index, inplace=True)           # the df is now 100% empty
+        logging.info('%s - Create clean NULL DataFrame' % cmi_debug )
         self.tg_df0 = pd.DataFrame()                                 # new df, but is NULLed
         x = 0   # row counter / = index_id for DataFrame
 
@@ -89,20 +88,27 @@ class y_topgainers:
             co_name = next(extr_strs)            # 2 : company name / e.g "Consumer Automotive Finance, Inc."
             price = next(extr_strs)              # 3 : price (Intraday) / e.g "0.0031"
 
-            change_sign = next(extr_strs)        # 4.0 : $ change sign / e.g  "+0.0021"
+            # is there a dedicated collumn to hold a +/- indicator
+            change_sign = next(extr_strs)        # 4 : $_change sign / e.g  "+0.0021"
             if change_sign == "+" or change_sign == "-":
-                change_val = next(extr_strs)     # 4.1 : $ change / e.g  "+0.0021"
+                change_val = next(extr_strs)     # 4 : Yes we found a sign indicator (+/-), advance iterator to next field
             else:
-                change_val = change_sign
-                logging.info( f"{cmi_debug} - {co_sym} / re-align extract head / no [+-] field for $0" )
-
+                change_val = change_sign         # 4 : Not found, just change $ value. but change $ value is +/- signed  in value 
+                logging.info( f"{cmi_debug} - {co_sym} / no dedicated [+-] field for $ CHANGE" )
+                if (re.search('\+', change_val)) or  ((re.search('\-', change_val)):
+                    logging.info( f"{cmi_debug} - {change_val} /  $ CHANGE is signed [+-]" )
+                else:
+                    logging.info( f"{cmi_debug} - {change_val} /  $ CHANGE is NOT signed [+-]" )
+                
+            # is there a dedicated collumn to hold a +/- indicator
             pct_sign = next(extr_strs)           # 5.0 : % change / e.g "+" or "-"
             if pct_sign == "+" or pct_sign == "-":
                 pct_val = next(extr_strs)        # 5.1 : change / e.g "210.0000%" WARN trailing "%" must be removed before casting to float
             else:
                 z = 0
                 pct_val = pct_sign
-                logging.info( f"{cmi_debug} - {co_sym} / re-align extract head / no [+-] field for %0" )
+                logging.info( f"{cmi_debug} - {co_sym} / no dedicated [+-] field for % CHANGE" )
+            
 
             vol = next(extr_strs)            # 6 : volume with scale indicator/ e.g "70.250k"
             avg_vol = next(extr_strs)        # 7 : Avg. vol over 3 months) / e.g "61,447"
@@ -114,14 +120,18 @@ class y_topgainers:
             # now wrangle the data...
             co_sym_lj = f"{co_sym:<6}"                                   # left justify TXT in DF & convert to raw string
             co_name_lj = np.array2string(np.char.ljust(co_name, 25) )    # left justify TXT in DF & convert to raw string
-            co_name_lj = (re.sub('[\'\"]', '', co_name_lj) )             # remove " ' and strip leading/trailing spaces
-            
-            price_cl = (re.sub('\,', '', price))                         # remove ,
+            co_name_lj = (re.sub('[\'\"]', '', co_name_lj) )             # remove " ' and strip leading/trailing spaces    
+            price_cl = (re.sub('\,', '', price))                   # remove ,
             price_clean = float(price_cl)
-            
-            mktcap = (re.sub('[N\/A]', '0', mktcap))                     # handle N/A
             change_clean = float(change_val)
 
+            if pct_val == "N/A":
+                pct_val = float(0.0)                               # Bad data. FOund a filed with N/A instead of read num
+            else:
+                pct_cl = re.sub('[\%\+\-,]', "", pct_val )
+                pct_clean = float(pct_cl)
+            
+            mktcap = (re.sub('[N\/A]', '0', mktcap))               # handle N/A
             TRILLIONS = re.search('T', mktcap)
             BILLIONS = re.search('B', mktcap)
             MILLIONS = re.search('M', mktcap)
@@ -147,11 +157,6 @@ class y_topgainers:
                 logging.info( f'%s - {x} / {co_sym_lj} bad mktcap data N/A - SZ' % cmi_debug )
                 # handle bad data in mktcap html page field
 
-            if pct_val == "N/A":
-                pct_val = float(0.0)        # Bad data. FOund a filed with N/A instead of read num
-            else:
-                pct_cl = re.sub('[\%\+\-,]', "", pct_val )
-                pct_clean = float(pct_cl)
 
             # now construct our list for concatinating to the dataframe 
             self.list_data = [[ \
