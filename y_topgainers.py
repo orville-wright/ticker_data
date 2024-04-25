@@ -91,15 +91,15 @@ class y_topgainers:
             # is there a dedicated collumn to hold a +/- indicator
             change_sign = next(extr_strs)        # 4 : $_change sign / e.g  "+0.0021"
             if change_sign == "+" or change_sign == "-":
-                change_val = next(extr_strs)     # 4 : Yes we found a sign indicator (+/-), advance iterator to next field
+                change_val = next(extr_strs)     # 4 : Yes found a sign indicator (+/-), advance iterator to next field
             else:
-                change_val = change_sign         # 4 : Not found, just change $ value. but change $ value is +/- signed  in value 
-                logging.info( f"{cmi_debug} - {co_sym} / no dedicated [+-] field for $ CHANGE" )
-                if (re.search('\+', change_val)) or  ((re.search('\-', change_val)):
-                    logging.info( f"{cmi_debug} - {change_val} /  $ CHANGE is signed [+-]" )
+                change_val = change_sign         # 4 : Not found. We now have change $ value but its possibly a +/- signed number
+                logging.info( f"{cmi_debug} - {co_sym} - no dedicated [+-] field for $ CHANGE" )
+                if (re.search('\+', change_val)) or  (re.search('\-', change_val)) is TRUE:
+                    logging.info( f"{cmi_debug} - {change_val} - $ CHANGE is signed [+-]" )
                 else:
-                    logging.info( f"{cmi_debug} - {change_val} /  $ CHANGE is NOT signed [+-]" )
-                
+                    logging.info( f"{cmi_debug} - {change_val} - $ CHANGE is NOT signed [+-]" )
+
             # is there a dedicated collumn to hold a +/- indicator
             pct_sign = next(extr_strs)           # 5.0 : % change / e.g "+" or "-"
             if pct_sign == "+" or pct_sign == "-":
@@ -107,7 +107,7 @@ class y_topgainers:
             else:
                 z = 0
                 pct_val = pct_sign
-                logging.info( f"{cmi_debug} - {co_sym} / no dedicated [+-] field for % CHANGE" )
+                logging.info( f"{cmi_debug} - {co_sym} - no dedicated [+-] field for % CHANGE" )
             
 
             vol = next(extr_strs)            # 6 : volume with scale indicator/ e.g "70.250k"
@@ -139,22 +139,22 @@ class y_topgainers:
             if TRILLIONS:
                 mktcap_clean = float(re.sub('T', '', mktcap))
                 mb = "ST"
-                logging.info( f'%s - {x} / {co_sym_lj} Mkt Cap: TRILLIONS - ST' % cmi_debug )
+                logging.info( f'%s - {x} - {co_sym_lj} Mkt Cap: TRILLIONS - ST' % cmi_debug )
 
             if BILLIONS:
                 mktcap_clean = float(re.sub('B', '', mktcap))
                 mb = "SB"
-                logging.info( f'%s - {x} / {co_sym_lj} Mkt cap: BILLIONS - SB' % cmi_debug )
+                logging.info( f'%s - {x} - {co_sym_lj} Mkt cap: BILLIONS - SB' % cmi_debug )
 
             if MILLIONS:
                 mktcap_clean = float(re.sub('M', '', mktcap))
                 mb = "SM"
-                logging.info( f'%s - {x} / {co_sym_lj} Mkt cap: MILLIONS - SM' % cmi_debug )
+                logging.info( f'%s - {x} - {co_sym_lj} Mkt cap: MILLIONS - SM' % cmi_debug )
 
             if not TRILLIONS and not BILLIONS and not MILLIONS:
                 mktcap_clean = 0    # error condition - possible bad data
                 mb = "SZ"           # Zillions
-                logging.info( f'%s - {x} / {co_sym_lj} bad mktcap data N/A - SZ' % cmi_debug )
+                logging.info( f'%s - {x} - {co_sym_lj} bad mktcap data N/A - SZ' % cmi_debug )
                 # handle bad data in mktcap html page field
 
 
