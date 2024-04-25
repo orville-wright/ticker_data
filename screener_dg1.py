@@ -115,24 +115,24 @@ class screener_dg1:
             co_name_lj = (re.sub('[\'\"]', '', co_name_lj) )                  # remove " ' and strip leading/trailing spaces
             price_clean = float(price)
             mktcap = (re.sub('[N\/A]', '0', mktcap))   # handle N/A
-            change_clean = np.float(change_val)
+            change_clean = float(change_val)
 
             TRILLIONS = re.search('T', mktcap)
             BILLIONS = re.search('B', mktcap)
             MILLIONS = re.search('M', mktcap)
 
             if TRILLIONS:
-                mktcap_clean = np.float(re.sub('T', '', mktcap))
+                mktcap_clean = float(re.sub('T', '', mktcap))
                 mb = "ST"
                 logging.info( f'%s - {x} / {co_sym_lj} Small Cap/TRILLIONS. set ST' % cmi_debug )
 
             if BILLIONS:
-                mktcap_clean = np.float(re.sub('B', '', mktcap))
+                mktcap_clean = float(re.sub('B', '', mktcap))
                 mb = "SB"
                 logging.info( f'%s - {x} / {co_sym_lj} Small cap/BILLIONS. set SB' % cmi_debug )
 
             if MILLIONS:
-                mktcap_clean = np.float(re.sub('M', '', mktcap))
+                mktcap_clean = float(re.sub('M', '', mktcap))
                 mb = "SM"
                 logging.info( f'%s - {x} / {co_sym_lj} Large cap/MILLIONS. set SM' % cmi_debug )
 
@@ -148,11 +148,12 @@ class screener_dg1:
                 pct_cl = re.sub('[\%\+\-]', "", pct_val )
                 pct_clean = float(pct_cl)
 
+                       #float(re.sub('\,', '', price_clean)), \
             self.data0 = [[ \
                        x, \
                        re.sub('\'', '', co_sym_lj), \
                        co_name_lj, \
-                       np.float(re.sub('\,', '', price)), \
+                       price, \
                        change_clean, \
                        pct_clean, \
                        mktcap_clean, \
@@ -160,7 +161,7 @@ class screener_dg1:
                        time_now ]]
 
             self.df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time' ], index=[x] )
-            self.dg1_df0 = self.dg1_df0.append(self.df0)    # append this ROW of data into the REAL DataFrame
+            self.dg1_df0 = self.dg1_df0._append(self.df0)    # append this ROW of data into the REAL DataFrame
             x+=1
 
         logging.info('%s - populated new DF0 dataset' % cmi_debug )
