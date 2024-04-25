@@ -68,7 +68,7 @@ class y_topgainers:
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         logging.info('%s - Drop all rows from DF0' % cmi_debug )
         #self.tg_df0.drop(self.tg_df0.index, inplace=True)           # the df is now 100% empty
-        self.tg_df0.DataFrame()                                      # new df, but is NULLed
+        self.tg_df0 = pd.DataFrame()                                 # new df, but is NULLed
         x = 0   # row counter / = index_id for DataFrame
         #self.list_data = []    # our in-memory list [] that holds our temp dataframe rows as we loop thru building it 
 
