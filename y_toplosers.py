@@ -75,7 +75,8 @@ class y_toplosers:
         logging.info('%s - IN' % cmi_debug )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         logging.info('%s - Drop all rows from DF0' % cmi_debug )
-        self.tg_df0.drop(self.tg_df0.index, inplace=True)
+        #self.tg_df0.drop(self.tg_df0.index, inplace=True)           # the df is now 100% empty
+        self.tg_df0 = pd.DataFrame()                                 # new df, but is NULLed. avoids empty concat errors
         x = 1    # row counter Also leveraged for unique dataframe key
         for datarow in self.all_tag_tr:
             # 1st <td> cell : ticker symbol info & has comment of company name
@@ -142,7 +143,7 @@ class y_toplosers:
             #    pct - strip out chars '+ and %' and cast as true decimal via numpy
             #    mktcap - strio out 'B' Billions & 'M' Millions
                        #float(re.sub('\,', '', price)), \
-            self.data0 = [[ \
+            self.list_data = [[ \
                        x, \
                        re.sub('\'', '', co_sym_lj), \
                        co_name_lj, \
@@ -153,9 +154,13 @@ class y_toplosers:
                        mb, \
                        time_now ]]
 
-            self.df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time' ], index=[x] )
-            self.tg_df0 = self.tg_df0._append(self.df0)    # append this ROW of data into the REAL DataFrame
+            #self.df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time' ], index=[x] )
+            #self.tg_df0 = self.tg_df0._append(self.df0)    # append this ROW of data into the REAL DataFrame
+            # convert our list into a 1 row dataframe
+            self.df_1_row = pd.DataFrame(self.list_data, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time' ], index=[x] )
+            self.tg_df0 = pd.concat([self.tg_df0, self.df_1_row])  
             x+=1
+
         logging.info('%s - populated new DF0 dataset' % cmi_debug )
         return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
                         # sucess = lobal class accessor (y_toplosers.tg_df0) populated & updated
