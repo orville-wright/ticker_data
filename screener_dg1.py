@@ -257,7 +257,7 @@ class screener_dg1:
         lowsym = self.dg1_df1.loc[minv, ['Symbol']][0]
         
         #ser.iloc[pos]
-        lowlow_sym = minv.iloc[0]
+        #lowlow_sym = minv.iloc[0]
 
         lowconame = self.dg1_df1.loc[minv, ['Co_name']][0]
 

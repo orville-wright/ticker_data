@@ -114,9 +114,11 @@ class y_topgainers:
             # now wrangle the data...
             co_sym_lj = f"{co_sym:<6}"          # left justify TXT in DF & convert to raw string
             co_name_lj = np.array2string(np.char.ljust(co_name, 25) )    # left justify TXT in DF & convert to raw string
-            co_name_lj = (re.sub('[\'\"]', '', co_name_lj) )                  # remove " ' and strip leading/trailing spaces
-            price_clean = float(price)
-            mktcap = (re.sub('[N\/A]', '0', mktcap))   # handle N/A
+            co_name_lj = (re.sub('[\'\"]', '', co_name_lj) )             # remove " ' and strip leading/trailing spaces
+            #price_dirty = at(price)                                   # could have , seperator in valu
+            price_cl = (re.sub('\,', '', price))                      # remove ,
+            price_clean = float(price_cl)
+            mktcap = (re.sub('[N\/A]', '0', mktcap))                     # handle N/A
             change_clean = float(change_val)
 
             TRILLIONS = re.search('T', mktcap)
@@ -150,7 +152,6 @@ class y_topgainers:
                 pct_cl = re.sub('[\%\+\-,]', "", pct_val )
                 pct_clean = float(pct_cl)
 
-                       #float(re.sub('\,', '', price_clean)), \
             # now construct our list for concatinating to the dataframe 
             self.list_data = [[ \
                        x, \
