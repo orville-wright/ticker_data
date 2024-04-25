@@ -69,6 +69,7 @@ class y_topgainers:
         logging.info('%s - Drop all rows from DF0' % cmi_debug )
         self.tg_df0.drop(self.tg_df0.index, inplace=True)
         x = 0   # row counter / = index_id for DataFrame
+        #self.list_data = []    # our in-memory list [] that holds our temp dataframe rows as we loop thru building it 
 
         # >>>DEBUG<< for when yahoo.com changes data model...
         print ( f"===== Rows: {len(self.tag_tbody.find_all('tr'))}  =================" )
@@ -150,7 +151,8 @@ class y_topgainers:
                 pct_clean = float(pct_cl)
 
                        #float(re.sub('\,', '', price_clean)), \
-            self.data0 = [[ \
+            # now construct our list for concatinating to the dataframe 
+            self.list_data = [[ \
                        x, \
                        re.sub('\'', '', co_sym_lj), \
                        co_name_lj, \
@@ -163,8 +165,13 @@ class y_topgainers:
 
             #logging.info( f'%s - tg_df0.data0: {self.data0}' % cmi_debug )
 
-            self.df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time' ], index=[x] )
-            self.tg_df0 = self.tg_df0._append(self.df0)    # append this ROW of data into the REAL DataFrame
+            # convert our list into a 1 row dataframe
+            self.df_1_row = pd.DataFrame(self.list_data, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time' ], index=[x] )
+            #self.tg_df0 = self.tg_df0._append(self.df0)    # append this ROW of data into the REAL DataFrame
+
+            #self.tg_df0 = pd.concat([self.tg_df0, self.list_data])
+            # concat the main dataframe (tg_data0) into a multi-row dataframe by extending it with or new row of data
+            self.tg_df0 = pd.concat([self.tg_df0, self.df_1_row])
             x+=1
 
         logging.info('%s - populated new DF0 dataset' % cmi_debug )
