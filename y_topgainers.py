@@ -84,7 +84,6 @@ class y_topgainers:
             print ( f"==============================================" )
             # >>>DEBUG<< for when yahoo.com changes data model...
             """
-
             extr_strs = j.strings
             co_sym = next(extr_strs)             # 1 : ticker symbol info / e.g "NWAU"
             co_name = next(extr_strs)            # 2 : company name / e.g "Consumer Automotive Finance, Inc."
@@ -96,6 +95,7 @@ class y_topgainers:
             else:
                 change_val = change_sign
                 logging.info( f"{cmi_debug} - {co_sym} / re-align extract head / no [+-] field for $0" )
+
             pct_sign = next(extr_strs)           # 5.0 : % change / e.g "+" or "-"
             if pct_sign == "+" or pct_sign == "-":
                 pct_val = next(extr_strs)        # 5.1 : change / e.g "210.0000%" WARN trailing "%" must be removed before casting to float
@@ -129,22 +129,22 @@ class y_topgainers:
             if TRILLIONS:
                 mktcap_clean = float(re.sub('T', '', mktcap))
                 mb = "ST"
-                logging.info( f'%s - {x} / {co_sym_lj} Small Cap/TRILLIONS. set ST' % cmi_debug )
+                logging.info( f'%s - {x} / {co_sym_lj} Mkt Cap: TRILLIONS - ST' % cmi_debug )
 
             if BILLIONS:
                 mktcap_clean = float(re.sub('B', '', mktcap))
                 mb = "SB"
-                logging.info( f'%s - {x} / {co_sym_lj} Small cap/BILLIONS. set SB' % cmi_debug )
+                logging.info( f'%s - {x} / {co_sym_lj} Mkt cap: BILLIONS - SB' % cmi_debug )
 
             if MILLIONS:
                 mktcap_clean = float(re.sub('M', '', mktcap))
                 mb = "SM"
-                logging.info( f'%s - {x} / {co_sym_lj} Large cap/MILLIONS. set SM' % cmi_debug )
+                logging.info( f'%s - {x} / {co_sym_lj} Mkt cap: MILLIONS - SM' % cmi_debug )
 
             if not TRILLIONS and not BILLIONS and not MILLIONS:
                 mktcap_clean = 0    # error condition - possible bad data
                 mb = "SZ"           # Zillions
-                logging.info( f'%s - {x} / {co_sym_lj} bad mktcap data N/A setting to SZ' % cmi_debug )
+                logging.info( f'%s - {x} / {co_sym_lj} bad mktcap data N/A - SZ' % cmi_debug )
                 # handle bad data in mktcap html page field
 
             if pct_val == "N/A":

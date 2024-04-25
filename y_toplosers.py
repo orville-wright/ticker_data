@@ -112,22 +112,22 @@ class y_toplosers:
             if TRILLIONS:
                 mktcap_clean = float(re.sub('T', '', mktcap))
                 mb = "T"
-                logging.info('%s - found TRILLIONS. set T' % cmi_debug )
+                logging.info( f'%s - {x} / {co_sym_lj} Mkt Cap: TRILLIONS - ST' % cmi_debug )
 
             if BILLIONS:
                 mktcap_clean = float(re.sub('B', '', mktcap))
                 mb = "B"
-                logging.info('%s - found BILLIONS. set B' % cmi_debug )
+                logging.info( f'%s - {x} / {co_sym_lj} Mkt cap: BILLIONS - SB' % cmi_debug )
 
             if MILLIONS:
                 mktcap_clean = float(re.sub('M', '', mktcap))
                 mb = "M"
-                logging.info('%s - found MILLIONS. set M' % cmi_debug )
+                logging.info( f'%s - {x} / {co_sym_lj} Mkt cap: MILLIONS - SM' % cmi_debug )
 
             if not TRILLIONS and not BILLIONS and not MILLIONS:
                 mktcap_clean = 0    # error condition - possible bad data
                 mb = "Z"            # Zillions !!
-                logging.info('%s - found TRILLIONS. set T' % cmi_debug )
+                logging.info( f'%s - {x} / {co_sym_lj} bad mktcap data N/A - SZ' % cmi_debug )
                 # handle bad data in mktcap html page field
 
             if pct == "N/A":            # Bad data. FOund a filed with N/A instead of read num
