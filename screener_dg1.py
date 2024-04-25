@@ -80,8 +80,10 @@ class screener_dg1:
         logging.info('%s - IN' % cmi_debug )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         logging.info('%s - Drop all rows from DF0' % cmi_debug )
-        self.dg1_df0.drop(self.dg1_df0.index, inplace=True)
+        #self.dg1_df0.drop(self.dg1_df0.index, inplace=True)
+        self.dg1_df0 = pd.DataFrame()                                 # new df, but is NULLed
         x = 0
+
         for j in self.tag_tbody.find_all('tr'):
             extr_strs = j.strings
             co_sym = next(extr_strs)             # 1 : ticker symbol info / e.g "NWAU"
@@ -149,7 +151,7 @@ class screener_dg1:
                 pct_clean = float(pct_cl)
 
                        #float(re.sub('\,', '', price_clean)), \
-            self.data0 = [[ \
+            self.list_data = [[ \
                        x, \
                        re.sub('\'', '', co_sym_lj), \
                        co_name_lj, \
@@ -160,8 +162,9 @@ class screener_dg1:
                        mb, \
                        time_now ]]
 
-            self.df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time' ], index=[x] )
-            self.dg1_df0 = self.dg1_df0._append(self.df0)    # append this ROW of data into the REAL DataFrame
+            # convert our list into a 1 row dataframe
+            self.df_1_row = pd.DataFrame(self.list_data, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time' ], index=[x] )
+            self.dg1_df0 = pd.concat([self.dg1_df0, self.df_1_row])
             x+=1
 
         logging.info('%s - populated new DF0 dataset' % cmi_debug )

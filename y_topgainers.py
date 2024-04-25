@@ -167,10 +167,6 @@ class y_topgainers:
 
             # convert our list into a 1 row dataframe
             self.df_1_row = pd.DataFrame(self.list_data, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time' ], index=[x] )
-            #self.tg_df0 = self.tg_df0._append(self.df0)    # append this ROW of data into the REAL DataFrame
-
-            #self.tg_df0 = pd.concat([self.tg_df0, self.list_data])
-            # concat the main dataframe (tg_data0) into a multi-row dataframe by extending it with or new row of data
             self.tg_df0 = pd.concat([self.tg_df0, self.df_1_row])
             x+=1
 
