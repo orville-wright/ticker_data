@@ -256,7 +256,7 @@ class screener_dg1:
         minv = self.dg1_df1['Cur_price'].idxmin()
         lowsym = self.dg1_df1.loc[minv, ['Symbol']][0]
         
-        print ( f"lossym: {lowsym}: / DF {self.dg1_df1.loc[minv, ['Symbol']]}" )
+        print ( f"lossym: {lowsym}: / minv_DF {self.dg1_df1['Cur_price'].idxmin()}" )
         #ser.iloc[pos]
         
         lowconame = self.dg1_df1.loc[minv, ['Co_name']][0]
