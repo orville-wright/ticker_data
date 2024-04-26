@@ -404,7 +404,8 @@ class combo_logic:
                 y = 0
             except KeyError:
                 logging.info( f"{cmi_debug} - {nq.asset_class} Mkt_cap key is NULL / setting to: 0" )
-                self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
+                #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
+                self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = 0
                 cleansed_errors += 1
                 print ( f"!", end="" )
                 fixchars += 1
