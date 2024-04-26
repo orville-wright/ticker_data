@@ -414,8 +414,10 @@ class combo_logic:
                 fixchars += 1
                 y = 0
             else:
+                # BUG : disabled this code - cant figgure out why its erroring
+                # this needs to be fixed
                 logging.info( f"{cmi_debug} - Set {nq.asset_class} Mkt_cap to: {nq.quote['mkt_cap']}" )
-                self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = nq.quote['mkt_cap']
+                #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = nq.quote['mkt_cap']
                 print ( f"+", end="" )
                 fixchars += 1
                 cleansed_errors += 1
@@ -423,7 +425,9 @@ class combo_logic:
                     logging.info( f"{cmi_debug} - Compute Mkt_cap scale tag: [ {nq.quote['mkt_cap']} ]..." )
                     for i in (("MT", 999999), ("LB", 10000), ("SB", 2000), ("LM", 500), ("SM", 50), ("TM", 10), ("UZ", 0)):
                         if nq.quote['mkt_cap'] == float(0):
-                            self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'M_B'] = "UZ"
+                            # BUG
+                            # This is broken - fix me !!!
+                            #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'M_B'] = "UZ"
                             logging.info( f"{cmi_debug} - Bad Market cap: [ {nq.quote['mkt_cap']} ] / scale set to: UZ" )
                             print ( f"+", end="" )
                             fixchars += 1
@@ -431,7 +435,9 @@ class combo_logic:
                         elif i[1] >= nq.quote['mkt_cap']:
                             pass
                         else:
-                            self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'M_B'] = i[0]
+                            # BUG
+                            # This is broken : Fix me !!!
+                            #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'M_B'] = i[0]
                             logging.info( f"{cmi_debug} - Market cap: [ {nq.quote['mkt_cap']} ] scale set to: {i[0]}" )
                             wrangle_errors += 1          # insert market cap scale into DF @ column M_B for this symbol
                             cleansed_errors += 1
