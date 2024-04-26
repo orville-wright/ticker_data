@@ -82,7 +82,7 @@ class un_volumes:
             print ( f"### - debug: {self.js_resp0.cookies.items()}" )
 
             #self.js_session.cookies.update({'ak_bmsc': self.js_resp0.cookies['ak_bmsc']} )    # NASDAQ cookie hack
-            self.js_session.cookies.update({'bm_sv': self.js_resp0.cookies['bm_sv']} )    # NASDAQ cookie hack
+            #self.js_session.cookies.update({'bm_sv': self.js_resp0.cookies['bm_sv']} )    # NASDAQ cookie hack
 
         # 2nd get with the secret nasdaq.com cookie no inserted
         logging.info('%s - rest API read json' % cmi_debug )
