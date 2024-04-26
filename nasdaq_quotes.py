@@ -144,7 +144,14 @@ class nquote:
         cmi_debug = __name__+"::"+self.init_dummy_session.__name__+".#"+str(self.yti)
         with self.js_session.get('https://www.nasdaq.com', stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp0:
             logging.info( f"%s - extract cookies  " % cmi_debug )
-            logging.info( f"%s - DUMP cookie jar: {self.js_session.get_dict()}" % cmi_debug )
+
+            # DEBUG
+            if self.args['bool_xray'] is True:
+                print ( f"===================== dummy_session.{self.yti} cookies  ===========================" )
+                for i in self.js_session.cookies.items():
+                    print ( f"{i}" )
+                print ( f"===================== dummy_session.{self.yti} cookies  ===========================" )
+
             logging.info( f"%s - update GOOD warm cookie  " % cmi_debug )
             self.js_session.cookies.update({'ak_bmsc': self.js_resp0.cookies['ak_bmsc']} )    # NASDAQ cookie hack
 
