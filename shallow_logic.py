@@ -385,8 +385,10 @@ class combo_logic:
                 unfixable_errors += 1     # set default data for non-regualr stocks
                 print ( f"!!", end="" )
                 fixchars += 2
-                self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
-                self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'M_B'] = 'EF'
+                # BUG : disabled this code - cant figgure out why its erroring
+                # this needs to be fixed
+                #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
+                #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'M_B'] = 'EF'
             else:
                 logging.info( f"{cmi_debug} - {qsymbol} asset class is {nq.asset_class}" )
                 pass
@@ -404,8 +406,9 @@ class combo_logic:
                 y = 0
             except KeyError:
                 logging.info( f"{cmi_debug} - {nq.asset_class} Mkt_cap key is NULL / setting to: 0" )
+                # BUG : disabled this code - cant figgure out why its erroring
+                # this needs to be fixed
                 #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
-                self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = 0
                 cleansed_errors += 1
                 print ( f"!", end="" )
                 fixchars += 1

@@ -495,7 +495,7 @@ class nquote:
                 wrangle_errors += 1
             else:
                 price_net_cl = (re.sub('[\-+]', '', price_net))              # remove - + signs
-                price_net_cl = np.float(price_net)
+                price_net_cl = float(price_net)
 
             if price_pct == "N/A":
                 price_pct_cl = 0
@@ -511,7 +511,7 @@ class nquote:
                 wrangle_errors += 1
             else:
                 price_pct = (re.sub('[\-+%]', '', price_pct))                # remove - + % signs
-                price_pct_cl = np.float(price_pct)
+                price_pct_cl = float(price_pct)
 
             # ################# open price(s) need extra treatment & care...
             """
@@ -521,7 +521,7 @@ class nquote:
             if open_price == "N/A" or open_price is None:
                 """ Stage #0 """
                 logging.info( f'%s - BAD open_price compound data: {type(open_price)} / {open_price} / set all to 0.0' % cmi_debug )
-                open_price_cl = np.float(0)
+                open_price_cl = float(0)
                 open_price_net = float(0)
                 open_price_pct_cl = float(0)
                 wrangle_errors += 3
@@ -542,7 +542,7 @@ class nquote:
                     wrangle_errors += 1
                 else:
                     open_price_cl = (re.sub('[ $,]', '', ops[0]))   # remove " " $ ,
-                    open_price_cl = np.float(open_price_cl)
+                    open_price_cl = float(open_price_cl)
                     """ Stage #2 """
 
                     if len(ops) != 1:   # the split failed to seperate all 3 elements. i.e. there open_price_net & open_price_pct don't exist
@@ -600,7 +600,7 @@ class nquote:
                 logging.info('%s - Mkt cap is ZERO, found N/A data' % cmi_debug )
                 wrangle_errors += 1
             else:
-                mkt_cap_cl = np.float(re.sub('[,]', '', mkt_cap))   # remove ,
+                mkt_cap_cl = float(re.sub('[,]', '', mkt_cap))   # remove ,
                 mkt_cap_cl = round(mkt_cap_cl / 1000000, 3)                  # resize & round mantissa = 3, as nasdaq.com gives full num
 
             vol_abs_cl = (re.sub('[,]', '', vol_abs))                        # remove ,
@@ -614,12 +614,12 @@ class nquote:
                co_sym_lj, \
                co_name_lj, \
                arrow_updown, \
-               np.float(price_cl), \
+               float(price_cl), \
                price_net_cl, \
                price_pct_cl, \
                open_price_cl, \
-               np.float(prev_close_cl), \
-               np.float(vol_abs_cl), \
+               float(prev_close_cl), \
+               float(vol_abs_cl), \
                mkt_cap_cl, \
                price_timestamp, \
                time_now ]]
