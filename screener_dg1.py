@@ -254,17 +254,19 @@ class screener_dg1:
         ulp = self.dg1_df1['Cur_price'].min()
         lowestprice = self.dg1_df1['Cur_price'].min()
         minv = self.dg1_df1['Cur_price'].idxmin()
-        lowsym = self.dg1_df1.loc[minv, ['Symbol']][0]
-        
-        #ser.iloc[pos]
-        #lowlow_sym = minv.iloc[0]
 
-        lowconame = self.dg1_df1.loc[minv, ['Co_name']][0]
+        lowsym_ser = self.dg1_df1.iloc[minv, :]
+        lowsym = lowsym_ser.iloc[1]
+        lowconame = lowsym_ser.iloc[2]
+        lowpctchange = lowsym_ser.iloc[5]
+
+        print ( "=============================================================================")
+
 
         # Allways make sure this is key #1 in the recommendations dict
-        rx['1'] = ('Small cap % gainer:', lowsym.rstrip(), '$'+str(ulp), lowconame.rstrip(), '+%'+str(self.dg1_df1.loc[minv, ['Pct_change']][0]) )
+        rx['1'] = ('Small cap % gainer:', lowsym.rstrip(), '$'+str(ulp), lowconame.rstrip(), '+%'+str(lowpctchange) )
 
-        print ( f">>Lowest<< price OPPTY is: #{minv} - {lowconame.rstrip()} ({lowsym.rstrip()}) @ ${lowestprice}" )
+        print ( f"Best low-buy OPPTY: #{minv} | {lowconame.rstrip()} ({lowsym.rstrip()}) | ${lowestprice} | %{lowpctchange}" )
         print ( " " )
         print ( self.dg1_df1 )
         return rx       # dict{}
