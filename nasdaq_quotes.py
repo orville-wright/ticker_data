@@ -153,7 +153,7 @@ class nquote:
                 print ( f"===================== dummy_session.{self.yti} cookies  ===========================" )
 
             logging.info( f"%s - update GOOD warm cookie  " % cmi_debug )
-            self.js_session.cookies.update({'ak_bmsc': self.js_resp0.cookies['ak_bmsc']} )    # NASDAQ cookie hack
+            self.js_session.cookies.update({'tr_jt_okta': self.js_resp0.cookies['tr_jt_okta']} )    # NASDAQ cookie hack
 
         # if the get() succeds, the response handle is automatically saved in Class Global accessor -> self.js_resp0
         return
