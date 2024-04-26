@@ -175,11 +175,11 @@ class un_volumes:
                        x, \
                        re.sub('\'', '', co_sym_lj), \
                        co_name_lj, \
-                       np.float(price_cl), \
-                       np.float(price_net_cl), \
-                       np.float(price_pct_cl), \
-                       np.float(vol_abs_cl), \
-                       np.float(vol_pct_cl), \
+                       float(price_cl), \
+                       float(price_net_cl), \
+                       float(price_pct_cl), \
+                       float(vol_abs_cl), \
+                       float(vol_pct_cl), \
                        time_now ]]
 
             if ud == 0:
