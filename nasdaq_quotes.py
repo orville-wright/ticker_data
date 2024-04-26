@@ -70,7 +70,7 @@ class nquote:
         #self.quote_df0 = pd.DataFrame(columns=[ 'Symbol', 'Co_name', 'arrow_updown', 'Cur_price', 'Prc_change', 'Pct_change', 'Open_price', 'Prev_close', 'Vol', 'Mkt_cap', 'Exch_timestamp', 'Time' ] )
         self.yti = yti
         self.js_session = HTMLSession()                        # init JAVAScript processor early
-        self.js_session.cookies.update(self.nasdaq_headers)    # load DEFAUKT cookie/header hack package into session
+        self.js_session.cookies.update(self.nasdaq_headers)    # load DEFAULT cookie/header hack package into session
         return
 
 # method 1
@@ -79,6 +79,7 @@ class nquote:
         logging.info( f"%s - CALLED" % cmi_debug )
         self.symbol = symbol.upper()
         path = "/api/quote/" + self.symbol + "/info?assetclass=" + asset_class
+        logging.info( f"%s - Insert ticker symbol path into cookie..." % cmi_debug )
         self.js_session.cookies.update({'path': path} )
         logging.info( f"%s - cookies/headers [path] object set to: {path}" % cmi_debug )
         return
@@ -142,8 +143,11 @@ class nquote:
         """
         cmi_debug = __name__+"::"+self.init_dummy_session.__name__+".#"+str(self.yti)
         with self.js_session.get('https://www.nasdaq.com', stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp0:
-            logging.info('%s - extract & update GOOD cookie  ' % cmi_debug )
+            logging.info( f"%s - extract cookies  " % cmi_debug )
+            logging.info( f"%s - DUMP cookie jar: {self.js_session.get_dict()}" % cmi_debug )
+            logging.info( f"%s - update GOOD warm cookie  " % cmi_debug )
             self.js_session.cookies.update({'ak_bmsc': self.js_resp0.cookies['ak_bmsc']} )    # NASDAQ cookie hack
+
         # if the get() succeds, the response handle is automatically saved in Class Global accessor -> self.js_resp0
         return
 
