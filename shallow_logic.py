@@ -49,7 +49,7 @@ class combo_logic:
 
     def __init__(self, i, d1, d2, d3, global_args):
         cmi_debug = __name__+"::"+self.__init__.__name__
-        logging.info('%s - INSTANTIATE' % cmi_debug )
+        logging.info('%s - INST_class' % cmi_debug )
         self.args = global_args
         self.deep_1 = d1.tg_df1.drop(columns=[ 'ERank', 'Time' ]).sort_values(by='Pct_change', ascending=False )
         self.deep_2 = d2.dg1_df1.drop(columns=[ 'Row', 'Time' ] )

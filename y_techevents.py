@@ -227,7 +227,7 @@ class y_techevents:
 
 
 # method #4
-    def build_te_summary(self, combo_df, me):
+    def build_te_summary(self, te_combo_df, me):
         """
         Build a Performance Outlook Technical Events DataFrame that is...
         A nice easy to read summary table
@@ -236,9 +236,11 @@ class y_techevents:
         """
         cmi_debug = __name__+"::"+self.build_te_summary.__name__+".#"+str(self.yti)+"."+str(me)
 
-        logging.info( f"{cmi_debug} - CALLED" )
+        logging.info( f"{cmi_debug} - get combo_df uniques" )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
-        te_source = combo_df.list_uniques()    # work on the combo DataFrame (unique only, no DUPES)
+        #DEBUG
+        print ( f"COMBO_DF: {te_combo_df}" )
+        te_source = te_combo_df.list_uniques()    # work on the combo DataFrame (unique only, no DUPES)
 
         cols = 1
         print ( f"\n===== Build Bullish/Bearish outlook summary ==============================" )
