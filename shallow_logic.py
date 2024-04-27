@@ -429,8 +429,7 @@ class combo_logic:
                 fixchars += 2
                 # BUG : disabled this code - cant figgure out why its erroring
                 # this needs to be fixed
-                zero_float = round(float(0), 3)
-                self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == qsymbol].index, 'Mkt_cap'] = zero_float
+                #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
                 #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'M_B'] = 'EF'
             else:
                 logging.info( f"{cmi_debug} - {qsymbol} asset class is {nq.asset_class}" )
@@ -442,8 +441,7 @@ class combo_logic:
                 null_tester = nq.quote['mkt_cap']         # some ETF/Funds have a market cap - but this state is inconsistent & random
             except TypeError:
                 logging.info( f"{cmi_debug} - {nq.asset_class} Mkt_cap data is NULL / setting to: 0" )
-                zero_float = round(float(0), 3)
-                self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = zero_float
+                self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
                 print ( f"!!", end="" )
                 cleansed_errors += 2
                 fixchars += 2
