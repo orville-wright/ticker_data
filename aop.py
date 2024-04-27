@@ -319,7 +319,7 @@ def main():
     if args['bool_te'] is True:
         cmi_debug = __name__+"::Tech_events_all.#1"
         te = y_techevents(1)
-        print ( f"DEBUG: dump combo_df - {x.combo_df}" )
+        print ( f"DEBUG: dump combo_df - {x.combo_df.sort_values(by=['Symbol'])}" )
         te.build_te_summary(x.combo_df, 1)       # x = main INSTANCE:: combo_logic
         #
         # TODO: populate build_te_summary with symbol co_name, Cur_price  Prc_change  Pct_change, volume
