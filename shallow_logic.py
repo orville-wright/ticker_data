@@ -429,7 +429,8 @@ class combo_logic:
                 fixchars += 2
                 # BUG : disabled this code - cant figgure out why its erroring
                 # this needs to be fixed
-                #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
+                z_float = round(float(0), 3)
+                self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = z_float
                 #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'M_B'] = 'EF'
             else:
                 logging.info( f"{cmi_debug} - {qsymbol} asset class is {nq.asset_class}" )
@@ -437,11 +438,12 @@ class combo_logic:
 
             #
             logging.info( f"{cmi_debug} - Test {nq.asset_class} Mkt_cap for NULLs..." )
+            z_float = round(float(0), 3)                  # 0.000
             try:
                 null_tester = nq.quote['mkt_cap']         # some ETF/Funds have a market cap - but this state is inconsistent & random
             except TypeError:
                 logging.info( f"{cmi_debug} - {nq.asset_class} Mkt_cap data is NULL / setting to: 0" )
-                self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
+                self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = z_float
                 print ( f"!!", end="" )
                 cleansed_errors += 2
                 fixchars += 2
@@ -450,7 +452,7 @@ class combo_logic:
                 logging.info( f"{cmi_debug} - {nq.asset_class} Mkt_cap key is NULL / setting to: 0" )
                 # BUG : disabled this code - cant figgure out why its erroring
                 # this needs to be fixed
-                self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = float(0)
+                self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = z_float
                 cleansed_errors += 1
                 print ( f"!", end="" )
                 fixchars += 1
