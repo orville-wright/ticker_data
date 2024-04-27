@@ -452,7 +452,8 @@ class combo_logic:
                 logging.info( f"{cmi_debug} - {nq.asset_class} Mkt_cap key is NULL / setting to: 0" )
                 # BUG : disabled this code - cant figgure out why its erroring
                 # this needs to be fixed
-                self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = z_float
+                # cant do this b/c cant index by the key... I think
+                # self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = z_float
                 cleansed_errors += 1
                 print ( f"!", end="" )
                 fixchars += 1
