@@ -430,7 +430,7 @@ class combo_logic:
                 # BUG : disabled this code - cant figgure out why its erroring
                 # this needs to be fixed
                 z_float = round(float(0), 3)
-                self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = z_float
+                #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = z_float
                 #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'M_B'] = 'EF'
             else:
                 logging.info( f"{cmi_debug} - {qsymbol} asset class is {nq.asset_class}" )
