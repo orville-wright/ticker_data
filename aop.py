@@ -230,9 +230,9 @@ def main():
         x.polish_combo_df(1)
         x.tag_dupes()
         x.tag_uniques()
-        x.rank_hot()
-        x.rank_unvol()
-        x.rank_caps()
+        #x.rank_hot()
+        #x.rank_unvol()
+        #x.rank_caps()
         x.combo_df.sort_values(by=['Symbol'])         # sort by sumbol name (so dupes are linearly grouped)
         x.reindex_combo_df()                          # re-order a new index (PERMENANT write)
 
