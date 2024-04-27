@@ -21,7 +21,7 @@ from marketwatch_md import mw_quote
 from y_techevents import y_techevents
 
 #####################################################
-
+# CLASS
 class combo_logic:
     """
     Do deeper logic data cleaning & thinking across multiple dataframes.
@@ -47,10 +47,10 @@ class combo_logic:
         'TM': 'Tiny cap + % gainer',
         }
 
-    def __init__(self, i, d1, d2, d3, global_args):
+    def __init__(self, yti, d1, d2, d3, global_args):
         cmi_debug = __name__+"::"+self.__init__.__name__
         logging.info('%s - INST_class' % cmi_debug )
-        self.inst_uid = i
+        self.inst_uid = yti
         self.deep_1 = d1.tg_df1.drop(columns=[ 'ERank', 'Time' ]).sort_values(by='Pct_change', ascending=False )
         self.deep_2 = d2.dg1_df1.drop(columns=[ 'Row', 'Time' ] )
         self.deep_3 = d3.up_df0.drop(columns=[ 'Row', 'Time', 'Vol', 'Vol_pct']).sort_values(by='Pct_change', ascending=False )
@@ -61,11 +61,12 @@ class combo_logic:
         return ( f'{self.__class__.__name__}(' f'{self.inst_uid!r})' )
 
 #############################################################################
-# method #1
+# method #0
 
     def prepare_combo_df(self):
         """
         combo_df is the **Single Source of Truth** dataset.
+        It is used & referenced by a lot of methods, functions and stuff.
         """
         cmi_debug = __name__+"::"+self.prepare_combo_df.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
@@ -75,6 +76,151 @@ class combo_logic:
         self.combo_dupes = self.combo_df.duplicated(['Symbol']).to_frame()         # convert Bool SERIES > DF & make avail as class global attr DF
         return
 
+###################################################################################
+# method 1
+
+    def polish_combo_df(self, me):
+        """
+        Clean, Polish & Wax the main Combo DataFrame.
+        We do a lot of heavy DF data generation/manipulation/insertion here.
+        Fill-out key collumn data thats missing, incomplete and/or not reliable due to errors in initial data extraction
+        & collection process... becasue exchange data is not 100% reliable as we collect it in real time (surprisingly!)
+        """
+        cmi_debug = __name__+"::"+self.polish_combo_df.__name__+".#"+str(self.inst_uid)+"."+str(me)
+        logging.info( f"{cmi_debug} - CALLED" )
+
+        self.prepare_combo_df()                         # FIRST, merge Small_cap + med + large + mega into a single DF
+
+        # Look into the main combo_df at the Unsual Vol columns
+        # Find/fix missing data in nasdaq.com unusual volume DF - i.e. market_cap info
+        uvol_badata = self.combo_df[self.combo_df['Mkt_cap'].isna()]     # Non and NaN = True
+        up_symbols = uvol_badata['Symbol'].tolist()     # get list of symbols that have bad-data in [] list
+        nq = nquote(3, self.args)                       # setup an nasdaq.com quote dict b/c we are going to get live data
+        nq.init_dummy_session()                         # initalize quote request session - note: will set nasdaq magic cookie
+        total_wrangle_errors = 0                        # usefull counters
+        unfixable_errors = 0
+        cleansed_errors = 0
+        logging.info( f"{cmi_debug} - GET missing data from nasdaq.com for: {len(up_symbols)} symbols" )
+        loop_count = 1
+        print ( f"Insert missing Unusual UP volume from Nasdaq.com [market data]..." )
+        cols = 1
+        fixchars = 0
+
+        # This is a network expsive method as it does a network get for each stock symbol
+        # and extracts missing data & saves it to combo_df.
+        # This function is obsessive at cleaning 1 Data field...the 'Market Cap' for each symbol
+        for qsymbol in up_symbols:
+            xsymbol = qsymbol
+            qsymbol = qsymbol.rstrip()                   # cleand/striped of trailing spaces
+            logging.info( f"{cmi_debug} ================ get quote: {qsymbol} : {loop_count} ====================" )
+            nq.update_headers(qsymbol, "stocks")         # set path: header object. doesnt touch secret nasdaq cookies
+            nq.form_api_endpoint(qsymbol, "stocks")      # set API endpoint url - default GUESS asset_class=stocks
+            ac = nq.learn_aclass(qsymbol)
+            if ac != "stocks":
+                logging.info( f"{cmi_debug} - re-shape asset class endpoint to: {ac}" )
+                nq.form_api_endpoint(qsymbol, ac)      # re-form API endpoint if default asset_class guess was wrong)
+            nq.get_nquote(qsymbol)                     # get a live quote
+            wrangle_errors = nq.build_data()           # wrangle & cleanse the data - lots done in here
+
+            print ( f"{qsymbol:5}...", end="", flush=True )
+            logging.info( f"{cmi_debug} - Begin market cap/scale logic cycle... {nq.asset_class}")
+            if nq.asset_class == "etf":        # Global attribute - is asset class ETF? yes = Cant get STOCK-type data
+                logging.info( f"{cmi_debug} - {qsymbol} asset class is ETF" )
+                wrangle_errors += 1
+                unfixable_errors += 1     # set default data for non-regualr stocks
+                print ( f"!!", end="" )
+                fixchars += 2
+
+                # BUG : disabled this code - cant figgure out why its erroring
+                # this needs to be fixed
+                z_float = round(float(0), 3)
+                if self.args['bool_xray'] is True:
+                    print ( f"=xray=========================== {self.inst_uid} ================================begin=" )
+                    print ( f"z_float: {z_float}" )
+                    print ( f"combo_df: {self.combo_df}" )
+                    print ( f"=xray=========================== {self.inst_uid} ==================================end=" )
+                #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = z_float
+                #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'M_B'] = 'EF'
+            else:
+                logging.info( f"{cmi_debug} - {qsymbol} asset class is {nq.asset_class}" )
+                pass
+
+            #
+            logging.info( f"{cmi_debug} - Test {nq.asset_class} Mkt_cap for NULLs..." )
+            z_float = round(float(0), 3)                  # 0.000
+            try:
+                null_tester = nq.quote['mkt_cap']         # some ETF/Funds have a market cap - but this state is inconsistent & random
+            except TypeError:
+                logging.info( f"{cmi_debug} - {nq.asset_class} Mkt_cap data is NULL / setting to: 0" )
+                #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = z_float
+                print ( f"!!", end="" )
+                cleansed_errors += 2
+                fixchars += 2
+                y = 0
+            except KeyError:
+                logging.info( f"{cmi_debug} - {nq.asset_class} Mkt_cap key is NULL / setting to: 0" )
+                # BUG : disabled this code - cant figgure out why its erroring
+                # this needs to be fixed
+                # cant do this b/c cant index by the key... I think
+                # self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = z_float
+                cleansed_errors += 1
+                print ( f"!", end="" )
+                fixchars += 1
+                y = 0
+            else:
+                # BUG : disabled this code - cant figgure out why its erroring
+                # this needs to be fixed
+                logging.info( f"{cmi_debug} - Set {nq.asset_class} Mkt_cap to: {nq.quote['mkt_cap']}" )
+                #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = nq.quote['mkt_cap']
+                print ( f"+", end="" )
+                fixchars += 1
+                cleansed_errors += 1
+                if nq.asset_class == "stocks":
+                    logging.info( f"{cmi_debug} - Compute Mkt_cap scale tag: [ {nq.quote['mkt_cap']} ]..." )
+                    for i in (("MT", 999999), ("LB", 10000), ("SB", 2000), ("LM", 500), ("SM", 50), ("TM", 10), ("UZ", 0)):
+                        if nq.quote['mkt_cap'] == float(0):
+                            # BUG
+                            # This is broken - fix me !!!
+                            #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'M_B'] = "UZ"
+                            logging.info( f"{cmi_debug} - Bad Market cap: [ {nq.quote['mkt_cap']} ] / scale set to: UZ" )
+                            print ( f"+", end="" )
+                            fixchars += 1
+                            break
+                        elif i[1] >= nq.quote['mkt_cap']:
+                            pass
+                        else:
+                            # BUG
+                            # This is broken : Fix me !!!
+                            #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'M_B'] = i[0]
+                            logging.info( f"{cmi_debug} - Market cap: [ {nq.quote['mkt_cap']} ] scale set to: {i[0]}" )
+                            wrangle_errors += 1          # insert market cap scale into DF @ column M_B for this symbol
+                            cleansed_errors += 1
+                            print ( f"+", end="" )
+                            fixchars += 1
+                            break
+            # nice column/rows status bar to show the hard work we are grinding on...
+            finally:
+                if fixchars == 1: print ( f"   ", end="" )
+                if fixchars == 2: print ( f"  ", end="" )
+                if fixchars == 3: print ( f" ", end="" )
+                fixchars = 0
+                cols += 1
+                if cols == 8:       # 8 symbols per row
+                    print ( f" " )  # onlhy print 8 symbols per row
+                    cols = 1
+                else:
+                    print ( f"/ ", end="" )
+
+            logging.info( f"{cmi_debug} ================ end quote: {qsymbol} : {loop_count} ====================" )
+            total_wrangle_errors = total_wrangle_errors + wrangle_errors
+            wrangle_errors = 0
+            loop_count += 1
+
+        print ( " " )
+        print  ( f"Symbols scanned: {loop_count-1} / Issues: {cleansed_errors} / Repaired: {total_wrangle_errors} / Unfixbale: {unfixable_errors}" )
+
+        return
+    
 #############################################################################
 # method #2
 
@@ -376,139 +522,4 @@ class combo_logic:
         self.combo_df.reset_index(inplace=True, drop=True)                         # reset index each time so its guaranteed sequential
         #self.combo_df = temp_df.sort_values(by=['Pct_change'], ascending=False )   # ensure sorted combo DF is avail as class global attr
         #self.combo_dupes = self.combo_df.duplicated(['Symbol']).to_frame()         # convert Bool SERIES > DF & make avail as class global attr DF
-        return
-
-###################################################################################
-# method 16
-
-    def polish_combo_df(self, me):
-        """
-        Clean, Polish & Wax the main Combo DataFrame.
-        We do a lot of heavy DF data generation/manipulation/insertion here.
-        Fill-out key collumn data thats missing, incomplete and/or not reliable due to errors in initial data extraction
-        & collection process... becasue exchange data is not 100% reliable as we collect it in real time (surprisingly!)
-        """
-        cmi_debug = __name__+"::"+self.polish_combo_df.__name__+".#"+str(self.inst_uid)+"."+str(me)
-        logging.info( f"{cmi_debug} - CALLED" )
-
-        self.prepare_combo_df()                # FIRST, merge Small_cap + med + large + mega into a single DF
-
-        # Find/fix missing data in nasdaq.com unusual volume DF - i.e. market_cap info
-        uvol_badata = self.combo_df[self.combo_df['Mkt_cap'].isna()]     # Non and NaN = True
-        up_symbols = uvol_badata['Symbol'].tolist()     # list of symbols as a [] list
-        nq = nquote(3, self.args)              # setup an nasdaq quote dict
-        nq.init_dummy_session()                # initalize quote request session - note: will set nasdaq magic cookie
-        total_wrangle_errors = 0               # usefull counters
-        unfixable_errors = 0
-        cleansed_errors = 0
-        logging.info( f"{cmi_debug} - find missing data for: {len(up_symbols)} symbols" )
-        loop_count = 1
-        print ( f"Insert missing data from [Nasdaq Unusual UP volume]..." )
-        cols = 1
-        fixchars = 0
-
-        for qsymbol in up_symbols:
-            xsymbol = qsymbol
-            qsymbol = qsymbol.rstrip()                   # cleand/striped of trailing spaces
-            logging.info( f"{cmi_debug} ================ get quote: {qsymbol} : {loop_count} ====================" )
-            nq.update_headers(qsymbol, "stocks")         # set path: header object. doesnt touch secret nasdaq cookies
-            nq.form_api_endpoint(qsymbol, "stocks")      # set API endpoint url - default GUESS asset_class=stocks
-            ac = nq.learn_aclass(qsymbol)
-            if ac != "stocks":
-                logging.info( f"{cmi_debug} - re-shape asset class endpoint to: {ac}" )
-                nq.form_api_endpoint(qsymbol, ac)      # re-form API endpoint if default asset_class guess was wrong)
-            nq.get_nquote(qsymbol)                     # get a live quote
-            wrangle_errors = nq.build_data()           # wrangle & cleanse the data - lots done in here
-
-            print ( f"{qsymbol:5}...", end="", flush=True )
-            logging.info( f"{cmi_debug} - Begin market cap/scale logic cycle... {nq.asset_class}")
-            if nq.asset_class == "etf":        # Global attribute - is asset class ETF? yes = Cant get STOCK-type data
-                logging.info( f"{cmi_debug} - {qsymbol} asset class is ETF" )
-                wrangle_errors += 1
-                unfixable_errors += 1     # set default data for non-regualr stocks
-                print ( f"!!", end="" )
-                fixchars += 2
-                # BUG : disabled this code - cant figgure out why its erroring
-                # this needs to be fixed
-                z_float = round(float(0), 3)
-                #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = z_float
-                #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'M_B'] = 'EF'
-            else:
-                logging.info( f"{cmi_debug} - {qsymbol} asset class is {nq.asset_class}" )
-                pass
-
-            #
-            logging.info( f"{cmi_debug} - Test {nq.asset_class} Mkt_cap for NULLs..." )
-            z_float = round(float(0), 3)                  # 0.000
-            try:
-                null_tester = nq.quote['mkt_cap']         # some ETF/Funds have a market cap - but this state is inconsistent & random
-            except TypeError:
-                logging.info( f"{cmi_debug} - {nq.asset_class} Mkt_cap data is NULL / setting to: 0" )
-                #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = z_float
-                print ( f"!!", end="" )
-                cleansed_errors += 2
-                fixchars += 2
-                y = 0
-            except KeyError:
-                logging.info( f"{cmi_debug} - {nq.asset_class} Mkt_cap key is NULL / setting to: 0" )
-                # BUG : disabled this code - cant figgure out why its erroring
-                # this needs to be fixed
-                # cant do this b/c cant index by the key... I think
-                # self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = z_float
-                cleansed_errors += 1
-                print ( f"!", end="" )
-                fixchars += 1
-                y = 0
-            else:
-                # BUG : disabled this code - cant figgure out why its erroring
-                # this needs to be fixed
-                logging.info( f"{cmi_debug} - Set {nq.asset_class} Mkt_cap to: {nq.quote['mkt_cap']}" )
-                #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = nq.quote['mkt_cap']
-                print ( f"+", end="" )
-                fixchars += 1
-                cleansed_errors += 1
-                if nq.asset_class == "stocks":
-                    logging.info( f"{cmi_debug} - Compute Mkt_cap scale tag: [ {nq.quote['mkt_cap']} ]..." )
-                    for i in (("MT", 999999), ("LB", 10000), ("SB", 2000), ("LM", 500), ("SM", 50), ("TM", 10), ("UZ", 0)):
-                        if nq.quote['mkt_cap'] == float(0):
-                            # BUG
-                            # This is broken - fix me !!!
-                            #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'M_B'] = "UZ"
-                            logging.info( f"{cmi_debug} - Bad Market cap: [ {nq.quote['mkt_cap']} ] / scale set to: UZ" )
-                            print ( f"+", end="" )
-                            fixchars += 1
-                            break
-                        elif i[1] >= nq.quote['mkt_cap']:
-                            pass
-                        else:
-                            # BUG
-                            # This is broken : Fix me !!!
-                            #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'M_B'] = i[0]
-                            logging.info( f"{cmi_debug} - Market cap: [ {nq.quote['mkt_cap']} ] scale set to: {i[0]}" )
-                            wrangle_errors += 1          # insert market cap scale into DF @ column M_B for this symbol
-                            cleansed_errors += 1
-                            print ( f"+", end="" )
-                            fixchars += 1
-                            break
-            # nice column/rows status bar to show the hard work we are grinding on...
-            finally:
-                if fixchars == 1: print ( f"   ", end="" )
-                if fixchars == 2: print ( f"  ", end="" )
-                if fixchars == 3: print ( f" ", end="" )
-                fixchars = 0
-                cols += 1
-                if cols == 8:       # 8 symbols per row
-                    print ( f" " )  # onlhy print 8 symbols per row
-                    cols = 1
-                else:
-                    print ( f"/ ", end="" )
-
-            logging.info( f"{cmi_debug} ================ end quote: {qsymbol} : {loop_count} ====================" )
-            total_wrangle_errors = total_wrangle_errors + wrangle_errors
-            wrangle_errors = 0
-            loop_count += 1
-
-        print ( " " )
-        print  ( f"Symbols scanned: {loop_count-1} / Issues: {cleansed_errors} / Repaired: {total_wrangle_errors} / Unfixbale: {unfixable_errors}" )
-
         return

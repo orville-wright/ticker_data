@@ -18,7 +18,7 @@ from bigcharts_md import bc_quote
 logging.basicConfig(level=logging.INFO)
 
 #####################################################
-
+# CLASS
 class un_volumes:
     """Class to discover unusual volume data from NASDAQ.com data source"""
 
@@ -46,7 +46,8 @@ class un_volumes:
                     'sec-fetch-site': 'same-site', \
                     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36' }
 
-
+#####################################################
+# INIT
     def __init__(self, yti, global_args):
         cmi_debug = __name__+"::"+self.__init__.__name__
         logging.info( f'%s - Instantiate.#{yti}' % cmi_debug )
@@ -60,6 +61,7 @@ class un_volumes:
         self.js_session.cookies.update(self.nasdaq_headers)    # load cookie/header hack data set into session
         return
 
+#####################################################
 # method #1
     def get_un_vol_data(self):
         """
@@ -100,7 +102,7 @@ class un_volumes:
             logging.info('%s - store DOWN data locale' % cmi_debug )
             self.uvol_down_data = self.uvol_all_data['data']['down']['table']['rows']
 
-         # Xray DEBUG
+        # DEBUG
         if self.args['bool_xray'] is True:
             print ( f"================================ {self.yti} ======================================" )
             print ( f"=== session cookies ===\n" )
@@ -108,7 +110,7 @@ class un_volumes:
                 print ( f"{i}" )
 
         return
-
+#####################################################
 # method #2
 # New method to build a Pandas DataFrame from JSON data structure
     def build_df(self, ud):
@@ -201,6 +203,7 @@ class un_volumes:
         return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
                         # sucess = lobal class accessor (y_toplosers.df0) populated & updated
 
+#####################################################
 # method #3
     def up_unvol_listall(self):
         """
@@ -216,6 +219,7 @@ class un_volumes:
         logging.info('ins.#%s.up_unvol_listall() - DONE' % self.yti )
         return list_up
 
+#####################################################
 # method #4
     def down_unvol_listall(self):
         """Print the full DataFrame table list of NASDAQ unusual DOWN volumes"""
