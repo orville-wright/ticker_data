@@ -318,7 +318,17 @@ def main():
     if args['bool_te'] is True:
         cmi_debug = __name__+"::Tech_events_all.#1"
         te = y_techevents(1)
-        ssot_te = combo_logic.combo_df
+
+        ssot_te = combo_logic(1, med_large_mega_gainers, small_cap_dataset, un_vol_activity, args )
+        ssot_te.polish_combo_df(1)
+        ssot_te.tag_dupes()
+        ssot_te.tag_uniques()
+        #x.rank_hot()
+        #x.rank_unvol()
+        #x.rank_caps()
+        ssot_te.combo_df.sort_values(by=['Symbol'])         # sort by sumbol name (so dupes are linearly grouped)
+        ssot_te.reindex_combo_df()                          # re-order a new index (PERMENANT write)
+
         print ( f"DEBUG: dump combo_df - {ssot_te}" )
         te.build_te_summary(ssot_te, 1)       # x = main INSTANCE:: combo_logic
         #
