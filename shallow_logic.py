@@ -60,10 +60,12 @@ class combo_logic:
     def __repr__(self):
         return ( f'{self.__class__.__name__}(' f'{self.inst_uid!r})' )
 
+#############################################################################
 # method #1
+
     def prepare_combo_df(self):
         """
-        combo_df will become the Single Source of Truth dataset.
+        combo_df is the **Single Source of Truth** dataset.
         """
         cmi_debug = __name__+"::"+self.prepare_combo_df.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
@@ -73,7 +75,9 @@ class combo_logic:
         self.combo_dupes = self.combo_df.duplicated(['Symbol']).to_frame()         # convert Bool SERIES > DF & make avail as class global attr DF
         return
 
+#############################################################################
 # method #2
+
     def tag_dupes(self):
         """
         Find & Tag the *duplicate* entries in the combo_df matrix dataset, which is important b/c dupes
@@ -84,6 +88,7 @@ class combo_logic:
         self.combo_df = self.combo_df.assign(Hot="", Insights="" )     # pre-insert 2 new columns
         min_price = {}      # Heler: DICT to help find cheapest ***HOT stock
         mpt = ()            # Helper: Internal DICT(tuple) element to find cheapest ***HOT stock
+
         for ds in self.combo_df[self.combo_df.duplicated(['Symbol'])].Symbol.values:    # ONLY work on dupes in DF !!!
             for row_idx in iter( self.combo_df.loc[self.combo_df['Symbol'] == ds ].index ):
                 sym = self.combo_df.loc[row_idx].Symbol
@@ -93,21 +98,21 @@ class combo_logic:
                 if pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == False and pd.isna(self.combo_df.loc[row_idx].M_B) == False:
                     self.combo_df.loc[row_idx,'Hot'] = "*Hot*"      # Tag as a **HOT** stock
                     self.combo_df.loc[row_idx,'Insights'] = self.cx.get(scale) + " + Unu vol"     # Annotate why...
-                    mpt = ( row_idx, sym, price )     # pack a tuple - for min_price analysis later
-                    min_price.update({row_idx: mpt})
+                    mpt = ( row_idx, sym, price )                   # pack a tuple - for min_price analysis later
+                    min_price.update({row_idx: mpt})                # load helpder DICT
                 elif pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == True and pd.isna(self.combo_df.loc[row_idx].M_B) == True:
-                     self.combo_df.drop([row_idx], inplace=True)
+                     self.combo_df.drop([row_idx], inplace=True)    # drop this row
                 else:
                     print ( f"WARNING: Don't know what to do for: {sym} / Mkt_cap: {cap} / M_B: {scale}" )
                     break
 
-        # TODO: ** This logix test is BUGGY & possible faills at Market open when many things are empty & unpopulated...
+        # TODO: ** This logic is BUGGY & possible fails at Market open when many things are empty & unpopulated...
         if not bool(min_price):         # is empty?
             print ( "No **HOT stocks to evaluate yet" )
 
         # since we are Tagging and annotating this DataFrame...
         # find and tag the lowest priced stock within the list of Hottest stocks
-        if min_price:     # We have some **HOT stocks to evaluate
+        if min_price:                       # note empty, We have some **HOT stocks to evaluate
             mptv = min(( td[2] for td in min_price.values() ))      # Output = 1 single value from a generator of tuples
             for v in min_price.values():    # v = tuple structured like: (0, BEAM, 28.42)
                 if v[2] == mptv:            # v[2] = 3rd element = price for this stock symbol
@@ -117,7 +122,9 @@ class combo_logic:
 
         return
 
+#####################################################################################
 # method #3
+
     def tag_uniques(self):
         """
         Find & Tag unique untagged entries in the combo_df dataset.
@@ -144,8 +151,10 @@ class combo_logic:
         logging.info('%s - Exit tag uniques cycle' % cmi_debug )
         return
 
+#################################################################################
 # method 4
 # a safety catch-all to scan for any NaaN's lying arround that wern't caught
+
     def tag_naans(self):
         """
         Hunt down and loose NaaN entries left lying arround
@@ -177,13 +186,14 @@ class combo_logic:
         logging.info('%s - Exit tag uniques cycle' % cmi_debug )
         """
 
+############################################################################
+# method 5
 
     def rank_hot(self):
         """
         isolate all *Hot* tagged stocks and rank them by price, lowest=1 to highest=n
         Since these stocks are the most active all-round, tag_rank them with 1xx (e.g., 100, 101, 102, 103)
         """
-
         cmi_debug = __name__+"::"+self.rank_hot.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
         self.combo_df = self.combo_df.assign(rank="" )     # pre-insert the new Tag_Rank column
@@ -192,13 +202,15 @@ class combo_logic:
         # Pack the list of index ID's into a list [] & pass it as an indexer inside a Loop
         # use rank column to hold a tag/ranking of cheapest *Hot* stock to most expensive *Hot* stock
         z = list(self.combo_df.sort_values(by=['Cur_price'], ascending=True).loc[self.combo_df['Hot'] == "*Hot*"].index)
-        y = 100
-        for i in z:
-            self.combo_df.loc[i, 'rank'] = y
-            #print ( "i: ", i, "x:", y )
+        y = 100                                  # HOT stocks ranking starts at 100
+        for i in z:                              # cycle thru the sorted DF
+            self.combo_df.loc[i, 'rank'] = y     # rank each Hot entry
+            # DEBUG: print ( "i: ", i, "x:", y )
             y += 1
-
         return self.combo_df
+
+###################################################################################
+# method 6
 
     def rank_unvol(self):
         """
@@ -206,28 +218,34 @@ class combo_logic:
         tag_rank them with code: 3xx (e.g. 300, 301, 302)
         """
         z = list(self.combo_df.sort_values(by=['Cur_price'], ascending=True).loc[self.combo_df['Insights'] == "^ Unusual vol only"].index)
-        y = 300
-        for i in z:
-            self.combo_df.loc[i, 'rank'] = y
-            #print ( "i: ", i, "x:", y )
+        y = 300                                  # Unusual Vol stocks ranking starts at 300 
+        for i in z:                              # cycle thru the sorted DF
+            self.combo_df.loc[i, 'rank'] = y     # rank each Unique entry
+            # DEBUG: print ( "i: ", i, "x:", y )
             y += 1
         return self.combo_df
 
+###################################################################################
+# method 7
+
     def rank_caps(self):
         """
-        isolate all non-*Hot* stocks and all non-Unusual Vol stocks.
+        isolate any stock NOT tagged (i.e not Hot or Unusual Vol tagged).
         tag_rank them with code: 2xx (e.g. 200, 201, 202, 203)
         WARNING:
             This is a cheap way to find/select criteria.
             MUST call this ranking method last for this to work correctly.
         """
         z = list(self.combo_df.sort_values(by=['Cur_price'], ascending=True).loc[self.combo_df['rank'] == "" ].index)
-        y = 200
-        for i in z:
-            self.combo_df.loc[i, 'rank'] = y
-            #print ( "i: ", i, "x:", y )
+        y = 200                                 # Non tagged average unknown stocks ranking starts at 200
+        for i in z:                             # cycle thru the sorted DF
+            self.combo_df.loc[i, 'rank'] = y    # rank each entury
+            # DEBUG : print ( "i: ", i, "x:", y )
             y += 1
         return self.combo_df
+
+###################################################################################
+# method 8
 
     def combo_listall(self):
         """
@@ -241,6 +259,9 @@ class combo_logic:
         pd.set_option('max_colwidth', 40)
         return self.combo_df
 
+###################################################################################
+# method 9
+
     def combo_listall_ranked(self):
         """
         Print the full contents of the combo DataFrame. Sorted by % Change
@@ -251,8 +272,11 @@ class combo_logic:
         logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 40)
-        #print ( self.combo_df.sort_values(by=['Pct_change'], ascending=False) )
+        # DEBUG: print ( self.combo_df.sort_values(by=['Pct_change'], ascending=False) )
         return self.combo_df.sort_values(by=['Pct_change'], ascending=False)
+
+###################################################################################
+# method 10
 
     def combo_listall_nodupes(self):
         """
@@ -267,6 +291,9 @@ class combo_logic:
         # return c.sort_values(by=['Pct_change'], ascending=False)
         return c    #  raw df list. DO NOT sort by anything
 
+###################################################################################
+# method 11
+
     def list_uniques(self):
         """
         Print the full contents of the combo DataFrame with DUPES removed
@@ -279,6 +306,9 @@ class combo_logic:
         pd.set_option('max_colwidth', 40)
         return self.combo_df.drop_duplicates(subset=['Symbol'], keep='first')    # only look at dupes in symbol colum
 
+###################################################################################
+# method 12
+
     def unique_symbols(self):
         """
         Build a DF of UNIQUE symbols from the combo DataFrame with DUPES remove
@@ -290,6 +320,9 @@ class combo_logic:
         pd.set_option('max_colwidth', 40)
         unique_s = self.combo_df.drop_duplicates(subset=['Symbol'], keep='first')     # only look at dupes in symbol colum
         return unique_s.sort_values(by=['Symbol'])
+
+###################################################################################
+# method 13
 
     def combo_grouped(self):
         """
@@ -304,6 +337,9 @@ class combo_logic:
         g_df = pd.DataFrame(self.combo_df.sort_values(by=['rank'], ascending=True).groupby(['Insights']).mean() )
         g_df.loc['Average_overall'] = g_df.mean()
         return g_df
+
+###################################################################################
+# method 14
 
     def combo_dupes_only_listall(self, opt):
         """
@@ -324,6 +360,9 @@ class combo_logic:
 
         return
 
+###################################################################################
+# method 15
+
     def reindex_combo_df(self):
         """
         Make combo_df index numbering linear; starting from 0, 1, 2, 3, 4...
@@ -338,6 +377,9 @@ class combo_logic:
         #self.combo_dupes = self.combo_df.duplicated(['Symbol']).to_frame()         # convert Bool SERIES > DF & make avail as class global attr DF
         return
 
+###################################################################################
+# method 16
+
     def polish_combo_df(self, me):
         """
         Clean, Polish & Wax the main Combo DataFrame.
@@ -348,19 +390,19 @@ class combo_logic:
         cmi_debug = __name__+"::"+self.polish_combo_df.__name__+".#"+str(self.inst_uid)+"."+str(me)
         logging.info( f"{cmi_debug} - CALLED" )
 
-        self.prepare_combo_df()      # FIRST, merge Small_cap + med + large + mega into a single DF
+        self.prepare_combo_df()                # FIRST, merge Small_cap + med + large + mega into a single DF
 
         # Find/fix missing data in nasdaq.com unusual volume DF - i.e. market_cap info
-        uvol_badata = self.combo_df[self.combo_df['Mkt_cap'].isna()]
-        up_symbols = uvol_badata['Symbol'].tolist()
-        nq = nquote(3, self.args)                   # setup an nasdaq quote dict
-        nq.init_dummy_session()                # setup request session - note: will set nasdaq magic cookie
+        uvol_badata = self.combo_df[self.combo_df['Mkt_cap'].isna()]     # Non and NaN = True
+        up_symbols = uvol_badata['Symbol'].tolist()     # list of symbols as a [] list
+        nq = nquote(3, self.args)              # setup an nasdaq quote dict
+        nq.init_dummy_session()                # initalize quote request session - note: will set nasdaq magic cookie
         total_wrangle_errors = 0               # usefull counters
         unfixable_errors = 0
         cleansed_errors = 0
         logging.info( f"{cmi_debug} - find missing data for: {len(up_symbols)} symbols" )
         loop_count = 1
-        print ( f"Collect & insert missing data elements [Nasdaq Unusual UP volume]..." )
+        print ( f"Insert missing data from [Nasdaq Unusual UP volume]..." )
         cols = 1
         fixchars = 0
 
@@ -387,7 +429,8 @@ class combo_logic:
                 fixchars += 2
                 # BUG : disabled this code - cant figgure out why its erroring
                 # this needs to be fixed
-                #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
+                zero_float = round(float(0), 3)
+                self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == qsymbol].index, 'Mkt_cap'] = zero_float
                 #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'M_B'] = 'EF'
             else:
                 logging.info( f"{cmi_debug} - {qsymbol} asset class is {nq.asset_class}" )
@@ -399,7 +442,8 @@ class combo_logic:
                 null_tester = nq.quote['mkt_cap']         # some ETF/Funds have a market cap - but this state is inconsistent & random
             except TypeError:
                 logging.info( f"{cmi_debug} - {nq.asset_class} Mkt_cap data is NULL / setting to: 0" )
-                self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
+                zero_float = round(float(0), 3)
+                self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = zero_float
                 print ( f"!!", end="" )
                 cleansed_errors += 2
                 fixchars += 2
@@ -408,7 +452,7 @@ class combo_logic:
                 logging.info( f"{cmi_debug} - {nq.asset_class} Mkt_cap key is NULL / setting to: 0" )
                 # BUG : disabled this code - cant figgure out why its erroring
                 # this needs to be fixed
-                #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(float(0), 3)
+                self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = float(0)
                 cleansed_errors += 1
                 print ( f"!", end="" )
                 fixchars += 1
