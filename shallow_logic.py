@@ -108,7 +108,8 @@ class combo_logic:
 
         # This is a network expsive method as it does a network get for each stock symbol
         # and extracts missing data & saves it to combo_df.
-        # This function is obsessive at cleaning 1 Data field...the 'Market Cap' for each symbol
+
+        ############################### Setup ############################################
         for qsymbol in up_symbols:
             xsymbol = qsymbol
             qsymbol = qsymbol.rstrip()                   # cleand/striped of trailing spaces
@@ -121,8 +122,10 @@ class combo_logic:
                 nq.form_api_endpoint(qsymbol, ac)      # re-form API endpoint if default asset_class guess was wrong)
             nq.get_nquote(qsymbol)                     # get a live quote
             wrangle_errors = nq.build_data()           # wrangle & cleanse the data - lots done in here
-
             print ( f"{qsymbol:5}...", end="", flush=True )
+            
+            ############################### Phase 1 ###########################################
+            # Evaluate Asset Class = an Exchnage Traded Fund (ETF)
             logging.info( f"{cmi_debug} - Begin market cap/scale logic cycle... {nq.asset_class}")
             if nq.asset_class == "etf":        # Global attribute - is asset class ETF? yes = Cant get STOCK-type data
                 logging.info( f"{cmi_debug} - {qsymbol} asset class is ETF" )
@@ -133,26 +136,27 @@ class combo_logic:
 
                 # BUG : disabled this code - cant figgure out why its erroring
                 # this needs to be fixed
-                z_float = round(float(0), 3)
+                z_float = round(float(0.0), 3)    # possibly wont work
                 if self.args['bool_xray'] is True:
                     print ( f"=xray=========================== {self.inst_uid} ================================begin=" )
                     print ( f"z_float: {z_float}" )
                     print ( f"combo_df: {self.combo_df}" )
                     print ( f"=xray=========================== {self.inst_uid} ==================================end=" )
-                #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = z_float
-                #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'M_B'] = 'EF'
+                self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = 'UZ'  # Mkt cap
+                self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'M_B'] = 'EF'      # asset class = ETF
             else:
                 logging.info( f"{cmi_debug} - {qsymbol} asset class is {nq.asset_class}" )
                 pass
 
-            #
+            ############################### Phase 2 ###########################################
+            # Evaluate Market Cap data field - quality of data
             logging.info( f"{cmi_debug} - Test {nq.asset_class} Mkt_cap for NULLs..." )
             z_float = round(float(0), 3)                  # 0.000
             try:
                 null_tester = nq.quote['mkt_cap']         # some ETF/Funds have a market cap - but this state is inconsistent & random
             except TypeError:
                 logging.info( f"{cmi_debug} - {nq.asset_class} Mkt_cap data is NULL / setting to: 0" )
-                #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = z_float
+                self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = 'UZ'    # make is a real number = 0
                 print ( f"!!", end="" )
                 cleansed_errors += 2
                 fixchars += 2
@@ -162,7 +166,7 @@ class combo_logic:
                 # BUG : disabled this code - cant figgure out why its erroring
                 # this needs to be fixed
                 # cant do this b/c cant index by the key... I think
-                # self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = z_float
+                self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = 'UZ'    # make is a real number = 0 
                 cleansed_errors += 1
                 print ( f"!", end="" )
                 fixchars += 1
@@ -171,7 +175,7 @@ class combo_logic:
                 # BUG : disabled this code - cant figgure out why its erroring
                 # this needs to be fixed
                 logging.info( f"{cmi_debug} - Set {nq.asset_class} Mkt_cap to: {nq.quote['mkt_cap']}" )
-                #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = nq.quote['mkt_cap']
+                self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = nq.quote['mkt_cap']
                 print ( f"+", end="" )
                 fixchars += 1
                 cleansed_errors += 1
@@ -191,7 +195,7 @@ class combo_logic:
                         else:
                             # BUG
                             # This is broken : Fix me !!!
-                            #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'M_B'] = i[0]
+                            self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'M_B'] = i[0]
                             logging.info( f"{cmi_debug} - Market cap: [ {nq.quote['mkt_cap']} ] scale set to: {i[0]}" )
                             wrangle_errors += 1          # insert market cap scale into DF @ column M_B for this symbol
                             cleansed_errors += 1

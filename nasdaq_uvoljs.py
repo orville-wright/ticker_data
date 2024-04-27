@@ -81,9 +81,7 @@ class un_volumes:
         self.js_session.cookies.update(self.nasdaq_headers)    # redundent as it's done in INIT but I'm not sure its persisting from there
         with self.js_session.get("https://www.nasdaq.com", stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp0:
             logging.info('%s - EXTRACT/INSERT valid cookie  ' % cmi_debug )
-            print ( f"### - debug: {self.js_resp0.cookies.items()}" )
-
-            #self.js_session.cookies.update({'ak_bmsc': self.js_resp0.cookies['ak_bmsc']} )    # NASDAQ cookie hack
+                        #self.js_session.cookies.update({'ak_bmsc': self.js_resp0.cookies['ak_bmsc']} )    # NASDAQ cookie hack
             #self.js_session.cookies.update({'bm_sv': self.js_resp0.cookies['bm_sv']} )    # NASDAQ cookie hack
 
         # 2nd get with the secret nasdaq.com cookie no inserted
@@ -104,11 +102,11 @@ class un_volumes:
 
         # DEBUG
         if self.args['bool_xray'] is True:
-            print ( f"================================ {self.yti} ======================================" )
-            print ( f"=== session cookies ===\n" )
+            print ( f"=xray=========================== {self.yti} ================================begin=" )
+            print ( f"=== session cookies ===" )
             for i in self.js_session.cookies.items():
                 print ( f"{i}" )
-
+            print ( f"=xray=========================== {self.yti} ==================================end=" )
         return
 #####################################################
 # method #2
