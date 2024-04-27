@@ -48,7 +48,7 @@ class y_techevents:
         self.yti = yti
         return
 
-
+#######################################################################
 # method #1
     def form_api_endpoints(self, symbol):
         """
