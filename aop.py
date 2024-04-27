@@ -309,7 +309,6 @@ def main():
         print ( f"Current day percent gain:   %{averages.iloc[-1]['Pct_change'].round(2)}" )
 
 
-
 # Get the Bull/Bear Technical performance Sentiment for all stocks in combo DF ######################
     """
     Bullish/Neutral/Bearish Technical indicators for each symbol
@@ -319,8 +318,9 @@ def main():
     if args['bool_te'] is True:
         cmi_debug = __name__+"::Tech_events_all.#1"
         te = y_techevents(1)
-        print ( f"DEBUG: dump combo_df - {x.combo_df.sort_values(by=['Symbol'])}" )
-        te.build_te_summary(x.combo_df, 1)       # x = main INSTANCE:: combo_logic
+        ssot_te = combo_logic.combo_df
+        print ( f"DEBUG: dump combo_df - {ssot_te}" )
+        te.build_te_summary(ssot_te, 1)       # x = main INSTANCE:: combo_logic
         #
         # TODO: populate build_te_summary with symbol co_name, Cur_price  Prc_change  Pct_change, volume
         # would be good to check if this symbol is also in the UNUSUAL UP table also.
@@ -336,7 +336,7 @@ def main():
         print ( f"***** Hacking ***** " )
         # might not be necessary now, since I've changed the logic surrounding COMBO DF dupes.
         # c_uniques = x.unique_symbols()
-        c_uniques = x.combo_listall_nodupes()
+        c_uniques = ssot_te.combo_listall_nodupes()
         te.te_df0.merge(c_uniques, left_on='Symbol', right_on='Symbol')
         # x.combo_listall_nodupes
         print ( f"{te.te_df0}" )
