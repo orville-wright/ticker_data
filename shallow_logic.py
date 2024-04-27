@@ -175,7 +175,9 @@ class combo_logic:
                 # BUG : disabled this code - cant figgure out why its erroring
                 # this needs to be fixed
                 logging.info( f"{cmi_debug} - Set {nq.asset_class} Mkt_cap to: {nq.quote['mkt_cap']}" )
-                self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = nq.quote['mkt_cap']
+                z_float = float(nq.quote['mkt_cap'])
+                #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = nq.quote['mkt_cap']
+                self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = z_float
                 print ( f"+", end="" )
                 fixchars += 1
                 cleansed_errors += 1
@@ -185,7 +187,7 @@ class combo_logic:
                         if nq.quote['mkt_cap'] == float(0):
                             # BUG
                             # This is broken - fix me !!!
-                            #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'M_B'] = "UZ"
+                            self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'M_B'] = "UZ"
                             logging.info( f"{cmi_debug} - Bad Market cap: [ {nq.quote['mkt_cap']} ] / scale set to: UZ" )
                             print ( f"+", end="" )
                             fixchars += 1
