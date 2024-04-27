@@ -650,6 +650,9 @@ class nquote:
         else:
             wrangle_errors += 50
             logging.info( f"%s - Nasdaq quote data is ABERRANT [ {a} {b} {c} ]" % cmi_debug )
+            # a = nulls_summary()
+            # b = nulls_watchlist()
+            # c = nulls_premarket()
 
         return wrangle_errors
 

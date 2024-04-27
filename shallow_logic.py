@@ -153,9 +153,14 @@ class combo_logic:
             logging.info( f"{cmi_debug} - Test {nq.asset_class} Mkt_cap for NULLs..." )
             z_float = round(float(0), 3)                  # 0.000
             try:
-                null_tester = nq.quote['mkt_cap']         # some ETF/Funds have a market cap - but this state is inconsistent & random
+                null_tester = nq.quote['mkt_cap']         # some ETF/Funds have a market cap - but data is inconsistent
             except TypeError:
                 logging.info( f"{cmi_debug} - {nq.asset_class} Mkt_cap data is NULL / setting to: 0" )
+                if self.args['bool_xray'] is True:
+                    print ( f"=xray=TypeError================= {self.inst_uid} ================================begin=" )
+                    print ( f"quote: {nq.quote.items()}" )
+                    print ( f"combo_df: {self.combo_df}" )
+                    print ( f"=xray=========================== {self.inst_uid} ==================================end=" )
                 self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = 'UZ'    # make is a real number = 0
                 print ( f"!!", end="" )
                 cleansed_errors += 2
@@ -163,6 +168,11 @@ class combo_logic:
                 y = 0
             except KeyError:
                 logging.info( f"{cmi_debug} - {nq.asset_class} Mkt_cap key is NULL / setting to: 0" )
+                if self.args['bool_xray'] is True:
+                    print ( f"=xray=KeyError================== {self.inst_uid} ================================begin=" )
+                    print ( f"quote: {nq.quote.items()}" )
+                    print ( f"combo_df: {self.combo_df}" )
+                    print ( f"=xray=========================== {self.inst_uid} ==================================end=" )
                 # BUG : disabled this code - cant figgure out why its erroring
                 # this needs to be fixed
                 # cant do this b/c cant index by the key... I think
