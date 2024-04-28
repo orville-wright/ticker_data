@@ -389,28 +389,6 @@ class nquote:
 
         #if a > 0    # Zone 1 (Data in Summary is in an Abberant state)
         # SUMMARY quote data is bad : manipulate it by hand
-        if self.quote_json1['data'] is not None:                                # bad payload? - can also test a == 0
-                logging.info('%s - Stage #0 / Fix Bad Summary data fields...' % cmi_debug )
-                jsondata10 = self.quote_json1['data']['summaryData']                # HEAD of data payload
-                prev_close = jsondata10['PreviousClose']['value']                   # e,g, "$138.93"
-                mkt_cap = jsondata10['MarketCap']['value']                          # e.g. "128,460,592,862"
-                today_hilo = jsondata10['TodayHighLow']['value']                    # WARN: multi-field string needs splitting/wrangeling e.g. "$143.97/$140.37"
-                #
-                if self.asset_class == "stocks":
-                    avg_vol = jsondata10['AverageVolume']['value']                      # e.g. "4,811,121" or N/A
-                    oneyear_target = jsondata10['OneYrTarget']['value']                 # e.g. "$151.00"
-                else:
-                    avg_vol = jsondata10['FiftyDayAvgDailyVol']['value']                      # e.g. "4,811,121" or N/A
-                    oneyear_target = 0                 # e.g. "$151.00
-                #
-                beta = jsondata10['Beta']['value']                                  # e.g. 1.23
-                LII_week_hilo = jsondata10['FiftTwoWeekHighLow']['value']           # WARN: multi-field string needs splitting/wrangeling e.g. "$152.84/$105.92"
-                logging.info( '%s - Stage #3 / [7] fields - Done' % cmi_debug )
-            else:
-                logging.info('%s - Stage #2 / NULL json payload - NOT regular stock' % cmi_debug )        # bad symbol json payload
-                self.quote.clear()
-                wrangle_errors += -1
-
 
         if a == 0 and b == 0:    # GOOD - all data fields are available
             logging.info( f'%s - Nasdaq quote data is NOMINAL [ {a} {b} {c} ]' % cmi_debug )
