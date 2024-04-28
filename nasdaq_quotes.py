@@ -224,6 +224,7 @@ class nquote:
             print ( f"===================== get_nquote.{self.yti} session cookies : {self.qs} ===========================" )
         return
 
+#######################################################################
 # method 7
     def get_js_nquote(self, symbol):
         """
@@ -420,7 +421,7 @@ class nquote:
                 self.quote.clear()
                 wrangle_errors += -1
 
-            # PRE-MARKET quoet data - 2 data zones
+            # PRE-MARKET quote data - 2 data zones
             if self.quote_json3['data'] is not None:                                # bad payload? - can also test c == 0
                 logging.info('%s - Stage #2 / Accessing data fields...' % cmi_debug )
                 jsondata30 = self.quote_json3['data']                               # HEAD of data payload 0
@@ -460,15 +461,8 @@ class nquote:
                     oneyear_target = jsondata10['OneYrTarget']['value']                 # e.g. "$151.00"
                     fields_set += 1
                 else:
-                    avg_vol = jsondata10['FiftyDayAvgDailyVol']['value']                      # e.g. "4,811,121" or N/A
-                    fields_set += 1
-                    oneyear_target = 0                 # e.g. "$151.00
-                    fields_set += 1
-                #
-                beta = jsondata10['Beta']['value']                                  # e.g. 1.23
-                fields_set += 1
-                LII_week_hilo = jsondata10['FiftTwoWeekHighLow']['value']           # WARN: multi-field string needs splitting/wrangeling e.g. "$152.84/$105.92"
-                fields_set += 1
+                    pass
+
                 logging.info( '%s - Stage #3 : {fields_set}/7 fields - Done' % cmi_debug )
             else:
                 logging.info('%s - Stage #2 / NULL json payload - NOT regular stock' % cmi_debug )        # bad symbol json payload
