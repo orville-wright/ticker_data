@@ -276,7 +276,7 @@ class nquote:
         """
 
         # ZONE #1 Summary zone....##############################################
-        def nulls_summary():
+        def nulls_summary(self, js_dataset):
             cmi_debug = __name__+"::"+nulls_summary.__name__+".#"+str(self.yti)
             logging.info( f'%s - probing json keys/fields for NULLs...' % cmi_debug )
             z = 1
@@ -304,11 +304,11 @@ class nquote:
                         y = x[i]
                     except TypeError:
                         logging.info( f"%s - Probe #1.3 (API=summary): NULL data @: [{i}]" % cmi_debug )
-                        jsondata10[i]['value'] = 0
+                        js_dataset[i]['value'] = 0      # fix the bad data by writing it as 0
                         jd10_null_errors += 1
                     except KeyError:
                         logging.info( f"%s - Probe #1.4 (API=summary): NULL key @: [{i}]" % cmi_debug )
-                        jsondata10[i]['value'] = 0
+                        js_dataset[i]['value'] = 0      # fix the bad data by writing it as 0
                         jd10_null_errors += 1
                     else:
                         z += 1
@@ -383,9 +383,9 @@ class nquote:
 ################################################################################################
         wrangle_errors = 0
         null_count = 0
-        a = nulls_summary()         # self.jsondata11 = self.quote_json1['data']
-        b = nulls_watchlist()       # self.jsondata20 = self.quote_json2['data'][0]
-        c = nulls_premarket()       # self.jsondata30 = self.quote_json3['data']
+        a = nulls_summary(jsondata10)         # self.jsondata11 = self.quote_json1['data']
+        b = nulls_watchlist()                 # self.jsondata20 = self.quote_json2['data'][0]
+        c = nulls_premarket()                 # self.jsondata30 = self.quote_json3['data']
 
         #if a > 0    # Zone 1 (Data in Summary is in an Abberant state)
         # SUMMARY quote data is bad : manipulate it by hand
