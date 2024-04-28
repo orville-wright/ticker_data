@@ -304,11 +304,11 @@ class nquote:
                         y = x[i]
                     except TypeError:
                         logging.info( f"%s - Probe #1.3 (API=summary): NULL data @: [{i}]" % cmi_debug )
-                        js_dataset[i]['value'] = 0      # fix the bad data by writing it as 0
+                        x[i] = 0      # fix the bad data by writing it as 0
                         jd10_null_errors += 1
                     except KeyError:
                         logging.info( f"%s - Probe #1.4 (API=summary): NULL key @: [{i}]" % cmi_debug )
-                        js_dataset[i]['value'] = 0      # fix the bad data by writing it as 0
+                        x[i] = 0      # fix the bad data by writing it as 0
                         jd10_null_errors += 1
                     else:
                         z += 1
