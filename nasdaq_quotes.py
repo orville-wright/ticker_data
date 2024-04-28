@@ -387,9 +387,9 @@ class nquote:
         b = nulls_watchlist()       # self.jsondata20 = self.quote_json2['data'][0]
         c = nulls_premarket()       # self.jsondata30 = self.quote_json3['data']
 
-        if a > 0    # Zone 1 (Data in Summary is in an Abberant state)
-            # SUMMARY quote data is bad : manipulate it by hand
-            if self.quote_json1['data'] is not None:                                # bad payload? - can also test a == 0
+        #if a > 0    # Zone 1 (Data in Summary is in an Abberant state)
+        # SUMMARY quote data is bad : manipulate it by hand
+        if self.quote_json1['data'] is not None:                                # bad payload? - can also test a == 0
                 logging.info('%s - Stage #0 / Fix Bad Summary data fields...' % cmi_debug )
                 jsondata10 = self.quote_json1['data']['summaryData']                # HEAD of data payload
                 prev_close = jsondata10['PreviousClose']['value']                   # e,g, "$138.93"
