@@ -207,7 +207,7 @@ class nquote:
         with self.js_session.get(self.watchlist_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp2:
             logging.info( f"%s - Stage #2 / Watchlist / get() data / storing..." % cmi_debug )
             print ( f"DEBUG: {self.watchlist_url}" )
-            logging.info( f"%s - API: {str(self.watchlist_ur)}" % cmi_debug )
+            logging.info( f"%s - API: {self.watchlist_url}" % cmi_debug )
             #logging.info( f"%s - API: {self.watchlist_url}" % cmi_debug )
             self.quote_json2 = json.loads(self.js_resp2.text)
             logging.info( f"%s - Stage #2 - Done" % cmi_debug )
