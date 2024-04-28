@@ -383,6 +383,10 @@ class nquote:
 ################################################################################################
         wrangle_errors = 0
         null_count = 0
+        jsondata10 = self.quote_json1['data']['summaryData']                # HEAD of data payload
+        jsondata20 = self.quote_json2['data'][0]                            # HEAD of data payload
+        jsondata30 = self.quote_json3['data']                               # HEAD of data payload 
+        jsondata31 = self.quote_json3['data']['infoTable']['rows'][0]       # HEAD of data payload 1
         a = nulls_summary(jsondata10)         # self.jsondata11 = self.quote_json1['data']
         b = nulls_watchlist()                 # self.jsondata20 = self.quote_json2['data'][0]
         c = nulls_premarket()                 # self.jsondata30 = self.quote_json3['data']
