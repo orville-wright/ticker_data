@@ -304,11 +304,11 @@ class nquote:
                         y = x[i]
                     except TypeError:
                         logging.info( f"%s - Probe #1.3 (API=summary): NULL data @: [{i}] - RESET to: 0" % cmi_debug )
-                        x[i] = 0      # fix the bad data by writing this field as 0
+                        x[i]['value'] = 0      # fix the bad data by writing this field as 0
                         jd10_null_errors += 1
                     except KeyError:
                         logging.info( f"%s - Probe #1.4 (API=summary): NULL key @: [{i}] - RESET to: 0" % cmi_debug )
-                        x[i] = 0      # fix the bad data by writing this field as 0
+                        x[i]['value'] = 0      # fix the bad data by writing this field as 0
                         jd10_null_errors += 1
                     else:
                         z += 1
@@ -441,21 +441,31 @@ class nquote:
             # SUMMARY quote data
             if self.quote_json1['data'] is not None:                                # bad payload? - can also test a == 0
                 logging.info('%s - Stage #3 / Accessing data fields...' % cmi_debug )
+                fields_set = 0
                 jsondata10 = self.quote_json1['data']['summaryData']                # HEAD of data payload
                 prev_close = jsondata10['PreviousClose']['value']                   # e,g, "$138.93"
+                fields_set += 1
                 mkt_cap = jsondata10['MarketCap']['value']                          # e.g. "128,460,592,862"
+                fields_set += 1
                 today_hilo = jsondata10['TodayHighLow']['value']                    # WARN: multi-field string needs splitting/wrangeling e.g. "$143.97/$140.37"
-                #
+                fields_set += 1
+
                 if self.asset_class == "stocks":
                     avg_vol = jsondata10['AverageVolume']['value']                      # e.g. "4,811,121" or N/A
+                    fields_set += 1
                     oneyear_target = jsondata10['OneYrTarget']['value']                 # e.g. "$151.00"
+                    fields_set += 1
                 else:
                     avg_vol = jsondata10['FiftyDayAvgDailyVol']['value']                      # e.g. "4,811,121" or N/A
+                    fields_set += 1
                     oneyear_target = 0                 # e.g. "$151.00
+                    fields_set += 1
                 #
                 beta = jsondata10['Beta']['value']                                  # e.g. 1.23
+                fields_set += 1
                 LII_week_hilo = jsondata10['FiftTwoWeekHighLow']['value']           # WARN: multi-field string needs splitting/wrangeling e.g. "$152.84/$105.92"
-                logging.info( '%s - Stage #3 / [7] fields - Done' % cmi_debug )
+                fields_set += 1
+                logging.info( '%s - Stage #3 : {fields_set}/7 fields - Done' % cmi_debug )
             else:
                 logging.info('%s - Stage #2 / NULL json payload - NOT regular stock' % cmi_debug )        # bad symbol json payload
                 self.quote.clear()
