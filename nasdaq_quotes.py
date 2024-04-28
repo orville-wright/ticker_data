@@ -300,6 +300,7 @@ class nquote:
             else:
                 x = self.jsondata11['summaryData']
                 for i in jd_10:
+                    print ( f"DEBUG: i: {i} " )
                     try:
                         y = x[i]
                     except TypeError:
