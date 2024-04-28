@@ -214,7 +214,7 @@ class nquote:
             logging.info( f"%s - Stage #3 / premarket / get() data / storing..." % cmi_debug )
             logging.info( f"%s - API URL: {self.premarket_url}" % cmi_debug )
             self.quote_json3 = json.loads(self.js_resp3.text)
-            logging.info( f"%s - Stage #3 - Done'" % cmi_debug )
+            logging.info( f"%s - Stage #3 - Done" % cmi_debug )
 
         # Xray DEBUG
         if self.args['bool_xray'] is True:
