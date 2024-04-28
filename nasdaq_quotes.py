@@ -111,11 +111,11 @@ class nquote:
         wurl_log2 = f"7c{asset_class}"         # hack f-strings doesnt like "%" inside {}
         #
         logging.info( f"================================ Quote API endpoints ================================" )
-        logging.info( f"%s - API endpoint #0: [ {self.quote_url} ]" % cmi_debug )
-        logging.info( f"%s - API endpoint #1: [ {self.summary_url} ]" % cmi_debug )
-        logging.info( f"%s - API endpoint #2: [ {wurl_log1}%%{wurl_log2} ]" % cmi_debug )
-        logging.info( f"%s - API endpoint #3: [ {self.premarket_url} ]" % cmi_debug )
-        logging.info( f"%s - API endpoint #4: [ {self.info_url} ]" % cmi_debug )
+        logging.info( f"%s - API #0: [ {self.quote_url} ]" % cmi_debug )
+        logging.info( f"%s - API #1: [ {self.summary_url} ]" % cmi_debug )
+        logging.info( f"%s - API #2: [ {wurl_log1}%%{wurl_log2} ]" % cmi_debug )
+        logging.info( f"%s - API #3: [ {self.premarket_url} ]" % cmi_debug )
+        logging.info( f"%s - API #4: [ {self.info_url} ]" % cmi_debug )
         self.quote_url = self.quote_url
         return
 
@@ -160,7 +160,7 @@ class nquote:
 
     def learn_aclass(self, symbol):
         cmi_debug = __name__+"::"+self.learn_aclass.__name__+".#"+str(self.yti)
-        logging.info( f"%s - Learn asset class using API endpoint: {self.info_url}" % cmi_debug )
+        logging.info( f"%s - Learn asset class @ API: {self.info_url}" % cmi_debug )
         with self.js_session.get(self.info_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp1:
             logging.info( f"%s - Extract default guess data..." % cmi_debug )
             self.quote_json1 = json.loads(self.js_resp1.text)
@@ -170,7 +170,7 @@ class nquote:
             for i in ['stocks', 'etf']:
                 test_info_url = t_info_url + i
                 with self.js_session.get(test_info_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp4:
-                    logging.info( f'%s - Test {symbol} for asset_class [ {i} ] @ API endpoint: {test_info_url}' % cmi_debug )
+                    logging.info( f'%s - Test {symbol} asset_class [ {i} ] @ API: {test_info_url}' % cmi_debug )
                     self.quote_json4 = json.loads(self.js_resp4.text)
                     if self.quote_json4['status']['rCode'] == 200:
                         self.asset_class = i
@@ -200,19 +200,20 @@ class nquote:
 
         with self.js_session.get(self.summary_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp1:
             logging.info( f"%s - Stage #1 / Summary / get() data / storing..." % cmi_debug )
-            logging.info( f"%s - API URL: {self.summary_url}" % cmi_debug )
+            logging.info( f"%s - API: {self.summary_url}" % cmi_debug )
             self.quote_json1 = json.loads(self.js_resp1.text)
             logging.info( f"%s - Stage #1 - Done" % cmi_debug )
 
         with self.js_session.get(self.watchlist_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp2:
             logging.info( f"%s - Stage #2 / Watchlist / get() data / storing..." % cmi_debug )
-            logging.info( f"%s - API URL: {self.watchlist_url}" % cmi_debug )
+            print ( f"DEBUG: {self.watchlist_url}" )
+            logging.info( f"%s - API: {self.watchlist_url}" % cmi_debug )
             self.quote_json2 = json.loads(self.js_resp2.text)
             logging.info( f"%s - Stage #2 - Done" % cmi_debug )
 
         with self.js_session.get(self.premarket_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp3:
             logging.info( f"%s - Stage #3 / premarket / get() data / storing..." % cmi_debug )
-            logging.info( f"%s - API URL: {self.premarket_url}" % cmi_debug )
+            logging.info( f"%s - API: {self.premarket_url}" % cmi_debug )
             self.quote_json3 = json.loads(self.js_resp3.text)
             logging.info( f"%s - Stage #3 - Done" % cmi_debug )
 
