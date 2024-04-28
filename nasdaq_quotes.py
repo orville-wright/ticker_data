@@ -276,7 +276,7 @@ class nquote:
         """
 
         # ZONE #1 Summary zone....##############################################
-        def nulls_summary(js_dataset):
+        def nulls_summary():
             cmi_debug = __name__+"::"+nulls_summary.__name__+".#"+str(self.yti)
             logging.info( f'%s - probing json keys/fields for NULLs...' % cmi_debug )
             z = 1
