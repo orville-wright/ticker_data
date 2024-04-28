@@ -304,9 +304,11 @@ class nquote:
                         y = x[i]
                     except TypeError:
                         logging.info( f"%s - Probe #1.3 (API=summary): NULL data @: [{i}]" % cmi_debug )
+                        jsondata10[i]['value'] = 0
                         jd10_null_errors += 1
                     except KeyError:
                         logging.info( f"%s - Probe #1.4 (API=summary): NULL key @: [{i}]" % cmi_debug )
+                        jsondata10[i]['value'] = 0
                         jd10_null_errors += 1
                     else:
                         z += 1
@@ -384,6 +386,31 @@ class nquote:
         a = nulls_summary()         # self.jsondata11 = self.quote_json1['data']
         b = nulls_watchlist()       # self.jsondata20 = self.quote_json2['data'][0]
         c = nulls_premarket()       # self.jsondata30 = self.quote_json3['data']
+
+        if a > 0    # Zone 1 (Data in Summary is in an Abberant state)
+            # SUMMARY quote data is bad : manipulate it by hand
+            if self.quote_json1['data'] is not None:                                # bad payload? - can also test a == 0
+                logging.info('%s - Stage #0 / Fix Bad Summary data fields...' % cmi_debug )
+                jsondata10 = self.quote_json1['data']['summaryData']                # HEAD of data payload
+                prev_close = jsondata10['PreviousClose']['value']                   # e,g, "$138.93"
+                mkt_cap = jsondata10['MarketCap']['value']                          # e.g. "128,460,592,862"
+                today_hilo = jsondata10['TodayHighLow']['value']                    # WARN: multi-field string needs splitting/wrangeling e.g. "$143.97/$140.37"
+                #
+                if self.asset_class == "stocks":
+                    avg_vol = jsondata10['AverageVolume']['value']                      # e.g. "4,811,121" or N/A
+                    oneyear_target = jsondata10['OneYrTarget']['value']                 # e.g. "$151.00"
+                else:
+                    avg_vol = jsondata10['FiftyDayAvgDailyVol']['value']                      # e.g. "4,811,121" or N/A
+                    oneyear_target = 0                 # e.g. "$151.00
+                #
+                beta = jsondata10['Beta']['value']                                  # e.g. 1.23
+                LII_week_hilo = jsondata10['FiftTwoWeekHighLow']['value']           # WARN: multi-field string needs splitting/wrangeling e.g. "$152.84/$105.92"
+                logging.info( '%s - Stage #3 / [7] fields - Done' % cmi_debug )
+            else:
+                logging.info('%s - Stage #2 / NULL json payload - NOT regular stock' % cmi_debug )        # bad symbol json payload
+                self.quote.clear()
+                wrangle_errors += -1
+
 
         if a == 0 and b == 0:    # GOOD - all data fields are available
             logging.info( f'%s - Nasdaq quote data is NOMINAL [ {a} {b} {c} ]' % cmi_debug )
@@ -649,13 +676,14 @@ class nquote:
             return wrangle_errors
         else:
             wrangle_errors += 50
-            logging.info( f"%s - Nasdaq quote data is ABERRANT [ {a} {b} {c} ]" % cmi_debug )
-            # a = nulls_summary()
-            # b = nulls_watchlist()
-            # c = nulls_premarket()
+            logging.info( f"%s - Nasdaq quote data is ABERRANT [ Zone 1:{a} zone 2:{b} zone 3:{c} ]" % cmi_debug )
+            # a = nulls_summary()   : zone 1
+            # b = nulls_watchlist() : zone 2
+            # c = nulls_premarket() : zone 3
 
         return wrangle_errors
 
+################################################################################
 # method 9
 # New method to build a Pandas DataFrame from JSON data structure
     def build_df(self):
