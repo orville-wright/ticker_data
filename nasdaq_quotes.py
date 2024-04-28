@@ -303,12 +303,12 @@ class nquote:
                     try:
                         y = x[i]
                     except TypeError:
-                        logging.info( f"%s - Probe #1.3 (API=summary): NULL data @: [{i}]" % cmi_debug )
-                        x[i] = 0      # fix the bad data by writing it as 0
+                        logging.info( f"%s - Probe #1.3 (API=summary): NULL data @: [{i}] - RESET to: 0" % cmi_debug )
+                        x[i] = 0      # fix the bad data by writing this field as 0
                         jd10_null_errors += 1
                     except KeyError:
-                        logging.info( f"%s - Probe #1.4 (API=summary): NULL key @: [{i}]" % cmi_debug )
-                        x[i] = 0      # fix the bad data by writing it as 0
+                        logging.info( f"%s - Probe #1.4 (API=summary): NULL key @: [{i}] - RESET to: 0" % cmi_debug )
+                        x[i] = 0      # fix the bad data by writing this field as 0
                         jd10_null_errors += 1
                     else:
                         z += 1
@@ -383,15 +383,14 @@ class nquote:
 ################################################################################################
         wrangle_errors = 0
         null_count = 0
-        jsondata10 = self.quote_json1['data']['summaryData']                # HEAD of data payload
-        jsondata20 = self.quote_json2['data'][0]                            # HEAD of data payload
-        jsondata30 = self.quote_json3['data']                               # HEAD of data payload 
-        jsondata31 = self.quote_json3['data']['infoTable']['rows'][0]       # HEAD of data payload 1
-        a = nulls_summary(jsondata10)         # self.jsondata11 = self.quote_json1['data']
+
+        a = nulls_summary()         # self.jsondata11 = self.quote_json1['data']
         b = nulls_watchlist()                 # self.jsondata20 = self.quote_json2['data'][0]
         c = nulls_premarket()                 # self.jsondata30 = self.quote_json3['data']
 
-        #if a > 0    # Zone 1 (Data in Summary is in an Abberant state)
+        if a > 0    # Zone 1 (Data in Summary is in an Abberant state)
+            a = nulls_summary()    # re-run it again just to see
+
         # SUMMARY quote data is bad : manipulate it by hand
 
         if a == 0 and b == 0:    # GOOD - all data fields are available
