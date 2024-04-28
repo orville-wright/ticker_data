@@ -388,8 +388,8 @@ class nquote:
         b = nulls_watchlist()                 # self.jsondata20 = self.quote_json2['data'][0]
         c = nulls_premarket()                 # self.jsondata30 = self.quote_json3['data']
 
-        if a > 0    # Zone 1 (Data in Summary is in an Abberant state)
-            a = nulls_summary()    # re-run it again just to see
+        if a > 0:    # Zone 1 (Data in Summary is in an Abberant state)
+            a = nulls_summary()    # re-run it again just to see. a should come back as == 0
 
         # SUMMARY quote data is bad : manipulate it by hand
 
