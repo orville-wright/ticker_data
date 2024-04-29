@@ -51,11 +51,12 @@ class nq_wrangler:
 # method 1
     def setup_zones(self, yti, qd_1, qd_2, qd_3):
         """
-        Build-out the full quote data structure thats tidy & clean. All fields sourced from the extracted JSON dataset.
-        Method must be given 3 core structures
-        jsondata11 = self.quote_json1['data']          # summary
-        jsondata20 = self.quote_json2['data'][0]       # watchlist
-        jsondata30 = self.quote_json3['data']          # premarket
+        Setup 3 main json class global accessors (must be passed into this method when called).
+        - This means that the JSNON must be read in a JSNON data zones before setup before passed to this method
+        Method must be given 3 core JSON structures (qd_1, qd_2, qd_3)
+        qd_1    : jsondata11 = self.quote_json1['data']          # summary
+        qd_2    : jsondata20 = self.quote_json2['data'][0]       # watchlist
+        qd_3    : jsondata30 = self.quote_json3['data']          # premarket
         """
         self.yti = yti
         cmi_debug = __name__+"::"+self.setup_zones.__name__+".#"+str(self.yti)
