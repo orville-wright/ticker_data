@@ -1,10 +1,4 @@
 #!/usr/bin/python3
-import requests
-from requests import Request, Session
-from requests_html import HTMLSession
-from bs4 import BeautifulSoup
-import pandas as pd
-import numpy as np
 import re
 import logging
 import argparse
@@ -19,8 +13,12 @@ logging.basicConfig(level=logging.INFO)
 
 #####################################################
 
-class qd_nquote:
-    """Class to get live Market Data Quote from NASDAQ.com data source"""
+class nq_wrangler:
+    """
+    Class to wrangle, clean, manipulate & prepare Nasdaq JSNON  Market QUote Data
+    This class can only be instatiated after the JSON data has been pulled off the network.
+    You can only wrangle data after you've read itoff the network. Never before!   
+    """
 
     # global accessors
     qd_quote = {}              # quote as dict
@@ -42,45 +40,32 @@ class qd_nquote:
     path = ""
     asset_class = ""        # global NULL TESTing indicator (important)
 
-                            # NASDAQ.com header/cookie hack
-    nasdaq_headers = { \
-                    'authority': 'api.nasdaq.com', \
-                    'path': '/api/quote/IBM/info?assetclass=stocks', \
-                    'origin': 'https://www.nasdaq.com', \
-                    'referer': 'https://www.nasdaq.com', \
-                    'sec-ch-ua': '"Chromium";v="92", " Not A;Brand";v="99", "Google Chrome";v="92"', \
-                    'sec-ch-ua-mobile': '"?0"', \
-                    'sec-fetch-mode': 'cors', \
-                    'sec-fetch-site': 'same-site', \
-                    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36' }
-
     def __init__(self, yti, global_args):
         cmi_debug = __name__+"::"+self.__init__.__name__
         logging.info( f'%s - Instantiate.#{yti}' % cmi_debug )
         self.args = global_args                                # Only set once per INIT. all methods are set globally
         self.yti = yti
-        self.js_session = HTMLSession()                        # init JAVAScript processor early
-        self.js_session.cookies.update(self.nasdaq_headers)    # load DEFAULT cookie/header hack package into session
         return
 
 # ###################################################################################################################################
 # method 1
-    def qd_build_data(self, yti, qd_1, qd_2, qd_3):
+    def setup_zones(self, yti, qd_1, qd_2, qd_3):
         """
         Build-out the full quote data structure thats tidy & clean. All fields sourced from the extracted JSON dataset.
+        Method must be given 3 core structures
+        jsondata11 = self.quote_json1['data']          # summary
+        jsondata20 = self.quote_json2['data'][0]       # watchlist
+        jsondata30 = self.quote_json3['data']          # premarket
         """
         self.yti = yti
-        cmi_debug = __name__+"::"+self.build_data.__name__+".#"+str(self.yti)
-        logging.info('%s - build quote data payload from JSON' % cmi_debug )
+        cmi_debug = __name__+"::"+self.setup_zones.__name__+".#"+str(self.yti)
+        logging.info('%s - build quote data payload from raw JSON' % cmi_debug )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
-        logging.info('%s - prepare jsondata accessors [11/20/30]...' % cmi_debug )
+        logging.info('%s - prepare jsondata accessors [Zone-1/Zone-2/Zone-3]...' % cmi_debug )
         self.jsondata11 = qd_1                              # summary
         self.jsondata20 = qd_2                              # watchlist
         self.jsondata30 = qd_3                              # premarket
-
-        #self.jsondata11 = self.quote_json1['data']                              # summary
-        #self.jsondata20 = self.quote_json2['data'][0]                           # watchlist
-        #self.jsondata30 = self.quote_json3['data']                              # premarket
+        return
 
     # Helper methods ##########################################################################################################
     """
@@ -98,19 +83,23 @@ class qd_nquote:
     def z1_summary(self):
         """
         Process Zone 1 - Summary Zone
+        self.asset_class must be set before this method can be called.
         """
-        cmi_debug = __name__+"::"+nulls_summary.__name__+".#"+str(self.yti)
-        logging.info( f'%s - probing json keys/fields for NULLs...' % cmi_debug )
+        cmi_debug = __name__+"::"+self.z1_summary.__name__+".#"+str(self.yti)
+        logging.info( f'%s - probing zone-1 JSON keys/fields...' % cmi_debug )
         z = 1
         jd10_null_errors = 0
+
+        # TODO: I need to move away from predefined fields and just scan all the fields and create a list
+        # TODO: this way, nasdaq can change their json and I wont care
         jd_10s = ("PreviousClose", "MarketCap", "TodayHighLow", "AverageVolume", "OneYrTarget", "Beta", "FiftTwoWeekHighLow" )
         jd_10e = ("PreviousClose", "MarketCap", "TodayHighLow", "FiftyDayAvgDailyVol", "Beta", "FiftTwoWeekHighLow" )
 
-        if self.asset_class == "stocks": jd_10 = jd_10s
-        if self.asset_class == "etf": jd_10 = jd_10e
+        if self.asset_class == "stocks": jd_10 = jd_10s     # asset_class ust be preset
+        if self.asset_class == "etf": jd_10 = jd_10e        # asset_class must be preset
 
         try:
-            y = self.jsondata11['summaryData']      # summary
+            y = self.jsondata11['summaryData']      # JSON struct : summary
         except TypeError:
             logging.info( f"%s - Probe #1.1 (API=summary): NULL data @: [data][summaryData]" % cmi_debug )
             jd10_null_errors = 1 + len(jd_10)       # everything in data set is BAD
@@ -135,21 +124,21 @@ class qd_nquote:
                     jd10_null_errors += 1
                 else:
                     z += 1
-        logging.info( f"%s - End NULL probe #1 (API=summary) / errors: {jd10_null_errors} / 7" % cmi_debug )
+        logging.info( f"%s - End NULL probe #1 (API=summary) / errors: {jd10_null_errors} / {len(x)}" % cmi_debug )
         return jd10_null_errors
 
 
     # ZONE #2 watchlist zone....############################################
-    def Z2_watchlist(self):
+    def z2_watchlist(self):
         """
-        Process Zone 2
+        Process Zone 2 L watchlist
         This data zone is far more tollerant. keys/fields pre-exist. So this zone cant test for a
         non-existent/bad ticker symbol (or ETF/Fund). but this means errors are less severe.
         """
-        cmi_debug = __name__+"::"+nulls_watchlist.__name__+".#"+str(self.yti)
-        logging.info( f'%s - probing json keys/fields for NULLs...' % cmi_debug )
+        cmi_debug = __name__+"::"+self.z2_watchlist.__name__+".#"+str(self.yti)
+        logging.info( f'%s - probing zone-2 JSON keys/fields for NULLs...' % cmi_debug )
         z = 1
-        x = self.jsondata20     # watchlist
+        x = self.jsondata20     # JSON struct : watchlist
         jd_20 = ("symbol", "companyName", "lastSalePrice", "netChange", "percentageChange", "deltaIndicator", "lastTradeTimestampDateTime", "volume" )
         jd20_null_errors = 0
 
@@ -164,16 +153,16 @@ class qd_nquote:
                 jd20_null_errors += 1
             else:
                 z += 1
-        logging.info( f"%s - End NULL probe #2 (API=watchlist) / errors: {jd20_null_errors} / 8" % cmi_debug )
+        logging.info( f"%s - End NULL probe #2 (API=watchlist) / errors: {jd20_null_errors} / {len(x)}" % cmi_debug )
         return jd20_null_errors
 
     # ZONE #3 premarket zone....########################################
-    def Z3_premarket(self):
+    def z3_premarket(self):
         """
         Process Zone 2 - Premarket Zone
         """
-        cmi_debug = __name__+"::"+nulls_premarket.__name__+".#"+str(self.yti)
-        logging.info( f'%s - probing json keys/fields for NULLs...' % cmi_debug )
+        cmi_debug = __name__+"::"+self.z3_premarket.__name__+".#"+str(self.yti)
+        logging.info( f'%s - probing zone-3 JSONkeys/fields for NULLs...' % cmi_debug )
         jd_31 = ("consolidated", "volume", "delta" )
         jd_30 = ("infoTable", "infoTable']['rows", "infoTable']['rows'][0", "infoTable']['rows'][0]['consolidated'",
                     "infoTable']['rows'][0]['volume'", "'infoTable']['rows'][0]['delta'" )
@@ -208,16 +197,17 @@ class qd_nquote:
 ################################################################################################
 # Quote DATA extractor ########################################################################
 ################################################################################################
-    def qd_wrangle(self):
+    def do_wrangle(self):
         """
         Do a lot of work cleaning the data.
         Main flow of wrangeling & cleaning is controlled from here. All other data wrangeling
         methods are called from here. 
         """
+        cmi_debug = __name__+"::"+self.do_wrangle.__name__+".#"+str(self.yti)
         wrangle_errors = 0
         null_count = 0
         a = self.z1_summary()                   # self.jsondata11 = self.quote_json1['data']
-        b = self.z2__watchlist()                # self.jsondata20 = self.quote_json2['data'][0]
+        b = self.z2_watchlist()                 # self.jsondata20 = self.quote_json2['data'][0]
         c = self.z3_premarket()                 # self.jsondata30 = self.quote_json3['data']
 
         if a > 0:                       # Zone 1 (Data in Summary is in an Abberant state)
@@ -227,7 +217,6 @@ class qd_nquote:
                 logging.info( f"%s - Nasdaq quote data is ABERRANT [ Zone 1:{a} zone 2:{b} zone 3:{c} ]" % cmi_debug )
                 logging.info( f'%s - Abandon Nasdaq quote - Data is BAD' % cmi_debug )
                 return wrangle_errors
-
             else:
                 logging.info( f"%s - Repaired ABERRANT data [ Zone 1:{a} zone 2:{b} zone 3:{c} ]" % cmi_debug )
                 wrangle_errors += 5     # Dataset allready started out life in bad shape
@@ -254,16 +243,17 @@ class qd_nquote:
 #######################################################################################
 # Zone 2
 # WATCHLIST quote data
-    def qd_pre_load_z2(self):
+    def pre_load_z2(self):
         """
         Zone 2 Watchlist pre-processor
         Fianlly extract Set all data field sfrom JSON and preload into variables
         for constructing into a List to eventually be written into a DataFrame
         """
+        cmi_debug = __name__+"::"+self.pre_load_z2.__name__+".#"+str(self.yti)
         if self.quote_json2['data'] is not None:                                # bad payload? - can also test b == 0
             logging.info('%s - Zone #2 / Accessing data fields...' % cmi_debug )
             jsondata20 = self.quote_json2['data'][0]                            # HEAD of data payload
-            co_sym = jsondata20['symbol']                                       # "IBM"
+            self.co_sym = jsondata20['symbol']                                       # "IBM"
             co_name = jsondata20['companyName']                                 # "International Business Machines Corporation Common Stock"
             price = jsondata20['lastSalePrice']                                 # "$143.32"
             price_net = jsondata20['netChange']                                 # "+4.39"
@@ -282,12 +272,13 @@ class qd_nquote:
 #######################################################################################
 # Zone 3
 # PRE-MARKET quote data - 2 data zones
-    def qd_pre_load_z3(self):
+    def pre_load_z3(self):
         """
         Zone 3 Premarket pre-processor
         Fianlly extract Set all data field sfrom JSON and preload into variables
         for constructing into a List to eventually be written into a DataFrame
         """
+        cmi_debug = __name__+"::"+self.pre_load_z3.__name__+".#"+str(self.yti)
         if self.quote_json3['data'] is not None:                                # bad payload? - can also test c == 0
             logging.info('%s - Zone #3 / Accessing data fields...' % cmi_debug )
             jsondata30 = self.quote_json3['data']                               # HEAD of data payload 0
@@ -314,7 +305,7 @@ class qd_nquote:
 ###############################################################################################3
 # Zone 1
 # Summary ZOne
-    def qd_pre_load_z1(self):
+    def pre_load_z1(self):
         """
         Zone 1 Summary pre-processor
         Finally extract Set all data field sfrom JSON and preload into variables
@@ -323,7 +314,7 @@ class qd_nquote:
                   contains lots of errors, missing fiels, bad fields etc. 
                   This is why we process it last !!!
         """
-
+        cmi_debug = __name__+"::"+self.pre_load_z1.__name__+".#"+str(self.yti)
         if self.quote_json1['data'] is not None:                                # bad payload? - can also test a == 0
             logging.info('%s - Zone #1 / Accessing data fields...' % cmi_debug )
             fields_set = 0
@@ -362,7 +353,6 @@ class qd_nquote:
         At the end just return a count of how many wrangle Errors we encountered
         """
         logging.info('%s - Begin heavy data wrangle workloads...' % cmi_debug )
-
         # >>> DEBUG Xray <<<
         if self.args['bool_xray'] is True:
             print ( f"\n================= Nasdaq quote data : raw uncleansed =================" )
