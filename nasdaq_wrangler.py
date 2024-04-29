@@ -3,7 +3,6 @@ import re
 import logging
 import argparse
 import time
-import threading
 import json
 import numpy as np
 
@@ -63,9 +62,9 @@ class nq_wrangler:
         logging.info('%s - build quote data payload from raw JSON' % cmi_debug )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         logging.info('%s - prepare jsondata accessors [Zone-1/Zone-2/Zone-3]...' % cmi_debug )
-        self.jsondata11 = qd_1                              # summary
-        self.jsondata20 = qd_2                              # watchlist
-        self.jsondata30 = qd_3                              # premarket
+        self.jsondata11 = qd_1                              # summary : quote_json1['data']
+        self.jsondata20 = qd_2                              # watchlist : quote_json2['data'][0]
+        self.jsondata30 = qd_3                              # premarket : quote_json3['data']
         return
 
     # Helper methods ##########################################################################################################

@@ -48,7 +48,6 @@ class nquote:
     path = ""
     asset_class = ""        # global NULL TESTing indicator (important)
 
-
                             # NASDAQ.com header/cookie hack
     nasdaq_headers = { \
                     'authority': 'api.nasdaq.com', \
@@ -61,7 +60,8 @@ class nquote:
                     'sec-fetch-site': 'same-site', \
                     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36' }
 
-
+######################################################################
+# method 0
     def __init__(self, yti, global_args):
         cmi_debug = __name__+"::"+self.__init__.__name__
         logging.info( f'%s - Instantiate.#{yti}' % cmi_debug )
@@ -73,6 +73,7 @@ class nquote:
         self.js_session.cookies.update(self.nasdaq_headers)    # load DEFAULT cookie/header hack package into session
         return
 
+######################################################################
 # method 1
     def update_headers(self, symbol, asset_class):
         cmi_debug = __name__+"::"+self.update_headers.__name__+".#"+str(self.yti)
@@ -84,6 +85,7 @@ class nquote:
         logging.info( f"%s - cookies/headers [path] object set to: {path}" % cmi_debug )
         return
 
+######################################################################
 # method 2
     def update_cookies(self):
         # assumes that the requests session has already been established
@@ -92,6 +94,7 @@ class nquote:
         self.js_session.cookies.update({'ak_bmsc': self.js_resp0.cookies['ak_bmsc']} )    # NASDAQ cookie hack
         return
 
+######################################################################
 # method 3
     def form_api_endpoint(self, symbol, asset_class):
         """
@@ -119,6 +122,7 @@ class nquote:
         self.quote_url = self.quote_url
         return
 
+######################################################################
 # method 4
     def do_simple_get(self):
         """
@@ -134,6 +138,7 @@ class nquote:
         # if the get() succeds, the response handle is automatically saved in Class Global accessor -> self.js_resp0
         return
 
+######################################################################
 # method 5
     def init_dummy_session(self):
         """
@@ -183,6 +188,7 @@ class nquote:
         logging.info( f"%s - Done" % cmi_debug )
         return i    # asset_class identifier  (stocks / etf)
 
+######################################################################
 # method 6
     def get_nquote(self, symbol):
         """
@@ -253,19 +259,15 @@ class nquote:
             print ( f"========================== {self.yti} - get_js_nquote::session cookies ================================" )
         return
 
+
+>>> DELETE ME from here down <<
 # ###################################################################################################################################
 # method 8
-    def build_data(self):
-        """
-        Build-out the full quote data structure thats tidy & clean. All fields sourced from the extracted JSON dataset.
-        """
-        cmi_debug = __name__+"::"+self.build_data.__name__+".#"+str(self.yti)
-        logging.info('%s - build quote data payload from JSON' % cmi_debug )
-        time_now = time.strftime("%H:%M:%S", time.localtime() )
-        logging.info('%s - prepare jsondata accessors [11/20/30]...' % cmi_debug )
-        self.jsondata11 = self.quote_json1['data']                              # summary
-        self.jsondata20 = self.quote_json2['data'][0]                           # watchlist
-        self.jsondata30 = self.quote_json3['data']                              # premarket
+# def build_data(self): --> REFACTORED --> setup_zones
+# nulls_summary --> REFACTORED --> z1_summary
+# nulls_watchlist --> REFACTORED --> z2_watchlist
+# nulls_premarket --> REFACTORED --> z3_premarket
+
 
         # Helper methods ##########################################################################################################
         """
@@ -279,109 +281,7 @@ class nquote:
               3. pre-market    :    self.jsondata30 = self.quote_json3['data']
         """
 
-        # ZONE #1 Summary zone....##############################################
-        def nulls_summary():
-            cmi_debug = __name__+"::"+nulls_summary.__name__+".#"+str(self.yti)
-            logging.info( f'%s - probing json keys/fields for NULLs...' % cmi_debug )
-            z = 1
-            jd10_null_errors = 0
-            jd_10s = ("PreviousClose", "MarketCap", "TodayHighLow", "AverageVolume", "OneYrTarget", "Beta", "FiftTwoWeekHighLow" )
-            jd_10e = ("PreviousClose", "MarketCap", "TodayHighLow", "FiftyDayAvgDailyVol", "Beta", "FiftTwoWeekHighLow" )
-
-            if self.asset_class == "stocks": jd_10 = jd_10s
-            if self.asset_class == "etf": jd_10 = jd_10e
-
-            try:
-                y = self.jsondata11['summaryData']      # summary
-            except TypeError:
-                logging.info( f"%s - Probe #1.1 (API=summary): NULL data @: [data][summaryData]" % cmi_debug )
-                jd10_null_errors = 1 + len(jd_10)       # everything in data set is BAD
-                return jd10_null_errors
-            except KeyError:
-                logging.info( f"%s - Probe #1.2 (API=summary): NULL key @: [data][summaryData]" % cmi_debug )
-                jd10_null_errors = 1 + len(jd_10)       # everything in data set is BAD
-                return jd10_null_errors
-            else:
-                x = self.jsondata11['summaryData']
-                for i in jd_10:
-                    print ( f"DEBUG: i: {i} " )
-                    try:
-                        y = x[i]
-                    except TypeError:
-                        logging.info( f"%s - Probe #1.3 (API=summary): NULL data @: [{i}] - RESET to: 0" % cmi_debug )
-                        x[i]['value'] = 0      # fix the bad data by writing this field as 0
-                        jd10_null_errors += 1
-                    except KeyError:
-                        logging.info( f"%s - Probe #1.4 (API=summary): NULL key @: [{i}] - RESET to: 0" % cmi_debug )
-                        x[i]['value'] = 0      # fix the bad data by writing this field as 0
-                        jd10_null_errors += 1
-                    else:
-                        z += 1
-            logging.info( f"%s - End NULL probe #1 (API=summary) / errors: {jd10_null_errors} / 7" % cmi_debug )
-            return jd10_null_errors
-
-
-        # ZONE #2 watchlist zone....############################################
-        def nulls_watchlist():
-            """
-            This data zone is far more tollerant. keys/fields pre-exist. So this zone cant test for a
-            non-existent/bad ticker symbol (or ETF/Fund). but this means errors are less severe.
-            """
-            cmi_debug = __name__+"::"+nulls_watchlist.__name__+".#"+str(self.yti)
-            logging.info( f'%s - probing json keys/fields for NULLs...' % cmi_debug )
-            z = 1
-            x = self.jsondata20     # watchlist
-            jd_20 = ("symbol", "companyName", "lastSalePrice", "netChange", "percentageChange", "deltaIndicator", "lastTradeTimestampDateTime", "volume" )
-            jd20_null_errors = 0
-
-            for i in jd_20:
-                try:
-                    y = x[i]
-                except TypeError:
-                    logging.info( f"%s - Probe #2.1 (API=watchlist): NULL data @: [{i}]" % cmi_debug )
-                    jd20_null_errors += 1
-                except KeyError:
-                    logging.info( f"%s - Probe #2.2 (API=watchlist): NULL KEY data @: [{i}]" % cmi_debug )
-                    jd20_null_errors += 1
-                else:
-                    z += 1
-            logging.info( f"%s - End NULL probe #2 (API=watchlist) / errors: {jd20_null_errors} / 8" % cmi_debug )
-            return jd20_null_errors
-
             # ZONE #3 watchlist zone....########################################
-        def nulls_premarket():
-            cmi_debug = __name__+"::"+nulls_premarket.__name__+".#"+str(self.yti)
-            logging.info( f'%s - probing json keys/fields for NULLs...' % cmi_debug )
-            jd_31 = ("consolidated", "volume", "delta" )
-            jd_30 = ("infoTable", "infoTable']['rows", "infoTable']['rows'][0", "infoTable']['rows'][0]['consolidated'",
-                       "infoTable']['rows'][0]['volume'", "'infoTable']['rows'][0]['delta'" )
-            z = 1
-            jd31_null_errors = 0
-            try:
-                y = self.jsondata30['infoTable']['rows'][0]     # premarket
-            except TypeError:
-                logging.info( f"%s - Probe #3.1 (API=premarket): NULL data @: [infoTable][rows][0]" % cmi_debug )
-                jd31_null_errors = 1 + len(jd_30)               # everything in data set is BAD
-                return jd31_null_errors
-            except KeyError:
-                logging.info( f"%s - Probe #3.2 (API=premarket): NULL key @: [infoTable][rows][0]" % cmi_debug )
-                jd31_null_errors = 1 + len(jd_30)               # everything in data set is BAD
-                return jd31_null_errors
-            else:
-                x = self.jsondata30['infoTable']['rows'][0]
-                for i in jd_31:
-                    try:
-                        y = x[i]
-                    except TypeError:
-                        logging.info( f"%s - Probe #3.3 (API=premarket): NULL data @: [{i}]" % cmi_debug )
-                        jd31_null_errors += 1
-                    except KeyError:
-                        logging.info( f"%s - Probe #3.4 (API=premarket): NULL key @: [{i}]" % cmi_debug )
-                        jd31_null_errors += 1
-                    else:
-                        z += 1
-            logging.info( f"%s - End NULL probe 3 (API=premarket): errors: {jd31_null_errors} / 6" % cmi_debug )
-            return jd31_null_errors
 
 ################################################################################################
 # Quote DATA extractor ########################################################################
