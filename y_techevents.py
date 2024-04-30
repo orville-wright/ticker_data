@@ -361,11 +361,11 @@ class y_techevents:
         """
         cmi_debug = __name__+"::"+self.te_into_nquote.__name__+".#"+str(self.yti)
         logging.info( f"{cmi_debug} - CALLED" )
-        nqinst.quote.update({"today_only": self.te_sentiment[0][2]} )
-        nqinst.quote.update({"short_term": self.te_sentiment[1][2]} )
-        nqinst.quote.update({"med_term": self.te_sentiment[2][2]} )
-        nqinst.quote.update({"long_term": self.te_sentiment[3][2]} )
-        nqinst.quote.update({"Bull_count": self.te_sentiment[4]} )
-        nqinst.quote.update({"Senti_algo": self.te_sentiment[5]} )
+        nqinst.qd_quote.update({"today_only": self.te_sentiment[0][2]} )
+        nqinst.qd_quote.update({"short_term": self.te_sentiment[1][2]} )
+        nqinst.qd_quote.update({"med_term": self.te_sentiment[2][2]} )
+        nqinst.qd_quote.update({"long_term": self.te_sentiment[3][2]} )
+        nqinst.qd_quote.update({"Bull_count": self.te_sentiment[4]} )
+        nqinst.qd_quote.update({"Senti_algo": self.te_sentiment[5]} )
         logging.info( f"{cmi_debug} - completed" )
         return
