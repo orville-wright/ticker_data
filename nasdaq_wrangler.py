@@ -373,7 +373,7 @@ class nq_wrangler:
             for name in work_on:
                 print ( f"{next(xx)} / {eval(name)}" )
         # >>> DEBUG Xray <<<
-
+        cc_errors = 0
         #################################### Begin Deep clean ##########################################
         self.co_sym_lj = self.co_sym.strip()
         #co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )          # left justify TXT & convert to raw string
@@ -384,18 +384,18 @@ class nq_wrangler:
         if self.price == "N/A":
             self.price_cl = 0
             logging.info('%s - Price is bad, found N/A data' % cmi_debug )
-            wrangle_errors += 1
+            cc_errors += 1
         else:
             self.price_cl = (re.sub('[ $,]', '', self.price))                      # remove $ sign
 
         if self.price_net == "N/A":
             self.price_net_cl = 0
             logging.info('%s - Price NET is bad, found N/A data' % cmi_debug )
-            wrangle_errors += 1
+            cc_errors += 1
         elif self.price_net == 'UNCH':
             self.price_net_cl = "Unch"
             logging.info('%s - Price NET is unchanged' % cmi_debug )
-            wrangle_errors += 1
+            cc_errors += 1
         else:
             self.price_net_cl = (re.sub('[\-+]', '', self.price_net))              # remove - + signs
             self.price_net_cl = float(self.price_net)
@@ -403,15 +403,15 @@ class nq_wrangler:
         if self.price_pct == "N/A":
             self.price_pct_cl = 0
             logging.info('%s - Price pct is bad, found N/A data' % cmi_debug )
-            wrangle_errors += 1
+            cc_errors += 1
         elif self.price_pct == "UNCH":
             self.price_pct_cl = "Unch"
             logging.info('%s - Price pct is unchanged' % cmi_debug )
-            wrangle_errors += 1
+            cc_errors += 1
         elif self.price_pct == '':
             self.price_pct_cl = "No data"
             logging.info('%s - Price pct is bad, field is Null/empty' % cmi_debug )
-            wrangle_errors += 1
+            cc_errors += 1
         else:
             self.price_pct = (re.sub('[\-+%]', '', self.price_pct))                # remove - + % signs
             self.price_pct_cl = float(self.price_pct)
@@ -427,7 +427,7 @@ class nq_wrangler:
                 self.open_price_cl = float(0)
                 self.open_price_net = float(0)
                 self.open_price_pct_cl = float(0)
-                wrangle_errors += 3
+                cc_errors += 3
         else:       # data is good...access 3 indices of sub-data from split list[]
             self.ops = self.open_price.split()
             logging.info( f"%s - Split open_price into {len(self.ops)} fields" % cmi_debug )
@@ -438,11 +438,11 @@ class nq_wrangler:
             except IndexError:
                 logging.info( f'%s - Bad key open_price: {type(self.open_price)} / setting to $0.0 / {self.open_price}' % cmi_debug )
                 self.open_price = float(0)
-                wrangle_errors += 1
+                cc_errors += 1
             except ValueError:
                 logging.info( f'%s - Bad open_price: {type(self.open_price)} / setting to $0.0 / {self.open_price}' % cmi_debug )
                 self.open_price = float(0)
-                wrangle_errors += 1
+                cc_errors += 1
             else:
                 self.open_price_cl = (re.sub('[ $,]', '', self.ops[0]))   # remove " " $ ,
                 self.open_price_cl = float(self.open_price_cl)
@@ -454,15 +454,15 @@ class nq_wrangler:
                 except IndexError:
                     logging.info( f'%s - Bad key open_price_net: {type(self.open_price_net)} / setting to $0.0 / {self.open_price_net}' % cmi_debug )
                     self.open_price_net = float(0)               # set NULL data to ZERO
-                    wrangle_errors += 1
+                    cc_errors += 1
                 except ValueError:
                     logging.info( f'%s - Bad open_price_net: {type(self.open_price_net)} / setting to $0.0 / {self.open_price_net}' % cmi_debug )
                     self.open_price_net = float(0)               # set NULL data to ZERO
-                    wrangle_errors += 1
+                    cc_errors += 1
                 except TypeError:
                     logging.info( f'%s - Bad open_price_net: {type(self.open_price_net)} / setting to $0.0 / {self.open_price_net}' % cmi_debug )
                     self.open_price_net = float(0)               # set NULL data to ZERO
-                    wrangle_errors += 1
+                    cc_errors += 1
                 else:
                     pass    # data is good...keep processing...
                     # INFO: no need of clean open_price_net - VAR is currently not used n our data model
@@ -472,11 +472,11 @@ class nq_wrangler:
                     except IndexError:
                         logging.info( f'%s - Bad key open_price_pct: {type(self.open_price_pct)} / setting to $0.0 / {self.open_price_pct}' % cmi_debug )
                         self.open_price_pct = float(0)               # set NULL data to ZERO
-                        wrangle_errors += 1
+                        cc_errors += 1
                     except ValueError:
                         logging.info( f'%s - Bad open_price_pct: {type(self.open_price_pct)} / setting to $0.0 / {self.open_price_pct}' % cmi_debug )
                         self.open_price_pct = float(0)               # set NULL data to ZERO
-                        wrangle_errors += 1
+                        cc_errors += 1
                     else:
                         self.open_price_pct_cl = (re.sub('[)(%]', '', self.price_pct))        # # remove " ", %  (leave +/- indicator)
                         # INFO: no need of clean open_price_net - VAR is currently not used n our data model
@@ -489,25 +489,25 @@ class nq_wrangler:
         if self.prev_close == "N/A":
             self.prev_close_cl = 0
             logging.info('%s - Prev close is bad, found N/A data' % cmi_debug )
-            wrangle_errors += 1
+            cc_errors += 1
         else:
             self.prev_close_cl = (re.sub('[ $,]', '', self.prev_close))   # remove $ sign
 
         if self.mkt_cap == "N/A":
             self.mkt_cap_cl = float(0)
             logging.info('%s - Mkt cap is bad, found N/A data' % cmi_debug )
-            wrangle_errors += 1
+            cc_errors += 1
         elif self.mkt_cap == 0:
             self.mkt_cap_cl = float(0)
             logging.info('%s - Mkt cap is ZERO, found N/A data' % cmi_debug )
-            wrangle_errors += 1
+            cc_errors += 1
         else:
             self.mkt_cap_cl = float(re.sub('[,]', '', self.mkt_cap))   # remove ,
             self.mkt_cap_cl = round(self.mkt_cap_cl / 1000000, 3)                  # resize & round mantissa = 3, as nasdaq.com gives full num
 
         self.vol_abs_cl = (re.sub('[,]', '', self.vol_abs))                        # remove
 
-        return wrangle_errors
+        return cc_errors
 
 
 ####################################################################
