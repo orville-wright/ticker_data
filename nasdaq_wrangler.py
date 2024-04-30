@@ -166,14 +166,14 @@ class nq_wrangler:
         """
         cmi_debug = __name__+"::"+self.z3_premarket.__name__+".#"+str(self.yti)
         logging.info( f'%s - probing zone-3 [API=premarket] JSON keys/fields...' % cmi_debug )
-        jd_31 = ("consolidated", "volume", "highPrice", "lowPrice", "delta" )
+        jd30_keys = ("consolidated", "volume", "highPrice", "lowPrice", "delta" )
         #jd_30 = ("infoTable", "infoTable']['rows", "infoTable']['rows'][0", "infoTable']['rows'][0]['consolidated'",
         # NOTE: wtf  ??? "infoTable']['rows'][0]['volume'", "'infoTable']['rows'][0]['delta'" )
         z = 1
         z3_errors = 0
         print ( f"DEBUG: {self.jsondata30}")
         try:
-            y = self.jsondata30['infoTable']['rows'][0]     # premarket InfoTable looks like it might may exist
+            y = self.jsondata30['data']['infoTable']['rows'][0]     # premarket InfoTable looks like it might may exist
         except TypeError:
             logging.info( f"%s - Probe #3.1 : TypeError BAD type @: [infoTable][rows][0]" % cmi_debug )
             z3_errors = 10               # everything in data set is BAD
@@ -185,8 +185,8 @@ class nq_wrangler:
             logging.info( f"%s - End probing zone-3 [API=premarket]: errors: {z3_errors}" % cmi_debug )
             return z3_errors
         else:
-            x = self.jsondata30['infoTable']['rows'][0]
-            for i in jd_31:     # No errors, plain old good structure that looks reasonably healthy to start with
+            x = self.jsondata30['data']['infoTable']['rows'][0]
+            for i in jd30_keys:     # No errors, looks reasonably healthy to start with
                 try:
                     y = x[i]
                 except TypeError:
@@ -216,7 +216,7 @@ class nq_wrangler:
         b = self.z2_watchlist()                 # self.jsondata20 = self.quote_json2['data'][0]
         c = self.z3_premarket()                 # self.jsondata30 = self.quote_json3['data']
 
-        if a > 0:                       # Zone 1 (Data in Summary is in an Abberant state)
+        if a > 0:                       # Zone 1 data in Summary is in an Abberant state
             logging.info( f'%s   - Summary Zone 1 has ERRORS: [ {a} ]' % cmi_debug )
             logging.info( f'%s   - Force a re-run to retry cleaning Summary Zone 1: [ {a} ]' % cmi_debug )
             a = self.z1_summary()    # re-run it again just to see. a should come back as == 0
@@ -234,7 +234,14 @@ class nq_wrangler:
                 wrangle_errors += self.pre_load_z3()     # Pre-market
                 wrangle_errors += self.pre_load_z1()     # summary
                 return wrangle_errors
-
+        elif b > 0:         # zone 2 data in watchlist is in an Abberant state
+            logging.info( f"%s   - Nasdaq quote data is ABERRANT [ Zone 1:{a} zone 2:{b} zone 3:{c} ]" % cmi_debug )
+            wrangle_errors = a+b+c
+            return wrangle_errors
+        elif c > 0:
+            logging.info( f"%s   - Nasdaq quote data is ABERRANT [ Zone 1:{a} zone 2:{b} zone 3:{c} ]" % cmi_debug )
+            wrangle_errors = a+b+c
+            return wrangle_errors
         else:
             logging.info( f"%s - Good NOMINAL starting data [ Zone 1:{a} zone 2:{b} zone 3:{c} ]" % cmi_debug )
             wrangle_errors += 5     # Dataset allready started out life in bad shape
