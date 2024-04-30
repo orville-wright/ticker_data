@@ -528,6 +528,7 @@ def main():
         wq.do_wrangle()
         wq.clean_cast()
         wq.build_data_sets()
+        te_nq_quote = wq.qd_quote
 
         # add Tech Events Sentiment to quote dict{}
         te = y_techevents(2)
@@ -535,14 +536,14 @@ def main():
         success = te.get_te_zones(2)
         if success == 0:
             te.build_te_data(2)
-            te.te_into_nquote(nq)
+            te.te_into_nquote(te_nq_quote)
             #nq.quote.update({"today_only": te.te_sentiment[0][2]} )
             #nq.quote.update({"short_term": te.te_sentiment[1][2]} )
             #nq.quote.update({"med_term": te.te_sentiment[2][2]} )
             #nq.quote.update({"long_term": te.te_sentiment[3][2]} )
         else:
             te.te_is_bad()            # FORCE Tech Events to be N/A
-            te.te_into_nquote(nq)     # NOTE: needs to be the point to new refactored class nasdqa_wrangler::nq_wrangler qd_quote{}
+            te.te_into_nquote(te_nq_quote)     # NOTE: needs to be the point to new refactored class nasdqa_wrangler::nq_wrangler qd_quote{}
         #
         print ( f"Get Nasdaq.com quote for: {nq_symbol}" )
         if nq.quote.get("symbol") is not None:
