@@ -429,7 +429,7 @@ class nq_wrangler:
                 self.open_price_pct_cl = float(0)
                 wrangle_errors += 3
         else:       # data is good...access 3 indices of sub-data from split list[]
-            self.selfops = self.open_price.split()
+            self.ops = self.open_price.split()
             logging.info( f"%s - Split open_price into {len(self.ops)} fields" % cmi_debug )
 
             """ Stage #1 """
