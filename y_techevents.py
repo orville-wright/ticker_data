@@ -355,6 +355,9 @@ class y_techevents:
     def te_into_nquote(self, nqinst):
         """
         Push the Tech Event Bull/Bear Indicators into their location within the nasdaq quote dict
+        which is now owned by the nasdaq_wrangler::nq_wrangler class in the accessor dict {} - qd_quote
+        NOTE: This is .update is BAD form b/c we reshape the dict struct of qd_quote{} so that it no longer
+              matches the original defiend shape in the class where its managed (nasdaq_wrangler::nq_wrangler)
         """
         cmi_debug = __name__+"::"+self.te_into_nquote.__name__+".#"+str(self.yti)
         logging.info( f"{cmi_debug} - CALLED" )

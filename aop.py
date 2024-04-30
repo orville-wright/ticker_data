@@ -34,6 +34,7 @@ from marketwatch_md import mw_quote
 from ml_yahoofinews import yfnews_reader
 from ml_urlhinter import url_hinter
 from y_techevents import y_techevents
+from nasdaq_wrangler import nq_wrangler
 
 # Globals
 work_inst = 0
@@ -503,7 +504,7 @@ def main():
     10 data fields provided
     """
     if args['qsymbol'] is not False:
-        nq = nquote(4, args)                         # Nasdqa quote instance from nasdqa_quotes.py
+        nq = nquote(1, args)                         # Nasdqa quote instance from nasdqa_quotes.py
         nq.init_dummy_session()                      # note: this will set nasdaq magic cookie
         nq_symbol = args['qsymbol'].upper()
         logging.info( f"%s - Get Nasdaq.com quote for symbol {nq_symbol}" % cmi_debug )
@@ -517,12 +518,17 @@ def main():
             nq.form_api_endpoint(nq_symbol, ac)      # re-form API endpoint if default asset_class guess was wrong)
         nq.get_nquote(nq_symbol.rstrip())
 
-        # >>> This is where we access the new nasdaq_wrangler class and methods
-        #
-        # wrangle_errors = ???.build_data_sets()       # final stage, write all data sets. return num of wrangeling errors
-        # ???.build_df()
 
-        #
+        wq = nq_wrangler(1, args)                   # instantiate a class for Quote Data Wrangeling
+        wq.asset_class = ac                         # wrangeler class MUST know the class of asset its working on
+        wq.setup_zones(1, nq.quote_json1, nq.quote_json2, nq.quote_json3)
+        wq.z1_summary()
+        wq.z2_watchlist()
+        wq.z3_premarket()
+        wq.do_wrangle()
+        wq.clean_cast()
+        wq.build_data_sets()
+
         # add Tech Events Sentiment to quote dict{}
         te = y_techevents(2)
         te.form_api_endpoints(nq_symbol)
@@ -535,8 +541,8 @@ def main():
             #nq.quote.update({"med_term": te.te_sentiment[2][2]} )
             #nq.quote.update({"long_term": te.te_sentiment[3][2]} )
         else:
-            te.te_is_bad()      # FORCE Tech Events to be N/A
-            te.te_into_nquote(nq)
+            te.te_is_bad()            # FORCE Tech Events to be N/A
+            te.te_into_nquote(nq)     # NOTE: needs to be the point to new refactored class nasdqa_wrangler::nq_wrangler qd_quote{}
         #
         print ( f"Get Nasdaq.com quote for: {nq_symbol}" )
         if nq.quote.get("symbol") is not None:

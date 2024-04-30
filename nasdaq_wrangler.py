@@ -27,17 +27,17 @@ class nq_wrangler:
     args = []                  # class dict to hold global args being passed in from main() methods
     qd_quote = {}              # quote as dict
     qd_data0 = []              # JSON data payload
-    self.quote_df0 = ""        # quote as DataFram
+    quote_df0 = ""             # quote as DataFram
     qd_js_session = ""         # main requests session
     qd_quote_json0 = ""        # JSON dataset #1 : dummy_session + Update_cookiues + do_simple_get
-    qd_quote_json1 = ""        # JSON dataset #1 quote summary
-    qd_quote_json2 = ""        # JSON dataset #2 quote watchlist
-    qd_quote_json3 = ""        # JSON dataset #3 quote premarket
+    jsondata11 = ""            # JSON dataset #1 quote summary : passed in <-- qd_1
+    jsondata20 = ""            # JSON dataset #2 quote watchlist : passed in <-- qd_2
+    jsondata30 = ""            # JSON dataset #3 quote premarket : passed in <-- qd_3
     qd_quote_json4 = ""        # JSON dataset #4 quote asset_class
     path = ""
     info_url = ""
     quote_url = ""
-    asset_class = ""        # global NULL TESTing indicator (important)
+    asset_class = ""           # global NULL TESTing indicator (important)
     summary_url = ""
     watchlist_url = ""
     premarket_url = ""
@@ -70,19 +70,17 @@ class nq_wrangler:
         self.jsondata30 = qd_3                              # premarket : quote_json3['data']
         return
 
-    # Helper methods ##########################################################################################################
+##########################################################################################################
     """
-    Private helper methods to poll nasdaq data model and test sanity for bad NULL data & bad/missing json keys
-    NOTE: Keys & NULLs are somethimes bad becasue when the amrket is closed (e.g. premarket data). In that scenario
-            this isn't an error scenario... but it's difficult logic to account for.
-    Call before trying to access asdaq API json list indexes, as bad data will exert many hard errors.
-    INFO: Checks 3 data zones in the nasdaq.com API json data model
-            1. summary       :    self.jsondata11 = self.quote_json1['data']
-            2. watchlist     :    self.jsondata20 = self.quote_json2['data'][0]
-            3. pre-market    :    self.jsondata30 = self.quote_json3['data']
+    Mmethods to parse nasdaq data model, test sanity for bad/missing data in json keys
+    NOTE: Keys & NULLs are sometimes bad when the market is closed (e.g. premarket data). In that scenario
+          this isn't an error scenario... but it's difficult logic to account for. TODO: Checking time may help
+    NOTE: Checks 3 data zones in the nasdaq.com API json data model
+    1. summary       :    qd_1 : self.jsondata11 = self.quote_json1['data']
+    2. watchlist     :    qd_2 : self.jsondata20 = self.quote_json2['data'][0]
+    3. pre-market    :    qd_3 : self.jsondata30 = self.quote_json3['data']
     """
 
-    # ZONE #1 Summary zone....##############################################
     def z1_summary(self):
         """
         Process Zone 1 - Summary Zone
@@ -225,17 +223,17 @@ class nq_wrangler:
                 wrangle_errors += 5     # Dataset allready started out life in bad shape
                 # setup main JSON data zone accessors...
                 # SUMMARY quote data seem OK to pre-process for loading
-                wrangle_errors = self.qd_pre_load_z2()      # Watchlist
-                wrangle_errors += self.qd_pre_load_z3()     # Pre-market
-                wrangle_errors += self.qd_pre_load_z1()     # summary
+                wrangle_errors = self.pre_load_z2()      # Watchlist
+                wrangle_errors += self.pre_load_z3()     # Pre-market
+                wrangle_errors += self.pre_load_z1()     # summary
                 return wrangle_errors
 
         else:
             logging.info( f"%s - Good NOMINAL starting data [ Zone 1:{a} zone 2:{b} zone 3:{c} ]" % cmi_debug )
             wrangle_errors += 5     # Dataset allready started out life in bad shape
-            wrangle_errors = self.qd_pre_load_z2()      # Watchlist
-            wrangle_errors += self.qd_pre_load_z3()     # Pre-market
-            wrangle_errors += self.qd_pre_load_z1()     # summary
+            wrangle_errors = self.pre_load_z2()      # Watchlist
+            wrangle_errors += self.pre_load_z3()     # Pre-market
+            wrangle_errors += self.pre_load_z1()     # summary
             return wrangle_errors
             wrangle_errors += 50
             # a = z1_summary()   : zone 1
@@ -244,13 +242,11 @@ class nq_wrangler:
         return wrangle_errors
 
 #######################################################################################
-# Zone 2
-# WATCHLIST quote data
+# Zone 2 : WATCHLIST quote data
     def pre_load_z2(self):
         """
-        Zone 2 Watchlist pre-processor
-        Fianlly extract Set all data field sfrom JSON and preload into variables
-        for constructing into a List to eventually be written into a DataFrame
+        NOTE: This is a helper method for do_wrangle()
+        NOTE: No need to ever call this explicitly. - that will #fail
         """
         cmi_debug = __name__+"::"+self.pre_load_z2.__name__+".#"+str(self.yti)
         if self.quote_json2['data'] is not None:                                # bad payload? - can also test b == 0
@@ -273,13 +269,11 @@ class nq_wrangler:
         return wrangle_errors
 
 #######################################################################################
-# Zone 3
-# PRE-MARKET quote data - 2 data zones
+# Zone 3 : PRE-MARKET quote data - 2 data zones
     def pre_load_z3(self):
         """
-        Zone 3 Premarket pre-processor
-        Fianlly extract Set all data field sfrom JSON and preload into variables
-        for constructing into a List to eventually be written into a DataFrame
+        NOTE: This is a helper method for do_wrangle()
+        NOTE: No need to ever call this explicitly. - that will #fail
         """
         cmi_debug = __name__+"::"+self.pre_load_z3.__name__+".#"+str(self.yti)
         if self.quote_json3['data'] is not None:                                # bad payload? - can also test c == 0
@@ -306,16 +300,14 @@ class nq_wrangler:
         return wrangle_errors
 
 ###############################################################################################3
-# Zone 1
-# Summary ZOne
+# Zone 1 : Summary Zone
     def pre_load_z1(self):
         """
-        Zone 1 Summary pre-processor
-        Finally extract Set all data field sfrom JSON and preload into variables
-        for constructing into a List to eventually be written into a DataFrame
-        WARNING : This data zone is highly fragile and very intollerant. It constantly
-                  contains lots of errors, missing fiels, bad fields etc. 
-                  This is why we process it last !!!
+        NOTE: This is a helper method for do_wrangle()
+        NOTE: No need to ever call this explicitly. - that will #fail
+        NOTE: This data zone is highly fragile and intollerant of net get() errors. It constantly
+              contains lots of errors, missing fiels, bad fields etc. 
+              This is why we process it last !!!
         """
         cmi_debug = __name__+"::"+self.pre_load_z1.__name__+".#"+str(self.yti)
         if self.quote_json1['data'] is not None:                                # bad payload? - can also test a == 0
@@ -350,7 +342,7 @@ class nq_wrangler:
 # wrangle, clean, cast & prepare the data ##############################################
     def clean_cast(self):
         """
-        This method is a full LINEAR run down all known data elements
+        This method is a LINEAR run down all known data elements
         Just try and process the data as fast as possible
         All variavble are loaded in support of creating a Qoute DataFram
         At the end just return a count of how many wrangle Errors we encountered
