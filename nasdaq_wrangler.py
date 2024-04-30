@@ -213,7 +213,7 @@ class nq_wrangler:
 
         if a > 0:                       # Zone 1 (Data in Summary is in an Abberant state)
             logging.info( f'%s - Summary Zone 1 has ERRORS: [ {a} ]' % cmi_debug )
-            a = self.nulls_summary()    # re-run it again just to see. a should come back as == 0
+            a = self.z1_summary()    # re-run it again just to see. a should come back as == 0
             if a > 0:                   # still BAD after 2nd attempt
                 logging.info( f"%s - Nasdaq quote data is ABERRANT [ Zone 1:{a} zone 2:{b} zone 3:{c} ]" % cmi_debug )
                 logging.info( f'%s - Abandon Nasdaq quote - Data is BAD' % cmi_debug )
