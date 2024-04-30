@@ -19,6 +19,7 @@ from nasdaq_quotes import nquote
 from bigcharts_md import bc_quote
 from marketwatch_md import mw_quote
 from y_techevents import y_techevents
+from nasdaq_wrangler import nq_wrangler
 
 #####################################################
 # CLASS
@@ -121,7 +122,15 @@ class combo_logic:
                 logging.info( f"{cmi_debug} - re-shape asset class endpoint to: {ac}" )
                 nq.form_api_endpoint(qsymbol, ac)      # re-form API endpoint if default asset_class guess was wrong)
             nq.get_nquote(qsymbol)                     # get a live quote
+
+            wq = nq_wrangler(1, self.args)                   # instantiate a class for Quote Data Wrangeling
+            wq.setup_zones(1, nq.quote_json1, nq.quote_json2, nq.quote_json3)
+            wq.do_wrangle()
+            wq.clean_cast()
+            wq.build_data_sets()
+
             wrangle_errors = nq.build_data()           # wrangle & cleanse the data - lots done in here
+            
             print ( f"{qsymbol:5}...", end="", flush=True )
             
             ############################### Phase 1 ###########################################
