@@ -172,19 +172,19 @@ class nq_wrangler:
         z = 1
         z3_errors = 0
         try:
-            y = self.jsondata30['infoTable']['rows'][0]     # premarket
+            y = self.jsondata31['infoTable']     # premarket InfoTable looks like it might may exist
         except TypeError:
             logging.info( f"%s - Probe #3.1 : TypeError BAD type @: [infoTable][rows][0]" % cmi_debug )
             z3_errors = 10               # everything in data set is BAD
-            logging.info( f"%s - End probing zone-3 [API=premarket]: errors: {z3_errors} / {len(jd_30)}" % cmi_debug )
+            logging.info( f"%s - End probing zone-3 [API=premarket]: errors: {z3_errors}" % cmi_debug )
             return z3_errors
         except KeyError:
             logging.info( f"%s - Probe #3.2 : KeyError BAD key @: [infoTable][rows][0]" % cmi_debug )
             z3_errors = 10               # everything in data set is BAD
-            logging.info( f"%s - End probing zone-3 [API=premarket]: errors: {z3_errors} / {len(jd_30)}" % cmi_debug )
+            logging.info( f"%s - End probing zone-3 [API=premarket]: errors: {z3_errors}" % cmi_debug )
             return z3_errors
         else:
-            x = self.jsondata30['infoTable']['rows'][0]
+            x = self.jsondata31['infoTable']['rows'][0]
             for i in jd_31:     # No errors, plain old good structure that looks reasonably healthy to start with
                 try:
                     y = x[i]
