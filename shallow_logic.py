@@ -128,8 +128,6 @@ class combo_logic:
             wq.do_wrangle()
             wq.clean_cast()
             wq.build_data_sets()
-
-            wrangle_errors = nq.build_data()           # wrangle & cleanse the data - lots done in here
             
             print ( f"{qsymbol:5}...", end="", flush=True )
             
