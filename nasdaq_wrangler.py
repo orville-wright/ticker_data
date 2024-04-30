@@ -126,7 +126,6 @@ class nq_wrangler:
                     x[i]['value'] = 0      # fix the bad data by writing this field as 0
                     z1_errors += 1
                 else:
-                    print ( f"")
                     z += 1
         logging.info( f"%s   - End probing zone-1 [API=summary] / errors: {z1_errors} / {len(x)} Keys" % cmi_debug )
         return z1_errors
@@ -369,8 +368,7 @@ class nq_wrangler:
             print ( f"\n================= Nasdaq quote data : raw uncleansed =================" )
             work_on = ['self.co_sym', 'self.co_name', 'self.price', 'self.price_net', 'self.price_pct', 'self.arrow_updown', \
                     'self.price_timestamp', 'self.vol_abs', 'self.open_price', 'self.open_volume', 'self.open_updown', \
-                    'self.prev_close', 'self.mkt_cap', 'self.today_hilo', 'self.avg_vol', 'self.oneyear_target', 'self.prev_close', \
-                    'self.LII_week_hilo']
+                    'self.prev_close', 'self.mkt_cap', 'self.today_hilo', 'self.avg_vol', 'self.oneyear_target', 'self.prev_close']
             xx = iter(work_on)
             for name in work_on:
                 print ( f"{next(xx)} / {eval(name)}" )
@@ -558,7 +556,6 @@ class nq_wrangler:
             avg_vol=self.avg_vol, \
             one_year_target=self.oneyear_target, \
             PreviousClose=self.PreviousClose, \
-            oneyear_hilo=self.LII_week_hilo, \
             mkt_cap=self.mkt_cap_cl )
 
         logging.info( f"%s - Build global DF: {self.symbol}" % cmi_debug )
