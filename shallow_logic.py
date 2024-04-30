@@ -191,7 +191,7 @@ class combo_logic:
                 # BUG : disabled this code - cant figgure out why its erroring
                 # this needs to be fixed
                 logging.info( f"{cmi_debug} - Set {wq.asset_class} Mkt_cap to: {wq.qd_quote['mkt_cap']}" )
-                z_float = float(wq.quote['mkt_cap'])
+                z_float = float(wq.qd_quote['mkt_cap'])
                 #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = nq.quote['mkt_cap']
                 self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = z_float
                 print ( f"+", end="" )
@@ -200,7 +200,7 @@ class combo_logic:
                 if wq.asset_class == "stocks":
                     logging.info( f"{cmi_debug} - Compute Mkt_cap scale tag: [ {wq.qd_quote['mkt_cap']} ]..." )
                     for i in (("MT", 999999), ("LB", 10000), ("SB", 2000), ("LM", 500), ("SM", 50), ("TM", 10), ("UZ", 0)):
-                        if wq.quote['mkt_cap'] == float(0):
+                        if wq.qd_quote['mkt_cap'] == float(0):
                             # BUG
                             # This is broken - fix me !!!
                             self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'M_B'] = "UZ"
@@ -214,7 +214,7 @@ class combo_logic:
                             # BUG
                             # This is broken : Fix me !!!
                             self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'M_B'] = i[0]
-                            logging.info( f"{cmi_debug} - Market cap: [ {wq.quote['mkt_cap']} ] scale set to: {i[0]}" )
+                            logging.info( f"{cmi_debug} - Market cap: [ {wq.qd_quote['mkt_cap']} ] scale set to: {i[0]}" )
                             wrangle_errors += 1          # insert market cap scale into DF @ column M_B for this symbol
                             cleansed_errors += 1
                             print ( f"+", end="" )
