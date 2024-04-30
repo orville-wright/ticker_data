@@ -96,8 +96,9 @@ class nq_wrangler:
         jd_10s = ("OneYrTarget", "TodayHighLow", "AverageVolume", "PreviousClose", "FiftTwoWeekHighLow", "MarketCap" )
         jd_10e = ("MarketCap", "TodayHighLow", "FiftyDayAvgDailyVol", "PreviousClose", "FiftTwoWeekHighLow" )
 
-        if self.asset_class == "stocks": jd_10 = jd_10s     # asset_class ust be preset
-        if self.asset_class == "etf": jd_10 = jd_10e        # asset_class must be preset
+        # asset_class must be preset
+        if self.asset_class == "stocks": jd_10 = ("OneYrTarget", "TodayHighLow", "AverageVolume", "PreviousClose", "FiftTwoWeekHighLow", "MarketCap" )
+        if self.asset_class == "etf": jd_10 = ("MarketCap", "TodayHighLow", "FiftyDayAvgDailyVol", "PreviousClose", "FiftTwoWeekHighLow" )
 
         try:
             y = self.jsondata11['data']['summaryData']      # JSON struct : summary
