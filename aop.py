@@ -519,7 +519,8 @@ def main():
         else:
             nq.get_nquote(nq_symbol.rstrip())
             wq = nq_wrangler(1, args)                   # instantiate a class for Quote Data Wrangeling
-            print ( ">>> DEBUG <<< : >>>>>>>>>> Asset class injection <<<<<<<<<<<<<<<<<<<<<<<<<<<<<" )
+            print ( f">>> DEBUG <<< : >>>>>>>>>> Asset class injection <<<<<<<<<<<<<<<<<<<<<<<<<<<<<" )
+            print ( f">>> DEBUG: Asset class is: {ac}" )
             wq.asset_class = ac                         # wrangeler class MUST know the class of asset its working on
             wq.setup_zones(1, nq.quote_json1, nq.quote_json2, nq.quote_json3)
             wq.do_wrangle()
