@@ -171,6 +171,7 @@ class nq_wrangler:
         # NOTE: wtf  ??? "infoTable']['rows'][0]['volume'", "'infoTable']['rows'][0]['delta'" )
         z = 1
         z3_errors = 0
+        print ( f"DEBUG: {self.jsondata30}")
         try:
             y = self.jsondata30['infoTable']['rows'][0]     # premarket InfoTable looks like it might may exist
         except TypeError:
