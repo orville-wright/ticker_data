@@ -114,7 +114,7 @@ class nq_wrangler:
         else:
             x = self.jsondata11['data']['summaryData']
             for i in jd_10:
-                logging.info( f"%s   - Scaning zone-1 for Key: [{i}]" )
+                logging.info( f"%s   - Scaning zone-1 for Key: [{i}]" % cmi_debug )
                 try:
                     y = x[i]
                 except TypeError:
@@ -141,7 +141,7 @@ class nq_wrangler:
         cmi_debug = __name__+"::"+self.z2_watchlist.__name__+".#"+str(self.yti)
         logging.info( f'%s - probing zone-2 [API=watchlist] JSON keys/fields...' % cmi_debug )
         z = 1
-        x = self.jsondata20['data']     # JSON struct : watchlist
+        x = self.jsondata20     # JSON struct : watchlist
         jd_20 = ("symbol", "companyName", "lastSalePrice", "netChange", "percentageChange", "deltaIndicator", "lastTradeTimestampDateTime", "volume" )
         z2_errors = 0
 
