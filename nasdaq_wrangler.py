@@ -93,23 +93,23 @@ class nq_wrangler:
 
         # TODO: I need to move away from predefined fields and just scan all the fields and create a list
         # TODO: this way, nasdaq can change their json and I wont care
-        jd_10s = ("PreviousClose", "MarketCap", "TodayHighLow", "AverageVolume", "OneYrTarget", "Beta", "FiftTwoWeekHighLow" )
-        jd_10e = ("PreviousClose", "MarketCap", "TodayHighLow", "FiftyDayAvgDailyVol", "Beta", "FiftTwoWeekHighLow" )
+        jd_10s = ("PreviousClose", "MarketCap", "TodayHighLow", "AverageVolume", "OneYrTarget", "PreviousClose", "FiftTwoWeekHighLow" )
+        jd_10e = ("PreviousClose", "MarketCap", "TodayHighLow", "FiftyDayAvgDailyVol", "PreviousClose", "FiftTwoWeekHighLow" )
 
         if self.asset_class == "stocks": jd_10 = jd_10s     # asset_class ust be preset
         if self.asset_class == "etf": jd_10 = jd_10e        # asset_class must be preset
 
         try:
-            y = self.jsondata11['summaryData']      # JSON struct : summary
+            y = self.jsondata11['data']['summaryData']      # JSON struct : summary
         except TypeError:
             logging.info( f"%s   - Probe #1.1 : TypeError / BAD type @: [data][summaryData]" % cmi_debug )
             z1_errors = 1 + len(jd_10)       # everything in data set is BAD
-            logging.info( f"%s - End probing zone-1 [API=summary] / errors: {z1_errors}" % cmi_debug )
+            logging.info( f"%s   - End probing zone-1 [API=summary] / errors: {z1_errors}" % cmi_debug )
             return z1_errors
         except KeyError:
             logging.info( f"%s   - Probe #1.2 : KeyError / BAD key @: [data][summaryData]" % cmi_debug )
             z1_errors = 1 + len(jd_10)       # everything in data set is BAD
-            logging.info( f"%s - End probing zone-1 [API=summary] / errors: {z1_errors}" % cmi_debug )
+            logging.info( f"%s   - End probing zone-1 [API=summary] / errors: {z1_errors}" % cmi_debug )
             return z1_errors
         else:
             x = self.jsondata11['summaryData']
@@ -127,7 +127,7 @@ class nq_wrangler:
                     z1_errors += 1
                 else:
                     z += 1
-        logging.info( f"%s - End probing zone-1 [API=summary] / errors: {z1_errors} / {len(x)}" % cmi_debug )
+        logging.info( f"%s   - End probing zone-1 [API=summary] / errors: {z1_errors} / {len(x)}" % cmi_debug )
         return z1_errors
 
 
@@ -176,12 +176,12 @@ class nq_wrangler:
         except TypeError:
             logging.info( f"%s - Probe #3.1 : TypeError BAD type @: [infoTable][rows][0]" % cmi_debug )
             jd31_null_errors = 1 + len(jd_30)               # everything in data set is BAD
-            logging.info( f"%s - End probing zone-2 [API=premarket]: errors: {jd31_null_errors} / {len(jd_30)}" % cmi_debug )
+            logging.info( f"%s - End probing zone-3 [API=premarket]: errors: {jd31_null_errors} / {len(jd_30)}" % cmi_debug )
             return jd31_null_errors
         except KeyError:
             logging.info( f"%s - Probe #3.2 : KeyError BAD key @: [infoTable][rows][0]" % cmi_debug )
             jd31_null_errors = 1 + len(jd_30)               # everything in data set is BAD
-            logging.info( f"%s - End probing zone-2 [API=premarket]: errors: {jd31_null_errors} / {len(jd_30)}" % cmi_debug )
+            logging.info( f"%s - End probing zone-3 [API=premarket]: errors: {jd31_null_errors} / {len(jd_30)}" % cmi_debug )
             return jd31_null_errors
         else:
             x = self.jsondata30['infoTable']['rows'][0]
@@ -220,12 +220,12 @@ class nq_wrangler:
             logging.info( f'%s   - Force a re-run to retry cleaning Summary Zone 1: [ {a} ]' % cmi_debug )
             a = self.z1_summary()    # re-run it again just to see. a should come back as == 0
             if a > 0:                   # still BAD after 2nd attempt
-                logging.info( f"%s - Nasdaq quote data is ABERRANT [ Zone 1:{a} zone 2:{b} zone 3:{c} ]" % cmi_debug )
-                logging.info( f'%s - Abandon Nasdaq quote - Data is BAD' % cmi_debug )
+                logging.info( f"%s   - Nasdaq quote data is ABERRANT [ Zone 1:{a} zone 2:{b} zone 3:{c} ]" % cmi_debug )
+                logging.info( f'%s   - Abandon Nasdaq quote - Data is BAD' % cmi_debug )
                 wrangle_errors = a+b+c
                 return wrangle_errors
             else:
-                logging.info( f"%s - Repaired ABERRANT data [ Zone 1:{a} zone 2:{b} zone 3:{c} ]" % cmi_debug )
+                logging.info( f"%s   - Repaired ABERRANT data [ Zone 1:{a} zone 2:{b} zone 3:{c} ]" % cmi_debug )
                 wrangle_errors += 5     # Dataset allready started out life in bad shape
                 # setup main JSON data zone accessors...
                 # SUMMARY quote data seem OK to pre-process for loading
@@ -360,7 +360,7 @@ class nq_wrangler:
             print ( f"\n================= Nasdaq quote data : raw uncleansed =================" )
             work_on = ['co_sym', 'co_name', 'price', 'price_net', 'price_pct', 'arrow_updown', \
                     'price_timestamp', 'vol_abs', 'open_price', 'open_volume', 'open_updown', \
-                    'prev_close', 'mkt_cap', 'today_hilo', 'avg_vol', 'oneyear_target', 'beta', \
+                    'prev_close', 'mkt_cap', 'today_hilo', 'avg_vol', 'oneyear_target', 'PreviousClose', \
                     'LII_week_hilo']
             xx = iter(work_on)
             for name in work_on:
@@ -548,7 +548,7 @@ class nq_wrangler:
             vol=self.vol_abs_cl, \
             avg_vol=self.avg_vol, \
             one_year_target=self.oneyear_target, \
-            beta=self.beta, \
+            PreviousClose=self.PreviousClose, \
             oneyear_hilo=self.LII_week_hilo, \
             mkt_cap=self.mkt_cap_cl )
 
