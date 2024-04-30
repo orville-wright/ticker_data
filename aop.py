@@ -518,8 +518,9 @@ def main():
         nq.get_nquote(nq_symbol.rstrip())
 
         # >>> This is where we access the new nasdaq_wrangler class and methods
-        wrangle_errors = nq.build_data()             # return num of data wrangeling errors we found & dealt with
-        nq.build_df()
+        #
+        # wrangle_errors = ???.build_data_sets()       # final stage, write all data sets. return num of wrangeling errors
+        # ???.build_df()
 
         #
         # add Tech Events Sentiment to quote dict{}

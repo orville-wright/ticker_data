@@ -22,30 +22,27 @@ class nquote:
     """Class to get live Market Data Quote from NASDAQ.com data source"""
 
     # global accessors
-    quote = {}              # quote as dict
-    quote_df0 = ""          # quote as pandas DataFrame
+    yti = 0                 # Unique instance identifier
+    cycle = 0               # class thread loop counter
+    args = []               # class dict to hold global args being passed in from main() methods
     quote_json0 = ""        # JSON dataset #1 : dummy_session + Update_cookiues + do_simple_get
     quote_json1 = ""        # JSON dataset #1 quote summary
     quote_json2 = ""        # JSON dataset #2 quote watchlist
     quote_json3 = ""        # JSON dataset #3 quote premarket
     quote_json4 = ""        # JSON dataset #4 quote asset_class
-    data0 = []              # JSON data payload
-    yti = 0                 # Unique instance identifier
-    cycle = 0               # class thread loop counter
-    args = []               # class dict to hold global args being passed in from main() methods
-    js_session = ""         # main requests session
     js_resp0 = ''           # session response handle for : dummy_session + Update_cookiues + do_simple_get
     js_resp1 = ''           # session response handle for : self.summary_url
     js_resp2 = ''           # session response handle for : self.watchlist_url
     js_resp3 = ''           # session response handle for : self.premarket_url
     js_resp4 = ''           # session response handle for : self.info_url
+    path = ""
+    info_url = ""
     quote_url = ""
+    js_session = ""         # main requests session
+    asset_class = ""        # global NULL TESTing indicator (important)
     summary_url = ""
     watchlist_url = ""
     premarket_url = ""
-    info_url = ""
-    path = ""
-    asset_class = ""        # global NULL TESTing indicator (important)
 
 # #####################################################################################
 # REFACTOR notes

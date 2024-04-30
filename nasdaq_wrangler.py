@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import re
 import logging
+import pandas as pd
 import argparse
 import time
 import json
@@ -26,6 +27,7 @@ class nq_wrangler:
     args = []                  # class dict to hold global args being passed in from main() methods
     qd_quote = {}              # quote as dict
     qd_data0 = []              # JSON data payload
+    self.quote_df0 = ""        # quote as DataFram
     qd_js_session = ""         # main requests session
     qd_quote_json0 = ""        # JSON dataset #1 : dummy_session + Update_cookiues + do_simple_get
     qd_quote_json1 = ""        # JSON dataset #1 quote summary
