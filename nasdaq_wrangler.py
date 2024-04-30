@@ -171,7 +171,7 @@ class nq_wrangler:
         # NOTE: wtf  ??? "infoTable']['rows'][0]['volume'", "'infoTable']['rows'][0]['delta'" )
         z = 1
         z3_errors = 0
-        print ( f"DEBUG: {self.jsondata30}")
+
         try:
             y = self.jsondata30['data']['infoTable']['rows'][0]     # premarket InfoTable looks like it might may exist
         except TypeError:
@@ -221,12 +221,12 @@ class nq_wrangler:
             logging.info( f'%s   - Force a re-run to retry cleaning Summary Zone 1: [ {a} ]' % cmi_debug )
             a = self.z1_summary()    # re-run it again just to see. a should come back as == 0
             if a > 0:                   # still BAD after 2nd attempt
-                logging.info( f"%s   - Nasdaq quote data is ABERRANT [ Zone 1:{a} zone 2:{b} zone 3:{c} ]" % cmi_debug )
+                logging.info( f"%s   - Nasdaq summary data is ABERRANT [ Zone 1:{a} zone 2:{b} zone 3:{c} ]" % cmi_debug )
                 logging.info( f'%s   - Abandon Nasdaq quote - Data is BAD' % cmi_debug )
                 wrangle_errors = a+b+c
                 return wrangle_errors
             else:
-                logging.info( f"%s   - Repaired ABERRANT data [ Zone 1:{a} zone 2:{b} zone 3:{c} ]" % cmi_debug )
+                logging.info( f"%s   - Repaired ABERRANT summary data [ Zone 1:{a} zone 2:{b} zone 3:{c} ]" % cmi_debug )
                 wrangle_errors += 5     # Dataset allready started out life in bad shape
                 # setup main JSON data zone accessors...
                 # SUMMARY quote data seem OK to pre-process for loading
@@ -235,11 +235,12 @@ class nq_wrangler:
                 wrangle_errors += self.pre_load_z1()     # summary
                 return wrangle_errors
         elif b > 0:         # zone 2 data in watchlist is in an Abberant state
-            logging.info( f"%s   - Nasdaq quote data is ABERRANT [ Zone 1:{a} zone 2:{b} zone 3:{c} ]" % cmi_debug )
+            logging.info( f"%s   - Nasdaq watchlist data is ABERRANT [ Zone 1:{a} zone 2:{b} zone 3:{c} ]" % cmi_debug )
+            logging.info( f'%s   - Abandon Nasdaq quote - Data is BAD' % cmi_debug )
             wrangle_errors = a+b+c
             return wrangle_errors
         elif c > 0:
-            logging.info( f"%s   - Nasdaq quote data is ABERRANT [ Zone 1:{a} zone 2:{b} zone 3:{c} ]" % cmi_debug )
+            logging.info( f"%s   - Nasdaq premarket data is ABERRANT [ Zone 1:{a} zone 2:{b} zone 3:{c} ]" % cmi_debug )
             wrangle_errors = a+b+c
             return wrangle_errors
         else:
@@ -362,11 +363,11 @@ class nq_wrangler:
         At the end just return a count of how many wrangle Errors we encountered
         """
         cmi_debug = __name__+"::"+self.clean_cast.__name__+".#"+str(self.yti)
-        logging.info('%s - Begin heavy data wrangle workloads...' % cmi_debug )
+        logging.info('%s  - Begin data cleanse for final setup...' % cmi_debug )
         # >>> DEBUG Xray <<<
         if self.args['bool_xray'] is True:
             print ( f"\n================= Nasdaq quote data : raw uncleansed =================" )
-            work_on = ['co_sym', 'co_name', 'price', 'price_net', 'price_pct', 'arrow_updown', \
+            work_on = ['self.co_sym', 'self.co_name', 'self.price', 'price_net', 'price_pct', 'arrow_updown', \
                     'price_timestamp', 'vol_abs', 'open_price', 'open_volume', 'open_updown', \
                     'prev_close', 'mkt_cap', 'today_hilo', 'avg_vol', 'oneyear_target', 'PreviousClose', \
                     'LII_week_hilo']
