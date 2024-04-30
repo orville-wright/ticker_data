@@ -270,7 +270,7 @@ class nq_wrangler:
         """
         cmi_debug = __name__+"::"+self.pre_load_z2.__name__+".#"+str(self.yti)
         if self.jsondata20['data'] is not None:                                # bad payload? - can also test b == 0
-            logging.info('%s  - zone-2 / Accessing JSON data fields...' % cmi_debug )
+            logging.info('%s  - zone-2 : [watchlist] : Accessing JSON data fields...' % cmi_debug )
             jd20 = self.jsondata20['data'][0]                            # HEAD of data payload
             self.co_sym = jd20['symbol']                                  # "IBM"
             self.co_name = jd20['companyName']                                 # "International Business Machines Corporation Common Stock"
@@ -280,10 +280,10 @@ class nq_wrangler:
             self.arrow_updown = jd20['deltaIndicator']                         # "up"
             self.price_timestamp = jd20['lastTradeTimestampDateTime']          # "2021-10-01T00:00:00"
             self.vol_abs = jd20['volume']                                      # "6,604,064"
-            logging.info( '%s  - zone-2 [watchlist] / [8] fields - Done' % cmi_debug )
+            logging.info( '%s  - zone-2 [watchlist] : [8] fields - Done' % cmi_debug )
             return 0
         else:
-            logging.info('%s  - zone-2 [watchlist] / BAD json payload - NOT regular stock / Abort' % cmi_debug )        # bad symbol json payload
+            logging.info('%s  - zone-2 [watchlist] : BAD json payload - NOT regular stock / Abort' % cmi_debug )        # bad symbol json payload
             self.quote.clear()
             return 99
 
@@ -295,13 +295,13 @@ class nq_wrangler:
         NOTE: No need to ever call this explicitly. - that will #fail
         """
         cmi_debug = __name__+"::"+self.pre_load_z3.__name__+".#"+str(self.yti)
-        logging.info('%s  - zone-3 [pre-market] / Accessing data fields...' % cmi_debug )
+        logging.info('%s  - zone-3 [pre-market] : Accessing data fields...' % cmi_debug )
         if self.jsondata30['data'] is not None:                                # bad payload? - can also test c == 0
             jsondata30 = self.jsondata30['data']                               # HEAD of data payload 0
             try:
                 jsondata31 = self.jsondata30['data']['infoTable']['rows'][0]       # HEAD of data payload 1
             except TypeError:
-                logging.info('%s  - zone-3 [pre-market] / WARNING infoTable payload is BAD / Zero ALL data' % cmi_debug )        # bad symbol json payload
+                logging.info('%s  - zone-3 [pre-market] : WARNING infoTable payload is BAD / Zero ALL data' % cmi_debug )        # bad symbol json payload
                 self.open_price = "$0.0 0.0 0.0"
                 self.open_volume = 0                                  # e.g. "71,506"
                 self.open_updown = "N/A"                              # e.g. "up"
@@ -310,10 +310,10 @@ class nq_wrangler:
                 self.open_price = jsondata31['consolidated']                             # WARN: open_price info = multi-field string needs splitting e.g. "$140.8 +1.87 (+1.35%)"
                 self.open_volume = jsondata31['volume']                                  # e.g. "71,506"
                 self.open_updown = jsondata31['delta']                                   # e.g. "up"
-                logging.info( '%s  - zone-3 [pre-market] / [3] fields - Done' % cmi_debug )
+                logging.info( '%s  - zone-3 [pre-market] : [3] fields - Done' % cmi_debug )
                 return 0
         else:
-            logging.info('%s  - Zone-3 [pre-market] BAD json payload - NOT regular stock / Abort' % cmi_debug )        # bad symbol json payload
+            logging.info('%s  - Zone-3 [pre-market] : BAD json payload - NOT regular stock / Abort' % cmi_debug )        # bad symbol json payload
             self.quote.clear()
             return 99
 
@@ -328,7 +328,7 @@ class nq_wrangler:
               This is why we process it last !!!
         """
         cmi_debug = __name__+"::"+self.pre_load_z1.__name__+".#"+str(self.yti)
-        logging.info('%s  - Zone #1 / Accessing data fields...' % cmi_debug )
+        logging.info('%s  - zone-1 [summary] : Accessing JSNON data fields...' % cmi_debug )
         if self.jsondata11['data'] is not None:                                # bad payload? - can also test a == 0
             fields_set = 0
             j11 = self.jsondata11['data']['summaryData']                # HEAD of data payload
@@ -349,7 +349,7 @@ class nq_wrangler:
             logging.info( f"%s  - zone-1 [summary] : {fields_set}/ 7 fields - Done" % cmi_debug )
             return 0
         else:
-            logging.info( '%s  - zone-1 / [summary] BAD json payload - NOT regular stock' % cmi_debug )        # bad symbol json payload
+            logging.info( '%s  - zone-1 / [summary] : BAD json payload - NOT regular stock' % cmi_debug )        # bad symbol json payload
             self.quote.clear()
             return 99
 
