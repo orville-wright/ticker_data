@@ -557,7 +557,6 @@ class nq_wrangler:
             vol=self.vol_abs_cl, \
             avg_vol=self.avg_vol, \
             one_year_target=self.oneyear_target, \
-            PreviousClose=self.PreviousClose, \
             mkt_cap=self.mkt_cap_cl )
 
         logging.info( f"%s - Build global DF: {self.symbol}" % cmi_debug )
