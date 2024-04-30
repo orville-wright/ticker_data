@@ -150,7 +150,7 @@ class nq_wrangler:
                 logging.info( f"%s - Probe #2.1 : TypeError / BAD type @: [{i}]" % cmi_debug )
                 jd20_null_errors += 1
             except KeyError:
-                logging.info( f"%s - Probe #2.2 : KeyError / BADkey @: [{i}]" % cmi_debug )
+                logging.info( f"%s - Probe #2.2 : KeyError / BAD key @: [{i}]" % cmi_debug )
                 jd20_null_errors += 1
             else:
                 z += 1
@@ -212,7 +212,8 @@ class nq_wrangler:
         c = self.z3_premarket()                 # self.jsondata30 = self.quote_json3['data']
 
         if a > 0:                       # Zone 1 (Data in Summary is in an Abberant state)
-            logging.info( f'%s - Summary Zone 1 has ERRORS: [ {a} ]' % cmi_debug )
+            logging.info( f'%s   - Summary Zone 1 has ERRORS: [ {a} ]' % cmi_debug )
+            logging.info( f'%s   - Force a re-run to retry cleaning Summary Zone 1: [ {a} ]' % cmi_debug )
             a = self.z1_summary()    # re-run it again just to see. a should come back as == 0
             if a > 0:                   # still BAD after 2nd attempt
                 logging.info( f"%s - Nasdaq quote data is ABERRANT [ Zone 1:{a} zone 2:{b} zone 3:{c} ]" % cmi_debug )

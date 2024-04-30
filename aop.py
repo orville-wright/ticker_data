@@ -522,9 +522,9 @@ def main():
         wq = nq_wrangler(1, args)                   # instantiate a class for Quote Data Wrangeling
         wq.asset_class = ac                         # wrangeler class MUST know the class of asset its working on
         wq.setup_zones(1, nq.quote_json1, nq.quote_json2, nq.quote_json3)
-        wq.z1_summary()
-        wq.z2_watchlist()
-        wq.z3_premarket()
+        #wq.z1_summary()
+        #wq.z2_watchlist()
+        #wq.z3_premarket()
         wq.do_wrangle()
         wq.clean_cast()
         wq.build_data_sets()
