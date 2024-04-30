@@ -96,20 +96,19 @@ class combo_logic:
         # Find/fix missing data in nasdaq.com unusual volume DF - i.e. market_cap info
         uvol_badata = self.combo_df[self.combo_df['Mkt_cap'].isna()]     # Non and NaN = True
         up_symbols = uvol_badata['Symbol'].tolist()     # get list of symbols that have bad-data in [] list
-        nq = nquote(3, self.args)                       # setup an nasdaq.com quote dict b/c we are going to get live data
+        nq = nquote(4, self.args)                       # setup an nasdaq.com quote dict b/c we are going to get live data
         nq.init_dummy_session()                         # initalize quote request session - note: will set nasdaq magic cookie
         total_wrangle_errors = 0                        # usefull counters
         unfixable_errors = 0
         cleansed_errors = 0
-        logging.info( f"%s  - Get quote data from nasdaq.com for:  {len(up_symbols)} symbols" % cmi_debug )
         loop_count = 1
-        print ( f"Insert missing Unusual UP volume from Nasdaq.com [market data]..." )
         cols = 1
         fixchars = 0
 
         ############################### get quote Setup #################################
         # This is a network expsive method as it does a network get for each stock symbol
         # and extracts missing data & saves it to combo_df.
+        logging.info( f"%s  - Get quote data from nasdaq.com for:  {len(up_symbols)} symbols" % cmi_debug )
         for qsymbol in up_symbols:
             xsymbol = qsymbol
             qsymbol = qsymbol.rstrip()                   # cleand/striped of trailing spaces
@@ -134,7 +133,7 @@ class combo_logic:
             ############################### Phase 1 ###########################################
             # Evaluate Asset Class = an Exchnage Traded Fund (ETF)
             logging.info( f"{cmi_debug} - Begin market cap/scale logic cycle... {nq.asset_class}")
-            if nq.asset_class == "etf":        # Global attribute - is asset class ETF? yes = Cant get STOCK-type data
+            if wq.asset_class == "etf":        # Global attribute - is asset class ETF? yes = Cant get STOCK-type data
                 logging.info( f"{cmi_debug} - {qsymbol} asset class is ETF" )
                 wrangle_errors += 1
                 unfixable_errors += 1     # set default data for non-regualr stocks
@@ -152,20 +151,20 @@ class combo_logic:
                 self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = 'UZ'  # Mkt cap
                 self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'M_B'] = 'EF'      # asset class = ETF
             else:
-                logging.info( f"{cmi_debug} - {qsymbol} asset class is {nq.asset_class}" )
+                logging.info( f"{cmi_debug} - {qsymbol} asset class is {wq.asset_class}" )
                 pass
 
             ############################### Phase 2 ###########################################
             # Evaluate Market Cap data field - quality of data
-            logging.info( f"{cmi_debug} - Test {nq.asset_class} Mkt_cap for NULLs..." )
+            logging.info( f"{cmi_debug} - Test {wq.asset_class} Mkt_cap for BAD data..." )
             z_float = round(float(0), 3)                  # 0.000
             try:
-                null_tester = nq.quote['mkt_cap']         # some ETF/Funds have a market cap - but data is inconsistent
+                null_tester = wq.qd_quote['mkt_cap']         # some ETF/Funds have a market cap - but data is inconsistent
             except TypeError:
-                logging.info( f"{cmi_debug} - {nq.asset_class} Mkt_cap data is NULL / setting to: 0" )
+                logging.info( f"{cmi_debug} - {wq.asset_class} Mkt_cap data is NULL / setting to: 0" )
                 if self.args['bool_xray'] is True:
                     print ( f"=xray=TypeError================= {self.inst_uid} ================================begin=" )
-                    print ( f"quote: {nq.quote.items()}" )
+                    print ( f"quote: {wq.qd_quote.items()}" )
                     print ( f"combo_df: {self.combo_df}" )
                     print ( f"=xray=========================== {self.inst_uid} ==================================end=" )
                 self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = 'UZ'    # make is a real number = 0
@@ -174,10 +173,10 @@ class combo_logic:
                 fixchars += 2
                 y = 0
             except KeyError:
-                logging.info( f"{cmi_debug} - {nq.asset_class} Mkt_cap key is NULL / setting to: 0" )
+                logging.info( f"{cmi_debug} - {wq.asset_class} Mkt_cap key is NULL / setting to: 0" )
                 if self.args['bool_xray'] is True:
                     print ( f"=xray=KeyError================== {self.inst_uid} ================================begin=" )
-                    print ( f"quote: {nq.quote.items()}" )
+                    print ( f"quote: {wq.qd_quote.items()}" )
                     print ( f"combo_df: {self.combo_df}" )
                     print ( f"=xray=========================== {self.inst_uid} ==================================end=" )
                 # BUG : disabled this code - cant figgure out why its erroring
@@ -191,31 +190,31 @@ class combo_logic:
             else:
                 # BUG : disabled this code - cant figgure out why its erroring
                 # this needs to be fixed
-                logging.info( f"{cmi_debug} - Set {nq.asset_class} Mkt_cap to: {nq.quote['mkt_cap']}" )
-                z_float = float(nq.quote['mkt_cap'])
+                logging.info( f"{cmi_debug} - Set {wq.asset_class} Mkt_cap to: {wq.qd_quote['mkt_cap']}" )
+                z_float = float(wq.quote['mkt_cap'])
                 #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = nq.quote['mkt_cap']
                 self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = z_float
                 print ( f"+", end="" )
                 fixchars += 1
                 cleansed_errors += 1
-                if nq.asset_class == "stocks":
-                    logging.info( f"{cmi_debug} - Compute Mkt_cap scale tag: [ {nq.quote['mkt_cap']} ]..." )
+                if wq.asset_class == "stocks":
+                    logging.info( f"{cmi_debug} - Compute Mkt_cap scale tag: [ {wq.qd_quote['mkt_cap']} ]..." )
                     for i in (("MT", 999999), ("LB", 10000), ("SB", 2000), ("LM", 500), ("SM", 50), ("TM", 10), ("UZ", 0)):
-                        if nq.quote['mkt_cap'] == float(0):
+                        if wq.quote['mkt_cap'] == float(0):
                             # BUG
                             # This is broken - fix me !!!
                             self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'M_B'] = "UZ"
-                            logging.info( f"{cmi_debug} - Bad Market cap: [ {nq.quote['mkt_cap']} ] / scale set to: UZ" )
+                            logging.info( f"{cmi_debug} - Bad Market cap: [ {wq.qd_quote['mkt_cap']} ] / scale set to: UZ" )
                             print ( f"+", end="" )
                             fixchars += 1
                             break
-                        elif i[1] >= nq.quote['mkt_cap']:
+                        elif i[1] >= wq.qd_quote['mkt_cap']:
                             pass
                         else:
                             # BUG
                             # This is broken : Fix me !!!
                             self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'M_B'] = i[0]
-                            logging.info( f"{cmi_debug} - Market cap: [ {nq.quote['mkt_cap']} ] scale set to: {i[0]}" )
+                            logging.info( f"{cmi_debug} - Market cap: [ {wq.quote['mkt_cap']} ] scale set to: {i[0]}" )
                             wrangle_errors += 1          # insert market cap scale into DF @ column M_B for this symbol
                             cleansed_errors += 1
                             print ( f"+", end="" )
