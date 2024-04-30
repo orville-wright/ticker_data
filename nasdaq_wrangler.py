@@ -249,7 +249,7 @@ class nq_wrangler:
             wrangle_errors = a+b+c
             return wrangle_errors
         else:
-            logging.info( f"%s - Good NOMINAL starting data [ Zone 1:{a} zone 2:{b} zone 3:{c} ]" % cmi_debug )
+            logging.info( f"%s   - Good NOMINAL data state [ Zone 1: {a} zone 2: {b} zone 3: {c} ]" % cmi_debug )
             wrangle_errors += 5     # Dataset allready started out life in bad shape
             wrangle_errors = self.pre_load_z2()      # Watchlist
             wrangle_errors += self.pre_load_z3()     # Pre-market
@@ -329,25 +329,29 @@ class nq_wrangler:
         """
         cmi_debug = __name__+"::"+self.pre_load_z1.__name__+".#"+str(self.yti)
         logging.info('%s  - zone-1 [summary] : Accessing JSON data fields...' % cmi_debug )
-        if self.jsondata11['data'] is not None:                                # bad payload? - can also test a == 0
+        if self.jsondata11['data'] is not None:                    # bad payload? - can also test a == 0
             fields_set = 0
-            j11 = self.jsondata11['data']['summaryData']                # HEAD of data payload
-            self.prev_close = j11['PreviousClose']['value']                   # e,g, "$138.93"
+            j11 = self.jsondata11['data']['summaryData']           # HEAD of data payload
+            self.prev_close = j11['PreviousClose']['value']        # e,g, "$138.93"
             fields_set += 1
-            self.mkt_cap = j11['MarketCap']['value']                          # e.g. "128,460,592,862"
+            self.mkt_cap = j11['MarketCap']['value']               # e.g. "128,460,592,862"
             fields_set += 1
-            self.today_hilo = j11['TodayHighLow']['value']                    # WARN: multi-field string needs splitting/wrangeling e.g. "$143.97/$140.37"
+            self.today_hilo = j11['TodayHighLow']['value']         # WARN: multi-field string needs splitting/wrangeling e.g. "$143.97/$140.37"
             fields_set += 1
             if self.asset_class == "stocks":
-                self.avg_vol = j11['AverageVolume']['value']                      # e.g. "4,811,121" or N/A
+                self.avg_vol = j11['AverageVolume']['value']       # e.g. "4,811,121" or N/A
                 fields_set += 1
-                self.oneyear_target = j11['OneYrTarget']['value']                 # e.g. "$151.00"
+                self.oneyear_target = j11['OneYrTarget']['value']  # e.g. "$151.00"
                 fields_set += 1
             else:
-                pass
+                logging.info( f"%s  - zone-1 [summary] : Not a stock - skipping some data..." % cmi_debug )
+                self.avg_vol = 0                                    # not stock gets 0 here
+                self.oneyear_target = 0                             # not stock gets 0 here
+                return 1
 
-            logging.info( f"%s  - zone-1 [summary] : {fields_set} / 7 fields - Done" % cmi_debug )
+            logging.info( f"%s  - zone-1 [summary] : {fields_set} / {len(j11)} fields - Done" % cmi_debug )
             return 0
+
         else:
             logging.info( '%s  - zone-1 / [summary] : BAD json payload - NOT regular stock' % cmi_debug )        # bad symbol json payload
             self.quote.clear()
