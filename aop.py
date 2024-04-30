@@ -522,6 +522,7 @@ def main():
             print ( f">>> DEBUG <<< : >>>>>>>>>> Asset class injection <<<<<<<<<<<<<<<<<<<<<<<<<<<<<" )
             print ( f">>> DEBUG: Asset class is: {ac}" )
             wq.asset_class = ac                         # wrangeler class MUST know the class of asset its working on
+            print ( f">>> DEBUG: wrangler class.asset_class:  {wq.asset_class}" )
             wq.setup_zones(1, nq.quote_json1, nq.quote_json2, nq.quote_json3)
             wq.do_wrangle()
             wq.clean_cast()
