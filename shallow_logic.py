@@ -192,8 +192,9 @@ class combo_logic:
                 # this needs to be fixed
                 logging.info( f"{cmi_debug} - Set {wq.asset_class} Mkt_cap to: {wq.qd_quote['mkt_cap']}" )
                 z_float = wq.qd_quote['mkt_cap']
-                print ( f">>>>> DEBUG: {z_float}" )
-                #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = wq.qd_quote['mkt_cap']
+                print ( f">>>>> DEBUG: {z_float} / type: {type(z_float)}" )
+                print ( f"{self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap']}" )
+
                 self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = z_float
                 print ( f"+", end="" )
                 fixchars += 1
