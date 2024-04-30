@@ -21,24 +21,24 @@ class nq_wrangler:
     """
 
     # global accessors
+    yti = 0                    # Unique instance identifier
+    qd_cycle = 0               # class thread loop counter
+    args = []                  # class dict to hold global args being passed in from main() methods
     qd_quote = {}              # quote as dict
+    qd_data0 = []              # JSON data payload
+    qd_js_session = ""         # main requests session
     qd_quote_json0 = ""        # JSON dataset #1 : dummy_session + Update_cookiues + do_simple_get
     qd_quote_json1 = ""        # JSON dataset #1 quote summary
     qd_quote_json2 = ""        # JSON dataset #2 quote watchlist
     qd_quote_json3 = ""        # JSON dataset #3 quote premarket
     qd_quote_json4 = ""        # JSON dataset #4 quote asset_class
-    qd_data0 = []              # JSON data payload
-    yti = 0                    # Unique instance identifier
-    qd_cycle = 0               # class thread loop counter
-    args = []                  # class dict to hold global args being passed in from main() methods
-    qd_js_session = ""         # main requests session
+    path = ""
+    info_url = ""
     quote_url = ""
+    asset_class = ""        # global NULL TESTing indicator (important)
     summary_url = ""
     watchlist_url = ""
     premarket_url = ""
-    info_url = ""
-    path = ""
-    asset_class = ""        # global NULL TESTing indicator (important)
 
     def __init__(self, yti, global_args):
         cmi_debug = __name__+"::"+self.__init__.__name__
@@ -504,19 +504,19 @@ class nq_wrangler:
 
 
 ####################################################################
-    def build_data_list(self):
+    def build_data_sets(self):
         """
-        data0 & quote are class addressible accessors that this instance will populate
-        No DataFrame is build.
+        qd_data0 & quote are class addressible accessors that this instance will populate
+        and a class addressible DataFrame is built.
         Build a list that holds all of our data elements.
         This list is used to write all final data into the DataFrame
         """
-        cmi_debug = __name__+"::"+self.build_data_list.__name__+".#"+str(self.yti)
+        cmi_debug = __name__+"::"+self.build_data_sets.__name__+".#"+str(self.yti)
         # craft final data structure.
         # NOTE: globally accessible and used by quote DF and quote DICT
         self.symbol=self.co_sym_lj.rstrip()
         logging.info( f"%s - Build list for Dataframe insert: {self.symbol}" % cmi_debug )        # so we can access it natively if needed, without using pandas
-        self.data0 = [[ \
+        self.qd_data0 = [[ \
             self.co_sym_lj, \
             self.co_name_lj, \
             self.arrow_updown, \
@@ -534,7 +534,7 @@ class nq_wrangler:
         # is all nice & clean & in its final beautiful shape by now.
         self.symbol=self.co_sym_lj.rstrip()
         logging.info( f"%s - Build global dict: {self.symbol}" % cmi_debug )        # so we can access it natively if needed, without using pandas
-        self.quote = dict( \
+        self.qd_quote = dict( \
             symbol=self.co_sym_lj.rstrip(), \
             name=self.co_name, \
             updown=self.arrow_updown, \
@@ -551,5 +551,13 @@ class nq_wrangler:
             beta=self.beta, \
             oneyear_hilo=self.LII_week_hilo, \
             mkt_cap=self.mkt_cap_cl )
+
+        logging.info( f"%s - Build global DF: {self.symbol}" % cmi_debug )
+        time_now = time.strftime("%H:%M:%S", time.localtime() )
+        logging.info('%s - Drop ephemeral DF' % cmi_debug )
+        #self.quote_df0.drop(self.quote_df0.index, inplace=True)        # ensure the DF is empty
+        logging.info('%s - Populate DF with new quote data' % cmi_debug )
+        self.quote_df0 = pd.DataFrame(self.data0, columns=[ 'Symbol', 'Co_name', 'arrow_updown', 'Cur_price', 'Prc_change', 'Pct_change', 'Open_price', 'Prev_close', 'Vol', 'Mkt_cap', 'Exch_timestamp', 'Time' ] )
+        logging.info('%s - Quote DF created' % cmi_debug )
 
         return 0

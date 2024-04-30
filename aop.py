@@ -503,7 +503,7 @@ def main():
     10 data fields provided
     """
     if args['qsymbol'] is not False:
-        nq = nquote(4, args)                         # NAsdaq quote instance
+        nq = nquote(4, args)                         # Nasdqa quote instance from nasdqa_quotes.py
         nq.init_dummy_session()                      # note: this will set nasdaq magic cookie
         nq_symbol = args['qsymbol'].upper()
         logging.info( f"%s - Get Nasdaq.com quote for symbol {nq_symbol}" % cmi_debug )
@@ -516,8 +516,11 @@ def main():
             logging.info( f"%s - re-shape asset class endpoint to: {ac}" % cmi_debug )
             nq.form_api_endpoint(nq_symbol, ac)      # re-form API endpoint if default asset_class guess was wrong)
         nq.get_nquote(nq_symbol.rstrip())
+
+        # >>> This is where we access the new nasdaq_wrangler class and methods
         wrangle_errors = nq.build_data()             # return num of data wrangeling errors we found & dealt with
         nq.build_df()
+
         #
         # add Tech Events Sentiment to quote dict{}
         te = y_techevents(2)

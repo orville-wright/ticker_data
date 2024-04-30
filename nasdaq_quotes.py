@@ -9,7 +9,6 @@ import re
 import logging
 import argparse
 import time
-import threading
 import json
 
 from bigcharts_md import bc_quote
@@ -50,7 +49,7 @@ class nquote:
 
 # #####################################################################################
 # REFACTOR notes
-# All of these methods has been removed from the class and refactored/migrated
+# All of these methods has been removed from this class and refactored/migrated
 # into ->  nasdaq_wrangler.py @ class::nq_wrangler
 #
 # def build_data(self): --> REFACTORED --> setup_zones
@@ -113,8 +112,9 @@ class nquote:
 # method 3
     def form_api_endpoint(self, symbol, asset_class):
         """
-        This is the quote endppints for the req get()
-        As of 1 Oct, 2021...Nasdaq has a new data model that splits quote data across 4 key API endpoints. Of which,  2 are very intersting.
+        This is the quote endpoints for the req get()
+        As of 1 Oct, 2021...
+        - Nasdaq has a new data model that splits quote data across 4 key API endpoints. Of which,  2 are very intersting.
         """
         cmi_debug = __name__+"::"+self.form_api_endpoint.__name__+".#"+str(self.yti)
         logging.info('%s - form API endpoint URL' % cmi_debug )
@@ -165,7 +165,7 @@ class nquote:
         with self.js_session.get('https://www.nasdaq.com', stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp0:
             logging.info( f"%s - extract cookies  " % cmi_debug )
 
-            # DEBUG
+            # DEBUG : Xray
             if self.args['bool_xray'] is True:
                 print ( f"===================== dummy_session.{self.yti} cookies  ===========================" )
                 for i in self.js_session.cookies.items():
@@ -173,12 +173,16 @@ class nquote:
                 print ( f"===================== dummy_session.{self.yti} cookies  ===========================" )
 
             logging.info( f"%s - update GOOD warm cookie  " % cmi_debug )
-            #self.js_session.cookies.update({'tr_jt_okta': self.js_resp0.cookies['tr_jt_okta']} )    # NASDAQ cookie hack
 
         # if the get() succeds, the response handle is automatically saved in Class Global accessor -> self.js_resp0
         return
 
+######################################################################
+# method 6
     def learn_aclass(self, symbol):
+        """
+        return : the asset identifier (stocks or etf)
+        """
         cmi_debug = __name__+"::"+self.learn_aclass.__name__+".#"+str(self.yti)
         logging.info( f"%s - Learn asset class @ API: {self.info_url}" % cmi_debug )
         with self.js_session.get(self.info_url, stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp1:
@@ -201,19 +205,18 @@ class nquote:
                         test_info_url = ""
 
         logging.info( f"%s - Done" % cmi_debug )
-        return i    # asset_class identifier  (stocks / etf)
+        return i    # asset_class identifier  (stocks or etf)
 
 ######################################################################
-# method 6
+# method 7
     def get_nquote(self, symbol):
         """
-        Access NEW nasdaq.com JAVASCRIPT page [unusual volume] and extract the native JSON dataset
-        JSON data contains *BOTH* UP vol & DOWN vol for top 25 symbols, right now!
-        NO BeautifulSOup scraping needed anymore. We access the pure JSON datset via native API rest call
+        Access NEW nasdaq.com JAVASCRIPT page [.../api//quote/]
+        Extract the native JSON dataset. Page is a pure JSON datset struct, so no BS4 scraping needed.
         NOTE: Javascript engine process is NOT required as the output page is simple JSON text
-        WWARNING: API URL get success for any URL endpoint. This includes non-existent symbols & symbols
-                 that return bad/NULL data set (i.e. ETF's, which are not company's or regular symbols)
-        NOTE: Since Nasdaq changed the data model, quote data is now split across mutliple API endpoints
+        NOTE: API URL get will = success for any URL endpoint, includes non-existent symbols & symbols !
+              that return bad/NULL data set (i.e. ETF's, which are not company's or regular symbols)
+        NOTE: Nasdaq changed quote data model. Data is now split across mutliple API endpoints
         """
         cmi_debug = __name__+"::"+self.get_nquote.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
@@ -272,26 +275,4 @@ class nquote:
             for i in self.js_session.cookies.items():
                 print ( f"{i}" )
             print ( f"========================== {self.yti} - get_js_nquote::session cookies ================================" )
-        return
-
-################################################################################
-# method 8
-# New method to build a Pandas DataFrame from JSON data structure
-    def build_df(self):
-        """
-        A 1-off nasdaq.com stored in a DataFrame
-        Might be useeful oneday?
-        """
-
-        cmi_debug = __name__+"::"+self.build_df.__name__+".#"+str(self.yti)
-        logging.info('%s - Create quote DF from JSON' % cmi_debug )
-
-        time_now = time.strftime("%H:%M:%S", time.localtime() )
-        logging.info('%s - Drop ephemeral DF' % cmi_debug )
-        #self.quote_df0.drop(self.quote_df0.index, inplace=True)        # ensure the DF is empty
-
-        logging.info('%s - Populate DF with new quote data' % cmi_debug )
-        self.quote_df0 = pd.DataFrame(self.data0, columns=[ 'Symbol', 'Co_name', 'arrow_updown', 'Cur_price', 'Prc_change', 'Pct_change', 'Open_price', 'Prev_close', 'Vol', 'Mkt_cap', 'Exch_timestamp', 'Time' ] )
-        logging.info('%s - Quote DF created' % cmi_debug )
-
         return
