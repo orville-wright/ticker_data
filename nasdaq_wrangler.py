@@ -114,7 +114,7 @@ class nq_wrangler:
         else:
             x = self.jsondata11['data']['summaryData']
             for i in jd_10:
-                print ( f"DEBUG: i: {i} " )
+                logging.info( f"%s   - Scaning zone-1 for Key: [{i}]" )
                 try:
                     y = x[i]
                 except TypeError:
@@ -127,7 +127,7 @@ class nq_wrangler:
                     z1_errors += 1
                 else:
                     z += 1
-        logging.info( f"%s   - End probing zone-1 [API=summary] / errors: {z1_errors} / {len(x)}" % cmi_debug )
+        logging.info( f"%s   - End probing zone-1 [API=summary] / errors: {z1_errors} / {len(x)} Keys" % cmi_debug )
         return z1_errors
 
 
@@ -141,23 +141,23 @@ class nq_wrangler:
         cmi_debug = __name__+"::"+self.z2_watchlist.__name__+".#"+str(self.yti)
         logging.info( f'%s - probing zone-2 [API=watchlist] JSON keys/fields...' % cmi_debug )
         z = 1
-        x = self.jsondata20     # JSON struct : watchlist
+        x = self.jsondata20['data']     # JSON struct : watchlist
         jd_20 = ("symbol", "companyName", "lastSalePrice", "netChange", "percentageChange", "deltaIndicator", "lastTradeTimestampDateTime", "volume" )
-        jd20_null_errors = 0
+        z2_errors = 0
 
         for i in jd_20:
             try:
                 y = x[i]
             except TypeError:
                 logging.info( f"%s - Probe #2.1 : TypeError / BAD type @: [{i}]" % cmi_debug )
-                jd20_null_errors += 1
+                z2_errors += 1
             except KeyError:
                 logging.info( f"%s - Probe #2.2 : KeyError / BAD key @: [{i}]" % cmi_debug )
-                jd20_null_errors += 1
+                z2_errors += 1
             else:
                 z += 1
-        logging.info( f"%s - End probing zone-2 [API=watchlist] / errors: {jd20_null_errors} / {len(x)}" % cmi_debug )
-        return jd20_null_errors
+        logging.info( f"%s - End probing zone-2 [API=watchlist] / errors: {z2_errors} / {len(x)}" % cmi_debug )
+        return z2_errors
 
     # ZONE #3 premarket zone....########################################
     def z3_premarket(self):
@@ -166,38 +166,38 @@ class nq_wrangler:
         """
         cmi_debug = __name__+"::"+self.z3_premarket.__name__+".#"+str(self.yti)
         logging.info( f'%s - probing zone-3 [API=premarket] JSON keys/fields...' % cmi_debug )
-        jd_31 = ("consolidated", "volume", "delta" )
-        jd_30 = ("infoTable", "infoTable']['rows", "infoTable']['rows'][0", "infoTable']['rows'][0]['consolidated'",
+        jd_31 = ("consolidated", "volume", "highPrice", "lowPrice", "delta" )
+        #jd_30 = ("infoTable", "infoTable']['rows", "infoTable']['rows'][0", "infoTable']['rows'][0]['consolidated'",
                     "infoTable']['rows'][0]['volume'", "'infoTable']['rows'][0]['delta'" )
         z = 1
-        jd31_null_errors = 0
+        z3_errors = 0
         try:
-            y = self.jsondata30['infoTable']['rows'][0]     # premarket
+            y = self.jsondata30['data']['infoTable']['rows'][0]     # premarket
         except TypeError:
             logging.info( f"%s - Probe #3.1 : TypeError BAD type @: [infoTable][rows][0]" % cmi_debug )
-            jd31_null_errors = 1 + len(jd_30)               # everything in data set is BAD
-            logging.info( f"%s - End probing zone-3 [API=premarket]: errors: {jd31_null_errors} / {len(jd_30)}" % cmi_debug )
-            return jd31_null_errors
+            z3_errors = 10               # everything in data set is BAD
+            logging.info( f"%s - End probing zone-3 [API=premarket]: errors: {z3_errors} / {len(jd_30)}" % cmi_debug )
+            return z3_errors
         except KeyError:
             logging.info( f"%s - Probe #3.2 : KeyError BAD key @: [infoTable][rows][0]" % cmi_debug )
-            jd31_null_errors = 1 + len(jd_30)               # everything in data set is BAD
-            logging.info( f"%s - End probing zone-3 [API=premarket]: errors: {jd31_null_errors} / {len(jd_30)}" % cmi_debug )
-            return jd31_null_errors
+            z3_errors = 10               # everything in data set is BAD
+            logging.info( f"%s - End probing zone-3 [API=premarket]: errors: {z3_errors} / {len(jd_30)}" % cmi_debug )
+            return z3_errors
         else:
             x = self.jsondata30['infoTable']['rows'][0]
-            for i in jd_31:
+            for i in jd_31:     # No errors, plain old good structure that looks reasonably healthy to start with
                 try:
                     y = x[i]
                 except TypeError:
                     logging.info( f"%s - Probe #3.3 : TypeError BAD type @: [{i}]" % cmi_debug )
-                    jd31_null_errors += 1
+                    z3_errors += 1
                 except KeyError:
                     logging.info( f"%s - Probe #3.4 : KeyError BAD key @: [{i}]" % cmi_debug )
-                    jd31_null_errors += 1
+                    z3_errors += 1
                 else:
                     z += 1
-        logging.info( f"%s - End probing zone-3 [API=premarket]: errors: {jd31_null_errors} / {len(x)}" % cmi_debug )
-        return jd31_null_errors
+        logging.info( f"%s - End probing zone-3 [API=premarket]: errors: {z3_errors} / {len(x)}" % cmi_debug )
+        return z3_errors
 
 ################################################################################################
 # Quote DATA extractor ########################################################################
