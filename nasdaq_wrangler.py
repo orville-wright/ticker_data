@@ -268,9 +268,9 @@ class nq_wrangler:
         NOTE: No need to ever call this explicitly. - that will #fail
         """
         cmi_debug = __name__+"::"+self.pre_load_z2.__name__+".#"+str(self.yti)
-        if self.quote_json20['data'] is not None:                                # bad payload? - can also test b == 0
+        if self.jsondata20['data'] is not None:                                # bad payload? - can also test b == 0
             logging.info('%s - Zone #2 / Accessing data fields...' % cmi_debug )
-            jd20 = self.quote_json20['data'][0]                            # HEAD of data payload
+            jd20 = self.jsondata20['data'][0]                            # HEAD of data payload
             self.co_sym = jd20['symbol']                                  # "IBM"
             self.co_name = jd20['companyName']                                 # "International Business Machines Corporation Common Stock"
             self.price = jd20['lastSalePrice']                                 # "$143.32"
