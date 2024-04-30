@@ -126,6 +126,7 @@ class nq_wrangler:
                     x[i]['value'] = 0      # fix the bad data by writing this field as 0
                     z1_errors += 1
                 else:
+                    print ( f"")
                     z += 1
         logging.info( f"%s   - End probing zone-1 [API=summary] / errors: {z1_errors} / {len(x)} Keys" % cmi_debug )
         return z1_errors
@@ -337,7 +338,6 @@ class nq_wrangler:
             fields_set += 1
             self.today_hilo = j11['TodayHighLow']['value']                    # WARN: multi-field string needs splitting/wrangeling e.g. "$143.97/$140.37"
             fields_set += 1
-
             if self.asset_class == "stocks":
                 self.avg_vol = j11['AverageVolume']['value']                      # e.g. "4,811,121" or N/A
                 fields_set += 1
@@ -369,7 +369,7 @@ class nq_wrangler:
             print ( f"\n================= Nasdaq quote data : raw uncleansed =================" )
             work_on = ['self.co_sym', 'self.co_name', 'self.price', 'self.price_net', 'self.price_pct', 'self.arrow_updown', \
                     'self.price_timestamp', 'self.vol_abs', 'self.open_price', 'self.open_volume', 'self.open_updown', \
-                    'self.prev_close', 'self.mkt_cap', 'self.today_hilo', 'self.avg_vol', 'self.oneyear_target', 'self.PreviousClose', \
+                    'self.prev_close', 'self.mkt_cap', 'self.today_hilo', 'self.avg_vol', 'self.oneyear_target', 'self.prev_close', \
                     'self.LII_week_hilo']
             xx = iter(work_on)
             for name in work_on:
