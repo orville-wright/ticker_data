@@ -294,13 +294,13 @@ class nq_wrangler:
         NOTE: No need to ever call this explicitly. - that will #fail
         """
         cmi_debug = __name__+"::"+self.pre_load_z3.__name__+".#"+str(self.yti)
+        logging.info('%s  - zone-3 [pre-market] / Accessing data fields...' % cmi_debug )
         if self.jsondata30['data'] is not None:                                # bad payload? - can also test c == 0
-            logging.info('%s  - zone-3 [pre-market] / Accessing data fields...' % cmi_debug )
             jsondata30 = self.jsondata30['data']                               # HEAD of data payload 0
             try:
                 jsondata31 = self.jsondata30['data']['infoTable']['rows'][0]       # HEAD of data payload 1
             except TypeError:
-                logging.info('%s  - zone-3 [pre-market] / WARNING infoTable payload is BAD' % cmi_debug )        # bad symbol json payload
+                logging.info('%s  - zone-3 [pre-market] / WARNING infoTable payload is BAD / Zero ALL data' % cmi_debug )        # bad symbol json payload
                 self.open_price = "$0.0 0.0 0.0"
                 self.open_volume = 0                                  # e.g. "71,506"
                 self.open_updown = "N/A"                              # e.g. "up"
@@ -327,33 +327,31 @@ class nq_wrangler:
               This is why we process it last !!!
         """
         cmi_debug = __name__+"::"+self.pre_load_z1.__name__+".#"+str(self.yti)
-        if self.quote_json1['data'] is not None:                                # bad payload? - can also test a == 0
-            logging.info('%s - Zone #1 / Accessing data fields...' % cmi_debug )
+        logging.info('%s - Zone #1 / Accessing data fields...' % cmi_debug )
+        if self.jsondata11['data'] is not None:                                # bad payload? - can also test a == 0
             fields_set = 0
-            jsondata10 = self.quote_json1['data']['summaryData']                # HEAD of data payload
-            self.prev_close = jsondata10['PreviousClose']['value']                   # e,g, "$138.93"
+            j11 = self.jsondata11['data']['summaryData']                # HEAD of data payload
+            self.prev_close = j11['PreviousClose']['value']                   # e,g, "$138.93"
             fields_set += 1
-            self.mkt_cap = jsondata10['MarketCap']['value']                          # e.g. "128,460,592,862"
+            self.mkt_cap = j11['MarketCap']['value']                          # e.g. "128,460,592,862"
             fields_set += 1
-            self.today_hilo = jsondata10['TodayHighLow']['value']                    # WARN: multi-field string needs splitting/wrangeling e.g. "$143.97/$140.37"
+            self.today_hilo = j11['TodayHighLow']['value']                    # WARN: multi-field string needs splitting/wrangeling e.g. "$143.97/$140.37"
             fields_set += 1
 
             if self.asset_class == "stocks":
-                self.avg_vol = jsondata10['AverageVolume']['value']                      # e.g. "4,811,121" or N/A
+                self.avg_vol = j11['AverageVolume']['value']                      # e.g. "4,811,121" or N/A
                 fields_set += 1
-                self.oneyear_target = jsondata10['OneYrTarget']['value']                 # e.g. "$151.00"
+                self.oneyear_target = j11['OneYrTarget']['value']                 # e.g. "$151.00"
                 fields_set += 1
             else:
                 pass
 
-            logging.info( '%s - Zone #1 : {fields_set}/7 fields - Done' % cmi_debug )
+            logging.info( '%s  - zone-1 [summary] : {fields_set}/ 7 fields - Done' % cmi_debug )
+            return 0
         else:
-            logging.info('%s - Zone #1 / NULL json payload - NOT regular stock' % cmi_debug )        # bad symbol json payload
+            logging.info( '%s  - zone-1 / [summary] BAD json payload - NOT regular stock' % cmi_debug )        # bad symbol json payload
             self.quote.clear()
-            wrangle_errors += -1
-
-        return wrangle_errors
-
+            return 99
 
 ########################################################################################
 # wrangle, clean, cast & prepare the data ##############################################
