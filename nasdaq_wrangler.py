@@ -64,7 +64,7 @@ class nq_wrangler:
         cmi_debug = __name__+"::"+self.setup_zones.__name__+".#"+str(self.yti)
         logging.info('%s  - build quote data payload from raw JSON' % cmi_debug )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
-        logging.info('%s  - prepare jsondata accessors [Zone-1/Zone-2/Zone-3]...' % cmi_debug )
+        logging.info('%s  - prepare json data accessors [Zone-1/Zone-2/Zone-3]...' % cmi_debug )
         self.jsondata11 = qd_1                              # summary : quote_json1['data']
         self.jsondata20 = qd_2                              # watchlist : quote_json2['data'][0]
         self.jsondata30 = qd_3                              # premarket : quote_json3['data']
@@ -89,7 +89,7 @@ class nq_wrangler:
         cmi_debug = __name__+"::"+self.z1_summary.__name__+".#"+str(self.yti)
         logging.info( f'%s   - probing zone-1 [API=summary] JSON keys/fields...' % cmi_debug )
         z = 1
-        jd10_null_errors = 0
+        z1_errors = 0
 
         # TODO: I need to move away from predefined fields and just scan all the fields and create a list
         # TODO: this way, nasdaq can change their json and I wont care
@@ -103,12 +103,14 @@ class nq_wrangler:
             y = self.jsondata11['summaryData']      # JSON struct : summary
         except TypeError:
             logging.info( f"%s   - Probe #1.1 : TypeError / BAD type @: [data][summaryData]" % cmi_debug )
-            jd10_null_errors = 1 + len(jd_10)       # everything in data set is BAD
-            return jd10_null_errors
+            z1_errors = 1 + len(jd_10)       # everything in data set is BAD
+            logging.info( f"%s - End probing zone-1 [API=summary] / errors: {z1_errors}" % cmi_debug )
+            return z1_errors
         except KeyError:
             logging.info( f"%s   - Probe #1.2 : KeyError / BAD key @: [data][summaryData]" % cmi_debug )
-            jd10_null_errors = 1 + len(jd_10)       # everything in data set is BAD
-            return jd10_null_errors
+            z1_errors = 1 + len(jd_10)       # everything in data set is BAD
+            logging.info( f"%s - End probing zone-1 [API=summary] / errors: {z1_errors}" % cmi_debug )
+            return z1_errors
         else:
             x = self.jsondata11['summaryData']
             for i in jd_10:
@@ -118,15 +120,15 @@ class nq_wrangler:
                 except TypeError:
                     logging.info( f"%s   - Probe #1.3 : TypeError / BAD type @: [{i}] - RESET to: 0" % cmi_debug )
                     x[i]['value'] = 0      # fix the bad data by writing this field as 0
-                    jd10_null_errors += 1
+                    z1_errors += 1
                 except KeyError:
                     logging.info( f"%s   - Probe #1.4 : KeyError / BAD key  @: [{i}] - RESET to: 0" % cmi_debug )
                     x[i]['value'] = 0      # fix the bad data by writing this field as 0
-                    jd10_null_errors += 1
+                    z1_errors += 1
                 else:
                     z += 1
-        logging.info( f"%s - End probing zone-1 [API=summary] / errors: {jd10_null_errors} / {len(x)}" % cmi_debug )
-        return jd10_null_errors
+        logging.info( f"%s - End probing zone-1 [API=summary] / errors: {z1_errors} / {len(x)}" % cmi_debug )
+        return z1_errors
 
 
     # ZONE #2 watchlist zone....############################################
@@ -174,10 +176,12 @@ class nq_wrangler:
         except TypeError:
             logging.info( f"%s - Probe #3.1 : TypeError BAD type @: [infoTable][rows][0]" % cmi_debug )
             jd31_null_errors = 1 + len(jd_30)               # everything in data set is BAD
+            logging.info( f"%s - End probing zone-2 [API=premarket]: errors: {jd31_null_errors} / {len(jd_30)}" % cmi_debug )
             return jd31_null_errors
         except KeyError:
             logging.info( f"%s - Probe #3.2 : KeyError BAD key @: [infoTable][rows][0]" % cmi_debug )
             jd31_null_errors = 1 + len(jd_30)               # everything in data set is BAD
+            logging.info( f"%s - End probing zone-2 [API=premarket]: errors: {jd31_null_errors} / {len(jd_30)}" % cmi_debug )
             return jd31_null_errors
         else:
             x = self.jsondata30['infoTable']['rows'][0]
@@ -192,7 +196,7 @@ class nq_wrangler:
                     jd31_null_errors += 1
                 else:
                     z += 1
-        logging.info( f"%s - End probing zone-3 [API=premarket]: errors: {jd31_null_errors} / 6" % cmi_debug )
+        logging.info( f"%s - End probing zone-3 [API=premarket]: errors: {jd31_null_errors} / {len(x)}" % cmi_debug )
         return jd31_null_errors
 
 ################################################################################################
