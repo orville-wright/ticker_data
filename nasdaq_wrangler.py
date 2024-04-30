@@ -93,8 +93,8 @@ class nq_wrangler:
 
         # TODO: I need to move away from predefined fields and just scan all the fields and create a list
         # TODO: this way, nasdaq can change their json and I wont care
-        jd_10s = ("PreviousClose", "MarketCap", "TodayHighLow", "AverageVolume", "OneYrTarget", "PreviousClose", "FiftTwoWeekHighLow" )
-        jd_10e = ("PreviousClose", "MarketCap", "TodayHighLow", "FiftyDayAvgDailyVol", "PreviousClose", "FiftTwoWeekHighLow" )
+        jd_10s = ("OneYrTarget", "TodayHighLow", "AverageVolume", "PreviousClose", "FiftTwoWeekHighLow", "MarketCap" )
+        jd_10e = ("MarketCap", "TodayHighLow", "FiftyDayAvgDailyVol", "PreviousClose", "FiftTwoWeekHighLow" )
 
         if self.asset_class == "stocks": jd_10 = jd_10s     # asset_class ust be preset
         if self.asset_class == "etf": jd_10 = jd_10e        # asset_class must be preset
