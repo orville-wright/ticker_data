@@ -517,12 +517,10 @@ def main():
             logging.info( f"%s - re-shape asset class endpoint to: {ac}" )
             nq.form_api_endpoint(nq_symbol, ac)      # re-form API endpoint if default asset_class guess was wrong)
         else:
+            logging.info( f"============ Getting nasdaq qote data for asset class: {ac} ==========" )
             nq.get_nquote(nq_symbol.rstrip())
             wq = nq_wrangler(1, args)                   # instantiate a class for Quote Data Wrangeling
-            print ( f">>> DEBUG <<< : >>>>>>>>>> Asset class injection <<<<<<<<<<<<<<<<<<<<<<<<<<<<<" )
-            print ( f">>> DEBUG: Asset class is: {ac}" )
             wq.asset_class = ac                         # wrangeler class MUST know the class of asset its working on
-            print ( f">>> DEBUG: wrangler class.asset_class:  {wq.asset_class}" )
             wq.setup_zones(1, nq.quote_json1, nq.quote_json2, nq.quote_json3)
             wq.do_wrangle()
             wq.clean_cast()
