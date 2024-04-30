@@ -241,6 +241,10 @@ class nq_wrangler:
             return wrangle_errors
         elif c > 0:
             logging.info( f"%s   - Nasdaq premarket data is ABERRANT [ Zone 1:{a} zone 2:{b} zone 3:{c} ]" % cmi_debug )
+            logging.info( f'%s   - Abandon Nasdaq quote - Data is BAD' % cmi_debug )
+            wrangle_errors = self.pre_load_z2()      # Watchlist
+            wrangle_errors += self.pre_load_z3()     # Pre-market
+            wrangle_errors += self.pre_load_z1()     # summary
             wrangle_errors = a+b+c
             return wrangle_errors
         else:
@@ -367,14 +371,13 @@ class nq_wrangler:
         # >>> DEBUG Xray <<<
         if self.args['bool_xray'] is True:
             print ( f"\n================= Nasdaq quote data : raw uncleansed =================" )
-            work_on = ['self.co_sym', 'self.co_name', 'self.price', 'price_net', 'price_pct', 'arrow_updown', \
+            work_on = ['co_sym', 'co_name', 'price', 'price_net', 'price_pct', 'arrow_updown', \
                     'price_timestamp', 'vol_abs', 'open_price', 'open_volume', 'open_updown', \
                     'prev_close', 'mkt_cap', 'today_hilo', 'avg_vol', 'oneyear_target', 'PreviousClose', \
                     'LII_week_hilo']
             xx = iter(work_on)
             for name in work_on:
-                #print ( f"{next(xx)} / {eval(name)}" )
-                print ( f"{xx}" )
+                print ( f"{next(xx)} / {eval(name)}" )
         # >>> DEBUG Xray <<<
 
         #################################### Begin Deep clean ##########################################
