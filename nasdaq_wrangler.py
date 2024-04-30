@@ -93,12 +93,12 @@ class nq_wrangler:
 
         # TODO: I need to move away from predefined fields and just scan all the fields and create a list
         # TODO: this way, nasdaq can change their json and I wont care
-        jd_10s = ("OneYrTarget", "TodayHighLow", "AverageVolume", "PreviousClose", "FiftTwoWeekHighLow", "MarketCap" )
-        jd_10e = ("MarketCap", "TodayHighLow", "FiftyDayAvgDailyVol", "PreviousClose", "FiftTwoWeekHighLow" )
 
-        # asset_class must be preset
+        # These are the JSON keys that we are intersted in extracting. Other keys exists but their boring
+        # assume that we are working on a stock (not an etf)
         jd_10 = ("OneYrTarget", "TodayHighLow", "AverageVolume", "PreviousClose", "FiftTwoWeekHighLow", "MarketCap" )
-        if self.asset_class == "etf": jd_10 = ("MarketCap", "TodayHighLow", "FiftyDayAvgDailyVol", "PreviousClose", "FiftTwoWeekHighLow" )
+        if self.asset_class == "etf":
+            jd_10 = ("MarketCap", "TodayHighLow", "FiftyDayAvgDailyVol", "PreviousClose", "FiftTwoWeekHighLow" )
 
         try:
             y = self.jsondata11['data']['summaryData']      # JSON struct : summary
@@ -329,33 +329,33 @@ class nq_wrangler:
         """
         cmi_debug = __name__+"::"+self.pre_load_z1.__name__+".#"+str(self.yti)
         logging.info('%s  - zone-1 [summary] : Accessing JSON data fields...' % cmi_debug )
-        if self.jsondata11['data'] is not None:                    # bad payload? - can also test a == 0
+        if self.asset_class == "stocks":
             fields_set = 0
-            j11 = self.jsondata11['data']['summaryData']           # HEAD of data payload
-            self.prev_close = j11['PreviousClose']['value']        # e,g, "$138.93"
-            fields_set += 1
-            self.mkt_cap = j11['MarketCap']['value']               # e.g. "128,460,592,862"
-            fields_set += 1
-            self.today_hilo = j11['TodayHighLow']['value']         # WARN: multi-field string needs splitting/wrangeling e.g. "$143.97/$140.37"
-            fields_set += 1
-            if self.asset_class == "stocks":
-                self.avg_vol = j11['AverageVolume']['value']       # e.g. "4,811,121" or N/A
-                fields_set += 1
-                self.oneyear_target = j11['OneYrTarget']['value']  # e.g. "$151.00"
-                fields_set += 1
+            if self.jsondata11['data'] is not None:                    # bad payload? - can also test a == 0
+                j11 = self.jsondata11['data']['summaryData']           # HEAD of data payload
+                self.prev_close = j11['PreviousClose']['value']        # e,g, "$138.93"
+                self.mkt_cap = j11['MarketCap']['value']               # e.g. "128,460,592,862"
+                self.today_hilo = j11['TodayHighLow']['value']         # WARN: multi-field string needs splitting/wrangeling e.g. "$143.97/$140.37"
+                self.avg_vol = j11['AverageVolume']['value']           # e.g. "4,811,121" or N/A
+                self.oneyear_target = j11['OneYrTarget']['value']      # e.g. "$151.00"
+                fields_set = 5
+                logging.info( f"%s  - zone-1 [summary] : {fields_set} / {len(j11)} fields - Done" % cmi_debug )
+                return 0
             else:
-                logging.info( f"%s  - zone-1 [summary] : Not a stock - skipping some data..." % cmi_debug )
-                self.avg_vol = 0                                    # not stock gets 0 here
-                self.oneyear_target = 0                             # not stock gets 0 here
-                return 1
-
-            logging.info( f"%s  - zone-1 [summary] : {fields_set} / {len(j11)} fields - Done" % cmi_debug )
-            return 0
-
+                logging.info( '%s  - zone-1 / [summary] : BAD json payload - BAD stock data' % cmi_debug )        # bad symbol json payload
+                self.quote.clear()
+                return 99
         else:
-            logging.info( '%s  - zone-1 / [summary] : BAD json payload - NOT regular stock' % cmi_debug )        # bad symbol json payload
-            self.quote.clear()
-            return 99
+            logging.info( f"%s  - zone-1 [summary] : Not a stock - skipping some data..." % cmi_debug )
+            j11 = self.jsondata11['data']['summaryData']           # HEAD of data payload
+            self.avg_vol = 0                                    # not stock gets 0 here
+            self.oneyear_target = 0                             # not stock gets 0 here
+            self.prev_close = j11['PreviousClose']['value']        # e,g, "$138.93"
+            self.mkt_cap = j11['MarketCap']['value']               # e.g. "128,460,592,862"
+            self.today_hilo = j11['TodayHighLow']['value']         # WARN: multi-field string needs splitting/wrangeling e.g. "$143.97/$140.37"
+            fields_set = 3
+            logging.info( f"%s  - zone-1 [summary] : {fields_set} / {len(j11)} fields - Done" % cmi_debug )
+            return 1
 
 ########################################################################################
 # wrangle, clean, cast & prepare the data ##############################################

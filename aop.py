@@ -520,6 +520,7 @@ def main():
 
 
         wq = nq_wrangler(1, args)                   # instantiate a class for Quote Data Wrangeling
+        logging.info( f"%s   - setting Wrangler Asset Class to: [{ac}]" % cmi_debug )
         wq.asset_class = ac                         # wrangeler class MUST know the class of asset its working on
         wq.setup_zones(1, nq.quote_json1, nq.quote_json2, nq.quote_json3)
         wq.do_wrangle()
