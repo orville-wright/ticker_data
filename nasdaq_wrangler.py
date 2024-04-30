@@ -363,7 +363,7 @@ class nq_wrangler:
         At the end just return a count of how many wrangle Errors we encountered
         """
         cmi_debug = __name__+"::"+self.clean_cast.__name__+".#"+str(self.yti)
-        logging.info('%s  - Begin data cleanse for final setup...' % cmi_debug )
+        logging.info('%s   - Begin data cleanse for final setup...' % cmi_debug )
         # >>> DEBUG Xray <<<
         if self.args['bool_xray'] is True:
             print ( f"\n================= Nasdaq quote data : raw uncleansed =================" )
@@ -373,7 +373,8 @@ class nq_wrangler:
                     'LII_week_hilo']
             xx = iter(work_on)
             for name in work_on:
-                print ( f"{next(xx)} / {eval(name)}" )
+                #print ( f"{next(xx)} / {eval(name)}" )
+                print ( f"{xx}" )
         # >>> DEBUG Xray <<<
 
         #################################### Begin Deep clean ##########################################
