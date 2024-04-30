@@ -294,11 +294,11 @@ class nq_wrangler:
         NOTE: No need to ever call this explicitly. - that will #fail
         """
         cmi_debug = __name__+"::"+self.pre_load_z3.__name__+".#"+str(self.yti)
-        if self.quote_json3['data'] is not None:                                # bad payload? - can also test c == 0
+        if self.jsondata30['data'] is not None:                                # bad payload? - can also test c == 0
             logging.info('%s - zone-3 [pre-market] / Accessing data fields...' % cmi_debug )
-            jsondata30 = self.quote_json3['data']                               # HEAD of data payload 0
+            jsondata30 = self.quote_json30['data']                               # HEAD of data payload 0
             try:
-                jsondata31 = self.quote_json3['data']['infoTable']['rows'][0]       # HEAD of data payload 1
+                jsondata31 = self.jsondata30['data']['infoTable']['rows'][0]       # HEAD of data payload 1
             except TypeError:
                 logging.info('%s - zone-3 [pre-market] / WARNING infoTable payload is BAD' % cmi_debug )        # bad symbol json payload
                 self.open_price = "$0.0 0.0 0.0"
