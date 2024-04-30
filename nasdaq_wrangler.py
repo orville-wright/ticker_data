@@ -296,7 +296,7 @@ class nq_wrangler:
         cmi_debug = __name__+"::"+self.pre_load_z3.__name__+".#"+str(self.yti)
         if self.jsondata30['data'] is not None:                                # bad payload? - can also test c == 0
             logging.info('%s - zone-3 [pre-market] / Accessing data fields...' % cmi_debug )
-            jsondata30 = self.quote_json30['data']                               # HEAD of data payload 0
+            jsondata30 = self.jsondata30['data']                               # HEAD of data payload 0
             try:
                 jsondata31 = self.jsondata30['data']['infoTable']['rows'][0]       # HEAD of data payload 1
             except TypeError:
