@@ -546,10 +546,10 @@ def main():
             te.te_into_nquote(te_nq_quote)     # NOTE: needs to be the point to new refactored class nasdqa_wrangler::nq_wrangler qd_quote{}
         #
         print ( f"Get Nasdaq.com quote for: {nq_symbol}" )
-        if nq.quote.get("symbol") is not None:
+        if wq.qd_quote.get("symbol") is not None:
             print ( f"================= Nasdaq quote data =======================" )
             c = 1
-            for k, v in nq.quote.items():
+            for k, v in wq.qd_quote.items():
                 print ( f"{c} - {k} : {v}" )
                 c += 1
             print ( f"===============================================================" )
