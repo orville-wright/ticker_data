@@ -517,7 +517,7 @@ def main():
             logging.info( f"%s - re-shape asset class endpoint to: {ac}" )
             nq.form_api_endpoint(nq_symbol, ac)      # re-form API endpoint if default asset_class guess was wrong)
         else:
-            logging.info( f"============ Getting nasdaq qote data for asset class: {ac} ==========" )
+            logging.info( f"============ Getting nasdaq quote data for asset class: {ac} ==========" )
             nq.get_nquote(nq_symbol.rstrip())
             wq = nq_wrangler(1, args)                   # instantiate a class for Quote Data Wrangeling
             wq.asset_class = ac                         # wrangeler class MUST know the class of asset its working on

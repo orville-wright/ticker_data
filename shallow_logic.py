@@ -101,35 +101,35 @@ class combo_logic:
         total_wrangle_errors = 0                        # usefull counters
         unfixable_errors = 0
         cleansed_errors = 0
-        logging.info( f"{cmi_debug} - GET missing data from nasdaq.com for: {len(up_symbols)} symbols" )
+        logging.info( f"%s  - Get quote data from nasdaq.com for:  {len(up_symbols)} symbols" % cmi_debug )
         loop_count = 1
         print ( f"Insert missing Unusual UP volume from Nasdaq.com [market data]..." )
         cols = 1
         fixchars = 0
 
+        ############################### get quote Setup #################################
         # This is a network expsive method as it does a network get for each stock symbol
         # and extracts missing data & saves it to combo_df.
-
-        ############################### Setup ############################################
         for qsymbol in up_symbols:
             xsymbol = qsymbol
             qsymbol = qsymbol.rstrip()                   # cleand/striped of trailing spaces
-            logging.info( f"{cmi_debug} ================ get quote: {qsymbol} : {loop_count} ====================" )
+            logging.info( f"%s  - get quote:  {qsymbol} : {loop_count}" % cmi_debug )
             nq.update_headers(qsymbol, "stocks")         # set path: header object. doesnt touch secret nasdaq cookies
             nq.form_api_endpoint(qsymbol, "stocks")      # set API endpoint url - default GUESS asset_class=stocks
             ac = nq.learn_aclass(qsymbol)
-            if ac != "stocks":
-                logging.info( f"{cmi_debug} - re-shape asset class endpoint to: {ac}" )
-                nq.form_api_endpoint(qsymbol, ac)      # re-form API endpoint if default asset_class guess was wrong)
-            nq.get_nquote(qsymbol)                     # get a live quote
 
-            wq = nq_wrangler(1, self.args)                   # instantiate a class for Quote Data Wrangeling
-            wq.setup_zones(1, nq.quote_json1, nq.quote_json2, nq.quote_json3)
-            wq.do_wrangle()
-            wq.clean_cast()
-            wq.build_data_sets()
-            
-            print ( f"{qsymbol:5}...", end="", flush=True )
+            if ac != "stocks":
+                logging.info( f"%s  - re-shape asset class endpoint to: {ac}" % cmi_debug )
+                nq.form_api_endpoint(qsymbol, ac)      # re-form API endpoint if default asset_class guess was wrong)
+            else:
+                nq.get_nquote(qsymbol.upper())             # get a live quote
+                wq = nq_wrangler(1, self.args)                   # instantiate a class for Quote Data Wrangeling
+                wq.asset_class = ac
+                wq.setup_zones(3, nq.quote_json1, nq.quote_json2, nq.quote_json3)
+                wq.do_wrangle()
+                wq.clean_cast()
+                wq.build_data_sets()     
+                print ( f"{qsymbol:5}...", end="", flush=True )
             
             ############################### Phase 1 ###########################################
             # Evaluate Asset Class = an Exchnage Traded Fund (ETF)
