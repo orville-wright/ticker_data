@@ -97,7 +97,7 @@ class nq_wrangler:
         jd_10e = ("MarketCap", "TodayHighLow", "FiftyDayAvgDailyVol", "PreviousClose", "FiftTwoWeekHighLow" )
 
         # asset_class must be preset
-        if self.asset_class == "stocks": jd_10 = ("OneYrTarget", "TodayHighLow", "AverageVolume", "PreviousClose", "FiftTwoWeekHighLow", "MarketCap" )
+        jd_10 = ("OneYrTarget", "TodayHighLow", "AverageVolume", "PreviousClose", "FiftTwoWeekHighLow", "MarketCap" )
         if self.asset_class == "etf": jd_10 = ("MarketCap", "TodayHighLow", "FiftyDayAvgDailyVol", "PreviousClose", "FiftTwoWeekHighLow" )
 
         try:
