@@ -295,24 +295,24 @@ class nq_wrangler:
         """
         cmi_debug = __name__+"::"+self.pre_load_z3.__name__+".#"+str(self.yti)
         if self.jsondata30['data'] is not None:                                # bad payload? - can also test c == 0
-            logging.info('%s - zone-3 [pre-market] / Accessing data fields...' % cmi_debug )
+            logging.info('%s  - zone-3 [pre-market] / Accessing data fields...' % cmi_debug )
             jsondata30 = self.jsondata30['data']                               # HEAD of data payload 0
             try:
                 jsondata31 = self.jsondata30['data']['infoTable']['rows'][0]       # HEAD of data payload 1
             except TypeError:
-                logging.info('%s - zone-3 [pre-market] / WARNING infoTable payload is BAD' % cmi_debug )        # bad symbol json payload
+                logging.info('%s  - zone-3 [pre-market] / WARNING infoTable payload is BAD' % cmi_debug )        # bad symbol json payload
                 self.open_price = "$0.0 0.0 0.0"
                 self.open_volume = 0                                  # e.g. "71,506"
                 self.open_updown = "N/A"                              # e.g. "up"
-                wrangle_errors += -1
+                return 99
             else:
                 self.open_price = jsondata31['consolidated']                             # WARN: open_price info = multi-field string needs splitting e.g. "$140.8 +1.87 (+1.35%)"
                 self.open_volume = jsondata31['volume']                                  # e.g. "71,506"
                 self.open_updown = jsondata31['delta']                                   # e.g. "up"
-                logging.info( '%s - zone-3 [pre-market] / [3] fields - Done' % cmi_debug )
+                logging.info( '%s  - zone-3 [pre-market] / [3] fields - Done' % cmi_debug )
                 return 0
         else:
-            logging.info('%s - Zone-3 [pre-market] BAD json payload - NOT regular stock / Abort' % cmi_debug )        # bad symbol json payload
+            logging.info('%s  - Zone-3 [pre-market] BAD json payload - NOT regular stock / Abort' % cmi_debug )        # bad symbol json payload
             self.quote.clear()
             return 99
 
