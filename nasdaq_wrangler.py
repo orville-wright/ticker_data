@@ -521,6 +521,8 @@ class nq_wrangler:
         cmi_debug = __name__+"::"+self.build_data_sets.__name__+".#"+str(self.yti)
         # craft final data structure.
         # NOTE: globally accessible and used by quote DF and quote DICT
+
+        self.time_now = time.strftime("%H:%M:%S", time.localtime() )
         self.symbol=self.co_sym_lj.rstrip()
         logging.info( f"%s - Build list for Dataframe insert: {self.symbol}" % cmi_debug )        # so we can access it natively if needed, without using pandas
         self.qd_data0 = [[ \
@@ -559,11 +561,10 @@ class nq_wrangler:
             mkt_cap=self.mkt_cap_cl )
 
         logging.info( f"%s - Build global DF: {self.symbol}" % cmi_debug )
-        time_now = time.strftime("%H:%M:%S", time.localtime() )
-        logging.info('%s - Drop ephemeral DF' % cmi_debug )
+        logging.info( '%s  - Drop ephemeral DF' % cmi_debug )
         #self.quote_df0.drop(self.quote_df0.index, inplace=True)        # ensure the DF is empty
         logging.info('%s - Populate DF with new quote data' % cmi_debug )
-        self.quote_df0 = pd.DataFrame(self.data0, columns=[ 'Symbol', 'Co_name', 'arrow_updown', 'Cur_price', 'Prc_change', 'Pct_change', 'Open_price', 'Prev_close', 'Vol', 'Mkt_cap', 'Exch_timestamp', 'Time' ] )
+        self.quote_df0 = pd.DataFrame(self.qd_data0, columns=[ 'Symbol', 'Co_name', 'arrow_updown', 'Cur_price', 'Prc_change', 'Pct_change', 'Open_price', 'Prev_close', 'Vol', 'Mkt_cap', 'Exch_timestamp', 'Time' ] )
         logging.info('%s - Quote DF created' % cmi_debug )
 
         return 0
