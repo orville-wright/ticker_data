@@ -503,7 +503,7 @@ def main():
     quote price data is 5 mins delayed
     10 data fields provided
     """
-    cmi_debug = __name__+"::aop::quote_template.#1"
+
     if args['qsymbol'] is not False:
         nq = nquote(1, args)                         # Nasdqa quote instance from nasdqa_quotes.py
         nq.init_dummy_session()                      # note: this will set nasdaq magic cookie
@@ -514,12 +514,12 @@ def main():
         ac = nq.learn_aclass(nq_symbol)
 
         if ac != "stocks":
-            logging.info( f"%s - re-shape asset class endpoint to: {ac}" % cmi_debug )
+            logging.info( f"%s - re-shape asset class endpoint to: {ac}" )
             nq.form_api_endpoint(nq_symbol, ac)      # re-form API endpoint if default asset_class guess was wrong)
         else:
             nq.get_nquote(nq_symbol.rstrip())
             wq = nq_wrangler(1, args)                   # instantiate a class for Quote Data Wrangeling
-            logging.info( f"%s   - setting Wrangler Asset Class to: [{ac}]" % cmi_debug )
+            print ( ">>> DEBUG <<< : >>>>>>>>>> Asset class injection <<<<<<<<<<<<<<<<<<<<<<<<<<<<<" )
             wq.asset_class = ac                         # wrangeler class MUST know the class of asset its working on
             wq.setup_zones(1, nq.quote_json1, nq.quote_json2, nq.quote_json3)
             wq.do_wrangle()
@@ -549,11 +549,10 @@ def main():
             print ( f"{c} - {k} : {v}" )
             c += 1
         print ( f"===================== Technial Events =========================" )
-        print ( " " )
         te.build_te_df(1)
         te.reset_te_df0()
-        print ( f"===============================================================" )
         print ( f"{te.te_df0}" )
+        print ( f"===============================================================" )
     else:
         print ( f"No Nasdaq.com quote - Not a regular symbol - prob Trust, ETF etc" )
 
