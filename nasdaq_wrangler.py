@@ -268,17 +268,17 @@ class nq_wrangler:
         NOTE: No need to ever call this explicitly. - that will #fail
         """
         cmi_debug = __name__+"::"+self.pre_load_z2.__name__+".#"+str(self.yti)
-        if self.quote_json2['data'] is not None:                                # bad payload? - can also test b == 0
+        if self.quote_json20['data'] is not None:                                # bad payload? - can also test b == 0
             logging.info('%s - Zone #2 / Accessing data fields...' % cmi_debug )
-            jsondata20 = self.quote_json2['data'][0]                            # HEAD of data payload
-            self.co_sym = jsondata20['symbol']                                  # "IBM"
-            self.co_name = jsondata20['companyName']                                 # "International Business Machines Corporation Common Stock"
-            self.price = jsondata20['lastSalePrice']                                 # "$143.32"
-            self.price_net = jsondata20['netChange']                                 # "+4.39"
-            self.price_pct = jsondata20['percentageChange']                          # "3.16%"
-            self.arrow_updown = jsondata20['deltaIndicator']                         # "up"
-            self.price_timestamp = jsondata20['lastTradeTimestampDateTime']          # "2021-10-01T00:00:00"
-            self.vol_abs = jsondata20['volume']                                      # "6,604,064"
+            jd20 = self.quote_json20['data'][0]                            # HEAD of data payload
+            self.co_sym = jd20['symbol']                                  # "IBM"
+            self.co_name = jd20['companyName']                                 # "International Business Machines Corporation Common Stock"
+            self.price = jd20['lastSalePrice']                                 # "$143.32"
+            self.price_net = jd20['netChange']                                 # "+4.39"
+            self.price_pct = jd20['percentageChange']                          # "3.16%"
+            self.arrow_updown = jd20['deltaIndicator']                         # "up"
+            self.price_timestamp = jd20['lastTradeTimestampDateTime']          # "2021-10-01T00:00:00"
+            self.vol_abs = jd20['volume']                                      # "6,604,064"
             logging.info( '%s - Zone #2 /[8] fields - Done' % cmi_debug )
         else:
             logging.info('%s - Zone #2 / NULL json payload - NOT regular stock' % cmi_debug )        # bad symbol json payload
