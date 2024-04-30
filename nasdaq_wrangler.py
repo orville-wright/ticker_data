@@ -346,7 +346,7 @@ class nq_wrangler:
             else:
                 pass
 
-            logging.info( '%s  - zone-1 [summary] : {fields_set}/ 7 fields - Done' % cmi_debug )
+            logging.info( f"%s  - zone-1 [summary] : {fields_set}/ 7 fields - Done" % cmi_debug )
             return 0
         else:
             logging.info( '%s  - zone-1 / [summary] BAD json payload - NOT regular stock' % cmi_debug )        # bad symbol json payload
