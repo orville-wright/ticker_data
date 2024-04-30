@@ -168,7 +168,7 @@ class nq_wrangler:
         logging.info( f'%s - probing zone-3 [API=premarket] JSON keys/fields...' % cmi_debug )
         jd_31 = ("consolidated", "volume", "highPrice", "lowPrice", "delta" )
         #jd_30 = ("infoTable", "infoTable']['rows", "infoTable']['rows'][0", "infoTable']['rows'][0]['consolidated'",
-                    "infoTable']['rows'][0]['volume'", "'infoTable']['rows'][0]['delta'" )
+        # NOTE: wtf  ??? "infoTable']['rows'][0]['volume'", "'infoTable']['rows'][0]['delta'" )
         z = 1
         z3_errors = 0
         try:
