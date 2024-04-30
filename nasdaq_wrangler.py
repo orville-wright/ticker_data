@@ -270,7 +270,7 @@ class nq_wrangler:
         """
         cmi_debug = __name__+"::"+self.pre_load_z2.__name__+".#"+str(self.yti)
         if self.jsondata20['data'] is not None:                                # bad payload? - can also test b == 0
-            logging.info('%s  - zone-2 : [watchlist] : Accessing JSON data fields...' % cmi_debug )
+            logging.info('%s  - zone-2 [watchlist] : Accessing JSON data fields...' % cmi_debug )
             jd20 = self.jsondata20['data'][0]                            # HEAD of data payload
             self.co_sym = jd20['symbol']                                  # "IBM"
             self.co_name = jd20['companyName']                                 # "International Business Machines Corporation Common Stock"
@@ -328,7 +328,7 @@ class nq_wrangler:
               This is why we process it last !!!
         """
         cmi_debug = __name__+"::"+self.pre_load_z1.__name__+".#"+str(self.yti)
-        logging.info('%s  - zone-1 [summary] : Accessing JSNON data fields...' % cmi_debug )
+        logging.info('%s  - zone-1 [summary] : Accessing JSON data fields...' % cmi_debug )
         if self.jsondata11['data'] is not None:                                # bad payload? - can also test a == 0
             fields_set = 0
             j11 = self.jsondata11['data']['summaryData']                # HEAD of data payload
@@ -346,7 +346,7 @@ class nq_wrangler:
             else:
                 pass
 
-            logging.info( f"%s  - zone-1 [summary] : {fields_set}/ 7 fields - Done" % cmi_debug )
+            logging.info( f"%s  - zone-1 [summary] : {fields_set} / 7 fields - Done" % cmi_debug )
             return 0
         else:
             logging.info( '%s  - zone-1 / [summary] : BAD json payload - NOT regular stock' % cmi_debug )        # bad symbol json payload
