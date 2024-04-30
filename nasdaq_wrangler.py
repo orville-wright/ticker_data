@@ -112,7 +112,7 @@ class nq_wrangler:
             logging.info( f"%s   - End probing zone-1 [API=summary] / errors: {z1_errors}" % cmi_debug )
             return z1_errors
         else:
-            x = self.jsondata11['summaryData']
+            x = self.jsondata11['data']['summaryData']
             for i in jd_10:
                 print ( f"DEBUG: i: {i} " )
                 try:
