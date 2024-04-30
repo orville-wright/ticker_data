@@ -327,7 +327,7 @@ class nq_wrangler:
               This is why we process it last !!!
         """
         cmi_debug = __name__+"::"+self.pre_load_z1.__name__+".#"+str(self.yti)
-        logging.info('%s - Zone #1 / Accessing data fields...' % cmi_debug )
+        logging.info('%s  - Zone #1 / Accessing data fields...' % cmi_debug )
         if self.jsondata11['data'] is not None:                                # bad payload? - can also test a == 0
             fields_set = 0
             j11 = self.jsondata11['data']['summaryData']                # HEAD of data payload
@@ -367,7 +367,7 @@ class nq_wrangler:
         # >>> DEBUG Xray <<<
         if self.args['bool_xray'] is True:
             print ( f"\n================= Nasdaq quote data : raw uncleansed =================" )
-            work_on = ['co_sym', 'co_name', 'price', 'price_net', 'price_pct', 'arrow_updown', \
+            work_on = ['self.co_sym', 'self.co_name', 'self.price', 'self.price_net', 'price_pct', 'arrow_updown', \
                     'price_timestamp', 'vol_abs', 'open_price', 'open_volume', 'open_updown', \
                     'prev_close', 'mkt_cap', 'today_hilo', 'avg_vol', 'oneyear_target', 'PreviousClose', \
                     'LII_week_hilo']
