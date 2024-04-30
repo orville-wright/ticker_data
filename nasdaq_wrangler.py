@@ -367,10 +367,10 @@ class nq_wrangler:
         # >>> DEBUG Xray <<<
         if self.args['bool_xray'] is True:
             print ( f"\n================= Nasdaq quote data : raw uncleansed =================" )
-            work_on = ['self.co_sym', 'self.co_name', 'self.price', 'self.price_net', 'price_pct', 'arrow_updown', \
-                    'price_timestamp', 'vol_abs', 'open_price', 'open_volume', 'open_updown', \
-                    'prev_close', 'mkt_cap', 'today_hilo', 'avg_vol', 'oneyear_target', 'PreviousClose', \
-                    'LII_week_hilo']
+            work_on = ['self.co_sym', 'self.co_name', 'self.price', 'self.price_net', 'self.price_pct', 'self.arrow_updown', \
+                    'self.price_timestamp', 'self.vol_abs', 'self.open_price', 'self.open_volume', 'self.open_updown', \
+                    'self.prev_close', 'self.mkt_cap', 'self.today_hilo', 'self.avg_vol', 'self.oneyear_target', 'self.PreviousClose', \
+                    'self.LII_week_hilo']
             xx = iter(work_on)
             for name in work_on:
                 print ( f"{next(xx)} / {eval(name)}" )
