@@ -62,9 +62,9 @@ class nq_wrangler:
         """
         self.yti = yti
         cmi_debug = __name__+"::"+self.setup_zones.__name__+".#"+str(self.yti)
-        logging.info('%s - build quote data payload from raw JSON' % cmi_debug )
+        logging.info('%s  - build quote data payload from raw JSON' % cmi_debug )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
-        logging.info('%s - prepare jsondata accessors [Zone-1/Zone-2/Zone-3]...' % cmi_debug )
+        logging.info('%s  - prepare jsondata accessors [Zone-1/Zone-2/Zone-3]...' % cmi_debug )
         self.jsondata11 = qd_1                              # summary : quote_json1['data']
         self.jsondata20 = qd_2                              # watchlist : quote_json2['data'][0]
         self.jsondata30 = qd_3                              # premarket : quote_json3['data']
@@ -87,7 +87,7 @@ class nq_wrangler:
         self.asset_class must be set before this method can be called.
         """
         cmi_debug = __name__+"::"+self.z1_summary.__name__+".#"+str(self.yti)
-        logging.info( f'%s - probing zone-1 JSON keys/fields...' % cmi_debug )
+        logging.info( f'%s   - probing zone-1 [API=summary] JSON keys/fields...' % cmi_debug )
         z = 1
         jd10_null_errors = 0
 
@@ -102,11 +102,11 @@ class nq_wrangler:
         try:
             y = self.jsondata11['summaryData']      # JSON struct : summary
         except TypeError:
-            logging.info( f"%s - Probe #1.1 (API=summary): NULL data @: [data][summaryData]" % cmi_debug )
+            logging.info( f"%s   - Probe #1.1 : TypeError / BAD type @: [data][summaryData]" % cmi_debug )
             jd10_null_errors = 1 + len(jd_10)       # everything in data set is BAD
             return jd10_null_errors
         except KeyError:
-            logging.info( f"%s - Probe #1.2 (API=summary): NULL key @: [data][summaryData]" % cmi_debug )
+            logging.info( f"%s   - Probe #1.2 : KeyError / BAD key @: [data][summaryData]" % cmi_debug )
             jd10_null_errors = 1 + len(jd_10)       # everything in data set is BAD
             return jd10_null_errors
         else:
@@ -116,16 +116,16 @@ class nq_wrangler:
                 try:
                     y = x[i]
                 except TypeError:
-                    logging.info( f"%s - Probe #1.3 (API=summary): NULL data @: [{i}] - RESET to: 0" % cmi_debug )
+                    logging.info( f"%s   - Probe #1.3 : TypeError / BAD type @: [{i}] - RESET to: 0" % cmi_debug )
                     x[i]['value'] = 0      # fix the bad data by writing this field as 0
                     jd10_null_errors += 1
                 except KeyError:
-                    logging.info( f"%s - Probe #1.4 (API=summary): NULL key @: [{i}] - RESET to: 0" % cmi_debug )
+                    logging.info( f"%s   - Probe #1.4 : KeyError / BAD key  @: [{i}] - RESET to: 0" % cmi_debug )
                     x[i]['value'] = 0      # fix the bad data by writing this field as 0
                     jd10_null_errors += 1
                 else:
                     z += 1
-        logging.info( f"%s - End NULL probe #1 (API=summary) / errors: {jd10_null_errors} / {len(x)}" % cmi_debug )
+        logging.info( f"%s - End probing zone-1 [API=summary] / errors: {jd10_null_errors} / {len(x)}" % cmi_debug )
         return jd10_null_errors
 
 
@@ -137,7 +137,7 @@ class nq_wrangler:
         non-existent/bad ticker symbol (or ETF/Fund). but this means errors are less severe.
         """
         cmi_debug = __name__+"::"+self.z2_watchlist.__name__+".#"+str(self.yti)
-        logging.info( f'%s - probing zone-2 JSON keys/fields for NULLs...' % cmi_debug )
+        logging.info( f'%s - probing zone-2 [API=watchlist] JSON keys/fields...' % cmi_debug )
         z = 1
         x = self.jsondata20     # JSON struct : watchlist
         jd_20 = ("symbol", "companyName", "lastSalePrice", "netChange", "percentageChange", "deltaIndicator", "lastTradeTimestampDateTime", "volume" )
@@ -147,14 +147,14 @@ class nq_wrangler:
             try:
                 y = x[i]
             except TypeError:
-                logging.info( f"%s - Probe #2.1 (API=watchlist): NULL data @: [{i}]" % cmi_debug )
+                logging.info( f"%s - Probe #2.1 : TypeError / BAD type @: [{i}]" % cmi_debug )
                 jd20_null_errors += 1
             except KeyError:
-                logging.info( f"%s - Probe #2.2 (API=watchlist): NULL KEY data @: [{i}]" % cmi_debug )
+                logging.info( f"%s - Probe #2.2 : KeyError / BADkey @: [{i}]" % cmi_debug )
                 jd20_null_errors += 1
             else:
                 z += 1
-        logging.info( f"%s - End NULL probe #2 (API=watchlist) / errors: {jd20_null_errors} / {len(x)}" % cmi_debug )
+        logging.info( f"%s - End probing zone-2 [API=watchlist] / errors: {jd20_null_errors} / {len(x)}" % cmi_debug )
         return jd20_null_errors
 
     # ZONE #3 premarket zone....########################################
@@ -163,7 +163,7 @@ class nq_wrangler:
         Process Zone 2 - Premarket Zone
         """
         cmi_debug = __name__+"::"+self.z3_premarket.__name__+".#"+str(self.yti)
-        logging.info( f'%s - probing zone-3 JSONkeys/fields for NULLs...' % cmi_debug )
+        logging.info( f'%s - probing zone-3 [API=premarket] JSON keys/fields...' % cmi_debug )
         jd_31 = ("consolidated", "volume", "delta" )
         jd_30 = ("infoTable", "infoTable']['rows", "infoTable']['rows'][0", "infoTable']['rows'][0]['consolidated'",
                     "infoTable']['rows'][0]['volume'", "'infoTable']['rows'][0]['delta'" )
@@ -172,11 +172,11 @@ class nq_wrangler:
         try:
             y = self.jsondata30['infoTable']['rows'][0]     # premarket
         except TypeError:
-            logging.info( f"%s - Probe #3.1 (API=premarket): NULL data @: [infoTable][rows][0]" % cmi_debug )
+            logging.info( f"%s - Probe #3.1 : TypeError BAD type @: [infoTable][rows][0]" % cmi_debug )
             jd31_null_errors = 1 + len(jd_30)               # everything in data set is BAD
             return jd31_null_errors
         except KeyError:
-            logging.info( f"%s - Probe #3.2 (API=premarket): NULL key @: [infoTable][rows][0]" % cmi_debug )
+            logging.info( f"%s - Probe #3.2 : KeyError BAD key @: [infoTable][rows][0]" % cmi_debug )
             jd31_null_errors = 1 + len(jd_30)               # everything in data set is BAD
             return jd31_null_errors
         else:
@@ -185,14 +185,14 @@ class nq_wrangler:
                 try:
                     y = x[i]
                 except TypeError:
-                    logging.info( f"%s - Probe #3.3 (API=premarket): NULL data @: [{i}]" % cmi_debug )
+                    logging.info( f"%s - Probe #3.3 : TypeError BAD type @: [{i}]" % cmi_debug )
                     jd31_null_errors += 1
                 except KeyError:
-                    logging.info( f"%s - Probe #3.4 (API=premarket): NULL key @: [{i}]" % cmi_debug )
+                    logging.info( f"%s - Probe #3.4 : KeyError BAD key @: [{i}]" % cmi_debug )
                     jd31_null_errors += 1
                 else:
                     z += 1
-        logging.info( f"%s - End NULL probe 3 (API=premarket): errors: {jd31_null_errors} / 6" % cmi_debug )
+        logging.info( f"%s - End probing zone-3 [API=premarket]: errors: {jd31_null_errors} / 6" % cmi_debug )
         return jd31_null_errors
 
 ################################################################################################
@@ -217,6 +217,7 @@ class nq_wrangler:
             if a > 0:                   # still BAD after 2nd attempt
                 logging.info( f"%s - Nasdaq quote data is ABERRANT [ Zone 1:{a} zone 2:{b} zone 3:{c} ]" % cmi_debug )
                 logging.info( f'%s - Abandon Nasdaq quote - Data is BAD' % cmi_debug )
+                wrangle_errors = a+b+c
                 return wrangle_errors
             else:
                 logging.info( f"%s - Repaired ABERRANT data [ Zone 1:{a} zone 2:{b} zone 3:{c} ]" % cmi_debug )
