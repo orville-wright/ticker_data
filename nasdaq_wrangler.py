@@ -172,7 +172,7 @@ class nq_wrangler:
         z = 1
         z3_errors = 0
         try:
-            y = self.jsondata30['data']['infoTable']['rows'][0]     # premarket
+            y = self.jsondata30['infoTable']['rows'][0]     # premarket
         except TypeError:
             logging.info( f"%s - Probe #3.1 : TypeError BAD type @: [infoTable][rows][0]" % cmi_debug )
             z3_errors = 10               # everything in data set is BAD
