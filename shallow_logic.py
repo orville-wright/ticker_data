@@ -213,6 +213,11 @@ class combo_logic:
                 print ( f"{row_index}" )
                 print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 7 <<<<<<<<<<<<<<<<<<<<<" )
                 print ( f" {self.combo_df.iloc[row_index]}" )
+                print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 7 <<<<<<<<<<<<<<<<<<<<<" )
+                print ( f" {self.combo_df.at[row_index, 5]}" )
+                print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 7 <<<<<<<<<<<<<<<<<<<<<" )
+                print ( f" {self.combo_df.at[row_index, 6]}" )
+                
                 #print ( f">>>>>> DEBUG: {self.combo_df.iat[row_index, 5].index[0]}" )
                 
                 self.combo_df.iat[row_index, 5] = round(z_float, 3)        # at row 0 / col 6 (Mkt_cap)
