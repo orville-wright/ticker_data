@@ -197,21 +197,21 @@ class combo_logic:
                 logging.info( f"{cmi_debug} - Set {wq.asset_class} Mkt_cap to: {wq.qd_quote['mkt_cap']}" )
                 z_float = (float(wq.qd_quote['mkt_cap']))
                 print ( f">>>>> DEBUG 2: {z_float} / type: {type(z_float)}" )
-                print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 3 <<<<<<<<<<<<<<<<<<<<<" )
+                #print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 3 <<<<<<<<<<<<<<<<<<<<<" )
                 print ( f"{self.combo_df[self.combo_df['Symbol'] == xsymbol]}" )
+
                 #print ( f"{self.combo_df.at[[self.combo_df['Symbol'] == xsymbol], 'Mkt_cap']}" )
- 
-                single_row_df = self.combo_df[self.combo_df['Symbol'] == xsymbol]
-                row_index = self.combo_df.loc[self.combo_df['Symbol'] == xsymbol].index[0]
-                worker_df = single_row_df.iat[0, 6]          # at row 0 / col 6 (Mkt_cap)
-
-                self.combo_df = self.combo_df[self.combo_df['Symbol'] == xsymbol]
-
-                print ( f">>>>>> DEBUG 4: {worker_df} ")
-                print ( f">>>>>> DEBUG 5: {row_index} ")
+                #single_row_df = self.combo_df[self.combo_df['Symbol'] == xsymbol]
+                #worker_df = single_row_df.iat[0, 6]          # at row 0 / col 6 (Mkt_cap)
+                #print ( f">>>>>> DEBUG 4: {worker_df} ")
+                #print ( f">>>>>> DEBUG 5: {row_index} ")
                 
                 print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 5 <<<<<<<<<<<<<<<<<<<<<" )
-                self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(z_float, 3)
+                row_index = self.combo_df.loc[self.combo_df['Symbol'] == xsymbol].index[0]
+                self.combo_df.iat[self.combo_df[row_index, 6]] = round(z_float, 3)          # at row 0 / col 6 (Mkt_cap)
+                #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(z_float, 3)
+                print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 5 <<<<<<<<<<<<<<<<<<<<<" )
+
                 print ( f"+", end="" )
                 fixchars += 1
                 cleansed_errors += 1
