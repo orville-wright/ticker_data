@@ -98,7 +98,7 @@ class combo_logic:
         print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 2 <<<<<<<<<<<<<<<<<<<<<" )
         print ( f"{self.combo_dupes_only_listall(1)}" )
         print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 3 <<<<<<<<<<<<<<<<<<<<<" )
-       print ( f"{self.combo_dupes_only_listall(2)}" )
+        print ( f"{self.combo_dupes_only_listall(2)}" )
         print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 4 <<<<<<<<<<<<<<<<<<<<<" )
         
         uvol_badata = self.combo_df[self.combo_df['Mkt_cap'].isna()]   # Non and NaN = True
