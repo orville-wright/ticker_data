@@ -274,7 +274,7 @@ class combo_logic:
                 if pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == False and pd.isna(self.combo_df.loc[row_idx].M_B) == False:
                     self.combo_df.loc[row_idx,'Hot'] = "*Hot*"      # Tag as a **HOT** stock
                     self.combo_df.loc[row_idx,'Insights'] = self.cx.get(scale) + " + Unu vol"     # Annotate why...
-                    mpt = ( row_idx, sym.rstrip(), price )          # pack a tuple - for min_price analysis later
+                    mpt = ( row_idx, sym.rstrip(), float(price) )   # pack a tuple - for min_price analysis later
                     min_price.update({row_idx: mpt})                # load helpder DICT e.g. {1: (7, 'IBM', 120.51), 7: (24, 'TSLA', 138.21)}
                 elif pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == True and pd.isna(self.combo_df.loc[row_idx].M_B) == True:
                      self.combo_df.drop([row_idx], inplace=True)    # drop this row from DF
