@@ -190,7 +190,7 @@ class combo_logic:
                 #print ( f"{self.combo_df[self.combo_df['Symbol'] == xsymbol]}" )
                 row_index = self.combo_df.loc[self.combo_df['Symbol'] == xsymbol].index[0]
                 self.combo_df.at[row_index, 'Mkt_cap'] = round(z_float, 3)
-                print ( f"{self.combo_df[self.combo_df['Symbol'] == xsymbol]}" )
+                #print ( f"{self.combo_df[self.combo_df['Symbol'] == xsymbol]}" )
                 print ( f"+", end="" )
                 self.fixchars += 1
                 cleansed_errors += 1
@@ -215,10 +215,10 @@ class combo_logic:
                             self.combo_df.at[row_index, 'M_B'] = i[0]
                             #print ( f"{self.combo_df[self.combo_df['Symbol'] == xsymbol]}" )
                             logging.info( f"{cmi_debug} - Market cap: [ {wq.qd_quote['mkt_cap']} ] scale set to: {i[0]}" )
-                            self.wrangle_errors += 1          # insert market cap scale into DF @ column M_B for this symbol
-                            self.cleansed_errors += 1
+                            #self.wrangle_errors += 1          # insert market cap scale into DF @ column M_B for this symbol
+                            #self.cleansed_errors += 1
                             print ( f"+", end="" )
-                            self.fixchars += 1
+                            #self.fixchars += 1
                             break
             # nice column/rows status bar to show the hard work we are grinding on...
             finally:
