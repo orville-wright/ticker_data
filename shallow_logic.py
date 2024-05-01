@@ -198,11 +198,12 @@ class combo_logic:
                 z_float = (float(wq.qd_quote['mkt_cap']))
                 print ( f">>>>> DEBUG 2: {z_float} / type: {type(z_float)}" )
                 print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 3 <<<<<<<<<<<<<<<<<<<<<" )
-                # print ( f"{self.combo_df[self.combo_df['Symbol'] == xsymbol]}" )
-                print ( f"{self.combo_df.at[[self.combo_df['Symbol'] == xsymbol], 'Mkt_cap']}" )
-                worker_df = self.combo_df.iat[0,]
-                print ( f">>>>>> DEBUG 4: {worker_df.at[0, 6]} ")   # at row 0 / col 6 (Mkt_cap)
-                
+                print ( f"{self.combo_df[self.combo_df['Symbol'] == xsymbol]}" )
+                #print ( f"{self.combo_df.at[[self.combo_df['Symbol'] == xsymbol], 'Mkt_cap']}" )
+ 
+                single_row_df = self.combo_df[self.combo_df['Symbol'] == xsymbol]
+                worker_df = single_row_df.iat[0, 6]          # at row 0 / col 6 (Mkt_cap)
+                print ( f">>>>>> DEBUG 4: {worker_df} ")
                 print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 5 <<<<<<<<<<<<<<<<<<<<<" )
                 self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(z_float, 3)
                 print ( f"+", end="" )
