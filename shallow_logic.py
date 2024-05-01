@@ -95,11 +95,7 @@ class combo_logic:
         # Find/fix missing data in nasdaq.com unusual volume DF - i.e. market_cap info
         print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 1 <<<<<<<<<<<<<<<<<<<<<" )
         self.tag_dupes()
-        print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 2 <<<<<<<<<<<<<<<<<<<<<" )
-        print ( f"{self.combo_dupes_only_listall(1)}" )
-        print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 3 <<<<<<<<<<<<<<<<<<<<<" )
         print ( f"{self.combo_dupes_only_listall(2)}" )
-        print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 4 <<<<<<<<<<<<<<<<<<<<<" )
         
         uvol_badata = self.combo_df[self.combo_df['Mkt_cap'].isna()]   # Non and NaN = True
         uvol_badsymbols = uvol_badata['Symbol'].tolist()               # make list of bad symbols from the DF
@@ -197,11 +193,12 @@ class combo_logic:
             else:
                 # BUG : disabled this code - cant figgure out why its erroring
                 # this needs to be fixed
+                print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 2 <<<<<<<<<<<<<<<<<<<<<" )
                 logging.info( f"{cmi_debug} - Set {wq.asset_class} Mkt_cap to: {wq.qd_quote['mkt_cap']}" )
-                z_float = wq.qd_quote['mkt_cap']
+                z_float = round(float(wq.qd_quote['mkt_cap']))
                 print ( f">>>>> DEBUG: {z_float} / type: {type(z_float)}" )
                 print ( f"{self.combo_df}" )
-                print ( f">>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<" )
+                print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 3 <<<<<<<<<<<<<<<<<<<<<" )
 
                 self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = z_float
                 print ( f"+", end="" )
@@ -533,6 +530,7 @@ class combo_logic:
         pd.set_option('max_colwidth', 40)
 
         if opt == 1:
+            # I dont think this function works!!!
             temp_1 = self.combo_df.sort_values(by=['Pct_change'], ascending=False)
             return (temp_1[temp_1.duplicated(['Symbol'])] )
 
