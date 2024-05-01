@@ -288,7 +288,8 @@ class combo_logic:
 
         # since we are Tagging and annotating this DataFrame...
         # find and tag the lowest priced stock within the list of Hottest stocks
-        if min_price:                       # note empty, We have some **HOT stocks to evaluate
+        print ( f">>>>> DEBUG : min_price: {min_price}" )
+        if min_price:                       # not empty, We have some **HOT stocks to evaluate
             mptv = min(( td[2] for td in min_price.values() ))      # Output = 1 single value from a generator of tuples
             for v in min_price.values():    # v = tuple structured like: (0, BEAM, 28.42)
                 if v[2] == mptv:            # v[2] = 3rd element = price for this stock symbol
