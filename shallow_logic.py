@@ -210,7 +210,7 @@ class combo_logic:
                     logging.info( f"{cmi_debug} - Compute Mkt_cap scale tag: [ {wq.qd_quote['mkt_cap']} ]..." )
                     for i in (("MT", 999999), ("LB", 10000), ("SB", 2000), ("LM", 500), ("SM", 50), ("TM", 10), ("UZ", 0)):
                         if wq.qd_quote['mkt_cap'] == float(0):
-                            print ( f"{self.combo_df[self.combo_df['Symbol'] == xsymbol]}" )
+                            #print ( f"{self.combo_df[self.combo_df['Symbol'] == xsymbol]}" )
                             row_index = self.combo_df.loc[self.combo_df['Symbol'] == xsymbol].index[0]
                             self.combo_df.at[row_index, 'M_B'] = "UZ"
                             #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'M_B'] = "UZ"
@@ -221,12 +221,10 @@ class combo_logic:
                         elif i[1] >= wq.qd_quote['mkt_cap']:
                             pass
                         else:
-                            print ( f"{self.combo_df[self.combo_df['Symbol'] == xsymbol]}" )
+                            #print ( f"{self.combo_df[self.combo_df['Symbol'] == xsymbol]}" )
                             row_index = self.combo_df.loc[self.combo_df['Symbol'] == xsymbol].index[0]
                             self.combo_df.at[row_index, 'M_B'] = i[0]
-                            print ( f"{self.combo_df[self.combo_df['Symbol'] == xsymbol]}" )
-
-                            #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'M_B'] = i[0]
+                            #print ( f"{self.combo_df[self.combo_df['Symbol'] == xsymbol]}" )
                             logging.info( f"{cmi_debug} - Market cap: [ {wq.qd_quote['mkt_cap']} ] scale set to: {i[0]}" )
                             self.wrangle_errors += 1          # insert market cap scale into DF @ column M_B for this symbol
                             self.cleansed_errors += 1
