@@ -209,14 +209,16 @@ class combo_logic:
                 
                 print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 5 <<<<<<<<<<<<<<<<<<<<<" )
                 row_index = self.combo_df.loc[self.combo_df['Symbol'] == xsymbol].index[0]
-                print ( f">>>>>> DEBUG: row_index: {row_index}" )
-                print ( f">>>>>> DEBUG: {self.combo_df.iat[row_index, 5].index[0]}" )
-                print ( f">>>>>> DEBUG: {self.combo_df.iloc[row_index]}" )
+                print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 6 <<<<<<<<<<<<<<<<<<<<<" )
+                print ( f"{row_index}" )
+                print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 7 <<<<<<<<<<<<<<<<<<<<<" )
+                print ( f" {self.combo_df.iloc[row_index]}" )
+                #print ( f">>>>>> DEBUG: {self.combo_df.iat[row_index, 5].index[0]}" )
                 
                 self.combo_df.iat[row_index, 5] = round(z_float, 3)        # at row 0 / col 6 (Mkt_cap)
-                print ( f">>>>>> DEBUG 5: {self.combo_df[self.combo_df['Symbol'] == xsymbol]}" )
+                print ( f">>>>>> DEBUG 8: {self.combo_df[self.combo_df['Symbol'] == xsymbol]}" )
                 #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(z_float, 3)
-                print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 5 <<<<<<<<<<<<<<<<<<<<<" )
+                print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 9 <<<<<<<<<<<<<<<<<<<<<" )
 
                 print ( f"+", end="" )
                 fixchars += 1
