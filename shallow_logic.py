@@ -105,7 +105,7 @@ class combo_logic:
         unfixable_errors = 0
         cleansed_errors = 0
         loop_count = 1
-        fixchars = 0
+        self.fixchars = 0
         cols = 1
 
         ############################### get quote Setup #################################
@@ -205,6 +205,7 @@ class combo_logic:
                 print ( f"+", end="" )
                 self.fixchars += 1
                 cleansed_errors += 1
+
                 if wq.asset_class == "stocks":
                     logging.info( f"{cmi_debug} - Compute Mkt_cap scale tag: [ {wq.qd_quote['mkt_cap']} ]..." )
                     for i in (("MT", 999999), ("LB", 10000), ("SB", 2000), ("LM", 500), ("SM", 50), ("TM", 10), ("UZ", 0)):
@@ -223,6 +224,8 @@ class combo_logic:
                             print ( f"{self.combo_df[self.combo_df['Symbol'] == xsymbol]}" )
                             row_index = self.combo_df.loc[self.combo_df['Symbol'] == xsymbol].index[0]
                             self.combo_df.at[row_index, 'M_B'] = i[0]
+                            print ( f"{self.combo_df[self.combo_df['Symbol'] == xsymbol]}" )
+
                             #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'M_B'] = i[0]
                             logging.info( f"{cmi_debug} - Market cap: [ {wq.qd_quote['mkt_cap']} ] scale set to: {i[0]}" )
                             self.wrangle_errors += 1          # insert market cap scale into DF @ column M_B for this symbol
@@ -232,10 +235,10 @@ class combo_logic:
                             break
             # nice column/rows status bar to show the hard work we are grinding on...
             finally:
-                if fixchars == 1: print ( f"   ", end="" )
-                if fixchars == 2: print ( f"  ", end="" )
-                if fixchars == 3: print ( f" ", end="" )
-                fixchars = 0
+                if self.fixchars == 1: print ( f"   ", end="" )
+                if self.fixchars == 2: print ( f"  ", end="" )
+                if self.fixchars == 3: print ( f" ", end="" )
+                self.fixchars = 0
                 cols += 1
                 if cols == 8:       # 8 symbols per row
                     print ( f" " )  # onlhy print 8 symbols per row
