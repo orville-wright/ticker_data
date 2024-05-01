@@ -93,9 +93,8 @@ class combo_logic:
 
         # Look into the main combo_df at the Unsual Vol columns
         # Find/fix missing data in nasdaq.com unusual volume DF - i.e. market_cap info
-        print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 1 <<<<<<<<<<<<<<<<<<<<<" )
         self.tag_dupes()
-        print ( f"{self.combo_dupes_only_listall(2)}" )
+        #print ( f"{self.combo_dupes_only_listall(2)}" )
         
         uvol_badata = self.combo_df[self.combo_df['Mkt_cap'].isna()]   # Non and NaN = True
         uvol_badsymbols = uvol_badata['Symbol'].tolist()               # make list of bad symbols from the DF
@@ -281,7 +280,6 @@ class combo_logic:
 
         # since we are Tagging and annotating this DataFrame...
         # find and tag the lowest priced stock within the list of Hottest stocks
-        print ( f">>>>> DEBUG : min_price: {min_price}" )
         if min_price:                       # not empty, We have some **HOT stocks to evaluate
             mptv = min(( td[2] for td in min_price.values() ))      # td[2] = iterator of 3rd elment of min_price{}
             for v in min_price.values():    # v = tuple structured like: (0, BEAM, 28.42)
