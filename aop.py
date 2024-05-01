@@ -231,7 +231,7 @@ def main():
         x.polish_combo_df(1)
         x.tag_dupes()
         x.tag_uniques()
-        x.rank_hot()
+        #x.rank_hot()       # currently disabled b/c it efforts. pandas statment needs to be simplifed and split
         x.rank_unvol()
         x.rank_caps()
         x.combo_df.sort_values(by=['Symbol'])         # sort by sumbol name (so dupes are linearly grouped)
