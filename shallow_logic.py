@@ -285,8 +285,12 @@ class combo_logic:
             for v in self.min_price.values():    # v = tuple structured like: (0, BEAM, 28.42)
                 if v[2] == mptv:            # v[2] = 3rd element = price for this stock symbol
                     row_idx = int(v[0])     # v[0] = 1st emelent = DataFrame index for this stock symbol
-                    self.rx = [row_idx, v[1].rstrip()]      # add hottest stock with lowest price (will only ever be 1 entry in list[])
+                    self.rx = [row_idx, v[1].rstrip()]              # add hottest stock with lowest price (will only ever be 1 entry in list[])
                     self.combo_df.loc[row_idx,'Hot'] = "*Hot*"      # Tag as a **HOT** stock in DataFrame
+                else:
+                    break
+            print ( f"Located **HOttest stock** / Tagged !!" )
+            print ( f"{self.min_price}")
 
         # TODO: ** This logic is BUGGY & possible fails at Market open when many things are empty & unpopulated...
         if not bool(self.min_price):         # is empty?
