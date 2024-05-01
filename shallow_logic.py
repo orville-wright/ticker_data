@@ -191,37 +191,15 @@ class combo_logic:
                 fixchars += 1
                 y = 0
             else:
-                # BUG : disabled this code - cant figgure out why its erroring
-                # this needs to be fixed
-                print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 2 <<<<<<<<<<<<<<<<<<<<<" )
                 logging.info( f"{cmi_debug} - Set {wq.asset_class} Mkt_cap to: {wq.qd_quote['mkt_cap']}" )
-                z_float = (float(wq.qd_quote['mkt_cap']))
-                #print ( f">>>>> DEBUG 2: {z_float} / type: {type(z_float)}" )
-                #print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 3 <<<<<<<<<<<<<<<<<<<<<" )
-                
+                z_float = (float(wq.qd_quote['mkt_cap']))                
                 print ( f"{self.combo_df[self.combo_df['Symbol'] == xsymbol]}" )
-
-                #print ( f"{self.combo_df.at[[self.combo_df['Symbol'] == xsymbol], 'Mkt_cap']}" )
-                #single_row_df = self.combo_df[self.combo_df['Symbol'] == xsymbol]
-                #worker_df = single_row_df.iat[0, 6]          # at row 0 / col 6 (Mkt_cap)
-                #print ( f">>>>>> DEBUG 4: {worker_df} ")
-                #print ( f">>>>>> DEBUG 5: {row_index} ")
-                
-                print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 5 <<<<<<<<<<<<<<<<<<<<<" )
                 row_index = self.combo_df.loc[self.combo_df['Symbol'] == xsymbol].index[0]
-                print ( f"{row_index}" )
-                print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 6 <<<<<<<<<<<<<<<<<<<<<" )
-                print ( f" {self.combo_df.at[row_index, 'Mkt_cap']}" )
-                print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 7 <<<<<<<<<<<<<<<<<<<<<" )
-                self.combo_df.at[row_index, 'Mkt_cap'] = 987.65
-                
-                #print ( f">>>>>> DEBUG: {self.combo_df.iat[row_index, 5].index[0]}" )
-                
-                self.combo_df.iat[row_index, 5] = round(z_float, 3)        # at row 0 / col 6 (Mkt_cap)
-                print ( f">>>>>> DEBUG 8: {self.combo_df[self.combo_df['Symbol'] == xsymbol]}" )
+                self.combo_df.at[row_index, 'Mkt_cap'] = round(z_float, 3)
+                #print ( f">>>>>> DEBUG 8: {self.combo_df[self.combo_df['Symbol'] == xsymbol]}" )
                 #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(z_float, 3)
-                print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 9 <<<<<<<<<<<<<<<<<<<<<" )
 
+                print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 9 <<<<<<<<<<<<<<<<<<<<<" )
                 print ( f"+", end="" )
                 fixchars += 1
                 cleansed_errors += 1
