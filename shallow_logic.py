@@ -248,7 +248,7 @@ class combo_logic:
 
             logging.info( f"{cmi_debug} ================ end quote: {qsymbol} : {loop_count} ====================" )
             total_wrangle_errors = total_wrangle_errors + self.wrangle_errors
-            wrangle_errors = 0
+            self.wrangle_errors = 0
             loop_count += 1
 
         print ( " " )
