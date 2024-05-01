@@ -95,11 +95,11 @@ class combo_logic:
         # Find/fix missing data in nasdaq.com unusual volume DF - i.e. market_cap info
         print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 1 <<<<<<<<<<<<<<<<<<<<<" )
         self.tag_dupes()
-        print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 1 <<<<<<<<<<<<<<<<<<<<<" )
-        self.combo_dupes_only_listall(1)
-        print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 1 <<<<<<<<<<<<<<<<<<<<<" )
-        self.combo_dupes_only_listall(2)
-        print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 1 <<<<<<<<<<<<<<<<<<<<<" )
+        print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 2 <<<<<<<<<<<<<<<<<<<<<" )
+        print ( f"{self.combo_dupes_only_listall(1)}" )
+        print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 3 <<<<<<<<<<<<<<<<<<<<<" )
+       print ( f"{self.combo_dupes_only_listall(2)}" )
+        print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 4 <<<<<<<<<<<<<<<<<<<<<" )
         
         uvol_badata = self.combo_df[self.combo_df['Mkt_cap'].isna()]   # Non and NaN = True
         uvol_badsymbols = uvol_badata['Symbol'].tolist()               # make list of bad symbols from the DF
@@ -523,6 +523,7 @@ class combo_logic:
 
     def combo_dupes_only_listall(self, opt):
         """
+        returns ad DF
         Print the full contents of the combo DataFrame with the DUPES tagged & sorted by % Change.
         Will only list the dupes unless you have called tag_dupes() first, and then youll get the full DF
         """
