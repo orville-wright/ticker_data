@@ -202,7 +202,7 @@ class combo_logic:
                 #print ( f"{self.combo_df.at[[self.combo_df['Symbol'] == xsymbol], 'Mkt_cap']}" )
  
                 single_row_df = self.combo_df[self.combo_df['Symbol'] == xsymbol]
-                row_index = self.combo_df[self.combo_df['Symbol'] == xsymbol].index[0]
+                row_index = self.combo_df.loc[self.combo_df['Symbol'] == xsymbol].index[0]
                 worker_df = single_row_df.iat[0, 6]          # at row 0 / col 6 (Mkt_cap)
 
                 self.combo_df = self.combo_df[self.combo_df['Symbol'] == xsymbol]
