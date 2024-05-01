@@ -200,7 +200,10 @@ class combo_logic:
                 print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 3 <<<<<<<<<<<<<<<<<<<<<" )
                 # print ( f"{self.combo_df[self.combo_df['Symbol'] == xsymbol]}" )
                 print ( f"{self.combo_df.at[[self.combo_df['Symbol'] == xsymbol], 'Mkt_cap']}" )
-
+                worker_df = self.combo_df.iat[0,]
+                print ( f">>>>>> DEBUG 4: {worker_df.at[0, 6]} ")   # at row 0 / col 6 (Mkt_cap)
+                
+                print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 5 <<<<<<<<<<<<<<<<<<<<<" )
                 self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(z_float, 3)
                 print ( f"+", end="" )
                 fixchars += 1
