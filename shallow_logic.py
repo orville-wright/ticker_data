@@ -138,10 +138,10 @@ class combo_logic:
             logging.info( f"{cmi_debug} - Begin market cap/scale logic cycle... {nq.asset_class}")
             if wq.asset_class == "etf":        # Global attribute - is asset class ETF? yes = Cant get STOCK-type data
                 logging.info( f"{cmi_debug} - {qsymbol} asset class is ETF" )
-                wrangle_errors += 1
-                unfixable_errors += 1     # set default data for non-regualr stocks
+                self.wrangle_errors += 1
+                self.unfixable_errors += 1     # set default data for non-regualr stocks
                 print ( f"!!", end="" )
-                fixchars += 2
+                self.fixchars += 2
 
                 # BUG : disabled this code - cant figgure out why its erroring
                 # this needs to be fixed
@@ -173,7 +173,7 @@ class combo_logic:
                 self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = 'UZ'    # make is a real number = 0
                 print ( f"!!", end="" )
                 cleansed_errors += 2
-                fixchars += 2
+                self.fixchars += 2
                 y = 0
             except KeyError:
                 logging.info( f"{cmi_debug} - {wq.asset_class} Mkt_cap key is NULL / setting to: 0" )
@@ -188,7 +188,7 @@ class combo_logic:
                 self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = 'UZ'    # make is a real number = 0 
                 cleansed_errors += 1
                 print ( f"!", end="" )
-                fixchars += 1
+                self.fixchars += 1
                 y = 0
             else:
                 logging.info( f"{cmi_debug} - Set {wq.asset_class} Mkt_cap to: {wq.qd_quote['mkt_cap']}" )
@@ -203,7 +203,7 @@ class combo_logic:
 
                 print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 9 <<<<<<<<<<<<<<<<<<<<<" )
                 print ( f"+", end="" )
-                fixchars += 1
+                self.fixchars += 1
                 cleansed_errors += 1
                 if wq.asset_class == "stocks":
                     logging.info( f"{cmi_debug} - Compute Mkt_cap scale tag: [ {wq.qd_quote['mkt_cap']} ]..." )
@@ -215,7 +215,7 @@ class combo_logic:
                             #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'M_B'] = "UZ"
                             logging.info( f"{cmi_debug} - Bad Market cap: [ {wq.qd_quote['mkt_cap']} ] / scale set to: UZ" )
                             print ( f"+", end="" )
-                            fixchars += 1
+                            self.fixchars += 1
                             break
                         elif i[1] >= wq.qd_quote['mkt_cap']:
                             pass
@@ -225,10 +225,10 @@ class combo_logic:
                             self.combo_df.at[row_index, 'M_B'] = i[0]
                             #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'M_B'] = i[0]
                             logging.info( f"{cmi_debug} - Market cap: [ {wq.qd_quote['mkt_cap']} ] scale set to: {i[0]}" )
-                            wrangle_errors += 1          # insert market cap scale into DF @ column M_B for this symbol
-                            cleansed_errors += 1
+                            self.wrangle_errors += 1          # insert market cap scale into DF @ column M_B for this symbol
+                            self.cleansed_errors += 1
                             print ( f"+", end="" )
-                            fixchars += 1
+                            self.fixchars += 1
                             break
             # nice column/rows status bar to show the hard work we are grinding on...
             finally:
@@ -244,7 +244,7 @@ class combo_logic:
                     print ( f"/ ", end="" )
 
             logging.info( f"{cmi_debug} ================ end quote: {qsymbol} : {loop_count} ====================" )
-            total_wrangle_errors = total_wrangle_errors + wrangle_errors
+            total_wrangle_errors = total_wrangle_errors + self.wrangle_errors
             wrangle_errors = 0
             loop_count += 1
 
