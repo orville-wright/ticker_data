@@ -85,44 +85,49 @@ class combo_logic:
         Clean, Polish & Wax the main Combo DataFrame.
         We do a lot of heavy DF data generation/manipulation/insertion here.
         Fill-out key collumn data thats missing, incomplete and/or not reliable due to errors in initial data extraction
-        & collection process... becasue exchange data is not 100% reliable as we collect it in real time (surprisingly!)
         """
         cmi_debug = __name__+"::"+self.polish_combo_df.__name__+".#"+str(self.inst_uid)+"."+str(me)
-        logging.info( f"{cmi_debug} - CALLED" )
+        logging.info( f"%s - CALLED" % cmi_debug )
 
         self.prepare_combo_df()                         # FIRST, merge Small_cap + med + large + mega into a single DF
 
         # Look into the main combo_df at the Unsual Vol columns
         # Find/fix missing data in nasdaq.com unusual volume DF - i.e. market_cap info
-        uvol_badata = self.combo_df[self.combo_df['Mkt_cap'].isna()]     # Non and NaN = True
-        up_symbols = uvol_badata['Symbol'].tolist()     # get list of symbols that have bad-data in [] list
-        nq = nquote(4, self.args)                       # setup an nasdaq.com quote dict b/c we are going to get live data
-        nq.init_dummy_session()                         # initalize quote request session - note: will set nasdaq magic cookie
-        total_wrangle_errors = 0                        # usefull counters
+        print ( f">>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<" )
+        self.tag_dupes()
+        self.combo_dupes_only_listall(1)
+        self.combo_dupes_only_listall(2)
+        print ( f">>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<" )
+        
+        uvol_badata = self.combo_df[self.combo_df['Mkt_cap'].isna()]   # Non and NaN = True
+        uvol_badsymbols = uvol_badata['Symbol'].tolist()               # make list of bad symbols from the DF
+        nq = nquote(4, self.args)                                      # setup an nasdaq.com quote instance to get live data from
+        nq.init_dummy_session()                                        # nasdaq.com session setup
+        total_wrangle_errors = 0
         unfixable_errors = 0
         cleansed_errors = 0
         loop_count = 1
-        cols = 1
         fixchars = 0
+        cols = 1
 
         ############################### get quote Setup #################################
-        # This is a network expsive method as it does a network get for each stock symbol
-        # and extracts missing data & saves it to combo_df.
-        logging.info( f"%s  - Get quote data from nasdaq.com for:  {len(up_symbols)} symbols" % cmi_debug )
-        for qsymbol in up_symbols:
+        # This is a network expensive - do a live network quote get for each stock
+        # from nasdaq.com & extract missing data. Rewrite in into combo_df.
+        logging.info( f"%s  - Get quote data from nasdaq.com for:  {len(uvol_badsymbols)} symbols" % cmi_debug )
+        for qsymbol in uvol_badsymbols:
             xsymbol = qsymbol
             qsymbol = qsymbol.rstrip()                   # cleand/striped of trailing spaces
             logging.info( f"%s  - get quote:  {qsymbol} : {loop_count}" % cmi_debug )
-            nq.update_headers(qsymbol, "stocks")         # set path: header object. doesnt touch secret nasdaq cookies
-            nq.form_api_endpoint(qsymbol, "stocks")      # set API endpoint url - default GUESS asset_class=stocks
-            ac = nq.learn_aclass(qsymbol)
+            nq.update_headers(qsymbol, "stocks")         # nasdaq.com session - set path: header object
+            nq.form_api_endpoint(qsymbol, "stocks")      # nasdaq.com set API endpoint - default GUESS asset_class=stocks
+            ac = nq.learn_aclass(qsymbol)                # nasdaq.com lead what the real asset class is
 
             if ac != "stocks":
                 logging.info( f"%s  - re-shape asset class endpoint to: {ac}" % cmi_debug )
-                nq.form_api_endpoint(qsymbol, ac)      # re-form API endpoint if default asset_class guess was wrong)
+                nq.form_api_endpoint(qsymbol, ac)        # re-form API endpoint if default asset_class guess was wrong
             else:
-                nq.get_nquote(qsymbol.upper())             # get a live quote
-                wq = nq_wrangler(1, self.args)                   # instantiate a class for Quote Data Wrangeling
+                nq.get_nquote(qsymbol.upper())           # get a live quote
+                wq = nq_wrangler(1, self.args)           # instantiate a class for Quote Data Wrangeling
                 wq.asset_class = ac
                 wq.setup_zones(3, nq.quote_json1, nq.quote_json2, nq.quote_json3)
                 wq.do_wrangle()
@@ -195,7 +200,7 @@ class combo_logic:
                 print ( f">>>>> DEBUG: {z_float} / type: {type(z_float)}" )
                 print ( f"{self.combo_df}" )
                 print ( f">>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<" )
-                
+
                 self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = z_float
                 print ( f"+", end="" )
                 fixchars += 1
