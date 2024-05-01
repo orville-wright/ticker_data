@@ -269,23 +269,24 @@ class combo_logic:
                     mpt = ( row_idx, sym.rstrip(), float(price) )   # pack a tuple - for min_price analysis later
                     min_price.update({row_idx: mpt})                # load helpder DICT e.g. {1: (7, 'IBM', 120.51), 7: (24, 'TSLA', 138.21)}
                     print ( f"{row_idx} - stock: {sym} forcfully tagged as - Mkt_cap: {cap} / M_B: {scale} : " )
-                    print ( f"{self.combo_df}")
+                    print ( f"{self.min_price}")
                 elif pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == True and pd.isna(self.combo_df.loc[row_idx].M_B) == True:
                      print ( f"{row_idx} - stock: {sym} allready tagged as  - Mkt_cap: {cap} / M_B: {scale} : deleted from DF" )
                      self.combo_df.drop([row_idx], inplace=True)    # drop this row from DF
-                     print ( f"{self.combo_df}")
+                     print ( f"{self.min_price}")
                 else:
                     print ( f"WARNING: Don't know what to do for: {sym} - Mkt_cap: {cap} / M_B: {scale}" )
                     break
 
         # TODO: ** This logic is BUGGY & possible fails at Market open when many things are empty & unpopulated...
         if not bool(min_price):         # is empty?
-            print ( "No **HOT stocks to evaluate yet" )             # did identify any low stocks (yet)
+            print ( "No **HOT stocks to evaluate yet" )  
+            print ( f"{self.min_price}")           # did identify any low stocks (yet)
 
         # since we are Tagging and annotating this DataFrame...
         # find and tag the lowest priced stock within the list of Hottest stocks
         if min_price:                       # not empty, We have some **HOT stocks to evaluate
-            print ( f"{self.combo_df}")
+            print ( f"{self.min_price}")
             mptv = min(( td[2] for td in min_price.values() ))      # td[2] = iterator of 3rd elment of min_price{}
             for v in min_price.values():    # v = tuple structured like: (0, BEAM, 28.42)
                 if v[2] == mptv:            # v[2] = 3rd element = price for this stock symbol
