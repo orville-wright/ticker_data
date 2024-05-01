@@ -101,12 +101,13 @@ class combo_logic:
         uvol_badsymbols = uvol_badata['Symbol'].tolist()               # make list of bad symbols from the DF
         nq = nquote(4, self.args)                                      # setup an nasdaq.com quote instance to get live data from
         nq.init_dummy_session()                                        # nasdaq.com session setup
-        total_wrangle_errors = 0
-        unfixable_errors = 0
-        cleansed_errors = 0
-        loop_count = 1
+        self.total_wrangle_errors = 0
+        self.wrangle_errors = 0
+        self.unfixable_errors = 0
+        self.cleansed_errors = 0
+        self.loop_count = 1
         self.fixchars = 0
-        cols = 1
+        self.cols = 1
 
         ############################### get quote Setup #################################
         # This is a network expensive - do a live network quote get for each stock
@@ -115,7 +116,7 @@ class combo_logic:
         for qsymbol in uvol_badsymbols:
             xsymbol = qsymbol
             qsymbol = qsymbol.rstrip()                   # cleand/striped of trailing spaces
-            logging.info( f"%s  - get quote:  {qsymbol} : {loop_count}" % cmi_debug )
+            logging.info( f"%s  - get quote:  {qsymbol} : {self.loop_count}" % cmi_debug )
             nq.update_headers(qsymbol, "stocks")         # nasdaq.com session - set path: header object
             nq.form_api_endpoint(qsymbol, "stocks")      # nasdaq.com set API endpoint - default GUESS asset_class=stocks
             ac = nq.learn_aclass(qsymbol)                # nasdaq.com lead what the real asset class is
@@ -169,7 +170,7 @@ class combo_logic:
                     print ( f"=xray=========================== {self.inst_uid} ==================================end=" )
                 self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = 'UZ'    # make is a real number = 0
                 print ( f"!!", end="" )
-                cleansed_errors += 2
+                self.cleansed_errors += 2
                 self.fixchars += 2
                 y = 0
             except KeyError:
@@ -180,7 +181,7 @@ class combo_logic:
                     print ( f"combo_df: {self.combo_df}" )
                     print ( f"=xray=========================== {self.inst_uid} ==================================end=" )
                 self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = 'UZ'    # make is a real number = 0 
-                cleansed_errors += 1
+                self.cleansed_errors += 1
                 print ( f"!", end="" )
                 self.fixchars += 1
                 y = 0
@@ -193,7 +194,7 @@ class combo_logic:
                 #print ( f"{self.combo_df[self.combo_df['Symbol'] == xsymbol]}" )
                 print ( f"+", end="" )
                 self.fixchars += 1
-                cleansed_errors += 1
+                self.cleansed_errors += 1
 
                 if wq.asset_class == "stocks":
                     logging.info( f"{cmi_debug} - Compute Mkt_cap scale tag: [ {wq.qd_quote['mkt_cap']} ]..." )
@@ -215,10 +216,10 @@ class combo_logic:
                             self.combo_df.at[row_index, 'M_B'] = i[0]
                             #print ( f"{self.combo_df[self.combo_df['Symbol'] == xsymbol]}" )
                             logging.info( f"{cmi_debug} - Market cap: [ {wq.qd_quote['mkt_cap']} ] scale set to: {i[0]}" )
-                            #self.wrangle_errors += 1          # insert market cap scale into DF @ column M_B for this symbol
-                            #self.cleansed_errors += 1
+                            self.wrangle_errors += 1          # insert market cap scale into DF @ column M_B for this symbol
+                            self.cleansed_errors += 1
                             print ( f"+", end="" )
-                            #self.fixchars += 1
+                            self.fixchars += 1
                             break
             # nice column/rows status bar to show the hard work we are grinding on...
             finally:
@@ -226,20 +227,20 @@ class combo_logic:
                 if self.fixchars == 2: print ( f"  ", end="" )
                 if self.fixchars == 3: print ( f" ", end="" )
                 self.fixchars = 0
-                cols += 1
-                if cols == 8:       # 8 symbols per row
+                self.cols += 1
+                if self.cols == 8:       # 8 symbols per row
                     print ( f" " )  # onlhy print 8 symbols per row
-                    cols = 1
+                    self.cols = 1
                 else:
                     print ( f"/ ", end="" )
 
-            logging.info( f"{cmi_debug} ================ end quote: {qsymbol} : {loop_count} ====================" )
-            total_wrangle_errors = total_wrangle_errors + self.wrangle_errors
+            logging.info( f"{cmi_debug} ================ end quote: {qsymbol} : {self.loop_count} ====================" )
+            self.total_wrangle_errors = self.total_wrangle_errors + self.wrangle_errors
             self.wrangle_errors = 0
-            loop_count += 1
+            self.loop_count += 1
 
         print ( " " )
-        print  ( f"Symbols scanned: {loop_count-1} / Issues: {cleansed_errors} / Repaired: {total_wrangle_errors} / Unfixbale: {unfixable_errors}" )
+        print  ( f"Symbols scanned: {self.loop_count-1} / Issues: {self.cleansed_errors} / Repaired: {self.total_wrangle_errors} / Unfixbale: {self.unfixable_errors}" )
 
         return
     
