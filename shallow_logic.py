@@ -198,6 +198,7 @@ class combo_logic:
                 self.combo_df.at[row_index, 'Mkt_cap'] = round(z_float, 3)
                 #print ( f">>>>>> DEBUG 8: {self.combo_df[self.combo_df['Symbol'] == xsymbol]}" )
                 #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = round(z_float, 3)
+                print ( f"{self.combo_df[self.combo_df['Symbol'] == xsymbol]}" )
 
                 print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 9 <<<<<<<<<<<<<<<<<<<<<" )
                 print ( f"+", end="" )
