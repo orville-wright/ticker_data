@@ -209,14 +209,12 @@ class combo_logic:
                 
                 print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 5 <<<<<<<<<<<<<<<<<<<<<" )
                 row_index = self.combo_df.loc[self.combo_df['Symbol'] == xsymbol].index[0]
-                print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 6 <<<<<<<<<<<<<<<<<<<<<" )
                 print ( f"{row_index}" )
+                print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 6 <<<<<<<<<<<<<<<<<<<<<" )
+                print ( f" {self.combo_df.at[row_index, 'Mkt_cap']}" )
                 print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 7 <<<<<<<<<<<<<<<<<<<<<" )
-                print ( f" {self.combo_df.iloc[self.combo_df[row_index]]}" )
-                print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 7 <<<<<<<<<<<<<<<<<<<<<" )
-                print ( f" {self.combo_df.at[self.combo_df[row_index, 'Mkt_cap']]}" )
-                print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 7 <<<<<<<<<<<<<<<<<<<<<" )
-                print ( f" {self.combo_df.at[self.combo_df[row_index, 6]]}" )
+                print ( f" {self.combo_df.loc[row_index, 5]}" )
+                print ( f" {self.combo_df.loc[row_index, 6]}" )
                 
                 #print ( f">>>>>> DEBUG: {self.combo_df.iat[row_index, 5].index[0]}" )
                 
