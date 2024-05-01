@@ -255,7 +255,7 @@ class combo_logic:
         logging.info('%s - IN' % cmi_debug )
         self.combo_df = self.combo_df.assign(Hot="", Insights="" )     # pre-insert 2 new columns
         self.min_price = {}      # Heler: DICT to help find cheapest ***HOT stock
-        mpt = ()            # Helper: Internal DICT(tuple) element to find cheapest ***HOT stock
+        self.mpt = ()            # Helper: Internal DICT(tuple) element to find cheapest ***HOT stock
 
         for ds in self.combo_df[self.combo_df.duplicated(['Symbol'])].Symbol.values:    # ONLY work on dupes in DF !!!
             for row_idx in iter( self.combo_df.loc[self.combo_df['Symbol'] == ds ].index ):
@@ -266,8 +266,8 @@ class combo_logic:
                 if pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == False and pd.isna(self.combo_df.loc[row_idx].M_B) == False:
                     self.combo_df.loc[row_idx,'Hot'] = "*Hot*"      # Tag as a **HOT** stock
                     self.combo_df.loc[row_idx,'Insights'] = self.cx.get(scale) + " + Unu vol"     # Annotate why...
-                    mpt = ( row_idx, sym.rstrip(), float(price) )   # pack a tuple - for min_price analysis later
-                    self.min_price.update({row_idx: mpt})                # load helpder DICT e.g. {1: (7, 'IBM', 120.51), 7: (24, 'TSLA', 138.21)}
+                    self.mpt = ( row_idx, sym.rstrip(), float(price) )   # pack a tuple - for min_price analysis later
+                    self.min_price.update({row_idx: self.mpt})                # load helpder DICT e.g. {1: (7, 'IBM', 120.51), 7: (24, 'TSLA', 138.21)}
                     print ( f"{row_idx} - stock: {sym} forcfully tagged as - Mkt_cap: {cap} / M_B: {scale} : " )
                     print ( f"{self.min_price}")
                 elif pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == True and pd.isna(self.combo_df.loc[row_idx].M_B) == True:
@@ -277,12 +277,6 @@ class combo_logic:
                 else:
                     print ( f"WARNING: Don't know what to do for: {sym} - Mkt_cap: {cap} / M_B: {scale}" )
                     break
-
-        # TODO: ** This logic is BUGGY & possible fails at Market open when many things are empty & unpopulated...
-        if not bool(self.min_price):         # is empty?
-            print ( "No **HOT stocks to evaluate yet" )  
-            print ( f"{self.min_price}")           # did identify any low stocks (yet)
-
         # since we are Tagging and annotating this DataFrame...
         # find and tag the lowest priced stock within the list of Hottest stocks
         if self.min_price:                       # not empty, We have some **HOT stocks to evaluate
@@ -294,6 +288,10 @@ class combo_logic:
                     self.rx = [row_idx, v[1].rstrip()]      # add hottest stock with lowest price (will only ever be 1 entry in list[])
                     self.combo_df.loc[row_idx,'Hot'] = "*Hot*"      # Tag as a **HOT** stock in DataFrame
 
+        # TODO: ** This logic is BUGGY & possible fails at Market open when many things are empty & unpopulated...
+        if not bool(self.min_price):         # is empty?
+            print ( f"No **HOT stocks to evaluate yet : {bool(self.min_price)}" )  
+            print ( f"{self.min_price}" )           # did identify any low stocks (yet)
         return
 
 #####################################################################################
