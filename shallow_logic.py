@@ -213,8 +213,7 @@ class combo_logic:
                 print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 6 <<<<<<<<<<<<<<<<<<<<<" )
                 print ( f" {self.combo_df.at[row_index, 'Mkt_cap']}" )
                 print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 7 <<<<<<<<<<<<<<<<<<<<<" )
-                print ( f" {self.combo_df.iat[row_index, 5]}" )
-                print ( f" {self.combo_df.iat[row_index, 6]}" )
+                self.combo_df.at[row_index, 'Mkt_cap'] = 987.65
                 
                 #print ( f">>>>>> DEBUG: {self.combo_df.iat[row_index, 5].index[0]}" )
                 
