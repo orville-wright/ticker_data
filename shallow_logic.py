@@ -93,11 +93,13 @@ class combo_logic:
 
         # Look into the main combo_df at the Unsual Vol columns
         # Find/fix missing data in nasdaq.com unusual volume DF - i.e. market_cap info
-        print ( f">>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<" )
+        print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 1 <<<<<<<<<<<<<<<<<<<<<" )
         self.tag_dupes()
+        print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 1 <<<<<<<<<<<<<<<<<<<<<" )
         self.combo_dupes_only_listall(1)
+        print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 1 <<<<<<<<<<<<<<<<<<<<<" )
         self.combo_dupes_only_listall(2)
-        print ( f">>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<" )
+        print ( f">>>>>>>>>>>>>>>>>>>>> DEBUG 1 <<<<<<<<<<<<<<<<<<<<<" )
         
         uvol_badata = self.combo_df[self.combo_df['Mkt_cap'].isna()]   # Non and NaN = True
         uvol_badsymbols = uvol_badata['Symbol'].tolist()               # make list of bad symbols from the DF
