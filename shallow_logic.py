@@ -268,10 +268,12 @@ class combo_logic:
                     self.combo_df.loc[row_idx,'Insights'] = self.cx.get(scale) + " + Unu vol"     # Annotate why...
                     mpt = ( row_idx, sym.rstrip(), float(price) )   # pack a tuple - for min_price analysis later
                     min_price.update({row_idx: mpt})                # load helpder DICT e.g. {1: (7, 'IBM', 120.51), 7: (24, 'TSLA', 138.21)}
+                    print ( f"stock: {sym} forcfully tagged as - Mkt_cap: {cap} / M_B: {scale}" )
                 elif pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == True and pd.isna(self.combo_df.loc[row_idx].M_B) == True:
+                     print ( f"stock: {sym} allready tagged as - Mkt_cap: {cap} / M_B: {scale}" )
                      self.combo_df.drop([row_idx], inplace=True)    # drop this row from DF
                 else:
-                    print ( f"WARNING: Don't know what to do for: {sym} / Mkt_cap: {cap} / M_B: {scale}" )
+                    print ( f"WARNING: Don't know what to do for: {sym} - Mkt_cap: {cap} / M_B: {scale}" )
                     break
 
         # TODO: ** This logic is BUGGY & possible fails at Market open when many things are empty & unpopulated...
