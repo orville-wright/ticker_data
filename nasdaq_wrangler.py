@@ -395,7 +395,7 @@ class nq_wrangler:
             self.price_cl = round(float(self.price_cl), 2)
 
         if self.price_net == "N/A":
-            self.price_net_cl = 0
+            self.price_net_cl = float(0)
             logging.info('%s - Price NET is bad, found N/A data' % cmi_debug )
             cc_errors += 1
         elif self.price_net == 'UNCH':
@@ -407,7 +407,7 @@ class nq_wrangler:
             self.price_net_cl = float(self.price_net)
 
         if self.price_pct == "N/A":
-            self.price_pct_cl = 0
+            self.price_pct_cl = float(0)
             logging.info('%s - Price pct is bad, found N/A data' % cmi_debug )
             cc_errors += 1
         elif self.price_pct == "UNCH":
@@ -536,9 +536,9 @@ class nq_wrangler:
             self.co_name_lj, \
             self.arrow_updown, \
             float(self.price_cl), \
-            self.price_net_cl, \
-            self.price_pct_cl, \
-            self.open_price_cl, \
+            float(self.price_net_cl), \
+            float(self.price_pct_cl), \
+            float(self.open_price_cl), \
             float(self.prev_close_cl), \
             float(self.vol_abs_cl), \
             self.mkt_cap_cl, \
@@ -553,11 +553,11 @@ class nq_wrangler:
             symbol=self.co_sym_lj.rstrip(), \
             name=self.co_name, \
             updown=self.arrow_updown, \
-            cur_price=self.price_cl, \
-            prc_change=self.price_net_cl, \
-            pct_change=self.price_pct_cl, \
-            open_price=self.open_price_cl, \
-            open_price_net=self.open_price_net, \
+            cur_price=float(self.price_cl), \
+            prc_change=float(self.price_net_cl), \
+            pct_change=float(self.price_pct_cl), \
+            open_price=float(self.open_price_cl), \
+            open_price_net=float(self.open_price_net), \
             open_price_pct=self.open_price_pct_cl, \
             prev_close=self.prev_close_cl, \
             vol=self.vol_abs_cl, \

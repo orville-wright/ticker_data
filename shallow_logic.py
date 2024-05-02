@@ -101,9 +101,9 @@ class combo_logic:
         nq = nquote(4, self.args)                                      # setup an nasdaq.com quote instance to get live data from
         nq.init_dummy_session()                                        # nasdaq.com session setup
         self.total_wrangle_errors = 0
-        self.wrangle_errors = 0
         self.unfixable_errors = 0
         self.cleansed_errors = 0
+        self.wrangle_errors = 0
         self.loop_count = 1
         self.fixchars = 0
         self.cols = 1
