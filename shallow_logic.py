@@ -288,8 +288,9 @@ class combo_logic:
                     self.rx = [row_idx, v[1].rstrip()]              # add hottest stock with lowest price (will only ever be 1 entry in list[])
                     self.combo_df.loc[row_idx,'Hot'] = "*Hot*"      # Tag as a **HOT** stock in DataFrame
                 else:
+                    print ( f"Didn't locate hottest stock")
                     break
-            print ( f"Located **HOttest stock** / Tagged !!" )
+            print ( f"Located/tagged {self.combo_df.loc[row_idx, 'Symbol']} : **HOttest stock**" )
             print ( f"{self.min_price}")
 
         # TODO: ** This logic is BUGGY & possible fails at Market open when many things are empty & unpopulated...
