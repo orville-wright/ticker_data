@@ -380,7 +380,7 @@ class combo_logic:
         #rh_df0 = self.combo_df.sort_values(by=['Cur_price'], ascending=True)
         #rh_list = rh_df0.loc[self.combo_df['Hot'] == "*Hot*"]
 
-        print ( f">>> DEBUG <<< [ rh_list ]:\n {rh_df0}" )
+        print ( f">>> DEBUG <<< [ combo_df ]:\n {self.combo_df}" )
         
         #self.combo_df.at[row_index, 'Mkt_cap'] = round(z_float, 3)
 
