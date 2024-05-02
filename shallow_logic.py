@@ -288,9 +288,9 @@ class combo_logic:
                     row_idx = int(v[0])     # v[0] = 1st emelent = DataFrame index for this stock symbol
                     self.rx = [row_idx, v[1].rstrip()]              # add hottest stock with lowest price (will only ever be 1 entry in list[])
                     self.combo_df.loc[row_idx,'Hot'] = "*Hot*"      # Tag as a **HOT** stock in DataFrame
+                    print ( f"Located **Hottest** stock: {self.combo_df.loc[row_idx, 'Symbol']}" )
                 else:
-                    print ( f"Didn't locate hottest stock" )
-    
+                    print ( f".!", end="" )
             print ( f"Located/tagged {self.combo_df.loc[row_idx, 'Symbol']} : **HOttest stock**" )
             print ( f"{self.min_price}")
 
