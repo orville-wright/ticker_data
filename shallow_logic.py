@@ -93,7 +93,7 @@ class combo_logic:
 
         # Look into the main combo_df at the Unsual Vol columns
         # Find/fix missing data in nasdaq.com unusual volume DF - i.e. market_cap info
-        self.tag_dupes()
+        #self.tag_dupes()
         #print ( f"{self.combo_dupes_only_listall(2)}" )
         
         uvol_badata = self.combo_df[self.combo_df['Mkt_cap'].isna()]   # Non and NaN = True
@@ -239,6 +239,7 @@ class combo_logic:
             self.loop_count += 1
 
         print ( " " )
+        print ( " " )
         print  ( f"Symbols scanned: {self.loop_count-1} / Issues: {self.cleansed_errors} / Repaired: {self.total_wrangle_errors} / Unfixbale: {self.unfixable_errors}" )
 
         return
@@ -268,34 +269,31 @@ class combo_logic:
                     self.combo_df.loc[row_idx,'Insights'] = self.cx.get(scale) + " + Unu vol"     # Annotate why...
                     self.mpt = ( row_idx, sym.rstrip(), float(price) )   # pack a tuple - for min_price analysis later
                     self.min_price.update({row_idx: self.mpt})                # load helpder DICT e.g. {1: (7, 'IBM', 120.51), 7: (24, 'TSLA', 138.21)}
-                    print ( f"{row_idx} - stock: {sym} forcfully tagged as - Mkt_cap: {cap} / M_B: {scale} : " )
-                    print ( f"{self.min_price}")
+                    #print ( f"{row_idx} - stock: {sym} forcfully tagged as - Mkt_cap: {cap} / M_B: {scale} : " )
+                    #print ( f"{self.min_price}")
                 elif pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == True and pd.isna(self.combo_df.loc[row_idx].M_B) == True:
-                     print ( f"{row_idx} - stock: {sym} allready tagged as  - Mkt_cap: {cap} / M_B: {scale} : deleted from DF" )
+                     #print ( f"{row_idx} - stock: {sym} allready tagged as  - Mkt_cap: {cap} / M_B: {scale} : deleted from DF" )
                      self.combo_df.drop([row_idx], inplace=True)    # drop this row from DF
-                     print ( f"{self.min_price}")
+                     #print ( f"{self.min_price}")
                 else:
                     print ( f"WARNING: Don't know what to do for: {sym} - Mkt_cap: {cap} / M_B: {scale}" )
                     break
-        # since we are Tagging and annotating this DataFrame...
+
         # find and tag the lowest priced stock within the list of Hottest stocks
         if self.min_price:                       # not empty, We have some **HOT stocks to evaluate
-            print ( f">>> DEBUG: {self.min_price}")
-            mptv = min(( td[2] for td in self.min_price.values() ))      # td[2] = iterator of 3rd elment of min_price{}
-            print ( f">>> DEBUG: min_prive.values {self.min_price.values()}")
-            for v in self.min_price.values():    # v = tuple structured like: (0, BEAM, 28.42)
-                if v[2] == mptv:            # v[2] = 3rd element = price for this stock symbol
-                    row_idx = int(v[0])     # v[0] = 1st emelent = DataFrame index for this stock symbol
-                    self.rx = [row_idx, v[1].rstrip()]              # add hottest stock with lowest price (will only ever be 1 entry in list[])
+            mptv = min(( td[2] for td in self.min_price.values() )) # td[2] = iterator of 3rd elment of min_price{}
+            for v in self.min_price.values():                       # v = tuple structured like: (0, IBM, 28.42)
+                if v[2] == mptv:                                    # v[2] = 3rd element = price symbol
+                    row_idx = int(v[0])                             # v[0] = 1st emelent = DF index of symbol
+                    self.rx = [row_idx, v[1].rstrip()]              # add hottest stock with lowest price / 1 entry in list[]
                     self.combo_df.loc[row_idx,'Hot'] = "*Hot*"      # Tag as a **HOT** stock in DataFrame
-                    print ( f"Located hottest stock: {self.combo_df.loc[row_idx, 'Symbol']}" )
+                    print ( f"\nLocated hottest stock: [ {self.combo_df.loc[row_idx, 'Symbol']} ]" )
                     break
                 else:
                     print ( f"[cold] / ", end="" )
 
-        #print ( f"{self.min_price}")
-        # TODO: ** This logic is BUGGY & possible fails at Market open when many things are empty & unpopulated...
-        if not bool(self.min_price):         # is empty?
+        # TODO: ** This logic can fail @ Market open when many things are empty & unpopulated...
+        if not bool(self.min_price):                # is empty?
             print ( f"No **HOT stocks located yet : {bool(self.min_price)}" )  
             print ( f"{self.min_price}" )           # did identify any low stocks (yet)
         return
