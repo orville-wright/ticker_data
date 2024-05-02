@@ -377,10 +377,10 @@ class combo_logic:
         # get a list of rows that meet the critera and find each row's index ID's.
         # Pack the list of index ID's into a list [] & pass it as an indexer inside a Loop
         # use rank column to hold a tag/ranking of cheapest *Hot* stock to most expensive *Hot* stock
-        rh_df0 = self.combo_df.sort_values(by=['Cur_price'], ascending=True)
-        rh_list = rh_df0.loc[self.combo_df['Hot'] == "*Hot*"]
+        #rh_df0 = self.combo_df.sort_values(by=['Cur_price'], ascending=True)
+        #rh_list = rh_df0.loc[self.combo_df['Hot'] == "*Hot*"]
 
-        print ( f">>> DEBUG <<< [ rh_list ]:\n {rh_list}" )
+        print ( f">>> DEBUG <<< [ rh_list ]:\n {rh_df0}" )
         
         #self.combo_df.at[row_index, 'Mkt_cap'] = round(z_float, 3)
 

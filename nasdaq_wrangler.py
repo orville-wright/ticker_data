@@ -387,11 +387,12 @@ class nq_wrangler:
         self.co_name_lj = (re.sub('[\']', '', self.co_name_lj) )                   # remove " ' and strip leading/trailing spaces
 
         if self.price == "N/A":
-            self.price_cl = 0
+            self.price_cl = float(0)
             logging.info('%s - Price is bad, found N/A data' % cmi_debug )
             cc_errors += 1
         else:
             self.price_cl = (re.sub('[ $,]', '', self.price))                      # remove $ sign
+            self.price_cl = round(float(self.price_cl), 2)
 
         if self.price_net == "N/A":
             self.price_net_cl = 0
