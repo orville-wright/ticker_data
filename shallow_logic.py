@@ -36,15 +36,15 @@ class combo_logic:
     combo_dupes = ""
     args = []           # class dict to hold global args being passed in from main() methods
     rx = []             # hottest stock with lowest price overall
-    cx = { 'LT': 'Mega cap + % gainer only', \
-        'LB': 'Large cap + % gainer only', \
-        'LM': 'Med cap + % gainer only', \
-        'LZ': 'Zero Large cap + % gainer only', \
-        'SB': 'Big Small cap + % gainer only', \
-        'SM': 'Small cap + % gainer only', \
-        'SZ': 'Zero Small cap + % gainer only', \
-        'EF': 'ETF Fund Trust + % gainer only', \
-        'UZ': 'Unknown cap + % gainer only', \
+    cx = { 'LT': 'Mega cap + % gainer', \
+        'LB': 'Large cap + % gainer', \
+        'LM': 'Med cap + % gainer', \
+        'LZ': 'Zero Large cap + % gainer', \
+        'SB': 'Big Small cap + % gainer', \
+        'SM': 'Small cap + % gainer', \
+        'SZ': 'Zero Small cap + % gainer', \
+        'EF': 'ETF Fund Trust + % gainer', \
+        'UZ': 'Unknown cap + % gainer', \
         'TM': 'Tiny cap + % gainer',
         }
 
@@ -109,9 +109,10 @@ class combo_logic:
         self.cols = 1
 
         ############################### get quote Setup #################################
-        # This is a network expensive - do a live network quote get for each stock
-        # from nasdaq.com & extract missing data. Rewrite in into combo_df.
+        # Get missing data from nasdaq.com. Rewrite in into combo_df.
+        # This is network expensive - do a live network quote get for each stock
         logging.info( f"%s  - Get quote data from nasdaq.com for:  {len(uvol_badsymbols)} symbols" % cmi_debug )
+        print ( f"========== ask nasdaq.com for quote data =====================================================" )
         for qsymbol in uvol_badsymbols:
             xsymbol = qsymbol
             qsymbol = qsymbol.rstrip()                   # cleand/striped of trailing spaces
@@ -131,16 +132,16 @@ class combo_logic:
                 wq.do_wrangle()
                 wq.clean_cast()
                 wq.build_data_sets()     
-                print ( f"{qsymbol:5}...", end="", flush=True )
+                print ( f"{qsymbol:5}...", end="", flush=True )         # >> pretty printer <<
             
-            ############################### Phase 1 ###########################################
-            # Evaluate Asset Class = an Exchnage Traded Fund (ETF)
+        ############################### Phase 1 ###########################################
+        # Evaluate Asset Class = an Exchnage Traded Fund (ETF)
             logging.info( f"{cmi_debug} - Begin market cap/scale logic cycle... {nq.asset_class}")
-            if wq.asset_class == "etf":        # Global attribute - is asset class ETF? yes = Cant get STOCK-type data
+            if wq.asset_class == "etf":                                 # Global attribute - Cant get STOCK-type data for 'etf'
                 logging.info( f"{cmi_debug} - {qsymbol} asset class is ETF" )
                 self.wrangle_errors += 1
-                self.unfixable_errors += 1     # set default data for non-regualr stocks
-                print ( f"!!", end="" )
+                self.unfixable_errors += 1
+                print ( f"!!", end="" )                                 # >> pretty printer <<
                 self.fixchars += 2
                 z_float = round(float(0.0), 3)
                 if self.args['bool_xray'] is True:
@@ -154,12 +155,12 @@ class combo_logic:
                 logging.info( f"{cmi_debug} - {qsymbol} asset class is {wq.asset_class}" )
                 pass
 
-            ############################### Phase 2 ###########################################
-            # Evaluate Market Cap data field - quality of data
+        ############################### Phase 2 ###########################################
+        # Evaluate Market Cap data field - quality of data
             logging.info( f"{cmi_debug} - Test {wq.asset_class} Mkt_cap for BAD data..." )
             z_float = round(float(0), 3)                  # 0.000
             try:
-                null_tester = wq.qd_quote['mkt_cap']         # some ETF/Funds have a market cap - but data is inconsistent
+                null_tester = wq.qd_quote['mkt_cap']                    # some ETF/Funds have a market cap - but data is inconsistent
             except TypeError:
                 logging.info( f"{cmi_debug} - {wq.asset_class} Mkt_cap data is NULL / setting to: 0" )
                 if self.args['bool_xray'] is True:
@@ -168,7 +169,7 @@ class combo_logic:
                     print ( f"combo_df: {self.combo_df}" )
                     print ( f"=xray=========================== {self.inst_uid} ==================================end=" )
                 self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = 'UZ'    # make is a real number = 0
-                print ( f"!!", end="" )
+                print ( f"^^", end="" )                                 # >> pretty printer <<
                 self.cleansed_errors += 2
                 self.fixchars += 2
                 y = 0
@@ -181,39 +182,35 @@ class combo_logic:
                     print ( f"=xray=========================== {self.inst_uid} ==================================end=" )
                 self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = 'UZ'    # make is a real number = 0 
                 self.cleansed_errors += 1
-                print ( f"!", end="" )
+                print ( f"!", end="" )                                  # >> pretty printer <<
                 self.fixchars += 1
                 y = 0
             else:
                 logging.info( f"{cmi_debug} - Set {wq.asset_class} Mkt_cap to: {wq.qd_quote['mkt_cap']}" )
                 z_float = (float(wq.qd_quote['mkt_cap']))                
-                #print ( f"{self.combo_df[self.combo_df['Symbol'] == xsymbol]}" )
                 row_index = self.combo_df.loc[self.combo_df['Symbol'] == xsymbol].index[0]
-                self.combo_df.at[row_index, 'Mkt_cap'] = round(z_float, 3)
-                #print ( f"{self.combo_df[self.combo_df['Symbol'] == xsymbol]}" )
-                print ( f"+", end="" )
+                self.combo_df.at[row_index, 'Mkt_cap'] = round(z_float, 3)      # set Market cap to real/live num from nasdaq.com
+                print ( f"$", end="" )                                  # >> pretty printer <<
                 self.fixchars += 1
                 self.cleansed_errors += 1
 
+        ############################### Phase 3 ###########################################
+        # Set the Market Cap scale tag (M_B col)
                 if wq.asset_class == "stocks":
                     logging.info( f"{cmi_debug} - Compute Mkt_cap scale tag: [ {wq.qd_quote['mkt_cap']} ]..." )
                     for i in (("MT", 999999), ("LB", 10000), ("SB", 2000), ("LM", 500), ("SM", 50), ("TM", 10), ("UZ", 0)):
                         if wq.qd_quote['mkt_cap'] == float(0):
-                            #print ( f"{self.combo_df[self.combo_df['Symbol'] == xsymbol]}" )
                             row_index = self.combo_df.loc[self.combo_df['Symbol'] == xsymbol].index[0]
                             self.combo_df.at[row_index, 'M_B'] = "UZ"
-                            #self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'M_B'] = "UZ"
-                            logging.info( f"{cmi_debug} - Bad Market cap: [ {wq.qd_quote['mkt_cap']} ] / scale set to: UZ" )
-                            print ( f"+", end="" )
+                            logging.info( f"{cmi_debug} - Bad Market cap: [ {wq.qd_quote['mkt_cap']} ] scale set to: UZ" )
+                            print ( f"0", end="" )
                             self.fixchars += 1
                             break
                         elif i[1] >= wq.qd_quote['mkt_cap']:
                             pass
                         else:
-                            #print ( f"{self.combo_df[self.combo_df['Symbol'] == xsymbol]}" )
                             row_index = self.combo_df.loc[self.combo_df['Symbol'] == xsymbol].index[0]
                             self.combo_df.at[row_index, 'M_B'] = i[0]
-                            #print ( f"{self.combo_df[self.combo_df['Symbol'] == xsymbol]}" )
                             logging.info( f"{cmi_debug} - Market cap: [ {wq.qd_quote['mkt_cap']} ] scale set to: {i[0]}" )
                             self.wrangle_errors += 1          # insert market cap scale into DF @ column M_B for this symbol
                             self.cleansed_errors += 1
@@ -267,14 +264,10 @@ class combo_logic:
                 if pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == False and pd.isna(self.combo_df.loc[row_idx].M_B) == False:
                     self.combo_df.loc[row_idx,'Hot'] = "*Hot*"      # Tag as a **HOT** stock
                     self.combo_df.loc[row_idx,'Insights'] = self.cx.get(scale) + " + Unu vol"     # Annotate why...
-                    self.mpt = ( row_idx, sym.rstrip(), float(price) )   # pack a tuple - for min_price analysis later
-                    self.min_price.update({row_idx: self.mpt})                # load helpder DICT e.g. {1: (7, 'IBM', 120.51), 7: (24, 'TSLA', 138.21)}
-                    #print ( f"{row_idx} - stock: {sym} forcfully tagged as - Mkt_cap: {cap} / M_B: {scale} : " )
-                    #print ( f"{self.min_price}")
+                    self.mpt = ( row_idx, sym.rstrip(), round(float(price), 2) )   # pack a tuple - for min_price analysis later
+                    self.min_price.update({row_idx: self.mpt})           # load helpder DICT e.g. {1: (7, 'IBM', 120.51), 7: (24, 'TSLA', 138.21)}
                 elif pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == True and pd.isna(self.combo_df.loc[row_idx].M_B) == True:
-                     #print ( f"{row_idx} - stock: {sym} allready tagged as  - Mkt_cap: {cap} / M_B: {scale} : deleted from DF" )
                      self.combo_df.drop([row_idx], inplace=True)    # drop this row from DF
-                     #print ( f"{self.min_price}")
                 else:
                     print ( f"WARNING: Don't know what to do for: {sym} - Mkt_cap: {cap} / M_B: {scale}" )
                     break
@@ -287,10 +280,12 @@ class combo_logic:
                     row_idx = int(v[0])                             # v[0] = 1st emelent = DF index of symbol
                     self.rx = [row_idx, v[1].rstrip()]              # add hottest stock with lowest price / 1 entry in list[]
                     self.combo_df.loc[row_idx,'Hot'] = "*Hot*"      # Tag as a **HOT** stock in DataFrame
-                    print ( f"\nLocated hottest stock: [ {self.combo_df.loc[row_idx, 'Symbol']} ]" )
+                    found_sym = self.combo_df.loc[row_idx, 'Symbol']
+                    print ( f"\nLocated hottest stock: [ {found_sym.rstrip()} ]" )
+                    print ( f"========== Hot stock analysis complete ===========================================" )
                     break
                 else:
-                    print ( f"[cold] / ", end="" )
+                    print ( f"[ cold ] / ", end="" )
 
         # TODO: ** This logic can fail @ Market open when many things are empty & unpopulated...
         if not bool(self.min_price):                # is empty?
@@ -380,10 +375,6 @@ class combo_logic:
         #rh_df0 = self.combo_df.sort_values(by=['Cur_price'], ascending=True)
         #rh_list = rh_df0.loc[self.combo_df['Hot'] == "*Hot*"]
 
-        print ( f">>> DEBUG <<< [ combo_df ]:\n {self.combo_df}" )
-        
-        #self.combo_df.at[row_index, 'Mkt_cap'] = round(z_float, 3)
-
         z = list(self.combo_df.sort_values(by=['Cur_price'], ascending=True).loc[self.combo_df['Hot'] == "*Hot*"].index)
         y = 100                                  # HOT stocks ranking starts at 100
         for i in z:                              # cycle thru the sorted DF
@@ -422,7 +413,7 @@ class combo_logic:
         z = list(self.combo_df.sort_values(by=['Cur_price'], ascending=True).loc[self.combo_df['rank'] == "" ].index)
         y = 200                                 # Non tagged average unknown stocks ranking starts at 200
         for i in z:                             # cycle thru the sorted DF
-            self.combo_df.loc[i, 'rank'] = y    # rank each entury
+            self.combo_df.loc[i, 'rank'] = y    # rank each entry
             # DEBUG : print ( "i: ", i, "x:", y )
             y += 1
         return self.combo_df
