@@ -231,9 +231,9 @@ def main():
         x.polish_combo_df(1)
         x.tag_dupes()
         x.tag_uniques()
-        #x.rank_hot()       # currently disabled b/c it efforts. pandas statment needs to be simplifed and split
-        # x.rank_unvol()    # ditto
-        # x.rank_caps()     # ditto
+        x.rank_hot()       # currently disabled b/c it efforts. pandas statment needs to be simplifed and split
+        x.rank_unvol()    # ditto
+        x.rank_caps()     # ditto
         x.combo_df.sort_values(by=['Symbol'])         # sort by sumbol name (so dupes are linearly grouped)
         x.reindex_combo_df()                          # re-order a new index (PERMENANT write)
 
