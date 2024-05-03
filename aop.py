@@ -236,6 +236,7 @@ def main():
         x.rank_caps()      # ditto
         x.combo_df.sort_values(by=['Symbol'])         # sort by sumbol name (so dupes are linearly grouped)
         x.reindex_combo_df()                          # re-order a new index (PERMENANT write)
+        x.find_hottest()
 
 # Summarize combo list key findings ##################################################################
         # Curious Outliers

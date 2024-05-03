@@ -34,8 +34,10 @@ class combo_logic:
     inst_uid = 0
     combo_df = ""
     combo_dupes = ""
+    min_price = {}      # Heler: DICT to help find cheapest ***HOT stock
     args = []           # class dict to hold global args being passed in from main() methods
     rx = []             # hottest stock with lowest price overall
+
     cx = { 'LT': 'Mega cap + % gainer', \
         'LB': 'L cap + % gainer', \
         'LM': 'M cap + % gainer', \
@@ -252,7 +254,6 @@ class combo_logic:
         cmi_debug = __name__+"::"+self.tag_dupes.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
         self.combo_df = self.combo_df.assign(Hot="", Insights="" )     # pre-insert 2 new columns
-        self.min_price = {}      # Heler: DICT to help find cheapest ***HOT stock
         self.mpt = ()            # Helper: Internal DICT(tuple) element to find cheapest ***HOT stock
 
         for ds in self.combo_df[self.combo_df.duplicated(['Symbol'])].Symbol.values:    # ONLY work on dupes in DF !!!
@@ -271,8 +272,14 @@ class combo_logic:
                 else:
                     print ( f"WARNING: Don't know what to do for: {sym} - Mkt_cap: {cap} / M_B: {scale}" )
                     break
+            return
 
-        # find and tag the lowest priced stock within the list of Hottest stocks
+#####################################################################################
+# method #2.1
+# find and tag the lowest priced stock within the list of Hottest stocks
+# must call tag_dupes() first as that tags hottest with *Hot* / this method relies on that
+
+    def find_hottest(self):
         if self.min_price:                       # not empty, We have some **HOT stocks to evaluate
             print ( f"Locating hottest stock...", end="" ) 
             mptv = min(( td[2] for td in self.min_price.values() )) # td[2] = iterator of 3rd elment of min_price{}
