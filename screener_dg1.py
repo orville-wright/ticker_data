@@ -53,17 +53,18 @@ class screener_dg1:
 
         cmi_debug = __name__+"::"+self.get_data.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
-        r = requests.get("https://finance.yahoo.com/screener/predefined/small_cap_gainers/" )
-        logging.info('%s - read html stream' % cmi_debug )
+        url = "https://finance.yahoo.com/screener/predefined/small_cap_gainers/"
+        r = requests.get(url)
+        logging.info( f"%s - read html stream: {url}" % cmi_debug )
         self.soup = BeautifulSoup(r.text, 'html.parser')
         # ATTR style search. Results -> Dict
         # <tr> tag has a very complex 'class=' but attributes are unique. e.g. 'simpTblRow'
-        logging.info('%s store url data handle' % cmi_debug )
+        logging.info('%s store resp data zone handle' % cmi_debug )
         self.tag_tbody = self.soup.find('tbody')
         self.tr_rows = self.tag_tbody.find(attrs={"class": "simpTblRow"})
         #self.all_tag_tr = self.soup.find(attrs={"class": "simpTblRow"})
 
-        logging.info('%s close url handle' % cmi_debug )
+        logging.info('%s close request handle' % cmi_debug )
         r.close()
         return
 
