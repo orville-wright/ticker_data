@@ -375,7 +375,7 @@ class combo_logic:
         #rh_df0 = self.combo_df.sort_values(by=['Cur_price'], ascending=True)
         #rh_list = rh_df0.loc[self.combo_df['Hot'] == "*Hot*"]
 
-        print ( f">>> DEBUG: \n{self.combo_df.sort_values(by=['Cur_price'], ascending=True)}" )
+        print ( f">>> DEBUG: \n{self.combo_df}" )
         z = list(self.combo_df.sort_values(by=['Cur_price'], ascending=True).loc[self.combo_df['Hot'] == "*Hot*"].index)
         y = 100                                  # HOT stocks ranking starts at 100
         for i in z:                              # cycle thru the sorted DF

@@ -63,28 +63,37 @@ class screener_dg1:
         self.tr_rows = self.tag_tbody.find(attrs={"class": "simpTblRow"})
         #self.all_tag_tr = self.soup.find(attrs={"class": "simpTblRow"})
 
-        #self.td_tag_rows = self.all_tag_tr.find('td')
-        # Example CSS Selector
-        #all_tag_tr1 = soup.select( "tr.simpTblRow.Bgc" )
         logging.info('%s close url handle' % cmi_debug )
         r.close()
         return
 
 # method #2
     def build_df0(self):
-        """Build-out Pandas DataFrame containg all the"""
-        """extracted/scraped fields from the html/markup table data"""
-        """Wrangle, clean/convert/format the data correctly."""
+        """
+        Build-out a fully populated Pandas DataFrame containg all the extracted/scraped fields from the
+        html/markup table data Wrangle, clean/convert/format the data correctly.
+        """
 
         cmi_debug = __name__+"::"+self.build_df0.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         logging.info('%s - Drop all rows from DF0' % cmi_debug )
-        #self.dg1_df0.drop(self.dg1_df0.index, inplace=True)
         self.dg1_df0 = pd.DataFrame()                                 # new df, but is NULLed
         x = 0
 
+        # >>>DEBUG<< for when yahoo.com changes data model...
+        print ( f"===== Rows: {len(self.tag_tbody.find_all('tr'))}  =================" )
         for j in self.tag_tbody.find_all('tr'):
+            """
+            # >>>DEBUG<< for when yahoo.com changes data model...
+            y = 1
+            for i in j.find_all('td'):
+                print ( f"Data {y}: {i.text}" )
+                logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
+                y += 1
+            print ( f"==============================================" )
+            # >>>DEBUG<< for when yahoo.com changes data model...
+            """
             extr_strs = j.strings
             co_sym = next(extr_strs)             # 1 : ticker symbol info / e.g "NWAU"
             co_name = next(extr_strs)            # 2 : company name / e.g "Consumer Automotive Finance, Inc."
@@ -95,7 +104,13 @@ class screener_dg1:
                 change_val = next(extr_strs)     # 4.1 : $ change value / e.g  "+0.0021"
             else:
                 change_val = change_sign
-                logging.info( f"{cmi_debug} - {co_sym} / re-align extractor / Found no [+-] tag for $0" )
+                logging.info( f"{cmi_debug} - {co_sym} - no dedicated [+-] field for $ CHANGE" )
+                if (re.search('\+', change_val)) or  (re.search('\-', change_val)) is TRUE:
+                    logging.info( f"{cmi_debug} - {change_val} - $ CHANGE is signed [+-]" )
+                else:
+                    logging.info( f"{cmi_debug} - {change_val} - $ CHANGE is NOT signed [+-]" )
+
+            # is there a dedicated collumn to hold a +/- indicator
             pct_sign = next(extr_strs)           # 5.0 : % change sign [+/-] / e.g "+%12.3"
             if pct_sign == "+" or pct_sign == "-":
                 pct_val = next(extr_strs)        # 5.1 : change / e.g "210.0000%" WARN trailing "%" must be removed before casting to float
@@ -112,13 +127,20 @@ class screener_dg1:
 
             ####################################################################
             # now wrangle the data...
-            co_sym_lj = f"{co_sym:<6}"          # left justify TXT in DF & convert to raw string
+            co_sym_lj = f"{co_sym:<6}"                                   # left justify TXT in DF & convert to raw string
             co_name_lj = np.array2string(np.char.ljust(co_name, 25) )    # left justify TXT in DF & convert to raw string
-            co_name_lj = (re.sub('[\'\"]', '', co_name_lj) )                  # remove " ' and strip leading/trailing spaces
+            co_name_lj = (re.sub('[\'\"]', '', co_name_lj) )             # remove " ' and strip leading/trailing spaces
+            price_cl = (re.sub('\,', '', price))                         # remove ,
             price_clean = float(price)
-            mktcap = (re.sub('[N\/A]', '0', mktcap))   # handle N/A
             change_clean = float(change_val)
 
+            if pct_val == "N/A":
+                pct_val = float(0.0)                               # Bad data. FOund a filed with N/A instead of read num
+            else:
+                pct_cl = re.sub('[\%\+\-,]', "", pct_val )
+                pct_clean = float(pct_cl)
+
+            mktcap = (re.sub('[N\/A]', '0', mktcap))               # handle N/A
             TRILLIONS = re.search('T', mktcap)
             BILLIONS = re.search('B', mktcap)
             MILLIONS = re.search('M', mktcap)
@@ -141,20 +163,15 @@ class screener_dg1:
             if not TRILLIONS and not BILLIONS and not MILLIONS:
                 mktcap_clean = 0    # error condition - possible bad data
                 mb = "SZ"           # Zillions
-                logging.info( f'%s - {x} / {co_sym_lj} bad mktcap data N/A setting to SZ' % cmi_debug )
+                logging.info( f'%s - {x} - {co_sym_lj} bad mktcap data N/A - SZ' % cmi_debug )
                 # handle bad data in mktcap html page field
 
-            if pct_val == "N/A":
-                pct_val = float(0.0)        # Bad data : Found a field with N/A instead of real num
-            else:
-                pct_cl = re.sub('[\%\+\-]', "", pct_val )
-                pct_clean = float(pct_cl)
 
             self.list_data = [[ \
                        x, \
                        re.sub('\'', '', co_sym_lj), \
                        co_name_lj, \
-                       price, \
+                       price_clean, \
                        change_clean, \
                        pct_clean, \
                        mktcap_clean, \

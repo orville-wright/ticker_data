@@ -68,7 +68,7 @@ class y_topgainers:
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         logging.info('%s - Create clean NULL DataFrame' % cmi_debug )
         self.tg_df0 = pd.DataFrame()                                 # new df, but is NULLed
-        x = 0   # row counter / = index_id for DataFrame
+        x = 0
 
         # >>>DEBUG<< for when yahoo.com changes data model...
         print ( f"===== Rows: {len(self.tag_tbody.find_all('tr'))}  =================" )
@@ -121,7 +121,7 @@ class y_topgainers:
             co_sym_lj = f"{co_sym:<6}"                                   # left justify TXT in DF & convert to raw string
             co_name_lj = np.array2string(np.char.ljust(co_name, 25) )    # left justify TXT in DF & convert to raw string
             co_name_lj = (re.sub('[\'\"]', '', co_name_lj) )             # remove " ' and strip leading/trailing spaces    
-            price_cl = (re.sub('\,', '', price))                   # remove ,
+            price_cl = (re.sub('\,', '', price))                         # remove ,
             price_clean = float(price_cl)
             change_clean = float(change_val)
 
