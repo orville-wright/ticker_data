@@ -274,9 +274,9 @@ def main():
             print ( f">>> DEBUG: \n {x.rx}")
             hotidx = x.rx[0]
             hotsym = x.rx[1]
-            #hotp = x.combo_df.loc[hotidx, ['Cur_price']][0]
+            hotp = x.combo_df.loc[hotidx, ['Cur_price']][0]
             #hotp = x.combo_df.at[hotidx, 'Cur_price']         # bug need to access index
-            hotp = x.combo_df.loc[[x.combo_df['Symbol'] == hotsym], ['Cur_price']]
+            #hotp = x.combo_df.loc[[x.combo_df['Symbol'] == hotsym], ['Cur_price']]
             hotname = x.combo_df.at[hotidx, 'Co_name']
             hotpct = x.combo_df.at[hotidx, 'Pct_change']
             #hotname = x.combo_df.loc[hotidx, ['Co_name']][0]
