@@ -265,6 +265,7 @@ def main():
             #hotp = x.combo_df.loc[hotidx, ['Cur_price']][0]
             hotp = x.combo_df.at[hotidx-1, 'Cur_price']         # bug need to access index
             hotname = x.combo_df.at[hotidx-1, 'Co_name']
+            hotpct = x.combo_df.at[hotidx-1, 'Pct_change']
             #hotname = x.combo_df.loc[hotidx, ['Co_name']][0]
             print ( " " )       # empty list[] = no stock found yet (prob very early in trading morning)
 
@@ -272,7 +273,7 @@ def main():
 
             #recommended['3'] = ('Hottest:', hotsym.rstrip(), '$'+str(hotp), hotname.rstrip(), '+%'+str(x.combo_df.loc[hotidx, ['Pct_change']][0]) )
             recommended['3'] = ('Hottest:', hotsym.rstrip(), '$'+str(hotp), hotname.rstrip(), '+%'+str(x.combo_df.at[hotidx, 'Pct_change']) )
-            print ( f">>Lowest price<< **Hot** stock: {hotsym.rstrip()} - {hotname.rstrip()} / {'$'+str(hotp)} / {'+%'+str(x.combo_df.at[hotidx-1, 'Pct_change')} gain" )
+            print ( f">>Lowest price<< **Hot** stock: {hotsym.rstrip()} - {hotname.rstrip()} / {'$'+str(hotp)} / {'+%'+str(hotpct)} gain" )
             print ( " " )
             print ( " " )
 
