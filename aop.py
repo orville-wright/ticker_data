@@ -232,7 +232,7 @@ def main():
         x.tag_dupes()
         x.tag_uniques()
         x.rank_hot()       # currently disabled b/c it efforts. pandas statment needs to be simplifed and split
-        x.find_hottest()
+        #x.find_hottest()
         x.rank_unvol()     # ditto
         x.rank_caps()      # ditto
         x.combo_df.sort_values(by=['Symbol'])         # sort by sumbol name (so dupes are linearly grouped)
@@ -245,13 +245,14 @@ def main():
         # temp_1.reset_index(inplace=True, drop=True)                           # reset index
 
         x.find_hottest()
+
         print ( f"========== Hot stock anomolies ===================================================" )
         print ( " " )
         print ( f"{x.combo_dupes_only_listall(1)}" )
 
         print ( " " )
         print ( f"========== Full System of Truth  ===================================================" )
-        print ( f"\n{self.combo_df}" )    # sort by %
+        print ( f"\n{x.combo_df}" )    # sort by %
         print ( " " )
 
         print ( "========== ** OUTLIERS ** : Unusual UP volume + Top Gainers by +5% ================================" )

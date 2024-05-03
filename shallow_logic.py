@@ -280,8 +280,9 @@ class combo_logic:
 # must call tag_dupes() first as that tags hottest with *Hot* / this method relies on that
 
     def find_hottest(self):
+        print ( f"========== Hot stock analysis ====================================================" )
         if self.min_price:                       # not empty, We have some **HOT stocks to evaluate
-            print ( f"\nLocating hottest stock...", end="" ) 
+            print ( f"\nLocating...", end="" ) 
             mptv = min(( td[2] for td in self.min_price.values() )) # td[2] = iterator of 3rd elment of min_price{}
             for v in self.min_price.values():                       # v = tuple structured like: (0, IBM, 28.42)
                 if v[2] == mptv:                                    # v[2] = 3rd element = price symbol
@@ -290,7 +291,7 @@ class combo_logic:
                     self.combo_df.loc[row_idx,'Hot'] = "*Hot*"      # Tag as a **HOT** stock in DataFrame
                     found_sym = self.combo_df.loc[row_idx, 'Symbol']
                     print ( f" [ {found_sym.rstrip()} ] @ #{row_idx}" )
-                    print ( f"========== Hot stock analysis complete ===========================================" )
+                    print ( f"========== complete ==============================================================" )
                     break
                 else:
                     print ( f".", end="" )
@@ -383,10 +384,6 @@ class combo_logic:
         #rh_df0 = self.combo_df.sort_values(by=['Cur_price'], ascending=True)
         #rh_list = rh_df0.loc[self.combo_df['Hot'] == "*Hot*"]
 
-        print ( f"\n " )
-        print ( f"==================================================================================" )
-        print ( f"========== Hot stock anomolies ===================================================" )
-        print ( f"\n{self.combo_df}" )
         z = list(self.combo_df.sort_values(by=['Cur_price'], ascending=True).loc[self.combo_df['Hot'] == "*Hot*"].index)
         y = 100                                  # HOT stocks ranking starts at 100
         for i in z:                              # cycle thru the sorted DF
