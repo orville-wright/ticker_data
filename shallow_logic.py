@@ -274,6 +274,7 @@ class combo_logic:
 
         # find and tag the lowest priced stock within the list of Hottest stocks
         if self.min_price:                       # not empty, We have some **HOT stocks to evaluate
+            print ( f"Locating hottest stock", end="" ) 
             mptv = min(( td[2] for td in self.min_price.values() )) # td[2] = iterator of 3rd elment of min_price{}
             for v in self.min_price.values():                       # v = tuple structured like: (0, IBM, 28.42)
                 if v[2] == mptv:                                    # v[2] = 3rd element = price symbol
@@ -281,11 +282,11 @@ class combo_logic:
                     self.rx = [row_idx, v[1].rstrip()]              # add hottest stock with lowest price / 1 entry in list[]
                     self.combo_df.loc[row_idx,'Hot'] = "*Hot*"      # Tag as a **HOT** stock in DataFrame
                     found_sym = self.combo_df.loc[row_idx, 'Symbol']
-                    print ( f"\nLocated hottest stock: [ {found_sym.rstrip()} ]" )
+                    print ( f" [ {found_sym.rstrip()} ] \n" )
                     print ( f"========== Hot stock analysis complete ===========================================" )
                     break
                 else:
-                    print ( f"[ cold ] / ", end="" )
+                    print ( f".", end="" )
 
         # TODO: ** This logic can fail @ Market open when many things are empty & unpopulated...
         if not bool(self.min_price):                # is empty?

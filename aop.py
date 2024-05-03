@@ -263,9 +263,10 @@ def main():
             hotidx = x.rx[0]
             hotsym = x.rx[1]
             #hotp = x.combo_df.loc[hotidx, ['Cur_price']][0]
-            hotp = x.combo_df.at[hotidx-1, 'Cur_price']         # bug need to access index
-            hotname = x.combo_df.at[hotidx-1, 'Co_name']
-            hotpct = x.combo_df.at[hotidx-1, 'Pct_change']
+            #hotp = x.combo_df.at[hotidx, 'Cur_price']         # bug need to access index
+            hotp = x.combo_df.loc[['Symbol' == hotsym ], ['Cur_price']]
+            hotname = x.combo_df.at[hotidx, 'Co_name']
+            hotpct = x.combo_df.at[hotidx, 'Pct_change']
             #hotname = x.combo_df.loc[hotidx, ['Co_name']][0]
             print ( " " )       # empty list[] = no stock found yet (prob very early in trading morning)
 
