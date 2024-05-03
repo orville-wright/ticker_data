@@ -262,7 +262,7 @@ def main():
             print ( f">>> DEBUG: \n {x.rx}" )
             hotidx = x.rx[0]
             hotsym = x.rx[1]
-            hotp = x.combo_df.loc[hotidx, ['Cur_price']][0]
+            hotp = x.combo_df.at[hotidx, 'Cur_price']
             #hotname = x.combo_df.loc[hotidx, ['Co_name']][0]
             print ( " " )       # empty list[] = no stock found yet (prob very early in trading morning)
 
