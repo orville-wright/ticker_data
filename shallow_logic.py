@@ -282,7 +282,7 @@ class combo_logic:
                     self.rx = [row_idx, v[1].rstrip()]              # add hottest stock with lowest price / 1 entry in list[]
                     self.combo_df.loc[row_idx,'Hot'] = "*Hot*"      # Tag as a **HOT** stock in DataFrame
                     found_sym = self.combo_df.loc[row_idx, 'Symbol']
-                    print ( f" [ {found_sym.rstrip()} ] @ {row_idx}" )
+                    print ( f" [ {found_sym.rstrip()} ] @ #{row_idx}" )
                     print ( f"========== Hot stock analysis complete ===========================================" )
                     break
                 else:
