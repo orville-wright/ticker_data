@@ -274,7 +274,7 @@ class combo_logic:
 
         # find and tag the lowest priced stock within the list of Hottest stocks
         if self.min_price:                       # not empty, We have some **HOT stocks to evaluate
-            print ( f"Locating hottest stock", end="" ) 
+            print ( f"Locating hottest stock...", end="" ) 
             mptv = min(( td[2] for td in self.min_price.values() )) # td[2] = iterator of 3rd elment of min_price{}
             for v in self.min_price.values():                       # v = tuple structured like: (0, IBM, 28.42)
                 if v[2] == mptv:                                    # v[2] = 3rd element = price symbol
@@ -282,7 +282,7 @@ class combo_logic:
                     self.rx = [row_idx, v[1].rstrip()]              # add hottest stock with lowest price / 1 entry in list[]
                     self.combo_df.loc[row_idx,'Hot'] = "*Hot*"      # Tag as a **HOT** stock in DataFrame
                     found_sym = self.combo_df.loc[row_idx, 'Symbol']
-                    print ( f" [ {found_sym.rstrip()} ] \n" )
+                    print ( f" [ {found_sym.rstrip()} ] @ {row_idx}" )
                     print ( f"========== Hot stock analysis complete ===========================================" )
                     break
                 else:
@@ -551,6 +551,4 @@ class combo_logic:
         cmi_debug = __name__+"::"+self.reindex_combo_df.__name__+".#"+str(self.inst_uid)
         logging.info('%s - IN' % cmi_debug )
         self.combo_df.reset_index(inplace=True, drop=True)                         # reset index each time so its guaranteed sequential
-        #self.combo_df = temp_df.sort_values(by=['Pct_change'], ascending=False )   # ensure sorted combo DF is avail as class global attr
-        #self.combo_dupes = self.combo_df.duplicated(['Symbol']).to_frame()         # convert Bool SERIES > DF & make avail as class global attr DF
         return
