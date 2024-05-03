@@ -237,25 +237,33 @@ def main():
         x.rank_caps()      # ditto
         x.combo_df.sort_values(by=['Symbol'])         # sort by sumbol name (so dupes are linearly grouped)
         x.reindex_combo_df()                          # re-order a new index (PERMENANT write)
-        x.find_hottest()
 
 # Summarize combo list key findings ##################################################################
         # Curious Outliers
         # temp_1 = x.combo_df.sort_values(by=['Pct_change'], ascending=False)
         # temp_1 = x.combo_df.sort_values(by=['Symbol'])                        # sort by sumbol name (so dupes are linearly grouped)
         # temp_1.reset_index(inplace=True, drop=True)                           # reset index
-        temp_1 = x.combo_df.sort_values(by=['Pct_change'], ascending=False)     # sort by %
-        print ( f">>> DEBUG: \n {x.combo_dupes_only_listall(1)}" )
-        temp_2 = x.combo_listall_nodupes()                                      # dupes by SYMBOL only
+
+        x.find_hottest()
+        print ( f"========== Hot stock anomolies ===================================================" )
         print ( " " )
+        print ( f"{x.combo_dupes_only_listall(1)}" )
+
+        print ( " " )
+        print ( f"========== Full System of Truth  ===================================================" )
+        print ( f"\n{self.combo_df}" )    # sort by %
+        print ( " " )
+
         print ( "========== ** OUTLIERS ** : Unusual UP volume + Top Gainers by +5% ================================" )
         print ( " " )
+        temp_1 = x.combo_df.sort_values(by=['Pct_change'], ascending=False) 
+        print ( f"{temp_1}" )       # DUPLES in the DF = a curious outlier
         # print ( f"{temp_1[temp_1.duplicated(['Symbol'], keep='first')]}" )    # DUPLES in the DF = a curious outlier
         #print ( f"{temp_1[temp_1.duplicated(['Symbol'], keep='last')]}" )       # DUPLES in the DF = a curious outlier
-        print ( f"{temp_1}" )       # DUPLES in the DF = a curious outlier
         print ( " " )
         print ( f"================= >>COMBO<< Full list of intersting market observations ==================" )
         #print ( f"{x.combo_listall_nodupes()}" )
+        temp_2 = x.combo_listall_nodupes()                                      # dupes by SYMBOL only
         print ( f"{temp_2.sort_values(by=['Pct_change'], ascending=False)}" )
 
         if len(x.rx) == 0:      # rx=[] holds hottest stock with lowest price overall
