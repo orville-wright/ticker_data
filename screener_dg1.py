@@ -107,8 +107,10 @@ class screener_dg1:
                 logging.info( f"{cmi_debug} - {co_sym} - no dedicated [+-] field for $ CHANGE" )
                 if (re.search('\+', change_val)) or  (re.search('\-', change_val)) is True:
                     logging.info( f"{cmi_debug} - {change_val} - $ CHANGE is signed [+-]" )
+                    price_cl = (re.sub('\+\-,', '', price))
                 else:
                     logging.info( f"{cmi_debug} - {change_val} - $ CHANGE is NOT signed [+-]" )
+                    price_cl = (re.sub('\,', '', price))                         # remove ,
 
             # is there a dedicated collumn to hold a +/- indicator
             pct_sign = next(extr_strs)           # 5.0 : % change sign [+/-] / e.g "+%12.3"
@@ -130,7 +132,6 @@ class screener_dg1:
             co_sym_lj = f"{co_sym:<6}"                                   # left justify TXT in DF & convert to raw string
             co_name_lj = np.array2string(np.char.ljust(co_name, 25) )    # left justify TXT in DF & convert to raw string
             co_name_lj = (re.sub('[\'\"]', '', co_name_lj) )             # remove " ' and strip leading/trailing spaces
-            price_cl = (re.sub('\,', '', price))                         # remove ,
             price_clean = float(price_cl)
             change_clean = float(change_val)
 
