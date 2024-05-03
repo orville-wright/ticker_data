@@ -84,7 +84,7 @@ class screener_dg1:
         # >>>DEBUG<< for when yahoo.com changes data model...
         print ( f"===== Rows: {len(self.tag_tbody.find_all('tr'))}  =================" )
         for j in self.tag_tbody.find_all('tr'):
-            """
+            #"""
             # >>>DEBUG<< for when yahoo.com changes data model...
             y = 1
             for i in j.find_all('td'):
@@ -93,7 +93,7 @@ class screener_dg1:
                 y += 1
             print ( f"==============================================" )
             # >>>DEBUG<< for when yahoo.com changes data model...
-            """
+            #"""
             extr_strs = j.strings
             co_sym = next(extr_strs)             # 1 : ticker symbol info / e.g "NWAU"
             co_name = next(extr_strs)            # 2 : company name / e.g "Consumer Automotive Finance, Inc."
