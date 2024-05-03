@@ -37,15 +37,15 @@ class combo_logic:
     args = []           # class dict to hold global args being passed in from main() methods
     rx = []             # hottest stock with lowest price overall
     cx = { 'LT': 'Mega cap + % gainer', \
-        'LB': 'Large cap + % gainer', \
-        'LM': 'Med cap + % gainer', \
-        'LZ': 'Zero Large cap + % gainer', \
-        'SB': 'Big Small cap + % gainer', \
-        'SM': 'Small cap + % gainer', \
-        'SZ': 'Zero Small cap + % gainer', \
+        'LB': 'L cap + % gainer', \
+        'LM': 'M cap + % gainer', \
+        'LZ': 'Zero L cap + % gainer', \
+        'SB': 'B/S cap + % gainer', \
+        'SM': 'S cap + % gainer', \
+        'SZ': 'Zero S cap + % gainer', \
         'EF': 'ETF Fund Trust + % gainer', \
-        'UZ': 'Unknown cap + % gainer', \
-        'TM': 'Tiny cap + % gainer',
+        'UZ': '? cap + % gainer', \
+        'TM': 'T cap + % gainer',
         }
 
     def __init__(self, yti, d1, d2, d3, global_args):
@@ -263,7 +263,7 @@ class combo_logic:
                 price = self.combo_df.loc[row_idx].Cur_price
                 if pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == False and pd.isna(self.combo_df.loc[row_idx].M_B) == False:
                     self.combo_df.loc[row_idx,'Hot'] = "*Hot*"      # Tag as a **HOT** stock
-                    self.combo_df.loc[row_idx,'Insights'] = self.cx.get(scale) + " + Unu vol"     # Annotate why...
+                    self.combo_df.loc[row_idx,'Insights'] = self.cx.get(scale) + " + ^Un vol"     # Annotate why...
                     self.mpt = ( row_idx, sym.rstrip(), round(float(price), 2) )   # pack a tuple - for min_price analysis later
                     self.min_price.update({row_idx: self.mpt})           # load helpder DICT e.g. {1: (7, 'IBM', 120.51), 7: (24, 'TSLA', 138.21)}
                 elif pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == True and pd.isna(self.combo_df.loc[row_idx].M_B) == True:
@@ -315,7 +315,7 @@ class combo_logic:
                 self.combo_df.loc[row_idx,'Insights'] = self.cx.get(scale)
             elif pd.isna(self.combo_df.loc[row_idx].Mkt_cap) == True and pd.isna(self.combo_df.loc[row_idx].M_B) == True:
                 logging.info('%s - Apply NaN/NaN inferrence logic' % cmi_debug )
-                self.combo_df.loc[row_idx,'Insights'] = "^ Unusual vol only"
+                self.combo_df.loc[row_idx,'Insights'] = "^ Un vol only"
             else:
                 logging.info('%s - Unknown logic discovered' % cmi_debug )
                 self.combo_df.loc[row_idx,'Insights'] = "!No logic!"
@@ -392,7 +392,7 @@ class combo_logic:
         Isolate all Unusual Vol stocks only.
         tag_rank them with code: 3xx (e.g. 300, 301, 302)
         """
-        z = list(self.combo_df.sort_values(by=['Cur_price'], ascending=True).loc[self.combo_df['Insights'] == "^ Unusual vol only"].index)
+        z = list(self.combo_df.sort_values(by=['Cur_price'], ascending=True).loc[self.combo_df['Insights'] == "^ Un vol only"].index)
         y = 300                                  # Unusual Vol stocks ranking starts at 300 
         for i in z:                              # cycle thru the sorted DF
             self.combo_df.loc[i, 'rank'] = y     # rank each Unique entry

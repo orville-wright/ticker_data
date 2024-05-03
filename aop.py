@@ -232,8 +232,8 @@ def main():
         x.tag_dupes()
         x.tag_uniques()
         x.rank_hot()       # currently disabled b/c it efforts. pandas statment needs to be simplifed and split
-        x.rank_unvol()    # ditto
-        x.rank_caps()     # ditto
+        x.rank_unvol()     # ditto
+        x.rank_caps()      # ditto
         x.combo_df.sort_values(by=['Symbol'])         # sort by sumbol name (so dupes are linearly grouped)
         x.reindex_combo_df()                          # re-order a new index (PERMENANT write)
 
@@ -248,16 +248,18 @@ def main():
         print ( "========== ** OUTLIERS ** : Unusual UP volume + Top Gainers by +5% ================================" )
         print ( " " )
         # print ( f"{temp_1[temp_1.duplicated(['Symbol'], keep='first')]}" )    # DUPLES in the DF = a curious outlier
-        print ( f"{temp_1[temp_1.duplicated(['Symbol'], keep='last')]}" )       # DUPLES in the DF = a curious outlier
+        #print ( f"{temp_1[temp_1.duplicated(['Symbol'], keep='last')]}" )       # DUPLES in the DF = a curious outlier
+        print ( f"{temp_1}" )       # DUPLES in the DF = a curious outlier
         print ( " " )
         print ( f"================= >>COMBO<< Full list of intersting market observations ==================" )
         #print ( f"{x.combo_listall_nodupes()}" )
         print ( f"{temp_2.sort_values(by=['Pct_change'], ascending=False)}" )
 
-        if len(x.rx) == 0:      # # hottest stock with lowest price overall
+        if len(x.rx) == 0:      # rx=[] holds hottest stock with lowest price overall
             print ( " " )       # empty list[] = no stock found yet (prob very early in trading morning)
             print ( f"No **hot** stock for >>LOW<< buy-in recommendations list yet" )
         else:
+            print ( f">>> DEBUG: \n {x.rx}" )
             hotidx = x.rx[0]
             hotsym = x.rx[1]
             hotp = x.combo_df.loc[hotidx, ['Cur_price']][0]
