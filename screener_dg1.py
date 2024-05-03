@@ -105,7 +105,7 @@ class screener_dg1:
             else:
                 change_val = change_sign
                 logging.info( f"{cmi_debug} - {co_sym} - no dedicated [+-] field for $ CHANGE" )
-                if (re.search('\+', change_val)) or  (re.search('\-', change_val)) is TRUE:
+                if (re.search('\+', change_val)) or  (re.search('\-', change_val)) is True:
                     logging.info( f"{cmi_debug} - {change_val} - $ CHANGE is signed [+-]" )
                 else:
                     logging.info( f"{cmi_debug} - {change_val} - $ CHANGE is NOT signed [+-]" )
