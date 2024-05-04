@@ -9,7 +9,6 @@ import re
 import logging
 import argparse
 import time
-import threading
 
 # logging setup
 logging.basicConfig(level=logging.INFO)

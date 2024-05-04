@@ -40,7 +40,6 @@ class yfnews_reader:
     ul_tag_dataset = ""     # BS4 handle of the <tr> extracted data
     yfn_df0 = ""            # DataFrame 1
     yfn_df1 = ""            # DataFrame 2
-    inst_uid = 0
     yti = 0                 # Unique instance identifier
     cycle = 0               # class thread loop counter
     nlp_x = 0
