@@ -58,7 +58,7 @@ class cookie_monster:
         self.path = path
         self.cycle = 1
         self.js_session = HTMLSession()                        # init JAVAScript processor early
-        self.html_session = requests.Session()                 # init HTML session
+        #self.html_session = requests.Session()                 # init HTML session
         self.js_session.cookies.update(self.yahoo_headers)     # load basic cookie/header hack data set into session
         self.a_urlp = urlparse('https://www.dummyurl.com')     # ??
         return
@@ -121,7 +121,7 @@ class cookie_monster:
         if type_of_get == 0:
             logging.info( f"%s - get() using simple HTML egine..." % cmi_debug )
             #with self.html_session.get(self.dummy_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.html_resp0:
-            self.html_resp0 = self.html_session.get(self.dummy_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
+            self.html_resp0 = requests.get(self.dummy_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
             # Xray DEBUG
             print ( f"====================== {self.yti} / Dummy HTML session cookies ==================================" )
             for i in self.html_session.cookies.items():
