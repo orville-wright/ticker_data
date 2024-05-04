@@ -134,7 +134,7 @@ class cookie_monster:
                 return
 
         if type_of_get == 1:
-            logging.info( f"%s - get() using JAVASCRIPT engine..." % cmi_debug 
+            logging.info( f"%s - get() using JAVASCRIPT engine..." % cmi_debug )
             with self.js_sesion.get(self.dummy_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
                 # Xray DEBUG
                 print ( f"=============== {self.yti} / Dummy JAVASCRIPT session cookies ==================================" )
