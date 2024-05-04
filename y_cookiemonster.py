@@ -27,7 +27,7 @@ class cookie_monster:
     soup = ""               # BS4 shared handle between UP & DOWN (1 URL, 2 embeded data sets in HTML doc)
     args = []               # class dict to hold global args being passed in from main() methods
     a_urlp = ""             # a url
-    dummy_url = "https://finance.yahoo.com/"   # url for the Dummy session
+    dummy_url = "https://geo.yahoo.com/p"   # url for the Dummy session
     path = ""               # the path component of our url : /screener/predefined/small_cap_gainers/
     yf_htmldata = ""        # live HTML data text from a sucecssful html get()
     yf_jsdata = ""          # live JAVASCRIPT page data - NOT the HTML down rendered page
@@ -149,7 +149,7 @@ class cookie_monster:
         print ( f">>> DEBUG: Hot cookie jar\n {json.dumps(hot_cookies)}" )
         print ( f"============================================= end ===========================================\n" )
 
-        #self.js_session.cookies.update({'A1': self.js_resp0.cookies['B']} )    # yahoo cookie hack
+        #self.js_session.cookies.update({'A1': self.js_resp0.cookies['A1']} )    # yahoo cookie hack
         #self.js_session.cookies.update({'A1': self.js_resp0.cookies['A1']} )    # yahoo cookie hack
         return
 

@@ -189,6 +189,7 @@ def main():
         yf_sc_screener.init_dummy_session()
         yf_sc_screener.update_cookies()
         yf_sc_screener.do_html_get()            # jorh = 0
+        yf_sc_screener.update_cookies()
 
         # jorh : 0 = Simple HTML engine processor / 1 = JAVASCRIPT engine renderer
         small_cap_dataset.get_data(1, yf_sc_screener.js_resp1, yf_sc_screener.jorh)              # extract data from finance.Yahoo.com
