@@ -45,7 +45,6 @@ class cookie_monster:
                         'sec-ch-ua-mobile': '"?0"', \
                         'sec-fetch-mode': 'navigate', \
                         'sec-fetch-site': 'same-origin', \
-                        'cookie': '', \
                         'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36' }
 
 #######################################################################
@@ -60,8 +59,8 @@ class cookie_monster:
         self.cycle = 1
         self.js_session = HTMLSession()                        # init JAVAScript processor early
         self.html_session = requests.Session()                 # init HTML session
-        self.js_session.cookies.update(self.yahoo_headers)     # load cookie/header hack data set into session
-        self.a_urlp = urlparse('https://www.dummyurl.com')
+        #self.js_session.cookies.update(self.yahoo_headers)     # load basic cookie/header hack data set into session
+        self.a_urlp = urlparse('https://www.dummyurl.com')     # ??
         return
     
 #######################################################################
@@ -77,7 +76,8 @@ class cookie_monster:
 
         cmi_debug = __name__+"::"+self.form_url_endpoint.__name__+".#"+str(self.yti)
         logging.info( f"%s - form URL endpoint..." % cmi_debug )
-        self.a_urlp = 'https://finance.yahoo.com' + self.path    # use global accessor (so all paths are consistent)
+        #self.a_urlp = 'https://finance.yahoo.com' + self.path    # use global accessor (so all paths are consistent)
+        self.a_urlp = self.path                                   # use global accessor (so all paths are consistent
         logging.info( f"%s - URL endpoint: {self.a_urlp}" % cmi_debug )
         return
 
@@ -100,7 +100,7 @@ class cookie_monster:
 
 #######################################################################
 # method 3
-    def init_dummy_session(self):
+    def init_dummy_session(self, type_of_get):
         cmi_debug = __name__+"::"+self.init_dummy_session.__name__+".#"+str(self.yti)
         """
         NOTE: we ping finance.yahoo.com
@@ -113,19 +113,42 @@ class cookie_monster:
         # https://finance.yahoo.com/
         # https://query1.finance.yahoo.com/v1/finance/trending/US?count=5&useQuotes=true&fields=logoUrl%2CregularMarketChangePercent%2CregularMarketPrice
 
+            
+
         logging.info( f"%s - get() dummy js_session with GOOD cookies for extraction" % cmi_debug )
         logging.info( f"%s - Using url: {self.dummy_url}" % cmi_debug )
 
-        with self.js_session.get(self.dummy_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
+        if type_of_get == 0:
+            logging.info( f"%s - get() using simple HTML egine..." % cmi_debug )
+            with self.html_session.get(self.dummy_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.html_resp0:
+                print ( f">>> DEBUG: dump HTML resp0 txt\n" )
+                # Xray DEBUG
+                print ( f"====================== {self.yti} / Dummy HTML session cookies ==================================" )
+                for i in self.html_session.cookies.items():
+                    print ( f"{i}" )
 
-            # Xray DEBUG
-            print ( f"========================== {self.yti} / Dummy session cookies ==================================" )
-            for i in self.js_session.cookies.items():
-                print ( f"{i}" )
-            print ( f"=========================================== end ================================================\n" )
-            # self.js_session.cookies.update({'B': self.js_resp0.cookies['B']} )    # yahoo cookie hack
-            # if the get() succeds, the response handle is automatically saved in Class Global accessor -> self.js_resp0
-            return
+                print ( f"================================================================================================\n" )
+                print ( f">>> DEBUG: dump rep0 txt\n" )
+                print ( f"{self.html_resp0.text}")
+                print ( f"=========================================== end ================================================\n" )
+                return
+
+        if type_of_get == 1:
+            logging.info( f"%s - get() using JAVASCRIPT engine..." % cmi_debug 
+            with self.js_sesion.get(self.dummy_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
+                # Xray DEBUG
+                print ( f"=============== {self.yti} / Dummy JAVASCRIPT session cookies ==================================" )
+                for i in self.js_session.cookies.items():
+                    print ( f"{i}" )
+
+                print ( f"================================================================================================\n" )
+                print ( f">>> DEBUG: dump JAVASCRIPT resp0 txt\n" )
+                print ( f"{self.js_resp0.text}")
+                print ( f"=========================================== end ================================================\n" )
+
+                # self.js_session.cookies.update({'B': self.js_resp0.cookies['B']} )    # yahoo cookie hack
+                # if the get() succeds, the response handle is automatically saved in Class Global accessor -> self.js_resp0
+                return
 
 #######################################################################
 # method 4
