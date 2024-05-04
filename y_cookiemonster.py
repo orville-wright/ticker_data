@@ -1,4 +1,4 @@
-!/usr/bin/python3
+#!/usr/bin/python3
 import requests
 from requests import Request, Session
 from requests_html import HTMLSession
@@ -72,9 +72,9 @@ class cookie_monster:
         """
 
         cmi_debug = __name__+"::"+self.form_url_endpoint.__name__+".#"+str(self.yti)
-        logging.info( f"%s - form URL endpoint for: {symbol}" % cmi_debug )
+        logging.info( f"%s - form URL endpoint..." % cmi_debug )
         self.a_urlp = 'https://finance.yahoo.com' + self.path    # use global accessor (so all paths are consistent)
-        logging.info( f"%s - API endpoint URL: {self.a_urlp}" % cmi_debug )
+        logging.info( f"%s - URL endpoint: {self.a_urlp}" % cmi_debug )
         return
 
 #######################################################################
