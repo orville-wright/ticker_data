@@ -27,6 +27,7 @@ class cookie_monster:
     soup = ""               # BS4 shared handle between UP & DOWN (1 URL, 2 embeded data sets in HTML doc)
     args = []               # class dict to hold global args being passed in from main() methods
     a_urlp = ""             # a url
+    dummy_url = "https://finance.yahoo.com/"   # url for the Dummy session
     path = ""               # the path component of our url : /screener/predefined/small_cap_gainers/
     yf_htmldata = ""        # live HTML data text from a sucecssful html get()
     yf_jsdata = ""          # live JAVASCRIPT page data - NOT the HTML down rendered page
@@ -44,6 +45,7 @@ class cookie_monster:
                         'sec-ch-ua-mobile': '"?0"', \
                         'sec-fetch-mode': 'navigate', \
                         'sec-fetch-site': 'same-origin', \
+                        'cookie': '', \
                         'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36' }
 
 #######################################################################
@@ -88,10 +90,11 @@ class cookie_monster:
         logging.info( f"%s - :path: cookie - [ {self.path} ]" % cmi_debug )
 
         if self.args['bool_xray'] is True:
-            print ( f"=========================== {self.yti} / session headers ===========================" )
+            print ( f"========================= {self.yti} / Updated session headers ============================" )
             for i in self.js_session.cookies.items():
                 print ( f"{i}" )
-
+            print ( f"========================================= end =============================================\n" )
+            
         return
 
 #######################################################################
@@ -109,14 +112,16 @@ class cookie_monster:
         # https://finance.yahoo.com/
         # https://query1.finance.yahoo.com/v1/finance/trending/US?count=5&useQuotes=true&fields=logoUrl%2CregularMarketChangePercent%2CregularMarketPrice
 
-        logging.info( f"%s - Setup get() a dummy session with GOOD cookies for extraction" % cmi_debug )
-        with self.js_session.get('https://finance.yahoo.com/', stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
+        logging.info( f"%s - get() dummy js_session with GOOD cookies for extraction" % cmi_debug )
+        logging.info( f"%s - Using url: {self.dummy_url}" % cmi_debug )
+
+        with self.js_session.get(self.dummy_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
 
             # Xray DEBUG
-            print ( f"========================== {self.yti} / Dummy session cookies ================================" )
-            for i in self.js_resp0.cookies.items():
+            print ( f"========================== {self.yti} / Dummy session cookies ==================================" )
+            for i in self.js_session.cookies.items():
                 print ( f"{i}" )
-            print ( f"========================== {self.yti} / Dummy session cookies ================================" )
+            print ( f"=========================================== end ================================================\n" )
             # self.js_session.cookies.update({'B': self.js_resp0.cookies['B']} )    # yahoo cookie hack
             # if the get() succeds, the response handle is automatically saved in Class Global accessor -> self.js_resp0
             return
@@ -130,13 +135,19 @@ class cookie_monster:
         
         # Xray DEBUG
         if self.args['bool_xray'] is True:
-            print ( f"========================== {self.yti} / Dummy session cookies ================================" )
-            for i in self.js_resp0.request.cookies.items():
+            print ( f"========================== {self.yti} / update_cookies ======================================" )
+            print ( f"js_resp0:" )
+            for i in self.js_resp0.cookies.items():
                 print ( f"{i}" )
-            print ( f"========================== {self.yti} / Dummy session cookies ================================" )
+
+            print ( f"js_session:" )
+            for i in self.js_session.cookies.items():
+                print ( f"{i}" )
+
+            print ( f"============================================= end ===========================================\n" )
 
         #self.js_session.cookies.update({'A1': self.js_resp0.cookies['B']} )    # yahoo cookie hack
-        self.js_session.cookies.update({'A1': self.js_resp0.cookies['A1']} )    # yahoo cookie hack
+        #self.js_session.cookies.update({'A1': self.js_resp0.cookies['A1']} )    # yahoo cookie hack
         return
 
 #######################################################################
@@ -162,7 +173,7 @@ class cookie_monster:
             print ( f"========================== {self.yti} / HTML get() session cookies ================================" )
             for i in self.js_session.cookies.items():
                 print ( f"{i}" )
-            print ( f"========================== {self.yti} / HTML get() session cookies ================================" )
+            print ( f"========================== {self.yti} / HTML get() session cookies ================================\n" )
 
         return
 
@@ -186,7 +197,7 @@ class cookie_monster:
             logging.info('%s - Javascript engine down rendering simple HTML page...' % cmi_debug )
             self.js_rtemp.html.render()             # render a raw HTML (non-JS) page & create response handle
             self.yf_jsdata = self.js_rtemp.text     # save down rendered HTML data page (built by JAVASCRIPT engine) - NOT the pure JAVASCRIPT page
-            logging.info('%s - Javascript down rendering completed! - saved HTML dataset' % cmi_debug )
+            logging.info( "%s - Javascript down rendering completed! - saved HTML dataset" % cmi_debug )
             self.jorh = 1
                                                     # TODO: should do some render() failure testing here
 
@@ -196,7 +207,7 @@ class cookie_monster:
             print ( f"========================== {self.yti} / JS get() session cookies ================================" )
             for i in self.js_session.cookies.items():
                 print ( f"{i}" )
-            print ( f"========================== {self.yti} / JS get() session cookies ================================" )
+            print ( f"========================== {self.yti} / JS get() session cookies ================================\n" )
 
         return
     
