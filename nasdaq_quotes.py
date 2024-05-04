@@ -93,7 +93,14 @@ class nquote:
         path = "/api/quote/" + self.symbol + "/info?assetclass=" + asset_class
         logging.info( f"%s - Insert ticker symbol path into cookie..." % cmi_debug )
         self.js_session.cookies.update({'path': path} )
-        logging.info( f"%s - cookies/headers [path] object set to: {path}" % cmi_debug )
+        logging.info( f"%s - cookies/headers :path: object set to: {path}" % cmi_debug )
+
+        if self.args['bool_xray'] is True:
+            print ( f"========================= {self.yti} / Updated session headers ============================" )
+            for i in self.js_session.cookies.items():
+                print ( f"{i}" )
+            print ( f"========================================= end =============================================\n" )
+            
         return
 
 ######################################################################
@@ -147,6 +154,13 @@ class nquote:
         logging.info('%s - Blind request get() on base url' % cmi_debug )
         with self.js_session.get('https://www.nasdaq.com', stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp0:
             logging.info('%s - Request get() done' % cmi_debug )
+            # DEBUG : Xray
+            if self.args['bool_xray'] is True:
+                print ( f"=========== do_simple_get.{self.yti} do_simple_get cookies  ===================" )
+                for i in self.js_session.cookies.items():
+                    print ( f"{i}" )
+                print ( f"===================== do_simple_get.{self.yti} end  ===========================" )
+
         # if the get() succeds, the response handle is automatically saved in Class Global accessor -> self.js_resp0
         return
 
@@ -167,7 +181,7 @@ class nquote:
                 print ( f"===================== dummy_session.{self.yti} cookies  ===========================" )
                 for i in self.js_session.cookies.items():
                     print ( f"{i}" )
-                print ( f"===================== dummy_session.{self.yti} cookies  ===========================" )
+                print ( f"========================== dummy_session.{self.yti} end  ===========================" )
 
             logging.info( f"%s - update GOOD warm cookie  " % cmi_debug )
 
