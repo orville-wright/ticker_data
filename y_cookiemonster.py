@@ -27,7 +27,7 @@ class cookie_monster:
     soup = ""               # BS4 shared handle between UP & DOWN (1 URL, 2 embeded data sets in HTML doc)
     args = []               # class dict to hold global args being passed in from main() methods
     a_urlp = ""             # a url
-    dummy_url = "https://geo.yahoo.com/p"   # url for the Dummy session
+    dummy_url = "https://finance.yahoo.com'"   # url for the Dummy session
     path = ""               # the path component of our url : /screener/predefined/small_cap_gainers/
     yf_htmldata = ""        # live HTML data text from a sucecssful html get()
     yf_jsdata = ""          # live JAVASCRIPT page data - NOT the HTML down rendered page
@@ -59,7 +59,7 @@ class cookie_monster:
         self.cycle = 1
         self.js_session = HTMLSession()                        # init JAVAScript processor early
         self.html_session = requests.Session()                 # init HTML session
-        #self.js_session.cookies.update(self.yahoo_headers)     # load basic cookie/header hack data set into session
+        self.js_session.cookies.update(self.yahoo_headers)     # load basic cookie/header hack data set into session
         self.a_urlp = urlparse('https://www.dummyurl.com')     # ??
         return
     
@@ -121,7 +121,7 @@ class cookie_monster:
         if type_of_get == 0:
             logging.info( f"%s - get() using simple HTML egine..." % cmi_debug )
             with self.html_session.get(self.dummy_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.html_resp0:
-                print ( f">>> DEBUG: dump HTML resp0 txt\n" )
+
                 # Xray DEBUG
                 print ( f"====================== {self.yti} / Dummy HTML session cookies ==================================" )
                 for i in self.html_session.cookies.items():
