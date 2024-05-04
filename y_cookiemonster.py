@@ -22,6 +22,7 @@ class cookie_monster:
 
     # global class accessors
     yti = 0                 # Unique instance identifier
+    jorh = 9                # which engine rendered the page : 0 = sime html / 1 Javascript render engine / 9 = unset
     cycle = 0               # class thread loop counter
     soup = ""               # BS4 shared handle between UP & DOWN (1 URL, 2 embeded data sets in HTML doc)
     args = []               # class dict to hold global args being passed in from main() methods
@@ -64,12 +65,10 @@ class cookie_monster:
     def form_url_endpoint(self):
         """
         NOTE: assumes that path header/cookie has been set first
-        URL endpoints available (examples)
-        https://finance.yahoo.com/screener/predefined/small_cap_gainers/
-        https://finance.yahoo.com/quote/IBM/?p=IBM
-        https://finance.yahoo.com/quote/IBM/news?p=IBM
-        https://finance.yahoo.com/quote/IBM/press-releases?p=IBM
-        https://finance.yahoo.com/quote/IBM/reports?p=IBM
+        URL endpoint examples...
+        /screener/predefined/small_cap_gainers/
+        /quote/IBM/?p=IBM
+        /quote/IBM/press-releases?p=IBM
         """
 
         cmi_debug = __name__+"::"+self.form_url_endpoint.__name__+".#"+str(self.yti)
@@ -133,6 +132,7 @@ class cookie_monster:
         with self.js_session.get(self.a_urlp, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp1:
             logging.info('%s - HTML Request get() completed!- saved HTML dataset' % cmi_debug )
             self.yf_htmldata = self.js_resp1.text
+            self.jorh = 0
             # On success, HTML response is saved in Class Global accessor -> self.js_resp0
             # TODO: should do some get() failure testing here
 
@@ -166,6 +166,7 @@ class cookie_monster:
             self.js_rtemp.html.render()             # render a raw HTML (non-JS) page & create response handle
             self.yf_jsdata = self.js_rtemp.text     # save down rendered HTML data page (built by JAVASCRIPT engine) - NOT the pure JAVASCRIPT page
             logging.info('%s - Javascript down rendering completed! - saved HTML dataset' % cmi_debug )
+            self.jorh = 1
                                                     # TODO: should do some render() failure testing here
 
         # TODO: should do some get() failure testing everywhere in here

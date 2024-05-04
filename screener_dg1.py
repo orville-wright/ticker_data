@@ -10,11 +10,12 @@ import logging
 import argparse
 import time
 
+from y_cookiemonster import cookie_monster
+
 # logging setup
 logging.basicConfig(level=logging.INFO)
 
 #####################################################
-
 class screener_dg1:
     """Class to extract precanned screener data from finance.yahoo.com"""
     """https://finance.yahoo.com/screener/predefined/day_gainers"""
@@ -28,13 +29,13 @@ class screener_dg1:
     dg1_df0 = ""          # DataFrame - Full list of top gainers
     dg1_df1 = ""          # DataFrame - Ephemerial list of top 10 gainers. Allways overwritten
     dg1_df2 = ""          # DataFrame - Top 10 ever 10 secs for 60 secs
-    all_tag_tr = ""      # BS4 handle of the <tr> extracted data
+    all_tag_tr = ""       # BS4 handle of the <tr> extracted data
     td_tag_rows = ""      # BS4 handle of the <tr> extracted data
     yti = 0
     cycle = 0           # class thread loop counter
 
-    # TODO: top 10 loosers - no methods coded yet
-
+#####################################################
+# init
     def __init__(self, yti):
         cmi_debug = __name__+"::"+self.__init__.__name__
         logging.info('%s - INSTANTIATE' % cmi_debug )
@@ -45,28 +46,34 @@ class screener_dg1:
         self.yti = yti
         return
 
+#####################################################
 # method #1
-    def get_data(self):
-        """Connect to finance.yahoo.com and extract (scrape) the raw sring data out of"""
-        """the embedded/precanned webpage screener html data table. Returns a BS4 handle."""
+    def get_data(self, resp, jorh):
+        """
+        Connect to finance.yahoo.com and extract (scrape) the raw string data out of
+        the webpage data tables. Returns a BS4 handle.
+        Send hint which engine processed & rendered the html page
+        0. Simple HTML engine
+        1. JAVASCRIPT HTML render engine (down redering a complex JS page in to simple HTML)
+        """
 
         cmi_debug = __name__+"::"+self.get_data.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
-        url = "https://finance.yahoo.com/screener/predefined/small_cap_gainers/"
-        r = requests.get(url)
-        logging.info( f"%s - read html stream: {url}" % cmi_debug )
-        self.soup = BeautifulSoup(r.text, 'html.parser')
-        # ATTR style search. Results -> Dict
-        # <tr> tag has a very complex 'class=' but attributes are unique. e.g. 'simpTblRow'
-        logging.info('%s store resp data zone handle' % cmi_debug )
+        if jorh == 0:
+            render_engine = "simple html engine"
+        else:
+            render_engine = "Javascript engine"
+
+        logging.info( f"%s - BS4 stream processing: {resp.url}" % cmi_debug )
+        logging.info( f"%s - Page rendered via: {render_engine}" % cmi_debug )
+        self.soup = BeautifulSoup(resp.text, 'html.parser')
         self.tag_tbody = self.soup.find('tbody')
         self.tr_rows = self.tag_tbody.find(attrs={"class": "simpTblRow"})
         #self.all_tag_tr = self.soup.find(attrs={"class": "simpTblRow"})
-
-        logging.info('%s close request handle' % cmi_debug )
-        r.close()
+        logging.info('%s Page processed BS4 engine' % cmi_debug )
         return
 
+#####################################################
 # method #2
     def build_df0(self):
         """
@@ -199,6 +206,7 @@ class screener_dg1:
             print ( ".", end="" )
         return
 
+#####################################################
 # method #4
     def listall(self):
         """Print the full DataFrame table list of precanned screener: DAY GAINERS"""
@@ -211,6 +219,7 @@ class screener_dg1:
         print ( self.dg1_df0.sort_values(by='Row', ascending=True ) )
         return
 
+#####################################################
 # method #5
     def build_top10(self):
         """Get top 10 enteries from main DF (df0) -> temp DF (df1)"""
@@ -226,6 +235,7 @@ class screener_dg1:
         self.dg1_df1.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
         return
 
+#####################################################
 # method #7
     def print_top10(self):
         """Prints the Top 20 Dataframe"""
@@ -237,6 +247,7 @@ class screener_dg1:
         print ( self.dg1_df1.sort_values(by='Pct_change', ascending=False ) )
         return
 
+#####################################################
 # method #6
     def build_10ten60(self, cycle):
         """Build-up 10x10x060 historical DataFrame (df2) from source df1"""
@@ -248,6 +259,7 @@ class screener_dg1:
         self.dg1_df2.reset_index(inplace=True, drop=True)    # ensure index is allways unique + sequential
         return
 
+#####################################################
 # method #8
     def screener_logic(self):
         """Exectract a list of small cap **GAINERS ONLY** logic"""
