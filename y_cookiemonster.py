@@ -59,6 +59,7 @@ class cookie_monster:
         self.path = path
         self.cycle = 1
         self.js_session = HTMLSession()                        # init JAVAScript processor early
+        self.html_session = requests.Session()                 # init HTML session
         self.js_session.cookies.update(self.yahoo_headers)     # load cookie/header hack data set into session
         self.a_urlp = urlparse('https://www.dummyurl.com')
         return
@@ -164,7 +165,7 @@ class cookie_monster:
         cmi_debug = __name__+"::"+self.do_html_get.__name__+".#"+str(self.yti)
         logging.info( f"%s - HTML request on URL: {self.a_urlp}" % cmi_debug )
         logging.info( f"%s - Simple HTML Request get() processing..." % cmi_debug )
-        with self.js_session.get(self.a_urlp, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp1:
+        with self.html_session.get(self.a_urlp, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp1:
             logging.info('%s - HTML Request get() completed!- saved HTML dataset' % cmi_debug )
             self.yf_htmldata = self.js_resp1.text
             self.jorh = 0
@@ -174,7 +175,7 @@ class cookie_monster:
         # Xray DEBUG
         if self.args['bool_xray'] is True:
             print ( f"========================== {self.yti} / HTML get() session cookies ================================" )
-            for i in self.js_session.cookies.items():
+            for i in self.html_session.cookies.items():
                 print ( f"{i}" )
             print ( f"========================== {self.yti} / HTML get() session cookies ================================\n" )
 
