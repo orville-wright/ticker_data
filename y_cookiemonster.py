@@ -103,6 +103,11 @@ class cookie_monster:
               No API specific url needed. 1st get  does need it. - Goal is to find & extract secret cookies
         Overwrites js_resp0 - initial session handle, *NOT* the main data session handle (js_resp2)
         """
+        # https://query1.finance.yahoo.com/v1/test/getcrumb
+        # https://ups.analytics.yahoo.com/ups/58824/sync?format=json
+        # https://geo.yahoo.com/p
+        # https://finance.yahoo.com/
+        # https://query1.finance.yahoo.com/v1/finance/trending/US?count=5&useQuotes=true&fields=logoUrl%2CregularMarketChangePercent%2CregularMarketPrice
 
         logging.info( f"%s - Setup get() a dummy session with GOOD cookies for extraction" % cmi_debug )
         with self.js_session.get('https://finance.yahoo.com/', stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
@@ -130,7 +135,8 @@ class cookie_monster:
                 print ( f"{i}" )
             print ( f"========================== {self.yti} / Dummy session cookies ================================" )
 
-        self.js_session.cookies.update({'A1': self.js_resp0.cookies['B']} )    # yahoo cookie hack
+        #self.js_session.cookies.update({'A1': self.js_resp0.cookies['B']} )    # yahoo cookie hack
+        self.js_session.cookies.update({'A1': self.js_resp0.cookies['A1']} )    # yahoo cookie hack
         return
 
 #######################################################################
