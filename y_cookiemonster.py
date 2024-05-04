@@ -124,7 +124,7 @@ class cookie_monster:
             self.html_resp0 = requests.get(self.dummy_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
             # Xray DEBUG
             print ( f"====================== {self.yti} / Dummy HTML session cookies ==================================" )
-            for i in self.html_session.cookies.items():
+            for i in self.html_resp0.cookies.items():
                 print ( f"{i}" )
 
             print ( f"================================================================================================\n" )
