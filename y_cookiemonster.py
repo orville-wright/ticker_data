@@ -27,7 +27,7 @@ class cookie_monster:
     soup = ""               # BS4 shared handle between UP & DOWN (1 URL, 2 embeded data sets in HTML doc)
     args = []               # class dict to hold global args being passed in from main() methods
     a_urlp = ""             # a url
-    dummy_url = "https://finance.yahoo.com'"   # url for the Dummy session
+    dummy_url = "https://finance.yahoo.com"   # url for the Dummy session
     path = ""               # the path component of our url : /screener/predefined/small_cap_gainers/
     yf_htmldata = ""        # live HTML data text from a sucecssful html get()
     yf_jsdata = ""          # live JAVASCRIPT page data - NOT the HTML down rendered page
@@ -115,7 +115,7 @@ class cookie_monster:
 
             
 
-        logging.info( f"%s - get() dummy js_session with GOOD cookies for extraction" % cmi_debug )
+        logging.info( f"%s - get() dummy session for cookie extraction" % cmi_debug )
         logging.info( f"%s - Using url: {self.dummy_url}" % cmi_debug )
 
         if type_of_get == 0:
@@ -149,6 +149,7 @@ class cookie_monster:
                 # self.js_session.cookies.update({'B': self.js_resp0.cookies['B']} )    # yahoo cookie hack
                 # if the get() succeds, the response handle is automatically saved in Class Global accessor -> self.js_resp0
                 return
+        return              # safety
 
 #######################################################################
 # method 4
