@@ -107,7 +107,7 @@ class cookie_monster:
         with self.js_session.get('https://www.finance.yahoo.com', stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
             # self.js_session.cookies.update({'B': self.js_resp0.cookies['B']} )    # yahoo cookie hack
             # if the get() succeds, the response handle is automatically saved in Class Global accessor -> self.js_resp0
-        return
+            return
 
 #######################################################################
 # method 4
