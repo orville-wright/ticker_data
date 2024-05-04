@@ -121,9 +121,13 @@ class cookie_monster:
         if type_of_get == 0:
             logging.info( f"%s - get() using simple HTML egine..." % cmi_debug )
             #with self.html_session.get(self.dummy_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.html_resp0:
+            print ( f"====================== {self.yti} / Dummy HTML session cookies / pre ============================" )
+            for i in self.html_resp0.cookies.items():
+                print ( f"{i}" )
+                
             self.html_resp0 = requests.get(self.dummy_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
             # Xray DEBUG
-            print ( f"====================== {self.yti} / Dummy HTML session cookies ==================================" )
+            print ( f"====================== {self.yti} / Dummy HTML session cookies / post ===========================" )
             for i in self.html_resp0.cookies.items():
                 print ( f"{i}" )
 
