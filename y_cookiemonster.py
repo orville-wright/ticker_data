@@ -35,14 +35,14 @@ class cookie_monster:
     js_resp2= ""            # JAVASCRIPT engine - response handle from a real live Javascript get()
                             # header struct
     yahoo_headers = { \
-                        'authority': 'yahoo.com', \
-                        'path': '/v1/finance/trending/US?lang=en-US&region=US&count=5&corsDomain=finance.yahoo.com', \
+                        'authority': 'finance.yahoo.com', \
+                        'path': '/__rapidworker-1.2.js', \
                         'origin': 'https://finance.yahoo.com', \
                         'referer': 'https://finance.yahoo.com/', \
-                        'sec-ch-ua': '"Chromium";v="92", " Not A;Brand";v="99", "Google Chrome";v="92"', \
+                        'sec-ch-ua': '"Google Chrome";v="123", "Not:A-Brand";v="8", "Chromium";v="123"', \
                         'sec-ch-ua-mobile': '"?0"', \
-                        'sec-fetch-mode': 'cors', \
-                        'sec-fetch-site': 'cross-site', \
+                        'sec-fetch-mode': 'same-origin', \
+                        'sec-fetch-site': 'same-origin', \
                         'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36' }
 
 #######################################################################
@@ -104,7 +104,7 @@ class cookie_monster:
         """
 
         logging.info( f"%s - Setup get() a dummy session with GOOD cookies for extraction" % cmi_debug )
-        with self.js_session.get('https://www.finance.yahoo.com', stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
+        with self.js_session.get('https://finance.yahoo.com/__rapidworker-1.2.js', stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
             # self.js_session.cookies.update({'B': self.js_resp0.cookies['B']} )    # yahoo cookie hack
             # if the get() succeds, the response handle is automatically saved in Class Global accessor -> self.js_resp0
             return
@@ -122,8 +122,8 @@ class cookie_monster:
             for i in self.js_session.cookies.items():
                 print ( f"{i}" )
             print ( f"========================== {self.yti} / Dummy session cookies ================================" )
-            
-        self.js_session.cookies.update({'B': self.js_resp0.cookies['B']} )    # yahoo cookie hack
+
+        self.js_session.cookies.update({'A1': self.js_resp0.cookies['B']} )    # yahoo cookie hack
         return
 
 #######################################################################
