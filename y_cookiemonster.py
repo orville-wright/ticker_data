@@ -82,7 +82,7 @@ class cookie_monster:
     def update_headers(self):
         cmi_debug = __name__+"::"+self.update_headers.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
-        logging.info( f"%s - inser cookie/header :path: object..." % cmi_debug )
+        logging.info( f"%s - insert cookie/header :path: object..." % cmi_debug )
         self.js_session.cookies.update({'path': self.path} )
         logging.info( f"%s - :path: cookie - [ {self.path} ]" % cmi_debug )
 
@@ -119,7 +119,7 @@ class cookie_monster:
         # Xray DEBUG
         if self.args['bool_xray'] is True:
             print ( f"========================== {self.yti} / Dummy session cookies ================================" )
-            for i in self.js_session.cookies.items():
+            for i in self.js_resp0.cookies.items():
                 print ( f"{i}" )
             print ( f"========================== {self.yti} / Dummy session cookies ================================" )
 
