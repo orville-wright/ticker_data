@@ -5,7 +5,7 @@ from requests_html import HTMLSession
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from datetime import datetime, date
-import hashlib
+import json
 import logging
 import argparse
 from rich import print
