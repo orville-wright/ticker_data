@@ -48,7 +48,7 @@ class screener_dg1:
 
 #####################################################
 # method #1
-    def get_data(self, resp, jorh):
+    def get_data(self, yti, resp, jorh):
         """
         Connect to finance.yahoo.com and extract (scrape) the raw string data out of
         the webpage data tables. Returns a BS4 handle.
@@ -56,7 +56,7 @@ class screener_dg1:
         0. Simple HTML engine
         1. JAVASCRIPT HTML render engine (down redering a complex JS page in to simple HTML)
         """
-
+        self.yti = yti
         cmi_debug = __name__+"::"+self.get_data.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         if jorh == 0:

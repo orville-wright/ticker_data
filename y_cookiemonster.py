@@ -144,7 +144,10 @@ class cookie_monster:
             for i in self.js_session.cookies.items():
                 print ( f"{i}" )
 
-            print ( f"============================================= end ===========================================\n" )
+
+        hot_cookies = requests.utils.dict_from_cookiejar(self.js_session.cookies)  
+        print ( f">>> DEBUG: Hot cookie jar\n {json.dumps(hot_cookies)}" )
+        print ( f"============================================= end ===========================================\n" )
 
         #self.js_session.cookies.update({'A1': self.js_resp0.cookies['B']} )    # yahoo cookie hack
         #self.js_session.cookies.update({'A1': self.js_resp0.cookies['A1']} )    # yahoo cookie hack
