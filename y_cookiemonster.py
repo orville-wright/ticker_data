@@ -58,7 +58,7 @@ class cookie_monster:
         self.path = path
         self.cycle = 1
         self.js_session = HTMLSession()                        # init JAVAScript processor early
-        #self.html_session = requests.Session()                 # init HTML session
+        self.html_session = requests.Session()                 # init HTML session
         self.js_session.cookies.update(self.yahoo_headers)     # load basic cookie/header hack data set into session
         self.a_urlp = urlparse('https://www.dummyurl.com')     # ??
         return
