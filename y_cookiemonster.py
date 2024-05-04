@@ -87,7 +87,7 @@ class cookie_monster:
         logging.info( f"%s - :path: cookie - [ {self.path} ]" % cmi_debug )
 
         if self.args['bool_xray'] is True:
-            print ( f"=========================== {self.yti} / session cookies ===========================" )
+            print ( f"=========================== {self.yti} / session headers ===========================" )
             for i in self.js_session.cookies.items():
                 print ( f"{i}" )
 
@@ -103,8 +103,8 @@ class cookie_monster:
         Overwrites js_resp0 - initial session handle, *NOT* the main data session handle (js_resp2)
         """
 
+        logging.info( f"%s - Setup get() a dummy session with GOOD cookies for extraction" % cmi_debug )
         with self.js_session.get('https://www.finance.yahoo.com', stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
-            logging.info('%s - extract & update GOOD cookie  ' % cmi_debug )
             # self.js_session.cookies.update({'B': self.js_resp0.cookies['B']} )    # yahoo cookie hack
             # if the get() succeds, the response handle is automatically saved in Class Global accessor -> self.js_resp0
         return
@@ -114,7 +114,7 @@ class cookie_monster:
     def update_cookies(self):
         # assumes that the requests session has already been established
         cmi_debug = __name__+"::"+self.update_cookies.__name__+".#"+str(self.yti)
-        logging.info('%s - REDO the cookie extract & update  ' % cmi_debug )
+        logging.info( f"%s - Swap in GOOD cookies from dummy session" % cmi_debug )
         self.js_session.cookies.update({'B': self.js_resp0.cookies['B']} )    # yahoo cookie hack
         return
 
