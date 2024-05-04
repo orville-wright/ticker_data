@@ -115,6 +115,14 @@ class cookie_monster:
         # assumes that the requests session has already been established
         cmi_debug = __name__+"::"+self.update_cookies.__name__+".#"+str(self.yti)
         logging.info( f"%s - Swap in GOOD cookies from dummy session" % cmi_debug )
+        
+        # Xray DEBUG
+        if self.args['bool_xray'] is True:
+            print ( f"========================== {self.yti} / Dummy session cookies ================================" )
+            for i in self.js_session.cookies.items():
+                print ( f"{i}" )
+            print ( f"========================== {self.yti} / Dummy session cookies ================================" )
+            
         self.js_session.cookies.update({'B': self.js_resp0.cookies['B']} )    # yahoo cookie hack
         return
 
