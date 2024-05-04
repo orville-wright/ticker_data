@@ -36,12 +36,13 @@ class cookie_monster:
                             # header struct
     yahoo_headers = { \
                         'authority': 'finance.yahoo.com', \
-                        'path': '/__rapidworker-1.2.js', \
+                        'path': '/', \
                         'origin': 'https://finance.yahoo.com', \
                         'referer': 'https://finance.yahoo.com/', \
                         'sec-ch-ua': '"Google Chrome";v="123", "Not:A-Brand";v="8", "Chromium";v="123"', \
+                        'sec-fetch-user': '"?1', \
                         'sec-ch-ua-mobile': '"?0"', \
-                        'sec-fetch-mode': 'same-origin', \
+                        'sec-fetch-mode': 'navigate', \
                         'sec-fetch-site': 'same-origin', \
                         'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36' }
 
@@ -104,7 +105,13 @@ class cookie_monster:
         """
 
         logging.info( f"%s - Setup get() a dummy session with GOOD cookies for extraction" % cmi_debug )
-        with self.js_session.get('https://finance.yahoo.com/__rapidworker-1.2.js', stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
+        with self.js_session.get('https://finance.yahoo.com/', stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
+
+            # Xray DEBUG
+            print ( f"========================== {self.yti} / Dummy session cookies ================================" )
+            for i in self.js_resp0.cookies.items():
+                print ( f"{i}" )
+            print ( f"========================== {self.yti} / Dummy session cookies ================================" )
             # self.js_session.cookies.update({'B': self.js_resp0.cookies['B']} )    # yahoo cookie hack
             # if the get() succeds, the response handle is automatically saved in Class Global accessor -> self.js_resp0
             return
@@ -119,7 +126,7 @@ class cookie_monster:
         # Xray DEBUG
         if self.args['bool_xray'] is True:
             print ( f"========================== {self.yti} / Dummy session cookies ================================" )
-            for i in self.js_resp0.cookies.items():
+            for i in self.js_resp0.request.cookies.items():
                 print ( f"{i}" )
             print ( f"========================== {self.yti} / Dummy session cookies ================================" )
 
