@@ -59,8 +59,7 @@ class screener_dg1:
         cmi_debug = __name__+"::"+self.get_data.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         print ( f"get using simple html engine" )
-        r = requests.get("https://finance.yahoo.com/gainers" )
-        #r = requests.get("https://finance.yahoo.com/screener/predefined/small_cap_gainers/" )
+        r = requests.get("https://finance.yahoo.com/screener/predefined/small_cap_gainers/" )
         logging.info( "%s - html stream read completed" % cmi_debug )
 
         logging.info( f"%s - BS4 stream processing..." % cmi_debug )
@@ -109,22 +108,24 @@ class screener_dg1:
                 change_val = next(extr_strs)     # 4.1 : $ change value / e.g  "+0.0021"
             else:
                 change_val = change_sign
-                logging.info( f"{cmi_debug} - {co_sym} - no dedicated [+-] field for $ CHANGE" )
+                logging.info( f"{cmi_debug} - {co_sym} : no dedicated [+-] field for $ CHANGE" )
                 if (re.search('\+', change_val)) or  (re.search('\-', change_val)) is True:
-                    logging.info( f"{cmi_debug} - {change_val} - $ CHANGE is signed [+-]" )
+                    logging.info( f"{cmi_debug} : {change_val} : $ CHANGE is signed [+-], stripping..." )
                     price_cl = (re.sub('\+\-,', '', price))
                 else:
-                    logging.info( f"{cmi_debug} - {change_val} - $ CHANGE is NOT signed [+-]" )
+                    logging.info( f"{cmi_debug} - {change_val} : $ CHANGE is NOT signed [+-]" )
                     price_cl = (re.sub('\,', '', price))                         # remove ,
 
             # is there a dedicated collumn to hold a +/- indicator
             pct_sign = next(extr_strs)           # 5.0 : % change sign [+/-] / e.g "+%12.3"
             if pct_sign == "+" or pct_sign == "-":
+                logging.info( f"{cmi_debug} : {change_val} : % CHANGE is signed [+-], skipping..." )
+                #pct_cl = (re.sub('\+\-,', '', pct_sign))   # skipp
                 pct_val = next(extr_strs)        # 5.1 : change / e.g "210.0000%" WARN trailing "%" must be removed before casting to float
             else:
                 z = 0
                 pct_val = pct_sign
-                logging.info( f"{cmi_debug} - {co_sym} / re-align extractor / Found no [+-] tag for %0" )
+                logging.info( f"{cmi_debug} - {co_sym} : Found no [+-] tag for % CHANGE" )
 
             vol = next(extr_strs)            # 6 : volume with scale indicator/ e.g "70.250k"
             avg_vol = next(extr_strs)        # 7 : Avg. vol over 3 months) / e.g "61,447"
