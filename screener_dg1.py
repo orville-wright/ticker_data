@@ -93,9 +93,8 @@ class screener_dg1:
             y = 1
             for i in j.find_all('td'):
                 print ( f"Data {y}: {i.text}" )
-                logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
+                #logging.info( f"%s - Data: {j.td.strings}" % cmi_debug )
                 y += 1
-            print ( f"==============================================" )
             # >>>DEBUG<< for when yahoo.com changes data model...
             #"""
             extr_strs = j.strings
@@ -108,14 +107,14 @@ class screener_dg1:
                 change_val = next(extr_strs)     # 4.1 : $ change value / e.g  "+0.0021"
             else:
                 change_val = change_sign
-                logging.info( f"{cmi_debug} - {co_sym} : no dedicated [+-] field for $ CHANGE" )
+                logging.info( f"{cmi_debug} : {co_sym} : no dedicated [+-] field for $ CHANGE" )
                 if (re.search('\+', change_val)) or  (re.search('\-', change_val)) is True:
                     logging.info( f"{cmi_debug} : {change_val} : $ CHANGE is signed [+-], stripping..." )
                     price_cl = (re.sub('\+\-,', '', price))
                 else:
                     logging.info( f"{cmi_debug} - {change_val} : $ CHANGE is NOT signed [+-]" )
-                    price_cl = (re.sub('\,', '', price))                         # remove ,
-
+                    price_cl = re.sub('[\,]', "", price)                         # remove ,
+                    logging.info( f"%s - Price cleaned: {price_cl}" % cmi_debug )
             # is there a dedicated collumn to hold a +/- indicator
             pct_sign = next(extr_strs)           # 5.0 : % change sign [+/-] / e.g "+%12.3"
             if pct_sign == "+" or pct_sign == "-":
@@ -125,7 +124,7 @@ class screener_dg1:
             else:
                 z = 0
                 pct_val = pct_sign
-                logging.info( f"{cmi_debug} - {co_sym} : Found no [+-] tag for % CHANGE" )
+                logging.info( f"{cmi_debug} : {co_sym} : Found no [+-] tag for % CHANGE" )
 
             vol = next(extr_strs)            # 6 : volume with scale indicator/ e.g "70.250k"
             avg_vol = next(extr_strs)        # 7 : Avg. vol over 3 months) / e.g "61,447"
@@ -173,6 +172,7 @@ class screener_dg1:
                 logging.info( f'%s - {x} - {co_sym_lj} bad mktcap data N/A - SZ' % cmi_debug )
                 # handle bad data in mktcap html page field
 
+            logging.info( f"====== Data prepared for DF ==========" % cmi_debug )
 
             self.list_data = [[ \
                        x, \
