@@ -59,7 +59,8 @@ class screener_dg1:
         cmi_debug = __name__+"::"+self.get_data.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         print ( f"get using simple html engine" )
-        r = requests.get("https://finance.yahoo.com/screener/predefined/small_cap_gainers/" )
+        r = requests.get("https://finance.yahoo.com/gainers" )
+        #r = requests.get("https://finance.yahoo.com/screener/predefined/small_cap_gainers/" )
         logging.info( "%s - html stream read completed" % cmi_debug )
 
         logging.info( f"%s - BS4 stream processing..." % cmi_debug )
