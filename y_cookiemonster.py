@@ -113,8 +113,6 @@ class cookie_monster:
         # https://finance.yahoo.com/
         # https://query1.finance.yahoo.com/v1/finance/trending/US?count=5&useQuotes=true&fields=logoUrl%2CregularMarketChangePercent%2CregularMarketPrice
 
-            
-
         logging.info( f"%s - get() dummy session for cookie extraction" % cmi_debug )
         logging.info( f"%s - Using url: {self.dummy_url}" % cmi_debug )
 
