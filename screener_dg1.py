@@ -110,11 +110,11 @@ class screener_dg1:
                 logging.info( f"{cmi_debug} : {co_sym} : no dedicated [+-] field for $ CHANGE" )
                 if (re.search('\+', change_val)) or  (re.search('\-', change_val)) is True:
                     logging.info( f"{cmi_debug} : {change_val} : $ CHANGE is signed [+-], stripping..." )
-                    change_cl = (re.sub('\+\-,', '', change_val))
+                    change_cl = re.sub('[\,]', "", change_val)       # remove , seperator
                     logging.info( f"%s : $ CHANGE cleaned: {change_cl}" % cmi_debug )
                 else:
                     logging.info( f"{cmi_debug} - {change_val} : $ CHANGE is NOT signed [+-]" )
-                    change_cl = re.sub('[\,]', "", change_val)           # remove ,
+                    change_cl = re.sub('[\,]', "", change_val)       # remove ,
                     logging.info( f"%s : CHANGE cleaned: {change_cl}" % cmi_debug )
             # is there a dedicated collumn to hold a +/- indicator
             pct_sign = next(extr_strs)           # 5.0 : % change sign [+/-] / e.g "+%12.3"
