@@ -35,7 +35,7 @@ from ml_yahoofinews import yfnews_reader
 from ml_urlhinter import url_hinter
 from y_techevents import y_techevents
 from nasdaq_wrangler import nq_wrangler
-from y_cookiemonster import cookie_monster
+from y_cookiemonster import y_cookiemonster
 
 # Globals
 work_inst = 0
@@ -182,25 +182,25 @@ def main():
         print ( "========== Screener: SMALL CAP Day Gainers : +5% & > $299M Mkt-cap ==========" )
         small_cap_dataset = screener_dg1(1)       # instantiate class
         #yf_sc_screener = cookie_monster(1, "/screener/predefined/small_cap_gainers/", args)
-        yf_sc_screener = cookie_monster(1, "/", args)
-        yf_sc_screener.debug_monster()
+        yf_sc = y_cookiemonster(1)
+        yf_sc.get_scap_data()
 
-        yf_sc_screener.form_url_endpoint()
-        yf_sc_screener.update_headers()
-        yf_sc_screener.init_dummy_session(0)    # 0 = html / 1 = javascript
-        yf_sc_screener.update_cookies()
+        #yf_sc_screener.form_url_endpoint()
+        #yf_sc_screener.update_headers()
+        #yf_sc_screener.init_dummy_session(0)    # 0 = html / 1 = javascript
+        #yf_sc_screener.update_cookies()
 
-        yf_sc_screener.do_html_get()            # jorh = 0
-        yf_sc_screener.update_cookies()
+        #yf_sc_screener.do_html_get()            # jorh = 0
+        #yf_sc_screener.update_cookies()
 
         # jorh : 0 = Simple HTML engine processor / 1 = JAVASCRIPT engine renderer
-        small_cap_dataset.get_data(1, yf_sc_screener.js_resp1, yf_sc_screener.jorh)              # extract data from finance.Yahoo.com
-        x = small_cap_dataset.build_df0()         # build full dataframe
+        #small_cap_dataset.get_data(1, yf_sc_screener.js_resp1, yf_sc_screener.jorh)              # extract data from finance.Yahoo.com
+        #x = small_cap_dataset.build_df0()         # build full dataframe
         # scrn1.build_top10()           # show top 10
         # scrn1.print_top10()           # print it
 
         # Recommendation #1 - Best small cap % gainer with lowest buy-in price
-        recommended.update(small_cap_dataset.screener_logic())
+        #recommended.update(small_cap_dataset.screener_logic())
         print ( " ")
 
 # process Nasdaq.com unusual_vol ################
