@@ -181,6 +181,7 @@ def main():
     if args['bool_scr'] is True:
         print ( "========== Screener: SMALL CAP Day Gainers : +5% & > $299M Mkt-cap ==========" )
         small_cap_dataset = screener_dg1(1)       # instantiate class
+        small_cap_dataset.init_dummy_session()
         small_cap_dataset.get_data(1)
 
         #yf_sc_screener = cookie_monster(1, "/screener/predefined/small_cap_gainers/", args)

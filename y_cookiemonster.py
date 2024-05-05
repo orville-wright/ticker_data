@@ -25,6 +25,9 @@ class y_cookiemonster:
     yti = 0
     cycle = 0           # class thread loop counter
 
+
+
+
     def __init__(self, yti):
         cmi_debug = __name__+"::"+self.__init__.__name__
         logging.info( f'%s - Instantiate.#{yti}' % cmi_debug )

@@ -37,13 +37,12 @@ class cookie_monster:
                             # header struct
     yahoo_headers = { \
                         'authority': 'finance.yahoo.com', \
-                        'path': '/', \
-                        'origin': 'https://finance.yahoo.com', \
-                        'referer': 'https://finance.yahoo.com/', \
+                        'path': '/screener/predefined/day_gainers/', \
+                        'referer': 'https://finance.yahoo.com/screener/', \
                         'sec-ch-ua': '"Google Chrome";v="123", "Not:A-Brand";v="8", "Chromium";v="123"', \
-                        'sec-fetch-user': '"?1', \
                         'sec-ch-ua-mobile': '"?0"', \
                         'sec-fetch-mode': 'navigate', \
+                        'sec-fetch-user': '"?1', \
                         'sec-fetch-site': 'same-origin', \
                         'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36' }
 

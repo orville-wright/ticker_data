@@ -32,7 +32,19 @@ class screener_dg1:
     td_tag_rows = ""      # BS4 handle of the <tr> extracted data
     yti = 0
     cycle = 0           # class thread loop counter
+    dummy_url = "https://finance.yahoo.com/screener/predefined/day_gainers"
 
+    yahoo_headers = { \
+                        'authority': 'finance.yahoo.com', \
+                        'path': '/screener/predefined/day_gainers/', \
+                        'referer': 'https://finance.yahoo.com/screener/', \
+                        'sec-ch-ua': '"Google Chrome";v="123", "Not:A-Brand";v="8", "Chromium";v="123"', \
+                        'sec-ch-ua-mobile': '"?0"', \
+                        'sec-fetch-mode': 'navigate', \
+                        'sec-fetch-user': '"?1', \
+                        'sec-fetch-site': 'same-origin', \
+                        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36' }
+    
 #####################################################
 # init
     def __init__(self, yti):
@@ -43,6 +55,14 @@ class screener_dg1:
         self.dg1_df1 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time'] )
         self.dg1_df2 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time'] )
         self.yti = yti
+        return
+
+    def init_dummy_session(self):
+        self.dummy_resp0 = requests.get(self.dummy_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
+        hot_cookies = requests.utils.dict_from_cookiejar(self.dummy_resp0.cookies)
+        print ( f"cookie jar:")
+        print ( f"{hot_cookies} ")
+        #self.js_session.cookies.update({'A1': self.js_resp0.cookies['A1']} )    # yahoo cookie hack
         return
 
 #####################################################
