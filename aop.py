@@ -188,6 +188,8 @@ def main():
         yf_sc_screener.update_headers()
         yf_sc_screener.init_dummy_session(0)    # 0 = html / 1 = javascript
         yf_sc_screener.update_cookies()
+        yf_sc_screener.debug_monster()
+        
         yf_sc_screener.do_html_get()            # jorh = 0
         yf_sc_screener.update_cookies()
 
