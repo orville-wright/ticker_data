@@ -10,7 +10,6 @@ import logging
 import argparse
 import time
 
-from y_cookiemonster import cookie_monster
 
 # logging setup
 logging.basicConfig(level=logging.INFO)
@@ -48,7 +47,7 @@ class screener_dg1:
 
 #####################################################
 # method #1
-    def get_data(self, yti, resp, jorh):
+    def get_data(self, yti):
         """
         Connect to finance.yahoo.com and extract (scrape) the raw string data out of
         the webpage data tables. Returns a BS4 handle.
@@ -59,18 +58,16 @@ class screener_dg1:
         self.yti = yti
         cmi_debug = __name__+"::"+self.get_data.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
-        if jorh == 0:
-            render_engine = "simple html engine"
-        else:
-            render_engine = "Javascript engine"
+        print ( f"get using simple html engine" )
+        r = requests.get("https://finance.yahoo.com/screener/predefined/small_cap_gainers/" )
+        logging.info( "%s - html stream read completed" % cmi_debug )
 
-        logging.info( f"%s - BS4 stream processing: {resp.url}" % cmi_debug )
-        logging.info( f"%s - Page rendered via: {render_engine}" % cmi_debug )
-        self.soup = BeautifulSoup(resp.text, 'html.parser')
+        logging.info( f"%s - BS4 stream processing..." % cmi_debug )
+        self.soup = BeautifulSoup(r.text, 'html.parser')
         self.tag_tbody = self.soup.find('tbody')
         self.tr_rows = self.tag_tbody.find(attrs={"class": "simpTblRow"})
         #self.all_tag_tr = self.soup.find(attrs={"class": "simpTblRow"})
-        logging.info('%s Page processed BS4 engine' % cmi_debug )
+        logging.info('%s Page processed by BS4 engine' % cmi_debug )
         return
 
 #####################################################
