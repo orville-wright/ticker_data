@@ -52,6 +52,8 @@ class y_topgainers:
         self.all_tag_tr = self.soup.find_all(attrs={"class": "simpTblRow"})   # simpTblRow
         #self.tr_rows = self.tag_tbody.find(attrs={"class": "simpTblRow"})
 
+        print ( f">>> DEBUG:\n {r.text}" )
+
         logging.info('%s - close url handle' % cmi_debug )
         r.close()
         return
