@@ -111,6 +111,7 @@ class screener_dg1:
                 if (re.search('\+', change_val)) or  (re.search('\-', change_val)) is True:
                     logging.info( f"{cmi_debug} : {change_val} : $ CHANGE is signed [+-], stripping..." )
                     price_cl = (re.sub('\+\-,', '', price))
+                    logging.info( f"%s - Price cleaned: {price_cl}" % cmi_debug )
                 else:
                     logging.info( f"{cmi_debug} - {change_val} : $ CHANGE is NOT signed [+-]" )
                     price_cl = re.sub('[\,]', "", price)                         # remove ,
@@ -172,7 +173,7 @@ class screener_dg1:
                 logging.info( f'%s - {x} - {co_sym_lj} bad mktcap data N/A - SZ' % cmi_debug )
                 # handle bad data in mktcap html page field
 
-            logging.info( f"====== Data prepared for DF ==========" % cmi_debug )
+            logging.info( f"%s === Data prepared for DF" % cmi_debug )
 
             self.list_data = [[ \
                        x, \
