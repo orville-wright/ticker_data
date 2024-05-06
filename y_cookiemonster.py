@@ -84,7 +84,7 @@ class y_cookiemonster:
         logging.info('%s - IN' % cmi_debug )
 
         #test_url = "https://www.whatismybrowser.com/detect/is-javascript-enabled"
-        test_url = "https://finance.yahoo.com/screener/"
+        test_url = "https://finance.yahoo.com/screener/predefined/small_cap_gainers/"
 
         logging.info( f"%s - Javascript engine test... {test_url}" % cmi_debug )
         logging.info( f"%s - URL: {test_url}" % cmi_debug )
