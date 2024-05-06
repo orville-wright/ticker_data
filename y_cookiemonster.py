@@ -90,7 +90,7 @@ class y_cookiemonster:
         with js_session.get( f'{test_url}', stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as js_resp0:
             logging.info('%s - JS_Request get() done' % cmi_debug )
         
-        js_page_data = js_session.html.render()
+        js_page_data = js_resp0.html.render()
 
         logging.info( f"%s - Dump JS resp0 cookie:" % cmi_debug )
         for i in js_resp0.cookies:
