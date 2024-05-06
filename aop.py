@@ -185,7 +185,7 @@ def main():
         small_cap_dataset.get_data(1)
  
         scap_test = y_cookiemonster(1)
-        scap_test.get_scap_data()
+        scap_test.get_js_data()
         #get_js_data() here <<<<
 
         #yf_sc_screener = cookie_monster(1, "/screener/predefined/small_cap_gainers/", args)
