@@ -95,7 +95,7 @@ class y_cookiemonster:
         logging.info( f"%s - JS_Request get() done" % cmi_debug )
         
         js_resp0.html.render()
-        print ( f"{js_resp0.html.text}" )
+        print ( f"{js_resp0.html.links}" )
 
         logging.info( f"%s - Dump JS resp0 cookie:" % cmi_debug )
         for i in js_resp0.cookies:
