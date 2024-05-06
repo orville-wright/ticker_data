@@ -89,10 +89,11 @@ class y_cookiemonster:
         logging.info( f"%s - Javascript engine test... {test_url}" % cmi_debug )
         logging.info( f"%s - URL: {test_url}" % cmi_debug )
         js_session = HTMLSession()
-        js_resp0 = js_session.get( test_url )
+        
+        #js_resp0 = js_session.get( test_url )
         #js_resp0 = js_session.get( test_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as js_resp0:
-        #with js_session.get( test_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as js_resp0:
-        logging.info( f"%s - JS_Request get() done" % cmi_debug )
+        with js_session.get( test_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as js_resp0:
+            logging.info( f"%s - JS_Request get() done" % cmi_debug )
         
         js_resp0.html.render()
         print ( f"{js_resp0.html.links}" )
