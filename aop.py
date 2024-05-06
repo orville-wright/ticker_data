@@ -187,6 +187,12 @@ def main():
         scap_test = y_cookiemonster(1)
         scap_test.get_js_data()
         #get_js_data() here <<<<
+        """
+        Disbale for now
+        x = small_cap_dataset.build_df0()         # build full dataframe
+        small_cap_dataset.build_top10()           # show top 10
+        small_cap_dataset.print_top10()           # print it
+        """
 
         #yf_sc_screener = cookie_monster(1, "/screener/predefined/small_cap_gainers/", args)
         #yf_sc_screener.form_url_endpoint()
@@ -198,9 +204,6 @@ def main():
         # jorh : 0 = Simple HTML engine processor / 1 = JAVASCRIPT engine renderer
         #small_cap_dataset.get_data(1, yf_sc_screener.js_resp1, yf_sc_screener.jorh)              # extract data from finance.Yahoo.com
 
-        x = small_cap_dataset.build_df0()         # build full dataframe
-        small_cap_dataset.build_top10()           # show top 10
-        small_cap_dataset.print_top10()           # print it
 
         # Recommendation #1 - Best small cap % gainer with lowest buy-in price
         #recommended.update(small_cap_dataset.screener_logic())

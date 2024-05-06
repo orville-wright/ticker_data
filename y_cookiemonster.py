@@ -83,7 +83,9 @@ class y_cookiemonster:
         cmi_debug = __name__+"::"+self.get_scap_data.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
 
-        test_url = "https://www.whatismybrowser.com/detect/is-javascript-enabled"
+        #test_url = "https://www.whatismybrowser.com/detect/is-javascript-enabled"
+        test_url = "https://finance.yahoo.com/screener/"
+
         logging.info( f"%s - Javascript engine test... {test_url}" % cmi_debug )
         logging.info( f"%s - URL: {test_url}" % cmi_debug )
         js_session = HTMLSession()
@@ -94,7 +96,7 @@ class y_cookiemonster:
         
         js_resp0.html.render()
         print ( f"{js_resp0.html.text}" )
-        
+
         logging.info( f"%s - Dump JS resp0 cookie:" % cmi_debug )
         for i in js_resp0.cookies:
             print ( f"{i} : {js_resp0.cookies[i]}" )
