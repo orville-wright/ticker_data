@@ -87,9 +87,9 @@ class y_cookiemonster:
         logging.info( f"%s - Javascript engine test... {test_url}" % cmi_debug )
         logging.info( f"%s - URL: {test_url}" % cmi_debug )
         js_session = HTMLSession()
-        #with js_session.get( f'{test_url}', stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as js_resp0:
-        with js_session.get( f'{test_url}', stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as js_resp0:
-            logging.info('%s - JS_Request get() done' % cmi_debug )
+        #js_resp0 = js_session.get( test_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as js_resp0:
+        with js_session.get( test_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as js_resp0:
+            logging.info( f"%s - JS_Request get() done" % cmi_debug )
         
         js_page_data = js_resp0.html.render()
 
