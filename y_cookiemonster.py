@@ -83,10 +83,11 @@ class y_cookiemonster:
         cmi_debug = __name__+"::"+self.get_scap_data.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
 
-        test_url = "https://finance.yahoo.com/gainers"
+        test_url = "https://www.whatismybrowser.com/detect/is-javascript-enabled"
         logging.info( f"%s - Javascript engine test... {test_url}" % cmi_debug )
         logging.info( f"%s - URL: {test_url}" % cmi_debug )
         js_session = HTMLSession()
+        #with js_session.get( f'{test_url}', stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as js_resp0:
         with js_session.get( f'{test_url}', stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as js_resp0:
             logging.info('%s - JS_Request get() done' % cmi_debug )
         
