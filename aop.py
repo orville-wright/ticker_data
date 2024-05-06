@@ -183,6 +183,7 @@ def main():
         small_cap_dataset = screener_dg1(1)       # instantiate class
         small_cap_dataset.init_dummy_session()
         small_cap_dataset.get_data(1)
+        #get_js_data() here <<<<
 
         #yf_sc_screener = cookie_monster(1, "/screener/predefined/small_cap_gainers/", args)
         #yf_sc_screener.form_url_endpoint()

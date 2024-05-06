@@ -12,6 +12,9 @@ import threading
 # logging setup
 logging.basicConfig(level=logging.INFO)
 
+from requests_html import HTMLSession
+import json
+
 #####################################################
 
 class y_cookiemonster:
@@ -25,9 +28,18 @@ class y_cookiemonster:
     yti = 0
     cycle = 0           # class thread loop counter
 
-
-
-
+    yahoo_headers = { \
+                            'authority': 'finance.yahoo.com', \
+                            'path': '/screener/predefined/day_gainers/', \
+                            'referer': 'https://finance.yahoo.com/screener/', \
+                            'sec-ch-ua': '"Google Chrome";v="123", "Not:A-Brand";v="8", "Chromium";v="123"', \
+                            'sec-ch-ua-mobile': '"?0"', \
+                            'sec-fetch-mode': 'navigate', \
+                            'sec-fetch-user': '"?1', \
+                            'sec-fetch-site': 'same-origin', \
+                            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36' }
+        
+##############################################################################
     def __init__(self, yti):
         cmi_debug = __name__+"::"+self.__init__.__name__
         logging.info( f'%s - Instantiate.#{yti}' % cmi_debug )
@@ -38,6 +50,7 @@ class y_cookiemonster:
         self.yti = yti
         return
 
+##############################################################################
 # method #1
     def get_scap_data(self):
         """Connect to finance.yahoo.com and extract (scrape) the raw sring data out of"""
@@ -59,4 +72,37 @@ class y_cookiemonster:
 
         logging.info('%s - close url handle' % cmi_debug )
         r.close()
+        return
+
+###########################################################################################
+# method #2
+    def get_js_data(self):
+        """Connect to finance.yahoo.com and extract (scrape) the raw sring data out of"""
+        """the embedded webpage [Stock:Top Gainers] html data table. Returns a BS4 handle."""
+
+        cmi_debug = __name__+"::"+self.get_scap_data.__name__+".#"+str(self.yti)
+        logging.info('%s - IN' % cmi_debug )
+
+        test_url = "https://finance.yahoo.com/gainers"
+        logging.info( f"%s - Javascript engine test... {test_url}" % cmi_debug )
+        logging.info( f"%s - URL: {test_url}" % cmi_debug )
+        js_session = HTMLSession()
+        with js_session.get( f'{test_url}', stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as js_resp0:
+            logging.info('%s - JS_Request get() done' % cmi_debug )
+        
+        js_page_data = js_session.html.render()
+
+        logging.info( f"%s - Dump JS resp0 cookie:" % cmi_debug )
+        for i in js_resp0.cookies:
+            print ( f"{i} : {js_resp0.cookies[i]}" )
+
+        hot_cookies = requests.utils.dict_from_cookiejar(js_resp0.cookies)
+        logging.info( f"%s - Dump JS cookie JAR\n {json.dumps(hot_cookies)}" % cmi_debug )
+
+        logging.info( f"%s - Swap in JS reps0 cookies into js_session yahoo_headers" % cmi_debug )
+        js_session.cookies.update(self.yahoo_headers)
+
+        # self.js_session.cookies.update({'bm_sv': self.js_resp0.cookies['bm_sv']} )    # NASDAQ cookie hack
+        # self.js_session.cookies.update(self.nasdaq_headers)    # load cookie/header hack data set into session
+
         return
