@@ -184,7 +184,7 @@ def main():
         small_cap_dataset.init_dummy_session()
         small_cap_dataset.get_data(1)
  
-        scap_test = y_cookiemonster()
+        scap_test = y_cookiemonster(1)
         scap_test.get_scap_data()
         #get_js_data() here <<<<
 
