@@ -97,7 +97,7 @@ class y_cookiemonster:
         #js_resp0 = js_session.get( test_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as js_resp0:
         #with js_session.get( test_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as js_resp0:
         # with js_session.get( 'https://www.javatester.org/javascript.html', stream=True, timeout=5 ) as self.js_resp0
-        with js_session.get( 'https://www.javatester.org/javascript.html' ) as self.js_resp0:
+        with js_session.get( test_url ) as self.js_resp0:
         
             logging.info( f"%s - JS_session.get() DONE !" % cmi_debug )
         
