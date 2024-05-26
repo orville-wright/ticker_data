@@ -99,8 +99,8 @@ class y_cookiemonster:
         with js_session.get( test_url, stream=True, timeout=5 ) as js_resp0:
             logging.info( f"%s - JS_session.get() DONE !" % cmi_debug )
         
-        js_resp0.html.render()
         logging.info( f"%s - html.render()..." % cmi_debug )
+        js_resp0.html.render()
         print ( f"{js_resp0.html.links}" )
         logging.info( f"%s - html.render() DONE !" % cmi_debug )
         logging.info( f"%s - Dump JS resp0 cookie:" % cmi_debug )
