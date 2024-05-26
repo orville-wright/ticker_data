@@ -80,7 +80,7 @@ class y_cookiemonster:
         """Connect to finance.yahoo.com and extract (scrape) the raw sring data out of"""
         """the embedded webpage [Stock:Top Gainers] html data table. Returns a BS4 handle."""
 
-        cmi_debug = __name__+"::"+self.get_scap_data.__name__+".#"+str(self.yti)
+        cmi_debug = __name__+"::"+self.get_js_data.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
 
         #test_url = "https://www.whatismybrowser.com/detect/is-javascript-enabled"
