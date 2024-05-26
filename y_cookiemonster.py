@@ -96,18 +96,19 @@ class y_cookiemonster:
         #js_resp0 = js_session.get( test_url )
         #js_resp0 = js_session.get( test_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as js_resp0:
         #with js_session.get( test_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as js_resp0:
-        with js_session.get( test_url, stream=True, timeout=5 ) as js_resp0:
+        with js_session.get(https://www.javatester.org/javascript.html, stream=True, timeout=5 ) as self.js_resp0:
+        
             logging.info( f"%s - JS_session.get() DONE !" % cmi_debug )
         
         logging.info( f"%s - html.render()..." % cmi_debug )
-        js_resp0.html.render()
-        print ( f"{js_resp0.html.links}" )
+        self.js_resp0.html.render()
+        print ( f"{self.js_resp0.text}" )
         logging.info( f"%s - html.render() DONE !" % cmi_debug )
         logging.info( f"%s - Dump JS resp0 cookie:" % cmi_debug )
-        for i in js_resp0.cookies:
-            print ( f"{i} : {js_resp0.cookies[i]}" )
+        for i in self.js_resp0.cookies:
+            print ( f"{i} : {self.js_resp0.cookies[i]}" )
 
-        hot_cookies = requests.utils.dict_from_cookiejar(js_resp0.cookies)
+        hot_cookies = requests.utils.dict_from_cookiejar(self.js_resp0.cookies)
         logging.info( f"%s - Dump JS cookie JAR\n {json.dumps(hot_cookies)}" % cmi_debug )
 
         logging.info( f"%s - Swap in JS reps0 cookies into js_session yahoo_headers" % cmi_debug )
