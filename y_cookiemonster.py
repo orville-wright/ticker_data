@@ -86,18 +86,22 @@ class y_cookiemonster:
         #test_url = "https://www.whatismybrowser.com/detect/is-javascript-enabled"
         test_url = "https://finance.yahoo.com/screener/predefined/small_cap_gainers/"
 
-        logging.info( f"%s - Javascript engine test... {test_url}" % cmi_debug )
+        logging.info( f"%s - Javascript engine setup..." % cmi_debug )
         logging.info( f"%s - URL: {test_url}" % cmi_debug )
+        logging.info( f"%s - JS_session HTMLsession() setup" % cmi_debug )
+
         js_session = HTMLSession()
         
         #js_resp0 = js_session.get( test_url )
         #js_resp0 = js_session.get( test_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as js_resp0:
-        with js_session.get( test_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as js_resp0:
-            logging.info( f"%s - JS_Request get() done" % cmi_debug )
+        #with js_session.get( test_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as js_resp0:
+        with js_session.get( test_url, stream=True, timeout=5 ) as js_resp0:
+            logging.info( f"%s - JS_session.get() DONE !" % cmi_debug )
         
         js_resp0.html.render()
+        logging.info( f"%s - html.render()..." % cmi_debug )
         print ( f"{js_resp0.html.links}" )
-
+        logging.info( f"%s - html.render() DONE !" % cmi_debug )
         logging.info( f"%s - Dump JS resp0 cookie:" % cmi_debug )
         for i in js_resp0.cookies:
             print ( f"{i} : {js_resp0.cookies[i]}" )
