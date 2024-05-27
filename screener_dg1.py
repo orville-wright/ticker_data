@@ -235,7 +235,7 @@ class screener_dg1:
 
             ################################ 5 ####################################
             # now construct our list for concatinating to the dataframe 
-            logging.info( f"%s === Data prepared for DF" % cmi_debug )
+            logging.info( f"% ===== Data prepared for DF =====" % cmi_debug )
 
             self.list_data = [[ \
                        x, \
