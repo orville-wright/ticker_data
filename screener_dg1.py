@@ -147,37 +147,43 @@ class screener_dg1:
             # >>>DEBUG<< for when yahoo.com changes data model...
             #"""
 
+            ################################ 1 ####################################
+
             extr_strs = j.strings
             co_sym = next(extr_strs)             # 1 : ticker symbol info / e.g "NWAU"
             co_name = next(extr_strs)            # 2 : company name / e.g "Consumer Automotive Finance, Inc."
             price = next(extr_strs)              # 3 : price (Intraday) / e.g "0.0031"
 
-            # is there a dedicated collumn to hold a +/- indicator
-            change_sign = next(extr_strs)        # 4.0 : $ change sign [+/-] / e.g  "+0.0021"
-            if change_sign == "+" or change_sign == "-":
-                change_val = next(extr_strs)     # 4 : Yes found a sign indicator (+/-), advance iterator to next field
+            change_sign = next(extr_strs)        # 4 : test for dedicated column for +/- indicator
+            logging.info( f"{cmi_debug} : {co_sym} : Check dedicated [+-] field for $ CHANGE" )
+            if change_sign == "+" or change_sign == "-":    # 4 : is $ change sign [+/-] a dedciated field
+                change_val = next(extr_strs)                # 4 : Yes, advance iterator to next field (ignore dedciated sign field)
             else:
-                change_val = change_sign         # 4 : Not found. We now have change $ value but its possibly a +/- signed number
-                logging.info( f"{cmi_debug} : {co_sym} : no dedicated [+-] field for $ CHANGE" )
+                change_val = change_sign                    # 4 : get $ change, but its possibly +/- signed
                 if (re.search('\+', change_val)) or  (re.search('\-', change_val)) is True:
-                    logging.info( f"{cmi_debug} : {change_val} : $ CHANGE is signed [+-], striping..." )
-                    change_cl = re.sub('[\+\-]', "", change_val)     # remove +/- sign
-                    logging.info( f"%s : $ CHANGE cleaned: {change_cl}" % cmi_debug )
+                    logging.info( f"{cmi_debug} : {change_val} : $ CHANGE is signed [+-], stripping..." )
+                    change_cl = re.sub('[\+\-]', "", change_val)       # remove +/- sign
+                    logging.info( f"%s : $ CHANGE +/- cleaned : {change_cl}" % cmi_debug )
                 else:
-                    logging.info( f"{cmi_debug} - {change_val} : $ CHANGE is NOT signed [+-]" )
-                    change_cl = re.sub('[\,]', "", change_val)       # remove ,
-                    logging.info( f"%s : CHANGE cleaned: {change_cl}" % cmi_debug )
+                    logging.info( f"{cmi_debug} : {change_val} : $ CHANGE is NOT signed [+-]" )
+                    change_cl = re.sub('[\,]', "", change_val)       # remove
+                    logging.info( f"%s : $ CHANGE , cleaned : {change_cl}" % cmi_debug )
 
-            # is there a dedicated collumn to hold a +/- indicator
-            pct_sign = next(extr_strs)           # 5.0 : % change sign [+/-] / e.g "+%12.3"
-            if pct_sign == "+" or pct_sign == "-":
-                logging.info( f"{cmi_debug} : {change_val} : % CHANGE is signed [+-], striping..." )
-                pct_cl = (re.sub('\+\-,', '', pct_sign))            # # remove +/- sign and '
-                pct_val = next(extr_strs)        # 5.1 : change / e.g "210.0000%" WARN trailing "%" must be removed before casting to float
+            pct_sign = next(extr_strs)              # 5 : test for dedicated column for +/- indicator
+            logging.info( f"{cmi_debug} : {co_sym} : Check dedicated [+-] field for % CHANGE" )
+            if pct_sign == "+" or pct_sign == "-":  # 5 : is %_change sign [+/-] a dedciated field
+                pct_val = next(extr_strs)           # 5 : advance iterator to next field (ignore dedciated sign field)
             else:
-                z = 0
-                pct_val = pct_sign
-                logging.info( f"{cmi_debug} : {co_sym} : no dedicated [+-] field for % CHANGE" )
+                pct_val = pct_sign                  # 5 get % change, but its possibly +/- signed
+                if (re.search('\+', pct_val)) or  (re.search('\-', pct_val)) is True:
+                    logging.info( f"{cmi_debug} : {pct_val} : % CHANGE is signed [+-], stripping..." )
+                    pct_cl = re.sub('[\+\-]', "", pct_val)       # remove +/- signs
+                    logging.info( f"{cmi_debug} : % CHANGE +/- striped : {pct_cl}" )
+
+            pct_cl = re.sub('[\%]', "", pct_cl)       # remove +/- signs
+            logging.info( f"{cmi_debug} : % CHANGE ,/% striped : {pct_cl}" )
+
+            ################################ 2 ####################################
 
             vol = next(extr_strs)            # 6 : volume with scale indicator/ e.g "70.250k"
             avg_vol = next(extr_strs)        # 7 : Avg. vol over 3 months) / e.g "61,447"
@@ -185,7 +191,7 @@ class screener_dg1:
             peratio = next(extr_strs)        # 9 : PE ratio TTM (Trailing 12 months) / e.g "N/A"
             #mini_gfx = next(extr_strs)      # 10 : IGNORED = mini-canvas graphic 52-week rnage (no TXT/strings avail)
 
-            ####################################################################
+            ################################ 3 ####################################
             # now wrangle the data...
             co_sym_lj = f"{co_sym:<6}"                                   # left justify TXT in DF & convert to raw string
             co_name_lj = np.array2string(np.char.ljust(co_name, 25) )    # left justify TXT in DF & convert to raw string
@@ -200,6 +206,7 @@ class screener_dg1:
                 pct_cl = re.sub('[\%\+\-,]', "", pct_val )
                 pct_clean = float(pct_cl)
 
+            ################################ 4 ####################################
             mktcap = (re.sub('[N\/A]', '0', mktcap))               # handle N/A
             TRILLIONS = re.search('T', mktcap)
             BILLIONS = re.search('B', mktcap)
@@ -226,6 +233,8 @@ class screener_dg1:
                 logging.info( f'%s - {x} - {co_sym_lj} bad mktcap data N/A - SZ' % cmi_debug )
                 # handle bad data in mktcap html page field
 
+            ################################ 5 ####################################
+            # now construct our list for concatinating to the dataframe 
             logging.info( f"%s === Data prepared for DF" % cmi_debug )
 
             self.list_data = [[ \
@@ -239,6 +248,7 @@ class screener_dg1:
                        mb, \
                        time_now ]]
 
+            ################################ 6 ####################################
             # convert our list into a 1 row dataframe
             self.df_1_row = pd.DataFrame(self.list_data, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time' ], index=[x] )
             self.dg1_df0 = pd.concat([self.dg1_df0, self.df_1_row])

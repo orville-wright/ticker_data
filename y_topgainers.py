@@ -174,6 +174,8 @@ class y_topgainers:
 
             ################################ 5 ####################################
             # now construct our list for concatinating to the dataframe 
+            logging.info( f"%s === Data prepared for DF" % cmi_debug )
+
             self.list_data = [[ \
                        x, \
                        re.sub('\'', '', co_sym_lj), \
