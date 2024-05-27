@@ -246,7 +246,7 @@ class y_topgainers:
         logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
-        print ( self.tg_df1.sort_values(by='Pct_change', ascending=False ).head(15) )
+        print ( f"{self.tg_df1.sort_values(by='Pct_change', ascending=False ).head(15)}" )
         return
 
 # method #6
