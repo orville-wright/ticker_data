@@ -28,6 +28,7 @@ class y_toplosers:
     tg_df1 = ""          # DataFrame - Ephemerial list of top 10 loserers. Allways overwritten
     tg_df2 = ""          # DataFrame - Top 10 ever 10 secs for 60 secs
     all_tag_tr = ""      # BS4 handle of the <tr> extracted data
+    rows_extr = 0        # number of rows of data extracted
     yti = 0
     cycle = 0           # class thread loop counter
 
@@ -56,6 +57,7 @@ class y_toplosers:
         # ATTR style search. Results -> Dict
         # <tr tag in target merkup line has a very complex 'class=' but the attributes are unique. e.g. 'simpTblRow' is just one unique attribute
         logging.info('%s - save data handle' % cmi_debug )
+        self.tag_tbody = self.soup.find('tbody')
         self.all_tag_tr = self.soup.find_all(attrs={"class": "simpTblRow"})
 
         # target markup line I am scanning looks like this...
@@ -79,6 +81,10 @@ class y_toplosers:
         #self.tg_df0.drop(self.tg_df0.index, inplace=True)           # the df is now 100% empty
         self.tg_df0 = pd.DataFrame()                                 # new df, but is NULLed. avoids empty concat errors
         x = 1    # row counter Also leveraged for unique dataframe key
+        self.rows_extr = int( len(self.tag_tbody.find_all('tr')) )
+
+        print ( f"===== rows: {self.rows_extr} ================" )
+
         for datarow in self.all_tag_tr:
             # 1st <td> cell : ticker symbol info & has comment of company name
             # 2nd <td> cell : company name

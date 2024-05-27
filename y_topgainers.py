@@ -73,8 +73,6 @@ class y_topgainers:
         logging.info('%s - Create clean NULL DataFrame' % cmi_debug )
         self.tg_df0 = pd.DataFrame()             # new df, but is NULLed
         x = 0
-
-        print ( f"===== Rows: {len(self.tag_tbody.find_all('tr'))}  =================" )
         self.rows_extr = int( len(self.tag_tbody.find_all('tr')) )
 
         for j in self.tag_tbody.find_all('tr'):
