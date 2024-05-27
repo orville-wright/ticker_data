@@ -31,8 +31,10 @@ class screener_dg1:
     all_tag_tr = ""       # BS4 handle of the <tr> extracted data
     td_tag_rows = ""      # BS4 handle of the <tr> extracted data
     tag_tbody = ""        # BS4 full body handle
+    ext_req = ""          # request was handled by y_cookiemonster
     yti = 0
-    cycle = 0           # class thread loop counter
+    cycle = 0             # class thread loop counter
+
     dummy_url = "https://finance.yahoo.com/screener/predefined/day_gainers"
 
     yahoo_headers = { \
@@ -84,6 +86,30 @@ class screener_dg1:
         r = requests.get("https://finance.yahoo.com/screener/predefined/small_cap_gainers/" )
         logging.info( "%s - html stream read completed" % cmi_debug )
 
+        logging.info( f"%s - BS4 stream processing..." % cmi_debug )
+        self.soup = BeautifulSoup(r.text, 'html.parser')
+        self.tag_tbody = self.soup.find('tbody')
+        self.tr_rows = self.tag_tbody.find(attrs={"class": "simpTblRow"})
+        #self.all_tag_tr = self.soup.find(attrs={"class": "simpTblRow"})
+        logging.info('%s Page processed by BS4 engine' % cmi_debug )
+        return
+
+#####################################################
+# method #1
+    def ext_get_data(self, yti):
+        """
+        Connect to finance.yahoo.com and extract (scrape) the raw string data out of
+        the webpage data tables. Returns a BS4 handle.
+        Send hint which engine processed & rendered the html page
+        0. Simple HTML engine
+        1. JAVASCRIPT HTML render engine (down redering a complex JS page in to simple HTML)
+        """
+        self.yti = yti
+        cmi_debug = __name__+"::"+self.ext_get_data.__name__+".#"+str(self.yti)
+        logging.info('%s - IN' % cmi_debug )
+        logging.info('%s - ext request pre-processed by cookiemonster...' % cmi_debug )
+        #r = requests.get("https://finance.yahoo.com/gainers/" )
+        r = self.ext_req
         logging.info( f"%s - BS4 stream processing..." % cmi_debug )
         self.soup = BeautifulSoup(r.text, 'html.parser')
         self.tag_tbody = self.soup.find('tbody')

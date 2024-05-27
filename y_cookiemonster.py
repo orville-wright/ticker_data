@@ -119,4 +119,4 @@ class y_cookiemonster:
         # self.js_session.cookies.update({'bm_sv': self.js_resp0.cookies['bm_sv']} )    # NASDAQ cookie hack
         # self.js_session.cookies.update(self.nasdaq_headers)    # load cookie/header hack data set into session
 
-        return
+        return self.js_resp0

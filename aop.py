@@ -182,12 +182,12 @@ def main():
         print ( "========== Screener: SMALL CAP Day Gainers : +5% & > $299M Mkt-cap ==========" )
         small_cap_dataset = screener_dg1(1)       # instantiate class
         small_cap_dataset.init_dummy_session()
-        small_cap_dataset.get_data(1)
  
-        #scap_test = y_cookiemonster(1)
-        #scap_test.get_js_data()
-        #get_js_data() here <<<<
-
+        #small_cap_dataset.get_data(1)
+        scap_test = y_cookiemonster(1)
+        small_cap_dataset.ext_req = scap_test.get_js_data()
+        small_cap_dataset.ext_get_data(1)
+        
         x = small_cap_dataset.build_df0()         # build full dataframe
         small_cap_dataset.build_top10()           # show top 10
         small_cap_dataset.print_top10()           # print it
