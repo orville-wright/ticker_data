@@ -108,7 +108,7 @@ class y_cookiemonster:
         logging.info( f"%s - html.render() DONE !" % cmi_debug )
 
         hot_cookies = requests.utils.dict_from_cookiejar(self.js_resp0.cookies)
-        logging.info( f"%s - Dump JS cookie JAR\n {json.dumps(hot_cookies)}" % cmi_debug )
+        #logging.info( f"%s - Dump JS cookie JAR\n {json.dumps(hot_cookies)}" % cmi_debug )
 
         logging.info( f"%s - Swap in JS reps0 cookies into js_session yahoo_headers" % cmi_debug )
         js_session.cookies.update(self.yahoo_headers)
