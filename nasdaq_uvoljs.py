@@ -88,11 +88,6 @@ class un_volumes:
         # 2nd get with the secret nasdaq.com cookie no inserted
         logging.info('%s - rest API read json' % cmi_debug )
         with self.js_session.get("https://api.nasdaq.com/api/quote/list-type/unusual_volume", stream=True, headers=self.nasdaq_headers, cookies=self.nasdaq_headers, timeout=5 ) as self.js_resp2:
-            # read the webpage with our Javascript engine processor
-            #logging.info('%s - Javascript engine processing...' % cmi_debug )
-            #self.js_resp2.html.render()    # might now even be needed now that nasdaq REST API get is working
-            #logging.info('%s - Javascript engine completed!' % cmi_debug )
-            # we can access pure 'Unusual VOlume' JSON data via an authenticated/valid REST API call
             logging.info('%s - json data extracted' % cmi_debug )
             logging.info('%s - store FULL json dataset' % cmi_debug )
             self.uvol_all_data = json.loads(self.js_resp2.text)
@@ -109,6 +104,7 @@ class un_volumes:
                 print ( f"{i}" )
             print ( f"=xray=========================== {self.yti} ==================================end=" )
         return
+
 #####################################################
 # method #2
 # New method to build a Pandas DataFrame from JSON data structure
@@ -178,9 +174,9 @@ class un_volumes:
                        x, \
                        re.sub('\'', '', co_sym_lj), \
                        co_name_lj, \
-                       float(price_cl), \
-                       float(price_net_cl), \
-                       float(price_pct_cl), \
+                       round(float(price_cl), 2), \
+                       round(float(price_net_cl), 2), \
+                       round(float(price_pct_cl), 2), \
                        round(float(vol_abs_cl)), \
                        round(float(vol_pct_cl), 1), \
                        time_now ]]
