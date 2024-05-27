@@ -86,6 +86,8 @@ class y_topgainers:
             # >>>DEBUG<< for when yahoo.com changes data model...
             """
 
+            ################################ 1 ####################################
+
             extr_strs = j.strings
             co_sym = next(extr_strs)             # 1 : ticker symbol info / e.g "NWAU"
             co_name = next(extr_strs)            # 2 : company name / e.g "Consumer Automotive Finance, Inc."
@@ -115,16 +117,13 @@ class y_topgainers:
                 if (re.search('\+', pct_val)) or  (re.search('\-', pct_val)) is True:
                     logging.info( f"{cmi_debug} : {pct_val} : % CHANGE is signed [+-], stripping..." )
                     pct_cl = re.sub('[\+\-]', "", pct_val)       # remove +/- sign
-                    logging.info( f"{cmi_debug} : pct CHANGE +/- cleaned : {pct_cl}" )
+                    logging.info( f"{cmi_debug} : pct CHANGE +/- striped : {pct_cl}" )
                 else:
                     logging.info( f"{cmi_debug} : {pct_val} : % CHANGE is NOT signed [+-]" )
-                    pct_cl = re.sub('[\,]', "", pct_val)       # remove
-                    logging.info( f"{cmi_debug} : pct CHANGE , cleaned : {pct_cl}" )
+                    pct_cl = re.sub('[\,\%]', "", pct_val)       # remove
+                    logging.info( f"{cmi_debug} : pct CHANGE ,/% striped : {pct_cl}" )
 
-                z = 0
-                pct_val = pct_sign
-                logging.info( f"{cmi_debug} - {co_sym} - no dedicated [+-] field for % CHANGE" )
-            
+            ################################ 2 ####################################
 
             vol = next(extr_strs)            # 6 : volume with scale indicator/ e.g "70.250k"
             avg_vol = next(extr_strs)        # 7 : Avg. vol over 3 months) / e.g "61,447"
@@ -132,7 +131,7 @@ class y_topgainers:
             peratio = next(extr_strs)        # 9 : PE ratio TTM (Trailing 12 months) / e.g "N/A"
             #mini_gfx = next(extr_strs)      # 10 : IGNORED = mini-canvas graphic 52-week rnage (no TXT/strings avail)
 
-            ####################################################################
+            ################################ 3 ####################################
             # now wrangle the data...
             co_sym_lj = f"{co_sym:<6}"                                   # left justify TXT in DF & convert to raw string
             co_name_lj = np.array2string(np.char.ljust(co_name, 25) )    # left justify TXT in DF & convert to raw string
@@ -146,7 +145,8 @@ class y_topgainers:
             else:
                 pct_cl = re.sub('[\%\+\-,]', "", pct_val )
                 pct_clean = float(pct_cl)
-            
+
+            ################################ 4 ####################################
             mktcap = (re.sub('[N\/A]', '0', mktcap))               # handle N/A
             TRILLIONS = re.search('T', mktcap)
             BILLIONS = re.search('B', mktcap)
@@ -173,7 +173,7 @@ class y_topgainers:
                 logging.info( f'%s - {x} - {co_sym_lj} bad mktcap data N/A - SZ' % cmi_debug )
                 # handle bad data in mktcap html page field
 
-
+            ################################ 5 ####################################
             # now construct our list for concatinating to the dataframe 
             self.list_data = [[ \
                        x, \
@@ -186,6 +186,7 @@ class y_topgainers:
                        mb, \
                        time_now ]]
 
+            ################################ 6 ####################################
             #logging.info( f'%s - tg_df0.data0: {self.data0}' % cmi_debug )
 
             # convert our list into a 1 row dataframe
@@ -197,6 +198,7 @@ class y_topgainers:
         return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
                         # sucess = lobal class accessor (y_topgainers.*_df0) populated & updated
 
+#########################################################################################
 # method #3
 # Hacking function - keep me arround for a while
     def prog_bar(self, x, y):
