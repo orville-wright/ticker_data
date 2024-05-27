@@ -24,7 +24,7 @@ logging.basicConfig(level=logging.INFO)
 # my private classes & methods
 from y_topgainers import y_topgainers
 from y_toplosers import y_toplosers
-from screener_dg1 import screener_dg1
+from y_smallcaps import smallcap_screen
 from nasdaq_uvoljs import un_volumes
 from nasdaq_quotes import nquote
 from shallow_logic import combo_logic
@@ -180,7 +180,7 @@ def main():
 # small caps are isolated outside the regular dataset by yahoo.com
     if args['bool_scr'] is True:
         print ( "========== Screener: SMALL CAP Day Gainers : +5% & > $299M Mkt-cap ==========" )
-        small_cap_dataset = screener_dg1(1)       # instantiate class
+        small_cap_dataset = smallcap_screen(1)       # instantiate class
         small_cap_dataset.init_dummy_session()
  
         #small_cap_dataset.get_data(1)
