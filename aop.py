@@ -331,7 +331,7 @@ def main():
         cmax = x.combo_df['Pct_change'].idxmax()
         clp = x.combo_df.loc[cmax, 'Cur_price']
         i_got_max = x.combo_df.loc[cmax]
-        
+
         clsym = i_got_max.at['Symbol']                # get symbol of lowest price item @ index_id
         clname = i_got_max.at['Co_name']              # get name of lowest price item @ index_id
         clupct = i_got_max.at['Pct_change']           # get %change of lowest price item @ index_id
@@ -360,12 +360,17 @@ def main():
 # Summary ############### AVERGAES and computed info ##########################
         print ( " " )
         print ( "============== Market activity overview, inisghts & stats =================" )
-        averages = x.combo_grouped().round(2)       # insights
+        avgs_prc = x.combo_grouped(2).round(2)       # insights
+        avgs_pct = x.combo_grouped(1).round(2)       # insights
+
+        print ( f"Price average over all stock movemnts" )
+        print ( f"{avgs_prc}" )
         print ( " " )
-        print ( f"{averages}" )
-        print ( " " )
-        print ( f"Current day average $ gain: ${averages.iloc[-1]['Prc_change'].round(2)}" )
-        print ( f"Current day percent gain:   %{averages.iloc[-1]['Pct_change'].round(2)}" )
+        print ( f"Percent  % average over all stock movemnts" )
+        print ( f"{avgs_pct}" )
+
+        #print ( f"Current day average $ gain: ${averages.iloc[-1]['Prc_change'].round(2)}" )
+        #print ( f"Current day percent gain:   %{averages.iloc[-1]['Pct_change'].round(2)}" )
 
 
 # Get the Bull/Bear Technical performance Sentiment for all stocks in combo DF ######################

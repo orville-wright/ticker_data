@@ -518,18 +518,27 @@ class combo_logic:
 ###################################################################################
 # method 13
 
-    def combo_grouped(self):
+    def combo_grouped(self, opt):
         """
         Print a set of insights like Agerages and Mean etc
         Sorted by % Change & grouped by Insights
         """
         cmi_debug = __name__+"::"+self.combo_grouped.__name__+".#"+str(self.inst_uid)
+        self.gopt = opt
         logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 40)
-        #g_df = pd.DataFrame(self.combo_df.sort_values(by=['rank'], ascending=True).groupby(['Insights'])['Pct_change'].mean() )
-        g_df = pd.DataFrame(self.combo_df.sort_values(by=['rank'], ascending=True).groupby(['Insights']) )
-        #g_df.loc['Average_overall'] = g_df.mean()
+
+        if self.gopt == 1:   # pct grouping
+            g_df = pd.DataFrame(self.combo_df.sort_values(by=['rank'], ascending=True).groupby(['Insights'])['Pct_change'].mean() )
+        
+        if self.gopt == 2:   # prc grouping
+            g_df = pd.DataFrame(self.combo_df.sort_values(by=['rank'], ascending=True).groupby(['Insights'])['Prc_change'].mean() )
+        
+        #g_df = pd.DataFrame(self.combo_df.sort_values(by=['rank'], ascending=True).groupby(['Insights']) )
+        
+        g_df.loc['Average_overall'] = g_df.mean()
+        
         return g_df
 
 ###################################################################################
