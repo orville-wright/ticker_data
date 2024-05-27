@@ -127,12 +127,16 @@ class combo_logic:
                 logging.info( f"%s  - re-shape asset class endpoint to: {ac}" % cmi_debug )
                 nq.form_api_endpoint(qsymbol, ac)        # re-form API endpoint if default asset_class guess was wrong
                 nq.get_nquote(qsymbol.upper())          # get a live quote
-                wq = nq_wrangler(1, self.args)           # instantiate a class for Quote Data Wrangeling
+                wq = nq_wrangler(4, self.args)           # instantiate a class for Quote Data Wrangeling
                 wq.asset_class = ac
+                wq.setup_zones(4, nq.quote_json1, nq.quote_json2, nq.quote_json3)
+                wq.do_wrangle()
+                wq.clean_cast()
+                wq.build_data_sets() 
                 print ( f"{qsymbol:5}...", end="", flush=True )         # >> pretty printer <<
             else:
                 nq.get_nquote(qsymbol.upper())           # get a live quote
-                wq = nq_wrangler(1, self.args)           # instantiate a class for Quote Data Wrangeling
+                wq = nq_wrangler(3, self.args)           # instantiate a class for Quote Data Wrangeling
                 wq.asset_class = ac
                 wq.setup_zones(3, nq.quote_json1, nq.quote_json2, nq.quote_json3)
                 wq.do_wrangle()
