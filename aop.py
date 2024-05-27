@@ -592,8 +592,6 @@ def main():
         te.reset_te_df0()
         print ( f"{te.te_df0}" )
         print ( f"===============================================================" )
-    else:
-        print ( f"No Nasdaq.com quote - Not a regular symbol - prob Trust, ETF etc" )
 
     """
     EXAMPLE #2
