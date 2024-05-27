@@ -136,7 +136,7 @@ class screener_dg1:
         print ( f"===== Rows: {len(self.tag_tbody.find_all('tr'))}  =================" )
         for j in self.tag_tbody.find_all('tr'):
 
-            #"""
+            """
             # >>>DEBUG<< for when yahoo.com changes data model...
             y = 1
             for i in j.find_all('td'):
@@ -145,7 +145,7 @@ class screener_dg1:
                 y += 1
             print ( f"==============================================" )
             # >>>DEBUG<< for when yahoo.com changes data model...
-            #"""
+            """
 
             ################################ 1 ####################################
 
