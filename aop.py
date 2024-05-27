@@ -544,44 +544,45 @@ def main():
     """
 
     if args['qsymbol'] is not False:
-        nq = nquote(1, args)                         # Nasdqa quote instance from nasdqa_quotes.py
-        nq.init_dummy_session()                      # note: this will set nasdaq magic cookie
+        nq = nquote(1, args)                          # Nasdqa quote instance from nasdqa_quotes.py
+        nq.init_dummy_session()                       # note: this will set nasdaq magic cookie
         nq_symbol = args['qsymbol'].upper()
         logging.info( f"%s - Get Nasdaq.com quote for symbol {nq_symbol}" % cmi_debug )
-        nq.update_headers(nq_symbol, "stocks")         # set path: header object. doesnt touch secret nasdaq cookies
-        nq.form_api_endpoint(nq_symbol, "stocks")      # set API endpoint url - default GUESS asset_class=stocks
+        nq.update_headers(nq_symbol, "stocks")        # set path: header object. doesnt touch secret nasdaq cookies
+        nq.form_api_endpoint(nq_symbol, "stocks")     # set API endpoint url - default GUESS asset_class=stocks
         ac = nq.learn_aclass(nq_symbol)
 
         if ac != "stocks":
             logging.info( f"%s - re-shape asset class endpoint to: {ac}" % cmi_debug )
-            nq.form_api_endpoint(nq_symbol, ac)      # re-form API endpoint if default asset_class guess was wrong)
-            nq.get_nquote(nq_symbol.upper())           # get a live quote
-            wq = nq_wrangler(1, args)           # instantiate a class for Quote Data Wrangeling
+            nq.form_api_endpoint(nq_symbol, ac)       # re-form API endpoint if default asset_class guess was wrong)
+            nq.get_nquote(nq_symbol.upper())          # get a live quote
+            wq = nq_wrangler(1, args)                 # instantiate a class for Quote Data Wrangeling
             wq.asset_class = ac
         else:
-            logging.info( f"============ Getting nasdaq quote data for asset class: {ac} ==========" )
             nq.get_nquote(nq_symbol.rstrip())
-            wq = nq_wrangler(1, args)                   # instantiate a class for Quote Data Wrangeling
-            wq.asset_class = ac                         # wrangeler class MUST know the class of asset its working on
-            wq.setup_zones(1, nq.quote_json1, nq.quote_json2, nq.quote_json3)
-            wq.do_wrangle()
-            wq.clean_cast()
-            wq.build_data_sets()
-            # add Tech Events Sentiment to quote dict{}
-            te_nq_quote = wq.qd_quote
-            te = y_techevents(2)
-            te.form_api_endpoints(nq_symbol)
-            success = te.get_te_zones(2)
-            if success == 0:
-                te.build_te_data(2)
-                te.te_into_nquote(te_nq_quote)
-                #nq.quote.update({"today_only": te.te_sentiment[0][2]} )
-                #nq.quote.update({"short_term": te.te_sentiment[1][2]} )
-                #nq.quote.update({"med_term": te.te_sentiment[2][2]} )
-                #nq.quote.update({"long_term": te.te_sentiment[3][2]} )
-            else:
-                te.te_is_bad()                     # FORCE Tech Events to be N/A
-                te.te_into_nquote(te_nq_quote)     # NOTE: needs to be the point to new refactored class nasdqa_wrangler::nq_wrangler qd_quote{}
+            wq = nq_wrangler(1, args)                 # instantiate a class for Quote Data Wrangeling
+            wq.asset_class = ac                       # wrangeler class MUST know the class of asset its working on
+
+        logging.info( f"============ Getting nasdaq quote data for asset class: {ac} ==========" )
+        wq.setup_zones(1, nq.quote_json1, nq.quote_json2, nq.quote_json3)
+        wq.do_wrangle()
+        wq.clean_cast()
+        wq.build_data_sets()
+        # add Tech Events Sentiment to quote dict{}
+        te_nq_quote = wq.qd_quote
+        te = y_techevents(2)
+        te.form_api_endpoints(nq_symbol)
+        success = te.get_te_zones(2)
+        if success == 0:
+            te.build_te_data(2)
+            te.te_into_nquote(te_nq_quote)
+            #nq.quote.update({"today_only": te.te_sentiment[0][2]} )
+            #nq.quote.update({"short_term": te.te_sentiment[1][2]} )
+            #nq.quote.update({"med_term": te.te_sentiment[2][2]} )
+            #nq.quote.update({"long_term": te.te_sentiment[3][2]} )
+        else:
+            te.te_is_bad()                     # FORCE Tech Events to be N/A
+            te.te_into_nquote(te_nq_quote)     # NOTE: needs to be the point to new refactored class nasdqa_wrangler::nq_wrangler qd_quote{}
 
         print ( f"===================== Nasdaq quote data =======================" )
         print ( f"                          {nq_symbol}" )
