@@ -181,8 +181,8 @@ class un_volumes:
                        float(price_cl), \
                        float(price_net_cl), \
                        float(price_pct_cl), \
-                       round(float(vol_abs_cl), 0), \
-                       round(float(vol_pct_cl), 0), \
+                       round(float(vol_abs_cl)), \
+                       round(float(vol_pct_cl)), \
                        time_now ]]
 
 
