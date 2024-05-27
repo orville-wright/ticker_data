@@ -195,8 +195,8 @@ class smallcap_screen:
             co_name_lj = np.array2string(np.char.ljust(co_name, 25) )    # left justify TXT in DF & convert to raw string
             co_name_lj = (re.sub('[\'\"]', '', co_name_lj) )             # remove " ' and strip leading/trailing spaces
             price_cl = re.sub('[\,]', "", price)                      # remove , seperator
-            price_clean = round(float(price_cl, 2))
-            change_clean = round(float(change_val, 2))
+            price_clean = round(float(price_cl), 2)
+            change_clean = round(float(change_val), 2)
 
             if pct_val == "N/A":
                 pct_val = float(0.0)                               # Bad data. FOund a filed with N/A instead of read num
