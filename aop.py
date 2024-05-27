@@ -553,8 +553,11 @@ def main():
         ac = nq.learn_aclass(nq_symbol)
 
         if ac != "stocks":
-            logging.info( f"%s - re-shape asset class endpoint to: {ac}" )
+            logging.info( f"%s - re-shape asset class endpoint to: {ac}" % cmi_debug )
             nq.form_api_endpoint(nq_symbol, ac)      # re-form API endpoint if default asset_class guess was wrong)
+            nq.get_nquote(nq_symbol.upper())           # get a live quote
+            wq = nq_wrangler(1, args)           # instantiate a class for Quote Data Wrangeling
+            wq.asset_class = ac
         else:
             logging.info( f"============ Getting nasdaq quote data for asset class: {ac} ==========" )
             nq.get_nquote(nq_symbol.rstrip())
