@@ -30,6 +30,7 @@ class screener_dg1:
     dg1_df2 = ""          # DataFrame - Top 10 ever 10 secs for 60 secs
     all_tag_tr = ""       # BS4 handle of the <tr> extracted data
     td_tag_rows = ""      # BS4 handle of the <tr> extracted data
+    tag_tbody = ""        # BS4 full body handle
     yti = 0
     cycle = 0           # class thread loop counter
     dummy_url = "https://finance.yahoo.com/screener/predefined/day_gainers"
@@ -78,7 +79,7 @@ class screener_dg1:
         self.yti = yti
         cmi_debug = __name__+"::"+self.get_data.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
-        print ( f"get using simple html engine" )
+        logging.info('%s - get using simple html engine..' % cmi_debug )
         #r = requests.get("https://finance.yahoo.com/gainers/" )
         r = requests.get("https://finance.yahoo.com/screener/predefined/small_cap_gainers/" )
         logging.info( "%s - html stream read completed" % cmi_debug )

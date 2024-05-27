@@ -184,15 +184,13 @@ def main():
         small_cap_dataset.init_dummy_session()
         small_cap_dataset.get_data(1)
  
-        scap_test = y_cookiemonster(1)
-        scap_test.get_js_data()
+        #scap_test = y_cookiemonster(1)
+        #scap_test.get_js_data()
         #get_js_data() here <<<<
-        """
-        Disbale for now
+
         x = small_cap_dataset.build_df0()         # build full dataframe
         small_cap_dataset.build_top10()           # show top 10
         small_cap_dataset.print_top10()           # print it
-        """
 
         #yf_sc_screener = cookie_monster(1, "/screener/predefined/small_cap_gainers/", args)
         #yf_sc_screener.form_url_endpoint()
