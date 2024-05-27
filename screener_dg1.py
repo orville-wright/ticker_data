@@ -63,8 +63,6 @@ class screener_dg1:
     def init_dummy_session(self):
         self.dummy_resp0 = requests.get(self.dummy_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
         hot_cookies = requests.utils.dict_from_cookiejar(self.dummy_resp0.cookies)
-        print ( f"cookie jar:")
-        print ( f"{hot_cookies} ")
         #self.js_session.cookies.update({'A1': self.js_resp0.cookies['A1']} )    # yahoo cookie hack
         return
 

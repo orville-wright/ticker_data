@@ -106,9 +106,10 @@ class y_cookiemonster:
 
         # print ( f"{self.js_resp0.text}" )
         logging.info( f"%s - html.render() DONE !" % cmi_debug )
-        logging.info( f"%s - Dump JS resp0 cookie:" % cmi_debug )
-        for i in self.js_resp0.cookies:
-            print ( f"{i} : {self.js_resp0.cookies[i]}" )
+        if self.args['bool_xray'] is True:
+            logging.info( f"%s - Dump JS resp0 cookie:" % cmi_debug )
+            for i in self.js_resp0.cookies:
+                print ( f"{i} : {self.js_resp0.cookies[i]}" )
 
         hot_cookies = requests.utils.dict_from_cookiejar(self.js_resp0.cookies)
         logging.info( f"%s - Dump JS cookie JAR\n {json.dumps(hot_cookies)}" % cmi_debug )
