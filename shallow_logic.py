@@ -129,6 +129,7 @@ class combo_logic:
                 nq.get_nquote(qsymbol.upper())           # get a live quote
                 wq = nq_wrangler(1, self.args)           # instantiate a class for Quote Data Wrangeling
                 wq.asset_class = ac
+                print ( f"{qsymbol:5}...", end="", flush=True )         # >> pretty printer <<
             else:
                 nq.get_nquote(qsymbol.upper())           # get a live quote
                 wq = nq_wrangler(1, self.args)           # instantiate a class for Quote Data Wrangeling
@@ -146,9 +147,9 @@ class combo_logic:
                 logging.info( f"{cmi_debug} - {qsymbol} asset class is ETF" )
                 self.wrangle_errors += 1
                 self.unfixable_errors += 1
-                print ( f"!!", end="" )                                 # >> pretty printer <<
+                print ( f"E!", end="" )                                 # >> pretty printer <<
                 self.fixchars += 2
-                z_float = round(float(0.0), 3)
+                z_float = round(float(0), 3)
                 if self.args['bool_xray'] is True:
                     print ( f"=xray=========================== {self.inst_uid} ================================begin=" )
                     print ( f"z_float: {z_float}" )
