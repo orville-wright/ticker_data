@@ -315,16 +315,30 @@ def main():
         # lowest priced stock
         clp = x.combo_df['Cur_price'].min()
         cminv = x.combo_df['Cur_price'].idxmin()
-        clsym = x.combo_df.loc[cminv, ['Symbol']][0]
-        clname = x.combo_df.loc[cminv, ['Co_name']][0]
-        recommended['4'] = ('Large cap:', clsym.rstrip(), '$'+str(clp), clname.rstrip(), '+%'+str(x.combo_df.loc[cminv, ['Pct_change']][0]) )
+        i_got_min = x.combo_df.loc[cminv]
+
+        clsym = i_got_min.at['Symbol']                # get symbol of lowest price item @ index_id
+        clname = i_got_min.at['Co_name']              # get name of lowest price item @ index_id
+        clupct = i_got_min.at['Pct_change']           # get %change of lowest price item @ index_id
+
+        #clsym = x.combo_df.loc[cminv, ['Symbol']][0]
+        #clname = x.combo_df.loc[cminv, ['Co_name']][0]    
+        #recommended['4'] = ('Large cap:', clsym.rstrip(), '$'+str(clp), clname.rstrip(), '+%'+str(x.combo_df.loc[cminv, ['Pct_change']][0]) )
+
+        recommended['4'] = ('Large cap:', clsym.rstrip(), '$'+str(clp), clname.rstrip(), '+%'+str(clupct) )
 
         # Biggest % gainer stock
         cmax = x.combo_df['Pct_change'].idxmax()
         clp = x.combo_df.loc[cmax, 'Cur_price']
-        clsym = x.combo_df.loc[cmax, ['Symbol']][0]
-        clname = x.combo_df.loc[cmax, ['Co_name']][0]
-        recommended['5'] = ('Top % gainer:', clsym.rstrip(), '$'+str(clp), clname.rstrip(), '+%'+str(x.combo_df.loc[cmax, ['Pct_change']][0]) )
+        i_got_max = x.combo_df.loc[cmax]
+        
+        clsym = i_got_max.at['Symbol']                # get symbol of lowest price item @ index_id
+        clname = i_got_max.at['Co_name']              # get name of lowest price item @ index_id
+        clupct = i_got_max.at['Pct_change']           # get %change of lowest price item @ index_id
+        #recommended['5'] = ('Top % gainer:', clsym.rstrip(), '$'+str(clp), clname.rstrip(), '+%'+str(x.combo_df.loc[cmax, ['Pct_change']][0]) )
+
+        recommended['5'] = ('Top % gainer:', clsym.rstrip(), '$'+str(clp), clname.rstrip(), '+%'+str(clupct) )
+        
 
 # Recommendeds ###############################################################
         #  key    recomendation data     - (example output shown)

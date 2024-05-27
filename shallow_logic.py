@@ -309,7 +309,7 @@ class combo_logic:
 
         # TODO: ** This logic can fail @ Market open when many things are empty & unpopulated...
         if not bool(self.min_price):                # is empty?
-            print ( f"No **HOT tagged stocks located yet : {bool(self.min_price)}" )  
+            print ( f"NO **HOT tagged stocks located yet" )  
 
         return
 
