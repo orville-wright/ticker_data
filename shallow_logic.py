@@ -155,8 +155,12 @@ class combo_logic:
                     print ( f"z_float: {z_float}" )
                     print ( f"combo_df: {self.combo_df}" )
                     print ( f"=xray=========================== {self.inst_uid} ==================================end=" )
-                self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'Mkt_cap'] = 'UZ'  # Mkt cap
-                self.combo_df.at[self.combo_df[self.combo_df['Symbol'] == xsymbol].index, 'M_B'] = 'EF'      # asset class = ETF
+
+                #z_float = (float(wq.qd_quote['mkt_cap']))
+                row_index = self.combo_df.loc[self.combo_df['Symbol'] == xsymbol].index[0]
+                self.combo_df.at[row_index, 'Mkt_cap'] = round(z_float, 3)      # set Market cap to real/live num from nasdaq.com
+                row_index = self.combo_df.loc[self.combo_df['Symbol'] == xsymbol].index[0]
+                self.combo_df.at[row_index, 'M_B'] = 'EF'
             else:
                 logging.info( f"{cmi_debug} - {qsymbol} asset class is {wq.asset_class}" )
                 pass
