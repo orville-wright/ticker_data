@@ -220,14 +220,11 @@ def main():
         up_unvols = un_vol_activity.up_unvol_listall()      # temp DF, nicely ordered & indexed of unusual UP vol activity
         ulp = up_unvols['Cur_price'].min()                  # find lowest price row in DF
         uminv = up_unvols['Cur_price'].idxmin()             # get index ID of lowest price row
-        
         u_got_it = up_unvols.loc[uminv]
-        print ( f">>>DEBUG 1:\n{u_got_it}" )      # uminv = custom selector on Current_price column
-        print ( f"\n>>>DEBUG 2:\n{u_got_it.at["Symbol"]}" )      # uminv = custom selector on Current_price column
 
-        ulsym = up_unvols.loc[uminv, ['Symbol']][0]         # get symbol of lowest price item @ index_id
-        ulname = up_unvols.loc[uminv, ['Co_name']][0]       # get name of lowest price item @ index_id
-        upct = up_unvols.loc[uminv, ['Pct_change']][0]      # get %change of lowest price item @ index_id
+        ulsym = u_got_it.at['Symbol']              # get symbol of lowest price item @ index_id
+        ulname = u_got_it.at['Co_name']            # get name of lowest price item @ index_id
+        upct = u_got_it.at['Pct_change']           # get %change of lowest price item @ index_id
 
         print ( f">>LOWEST<< buy price OPPTY is: #{uminv} - {ulname.rstrip()} ({ulsym.rstrip()}) @ ${ulp} / {upct}% gain" )
         print ( " " )
