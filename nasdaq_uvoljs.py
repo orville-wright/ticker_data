@@ -129,7 +129,7 @@ class un_volumes:
             dataset = self.uvol_up_data
         elif ud == 1:
             logging.info('%s - build DOWN df' % cmi_debug )
-            self.down_df0 = pd.DataFrame()           # new df, but is NULLed
+            self.down_df1 = pd.DataFrame()           # new df, but is NULLed
             this_df = self.down_df1
             dataset = self.uvol_down_data
         else:
