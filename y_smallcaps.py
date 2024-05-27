@@ -328,7 +328,7 @@ class smallcap_screen:
     def screener_logic(self):
         """Exectract a list of small cap **GAINERS ONLY** logic"""
         """ 1. Sort by Cur_price """
-        """ 2. exclude any company with Market Cap < $299M """
+        """ 2. exclude any company with Market Cap > $299M """
         """ 3. manage company's with Market cap in BILLION's (requires special handeling) """
         """ 3. exclude any comany with %gain less than 5% """
         """ 4. SMALL CAP stocks only - Excludes Medium. Large, Mega cap companies!!"""
@@ -354,7 +354,7 @@ class smallcap_screen:
         lowconame = lowsym_ser.iloc[2]
         lowpctchange = lowsym_ser.iloc[5]
 
-        print ( f"\n========== Small cap Analysis ===========================================================" )
+        print ( f"\n========== Small cap Analysis / @ Mkt Cap > $299M ===============================================" )
         # Allways make sure this is key #1 in the recommendations dict
         rx['1'] = ('Small cap % gainer:', lowsym.rstrip(), '$'+str(ulp), lowconame.rstrip(), '+%'+str(lowpctchange) )
 
