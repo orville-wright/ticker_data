@@ -114,7 +114,7 @@ class combo_logic:
         # Get missing data from nasdaq.com. Rewrite in into combo_df.
         # This is network expensive - do a live network quote get for each stock
         logging.info( f"%s  - Get quote data from nasdaq.com for:  {len(uvol_badsymbols)} symbols" % cmi_debug )
-        print ( f"========== ask nasdaq.com for quote data =====================================================" )
+        print ( f"========== ask nasdaq.com for missing quote data =====================================================" )
         for qsymbol in uvol_badsymbols:
             xsymbol = qsymbol
             qsymbol = qsymbol.rstrip()                   # cleand/striped of trailing spaces
@@ -291,7 +291,7 @@ class combo_logic:
 # must call tag_dupes() first as that tags hottest with *Hot* / this method relies on that
 
     def find_hottest(self):
-        print ( f"========== Hot stock analysis ====================================================" )
+        print ( f"\n========== Hot stock analysis ====================================================" )
         if self.min_price:                       # not empty, We have some **HOT stocks to evaluate
             print ( f"\nLocating...", end="" ) 
             mptv = min(( td[2] for td in self.min_price.values() )) # td[2] = iterator of 3rd elment of min_price{}
@@ -309,8 +309,8 @@ class combo_logic:
 
         # TODO: ** This logic can fail @ Market open when many things are empty & unpopulated...
         if not bool(self.min_price):                # is empty?
-            print ( f"No **HOT stocks located yet : {bool(self.min_price)}" )  
-            print ( f"{self.min_price}" )           # did identify any low stocks (yet)
+            print ( f"No **HOT tagged stocks located yet : {bool(self.min_price)}" )  
+
         return
 
 #####################################################################################
@@ -542,16 +542,17 @@ class combo_logic:
         Will only list the dupes unless you have called tag_dupes() first, and then youll get the full DF
         """
         cmi_debug = __name__+"::"+self.combo_dupes_only_listall.__name__+".#"+str(self.inst_uid)
+        self.opt = opt
         logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 40)
 
-        if opt == 1:
+        if self.opt == 1:
             # I dont think this function works!!!
             temp_1 = self.combo_df.sort_values(by=['Pct_change'], ascending=False)
             return (temp_1[temp_1.duplicated(['Symbol'])] )
 
-        if opt == 2:
+        if self.opt == 2:
             return ( self.combo_dupes[self.combo_dupes[0] == True] )
 
         return

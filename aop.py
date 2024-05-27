@@ -251,7 +251,7 @@ def main():
         x.polish_combo_df(1)
         x.tag_dupes()
         x.tag_uniques()
-        x.rank_hot()       # currently disabled b/c it efforts. pandas statment needs to be simplifed and split
+        x.rank_hot()       # currently disabled b/c it errors. pandas statment needs to be simplifed and split
         #x.find_hottest()
         x.rank_unvol()     # ditto
         x.rank_caps()      # ditto
@@ -267,7 +267,6 @@ def main():
         x.find_hottest()
 
         print ( f"========== Hot stock anomolies ===================================================" )
-        print ( " " )
         print ( f"{x.combo_dupes_only_listall(1)}" )
 
         print ( " " )
