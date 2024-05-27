@@ -160,7 +160,6 @@ class combo_logic:
                     print ( f"combo_df: {self.combo_df}" )
                     print ( f"=xray=========================== {self.inst_uid} ==================================end=" )
 
-                #z_float = (float(wq.qd_quote['mkt_cap']))
                 row_index = self.combo_df.loc[self.combo_df['Symbol'] == xsymbol].index[0]
                 self.combo_df.at[row_index, 'Mkt_cap'] = z_float      # set Market cap to 0 for ETF
                 row_index = self.combo_df.loc[self.combo_df['Symbol'] == xsymbol].index[0]
