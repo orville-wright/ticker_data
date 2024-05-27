@@ -221,6 +221,9 @@ def main():
         ulp = up_unvols['Cur_price'].min()                  # find lowest price row in DF
         uminv = up_unvols['Cur_price'].idxmin()             # get index ID of lowest price row
         ulsym = up_unvols.loc[uminv, ['Symbol']][0]         # get symbol of lowest price item @ index_id
+
+        print ( f">>>DEBUG: {up_unvols.loc[uminv, ['Symbol']]}" )
+        
         ulname = up_unvols.loc[uminv, ['Co_name']][0]       # get name of lowest price item @ index_id
         upct = up_unvols.loc[uminv, ['Pct_change']][0]      # get %change of lowest price item @ index_id
         print ( f">>LOWEST<< buy price OPPTY is: #{uminv} - {ulname.rstrip()} ({ulsym.rstrip()}) @ ${ulp} / {upct}% gain" )
