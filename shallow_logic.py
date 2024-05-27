@@ -126,7 +126,7 @@ class combo_logic:
             if ac != "stocks":
                 logging.info( f"%s  - re-shape asset class endpoint to: {ac}" % cmi_debug )
                 nq.form_api_endpoint(qsymbol, ac)        # re-form API endpoint if default asset_class guess was wrong
-                nq.get_nquote(qsymbol.upper())           # get a live quote
+                #nq.get_nquote(qsymbol.upper())          # get a live quote
                 wq = nq_wrangler(1, self.args)           # instantiate a class for Quote Data Wrangeling
                 wq.asset_class = ac
                 print ( f"{qsymbol:5}...", end="", flush=True )         # >> pretty printer <<
@@ -149,7 +149,7 @@ class combo_logic:
                 self.unfixable_errors += 1
                 print ( f"E!", end="" )                                 # >> pretty printer <<
                 self.fixchars += 2
-                z_float = round(float(0), 3)
+                z_float = round(float(0), 2)
                 if self.args['bool_xray'] is True:
                     print ( f"=xray=========================== {self.inst_uid} ================================begin=" )
                     print ( f"z_float: {z_float}" )
@@ -158,7 +158,7 @@ class combo_logic:
 
                 #z_float = (float(wq.qd_quote['mkt_cap']))
                 row_index = self.combo_df.loc[self.combo_df['Symbol'] == xsymbol].index[0]
-                self.combo_df.at[row_index, 'Mkt_cap'] = round(z_float, 3)      # set Market cap to real/live num from nasdaq.com
+                self.combo_df.at[row_index, 'Mkt_cap'] = z_float      # set Market cap to 0 for ETF
                 row_index = self.combo_df.loc[self.combo_df['Symbol'] == xsymbol].index[0]
                 self.combo_df.at[row_index, 'M_B'] = 'EF'
             else:
