@@ -202,9 +202,8 @@ def main():
         # jorh : 0 = Simple HTML engine processor / 1 = JAVASCRIPT engine renderer
         #small_cap_dataset.get_data(1, yf_sc_screener.js_resp1, yf_sc_screener.jorh)              # extract data from finance.Yahoo.com
 
-
         # Recommendation #1 - Best small cap % gainer with lowest buy-in price
-        #recommended.update(small_cap_dataset.screener_logic())
+        recommended.update(small_cap_dataset.screener_logic())
         print ( " ")
 
 # process Nasdaq.com unusual_vol ################
