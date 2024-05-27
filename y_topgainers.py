@@ -154,27 +154,27 @@ class y_topgainers:
             if TRILLIONS:
                 mktcap_clean = float(re.sub('T', '', mktcap))
                 mb = "ST"
-                logging.info( f'%s : #{x} : {co_sym_lj} Mkt Cap: TRILLIONS - ST' % cmi_debug )
+                logging.info( f'%s : #{x} : {co_sym_lj} Mkt Cap: TRILLIONS : ST' % cmi_debug )
 
             if BILLIONS:
                 mktcap_clean = float(re.sub('B', '', mktcap))
                 mb = "SB"
-                logging.info( f'%s : #{x} : {co_sym_lj} Mkt cap: BILLIONS - SB' % cmi_debug )
+                logging.info( f'%s : #{x} : {co_sym_lj} Mkt cap: BILLIONS : SB' % cmi_debug )
 
             if MILLIONS:
                 mktcap_clean = float(re.sub('M', '', mktcap))
                 mb = "SM"
-                logging.info( f'%s : #{x} : {co_sym_lj} Mkt cap: MILLIONS - SM' % cmi_debug )
+                logging.info( f'%s : #{x} : {co_sym_lj} Mkt cap: MILLIONS : SM' % cmi_debug )
 
             if not TRILLIONS and not BILLIONS and not MILLIONS:
                 mktcap_clean = 0    # error condition - possible bad data
                 mb = "SZ"           # Zillions
-                logging.info( f'%s : #{x} : {co_sym_lj} bad mktcap data N/A - SZ' % cmi_debug )
+                logging.info( f'%s : #{x} : {co_sym_lj} bad mktcap data N/A : SZ' % cmi_debug )
                 # handle bad data in mktcap html page field
 
             ################################ 5 ####################################
             # now construct our list for concatinating to the dataframe 
-            logging.info( f"%s ========== Data prepared for DF ==========" % cmi_debug )
+            logging.info( f"%s ============ Data prepared for DF ============" % cmi_debug )
 
             self.list_data = [[ \
                        x, \
