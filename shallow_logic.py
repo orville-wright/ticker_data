@@ -126,7 +126,7 @@ class combo_logic:
             if ac != "stocks":
                 logging.info( f"%s  - re-shape asset class endpoint to: {ac}" % cmi_debug )
                 nq.form_api_endpoint(qsymbol, ac)        # re-form API endpoint if default asset_class guess was wrong
-                #nq.get_nquote(qsymbol.upper())          # get a live quote
+                nq.get_nquote(qsymbol.upper())          # get a live quote
                 wq = nq_wrangler(1, self.args)           # instantiate a class for Quote Data Wrangeling
                 wq.asset_class = ac
                 print ( f"{qsymbol:5}...", end="", flush=True )         # >> pretty printer <<
