@@ -83,8 +83,6 @@ class y_toplosers:
         x = 1    # row counter Also leveraged for unique dataframe key
         self.rows_extr = int( len(self.tag_tbody.find_all('tr')) )
 
-        print ( f"===== rows: {self.rows_extr} ================" )
-
         for datarow in self.all_tag_tr:
             # 1st <td> cell : ticker symbol info & has comment of company name
             # 2nd <td> cell : company name
@@ -199,6 +197,7 @@ class y_toplosers:
 # method #5
     def build_top10(self):
         """Get top 10 loserers from main DF (df0) -> temp DF (df1)"""
+        """Number of rows to grab is now set from num of rows that BS4 actually extracted (rows_extr)"""
         """df1 is ephemerial. Is allways overwritten on each run"""
 
         cmi_debug = __name__+"::"+self.build_top10.__name__+".#"+str(self.yti)
@@ -207,7 +206,7 @@ class y_toplosers:
         self.tg_df1.drop(self.tg_df1.index, inplace=True)
         logging.info('%s - Copy DF0 -> ephemerial DF1' % cmi_debug )
         #self.tg_df1 = self.tg_df0.sort_values(by='Pct_change', ascending=False ).copy(deep=True)    # create new DF via copy of top 10 entries
-        self.tg_df1 = self.tg_df0.sort_values(by='Pct_change', ascending=False ).head(20).copy(deep=True)    # create new DF via copy of top 10 entries
+        self.tg_df1 = self.tg_df0.sort_values(by='Pct_change', ascending=False ).head(self.rows_extr).copy(deep=True)    # create new DF via copy of top 10 entries
         self.tg_df1.rename(columns = {'Row':'ERank'}, inplace = True)   # Rank is more accurate for this Ephemerial DF
         self.tg_df1.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
         return
@@ -215,12 +214,13 @@ class y_toplosers:
 # method #7
     def print_top10(self):
         """Prints the Top 10 Dataframe"""
+        """Number of rows to grab is now set from num of rows that BS4 actually extracted (rows_extr)"""
 
         cmi_debug = __name__+"::"+self.print_top10.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
-        print ( self.tg_df1.sort_values(by='Pct_change', ascending=False ).head(20) )
+        print ( self.tg_df1.sort_values(by='Pct_change', ascending=False ).head(self.rows_extr) )
         return
 
 # method #6
