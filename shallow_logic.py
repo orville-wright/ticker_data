@@ -550,10 +550,7 @@ class combo_logic:
         if self.opt == 1:
             # dupe symbols show up b/c they are very active & all over the data. They are tagged as HOT stocks
             temp_1 = self.combo_df.sort_values(by=['Pct_change'], ascending=False)
-            if  temp_1.empty:
-                return 0
-            else:
-                return (temp_1[temp_1.duplicated(['Symbol'])] )
+            return (temp_1[temp_1.duplicated(['Symbol'])] )
 
         if self.opt == 2:
             return ( self.combo_dupes[self.combo_dupes[0] == True] )

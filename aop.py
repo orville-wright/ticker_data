@@ -266,8 +266,10 @@ def main():
 
         x.find_hottest()
 
-        if x.combo_dupes_only_listall(1) != 0:
-            print ( f"========== Hot stock anomolies ===================================================" )
+        print ( f"========== Hot stock anomolies ===================================================" )
+        if x.combo_dupes_only_listall(1).empty:
+            print ( f"NONE found at moment" )
+        else:
             print ( f"{x.combo_dupes_only_listall(1)}" )
 
         print ( " " )
