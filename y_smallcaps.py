@@ -9,6 +9,7 @@ import re
 import logging
 import argparse
 import time
+from rich import print
 
 
 # logging setup
@@ -32,6 +33,7 @@ class smallcap_screen:
     td_tag_rows = ""      # BS4 handle of the <tr> extracted data
     tag_tbody = ""        # BS4 full body handle
     ext_req = ""          # request was handled by y_cookiemonster
+    extr_rows = 0         # number or rows extracted by BS4
     yti = 0
     cycle = 0             # class thread loop counter
 
@@ -130,8 +132,8 @@ class smallcap_screen:
         logging.info('%s - Create clean NULL DataFrame' % cmi_debug )
         self.dg1_df0 = pd.DataFrame()            # new df, but is NULLed
         x = 0
+        self.rows_extr = int( len(self.tag_tbody.find_all('tr')) )
 
-        print ( f"===== Rows: {len(self.tag_tbody.find_all('tr'))}  =================" )
         for j in self.tag_tbody.find_all('tr'):
 
             """
@@ -284,6 +286,7 @@ class smallcap_screen:
 # method #5
     def build_top10(self):
         """Get top 10 enteries from main DF (df0) -> temp DF (df1)"""
+        """Number of rows to grab is now set from num of rows that BS4 actually extracted (rows_extr)"""
         """df1 is ephemerial. Is allways overwritten on each run"""
 
         cmi_debug = __name__+"::"+self.build_top10.__name__+".#"+str(self.yti)
@@ -291,7 +294,7 @@ class smallcap_screen:
         logging.info('%s - Drop all rows from DF1' % cmi_debug )
         self.dg1_df1.drop(self.dg1_df1.index, inplace=True)
         logging.info('%s - Copy DF0 -> ephemerial DF1' % cmi_debug )
-        self.dg1_df1 = self.dg1_df0.sort_values(by='Pct_change', ascending=False ).copy(deep=True)    # create new DF via copy of top 10 entries
+        self.dg1_df1 = self.dg1_df0.sort_values(by='Pct_change', ascending=False ).head(self.rows_extr).copy(deep=True)    # create new DF via copy of top 10 entries
         self.dg1_df1.rename(columns = {'Row':'ERank'}, inplace = True)    # Rank is more accurate for this Ephemerial DF
         self.dg1_df1.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
         return
@@ -305,7 +308,7 @@ class smallcap_screen:
         logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
-        print ( self.dg1_df1.sort_values(by='Pct_change', ascending=False ) )
+        print ( f"{self.dg1_df1.sort_values(by='Pct_change', ascending=False).head(self.rows_extr)}" )
         return
 
 #####################################################
@@ -351,9 +354,7 @@ class smallcap_screen:
         lowconame = lowsym_ser.iloc[2]
         lowpctchange = lowsym_ser.iloc[5]
 
-        print ( "=============================================================================")
-
-
+        print ( f"\n========== Small cap Analysis ===========================================================" )
         # Allways make sure this is key #1 in the recommendations dict
         rx['1'] = ('Small cap % gainer:', lowsym.rstrip(), '$'+str(ulp), lowconame.rstrip(), '+%'+str(lowpctchange) )
 
