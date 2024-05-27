@@ -119,7 +119,7 @@ class y_topgainers:
                     pct_cl = re.sub('[\+\-]', "", pct_val)       # remove +/- signs
                     logging.info( f"{cmi_debug} : % CHANGE +/- striped : {pct_cl}" )
 
-            pct_cl = re.sub('[\+\-]', "", pct_cl)       # remove +/- signs
+            pct_cl = re.sub('[\%]', "", pct_cl)       # remove +/- signs
             logging.info( f"{cmi_debug} : % CHANGE ,/% striped : {pct_cl}" )
 
             ################################ 2 ####################################
