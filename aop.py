@@ -266,8 +266,9 @@ def main():
 
         x.find_hottest()
 
-        print ( f"========== Hot stock anomolies ===================================================" )
-        print ( f"{x.combo_dupes_only_listall(1)}" )
+        if x.combo_dupes_only_listall(1) != 0:
+            print ( f"========== Hot stock anomolies ===================================================" )
+            print ( f"{x.combo_dupes_only_listall(1)}" )
 
         print ( " " )
         print ( f"========== Full System of Truth  ===================================================" )

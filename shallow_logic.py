@@ -548,9 +548,12 @@ class combo_logic:
         pd.set_option('max_colwidth', 40)
 
         if self.opt == 1:
-            # I dont think this function works!!!
+            # dupe symbols show up b/c they are very active & all over the data. They are tagged as HOT stocks
             temp_1 = self.combo_df.sort_values(by=['Pct_change'], ascending=False)
-            return (temp_1[temp_1.duplicated(['Symbol'])] )
+            if  temp_1.empty:
+                return 0
+            else:
+                return (temp_1[temp_1.duplicated(['Symbol'])] )
 
         if self.opt == 2:
             return ( self.combo_dupes[self.combo_dupes[0] == True] )
