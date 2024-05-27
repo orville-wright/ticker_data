@@ -11,6 +11,7 @@ import argparse
 import time
 import threading
 import json
+from rich import print
 
 from bigcharts_md import bc_quote
 
@@ -123,10 +124,12 @@ class un_volumes:
         logging.info('%s - IN' % cmi_debug )
         if ud == 0:
             logging.info('%s - build UP df' % cmi_debug )
+            self.up_df0 = pd.DataFrame()             # new df, but is NULLed
             this_df = self.up_df0
             dataset = self.uvol_up_data
         elif ud == 1:
             logging.info('%s - build DOWN df' % cmi_debug )
+            self.down_df0 = pd.DataFrame()           # new df, but is NULLed
             this_df = self.down_df1
             dataset = self.uvol_down_data
         else:
@@ -171,7 +174,7 @@ class un_volumes:
             vol_abs_cl = (re.sub('[,]', '', vol_abs))                      # remove ,
             vol_pct_cl = (re.sub('[%]', '', vol_pct))                      # remover %
 
-            self.data0 = [[ \
+            self.list_data = [[ \
                        x, \
                        re.sub('\'', '', co_sym_lj), \
                        co_name_lj, \
@@ -183,15 +186,13 @@ class un_volumes:
                        time_now ]]
 
 
-            self.df_1_row = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ], index=[x] )
+            self.df_1_row = pd.DataFrame(self.list_data, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', "Vol", 'Vol_pct', 'Time' ], index=[x] )
             if ud == 0:
-                logging.info('%s - append UP Volume data into DataFrame' % cmi_debug )
+                logging.info( '%s - append UP Volume data into DataFrame' % cmi_debug )
                 self.up_df0 = pd.concat([self.up_df0, self.df_1_row])    # append this ROW of data into the REAL DataFrame
-                #self.up_df0 = self.up_df0.concat(self.temp_df0, sort=False)    # append this ROW of data into the REAL DataFrame
             else:
                 logging.info('%s - append DOWN Volume data into DataFrame' % cmi_debug )
                 self.down_df1 = pd.concat([self.down_df1, self.df_1_row])    # append this ROW of data into the REAL DataFrame
-                #self.down_df1 = pd.concat([self.temp_df1, sort=False)    # append this ROW of data into the REAL DataFrame
 
             x += 1
 
