@@ -115,11 +115,11 @@ class y_topgainers:
                 if (re.search('\+', pct_val)) or  (re.search('\-', pct_val)) is True:
                     logging.info( f"{cmi_debug} : {pct_val} : % CHANGE is signed [+-], stripping..." )
                     pct_cl = re.sub('[\+\-]', "", pct_val)       # remove +/- sign
-                    logging.info( f"%s : pct CHANGE +/- cleaned : {pct_cl}" % cmi_debug )
+                    logging.info( f"{cmi_debug} : pct CHANGE +/- cleaned : {pct_cl}" )
                 else:
                     logging.info( f"{cmi_debug} : {pct_val} : % CHANGE is NOT signed [+-]" )
                     pct_cl = re.sub('[\,]', "", pct_val)       # remove
-                    logging.info( f"%s : pct CHANGE , cleaned : {pct_cl}" % cmi_debug )
+                    logging.info( f"{cmi_debug} : pct CHANGE , cleaned : {pct_cl}" )
 
                 z = 0
                 pct_val = pct_sign
