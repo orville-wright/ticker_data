@@ -8,6 +8,7 @@ import logging
 import argparse
 import time
 import threading
+from rich import print
 
 # logging setup
 logging.basicConfig(level=logging.INFO)
@@ -22,6 +23,7 @@ class y_topgainers:
     tg_df1 = ""          # DataFrame - Ephemerial list of top 10 gainers. Allways overwritten
     tg_df2 = ""          # DataFrame - Top 10 ever 10 secs for 60 secs
     all_tag_tr = ""      # BS4 handle of the <tr> extracted data
+    rows_extr = 0        # number of rows of data extracted
     yti = 0
     cycle = 0           # class thread loop counter
 
@@ -73,6 +75,8 @@ class y_topgainers:
         x = 0
 
         print ( f"===== Rows: {len(self.tag_tbody.find_all('tr'))}  =================" )
+        self.rows_extr = int( len(self.tag_tbody.find_all('tr')) )
+
         for j in self.tag_tbody.find_all('tr'):
 
             """
@@ -224,7 +228,8 @@ class y_topgainers:
 
 # method #5
     def build_top10(self):
-        """Get top 15 gainers from main DF (df0) -> temp DF (df1)"""
+        """Get top gainers from main DF (df0) -> temp DF (df1)"""
+        """Number of rows to grab is now set from num of rows that BS4 actually extracted (rows_extr)"""
         """df1 is ephemerial. Is allways overwritten on each run"""
 
         cmi_debug = __name__+"::"+self.build_top10.__name__+".#"+str(self.yti)
@@ -233,7 +238,7 @@ class y_topgainers:
         logging.info('%s - Drop all rows from DF1' % cmi_debug )
         self.tg_df1.drop(self.tg_df1.index, inplace=True)
         logging.info('%s - Copy DF0 -> ephemerial DF1' % cmi_debug )
-        self.tg_df1 = self.tg_df0.sort_values(by='Pct_change', ascending=False ).head(15).copy(deep=True)    # create new DF via copy of top 10 entries
+        self.tg_df1 = self.tg_df0.sort_values(by='Pct_change', ascending=False ).head(self.rows_extr).copy(deep=True)    # create new DF via copy of top 10 entries
         self.tg_df1.rename(columns = {'Row':'ERank'}, inplace = True)    # Rank is more accurate for this Ephemerial DF
         self.tg_df1.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
         return
@@ -241,12 +246,13 @@ class y_topgainers:
 # method #7
     def print_top10(self):
         """Prints the Top 10 Dataframe"""
+        """Number of rows to print is now set from num of rows that BS4 actually extracted (rows_extr)"""
 
         cmi_debug = __name__+"::"+self.print_top10.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
-        print ( f"{self.tg_df1.sort_values(by='Pct_change', ascending=False ).head(15)}" )
+        print ( f"{self.tg_df1.sort_values(by='Pct_change', ascending=False ).head(self.rows_extr)}" )
         return
 
 # method #6

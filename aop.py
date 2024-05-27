@@ -135,11 +135,11 @@ def main():
     if args['bool_tops'] is True:
         print ( "========== Top Gainers / Large Cap ==========" )
         print ( " " )
-        med_large_mega_gainers = y_topgainers(1)       # instantiate class
+        med_large_mega_gainers = y_topgainers(1)      # instantiate class
         med_large_mega_gainers.get_topg_data()        # extract data from finance.Yahoo.com
         x = med_large_mega_gainers.build_tg_df0()     # build full dataframe
-        med_large_mega_gainers.build_top10()           # show top 10
-        med_large_mega_gainers.print_top10()           # print it
+        med_large_mega_gainers.build_top10()          # show top 10
+        med_large_mega_gainers.print_top10()          # print it
         print ( " " )
 
 ########### 2 - TOP LOSERS ################
@@ -149,8 +149,8 @@ def main():
         med_large_mega_loosers = y_toplosers(1)       # instantiate class
         med_large_mega_loosers.get_topg_data()        # extract data from finance.Yahoo.com
         x = med_large_mega_loosers.build_tg_df0()     # build full dataframe
-        med_large_mega_loosers.build_top10()           # show top 10
-        med_large_mega_loosers.print_top10()           # print it
+        med_large_mega_loosers.build_top10()          # show top 10
+        med_large_mega_loosers.print_top10()          # print it
         print ( " ")
 
 ########### 3 10x10x60 ################

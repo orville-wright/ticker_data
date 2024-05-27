@@ -13,6 +13,7 @@ import time
 import threading
 import types
 import inspect
+from rich import print
 
 # logging setup
 logging.basicConfig(level=logging.INFO)
