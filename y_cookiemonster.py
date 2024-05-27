@@ -102,7 +102,8 @@ class y_cookiemonster:
             logging.info( f"%s - JS_session.get() DONE !" % cmi_debug )
         
         logging.info( f"%s - html.render()..." % cmi_debug )
-        self.js_resp0.html.render()
+        #self.js_resp0.html.render()
+        
         print ( f"{self.js_resp0.text}" )
         logging.info( f"%s - html.render() DONE !" % cmi_debug )
         logging.info( f"%s - Dump JS resp0 cookie:" % cmi_debug )
