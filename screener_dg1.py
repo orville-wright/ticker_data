@@ -129,13 +129,13 @@ class screener_dg1:
         cmi_debug = __name__+"::"+self.build_df0.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
-        logging.info('%s - Drop all rows from DF0' % cmi_debug )
-        self.dg1_df0 = pd.DataFrame()                                 # new df, but is NULLed
+        logging.info('%s - Create clean NULL DataFrame' % cmi_debug )
+        self.dg1_df0 = pd.DataFrame()            # new df, but is NULLed
         x = 0
 
-        # >>>DEBUG<< for when yahoo.com changes data model...
         print ( f"===== Rows: {len(self.tag_tbody.find_all('tr'))}  =================" )
         for j in self.tag_tbody.find_all('tr'):
+
             #"""
             # >>>DEBUG<< for when yahoo.com changes data model...
             y = 1
@@ -143,37 +143,41 @@ class screener_dg1:
                 print ( f"Data {y}: {i.text}" )
                 #logging.info( f"%s - Data: {j.td.strings}" % cmi_debug )
                 y += 1
+            print ( f"==============================================" )
             # >>>DEBUG<< for when yahoo.com changes data model...
             #"""
+
             extr_strs = j.strings
             co_sym = next(extr_strs)             # 1 : ticker symbol info / e.g "NWAU"
             co_name = next(extr_strs)            # 2 : company name / e.g "Consumer Automotive Finance, Inc."
             price = next(extr_strs)              # 3 : price (Intraday) / e.g "0.0031"
 
+            # is there a dedicated collumn to hold a +/- indicator
             change_sign = next(extr_strs)        # 4.0 : $ change sign [+/-] / e.g  "+0.0021"
             if change_sign == "+" or change_sign == "-":
-                change_val = next(extr_strs)     # 4.1 : $ change value / e.g  "+0.0021"
+                change_val = next(extr_strs)     # 4 : Yes found a sign indicator (+/-), advance iterator to next field
             else:
-                change_val = change_sign
+                change_val = change_sign         # 4 : Not found. We now have change $ value but its possibly a +/- signed number
                 logging.info( f"{cmi_debug} : {co_sym} : no dedicated [+-] field for $ CHANGE" )
                 if (re.search('\+', change_val)) or  (re.search('\-', change_val)) is True:
-                    logging.info( f"{cmi_debug} : {change_val} : $ CHANGE is signed [+-], stripping..." )
-                    change_cl = re.sub('[\+\-]', "", change_val)       # remove =/- sign
+                    logging.info( f"{cmi_debug} : {change_val} : $ CHANGE is signed [+-], striping..." )
+                    change_cl = re.sub('[\+\-]', "", change_val)     # remove +/- sign
                     logging.info( f"%s : $ CHANGE cleaned: {change_cl}" % cmi_debug )
                 else:
                     logging.info( f"{cmi_debug} - {change_val} : $ CHANGE is NOT signed [+-]" )
                     change_cl = re.sub('[\,]', "", change_val)       # remove ,
                     logging.info( f"%s : CHANGE cleaned: {change_cl}" % cmi_debug )
+
             # is there a dedicated collumn to hold a +/- indicator
             pct_sign = next(extr_strs)           # 5.0 : % change sign [+/-] / e.g "+%12.3"
             if pct_sign == "+" or pct_sign == "-":
-                logging.info( f"{cmi_debug} : {change_val} : % CHANGE is signed [+-], skipping..." )
-                #pct_cl = (re.sub('\+\-,', '', pct_sign))   # skipp
+                logging.info( f"{cmi_debug} : {change_val} : % CHANGE is signed [+-], striping..." )
+                pct_cl = (re.sub('\+\-,', '', pct_sign))            # # remove +/- sign and '
                 pct_val = next(extr_strs)        # 5.1 : change / e.g "210.0000%" WARN trailing "%" must be removed before casting to float
             else:
                 z = 0
                 pct_val = pct_sign
-                logging.info( f"{cmi_debug} : {co_sym} : Found no [+-] tag for % CHANGE" )
+                logging.info( f"{cmi_debug} : {co_sym} : no dedicated [+-] field for % CHANGE" )
 
             vol = next(extr_strs)            # 6 : volume with scale indicator/ e.g "70.250k"
             avg_vol = next(extr_strs)        # 7 : Avg. vol over 3 months) / e.g "61,447"
