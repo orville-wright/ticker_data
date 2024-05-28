@@ -76,7 +76,7 @@ class y_techevents:
         logging.info( f"{cmi_debug} - API endpoint #4: [ {self.te_long_url} ]" )
         return
 
-
+###########################################################################
 # method #2
     def get_te_zones(self, me):
         """
@@ -110,7 +110,7 @@ class y_techevents:
             self.bb_today = self.te_zone.find(attrs={"class": "W(1/4)--mobp W(1/2) IbBox"} )
             return 0
 
-
+###########################################################################
 # method #3
     def build_te_data(self, me):
         """
@@ -225,7 +225,7 @@ class y_techevents:
         #logging.disable(20)                  # DISABLE Logging
         return y        # number of rows inserted into Tech events dict
 
-
+###########################################################################
 # method #4
     def build_te_summary(self, te_combo_df, me):
         """
@@ -271,7 +271,7 @@ class y_techevents:
 
         return
 
-
+###########################################################################
 # method #5
     def te_is_bad(self):
         """
@@ -303,7 +303,7 @@ class y_techevents:
         logging.info( f"{cmi_debug} - populated dict as BAD data: All values set to N/A" )
         return 4        # number of rows inserted into Tech events dict
 
-
+###########################################################################
 # method #6
     def build_te_df(self, me):
         """
@@ -339,6 +339,7 @@ class y_techevents:
 
         return
 
+###########################################################################
 # method #7
     def reset_te_df0(self):
         """
@@ -350,7 +351,7 @@ class y_techevents:
         logging.info( f"{cmi_debug} - completed" )
         return
 
-
+###########################################################################
 # method #8
     def te_into_nquote(self, nqinst):
         """
