@@ -399,7 +399,7 @@ class nq_wrangler:
             logging.info('%s - Price NET is bad, found N/A data' % cmi_debug )
             cc_errors += 1
         elif self.price_net == 'UNCH':
-            self.price_net_cl = "Unch"
+            self.price_net_cl = float(0)
             logging.info('%s - Price NET is unchanged' % cmi_debug )
             cc_errors += 1
         else:
@@ -411,11 +411,11 @@ class nq_wrangler:
             logging.info('%s - Price pct is bad, found N/A data' % cmi_debug )
             cc_errors += 1
         elif self.price_pct == "UNCH":
-            self.price_pct_cl = "Unch"
+            self.price_pct_cl = float(0)
             logging.info('%s - Price pct is unchanged' % cmi_debug )
             cc_errors += 1
         elif self.price_pct == '':
-            self.price_pct_cl = "No data"
+            self.price_pct_cl = float(0)
             logging.info('%s - Price pct is bad, field is Null/empty' % cmi_debug )
             cc_errors += 1
         else:
