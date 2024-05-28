@@ -87,9 +87,7 @@ class y_topgainers:
             print ( f"==============================================" )
             # >>>DEBUG<< for when yahoo.com changes data model...
             """
-
             ################################ 1 ####################################
-
             extr_strs = j.strings
             co_sym = next(extr_strs)             # 1 : ticker symbol info / e.g "NWAU"
             co_name = next(extr_strs)            # 2 : company name / e.g "Consumer Automotive Finance, Inc."
@@ -125,7 +123,6 @@ class y_topgainers:
             logging.info( f"{cmi_debug} : % CHANGE ,/% striped : {pct_cl}" )
 
             ################################ 2 ####################################
-
             vol = next(extr_strs)            # 6 : volume with scale indicator/ e.g "70.250k"
             avg_vol = next(extr_strs)        # 7 : Avg. vol over 3 months) / e.g "61,447"
             mktcap = next(extr_strs)         # 8 : Market cap with scale indicator / e.g "15.753B"

@@ -84,6 +84,17 @@ class y_toplosers:
         self.rows_extr = int( len(self.tag_tbody.find_all('tr')) )
 
         for datarow in self.all_tag_tr:
+            """
+            # >>>DEBUG<< for when yahoo.com changes data model...
+            y = 1
+            for i in j.find_all('td'):
+                print ( f"Data {y}: {i.text}" )
+                logging.info( f'%s - Data: {j.td.strings}' % cmi_debug )
+                y += 1
+            print ( f"==============================================" )
+            # >>>DEBUG<< for when yahoo.com changes data model...
+            """
+            ################################ 1 ####################################
             # 1st <td> cell : ticker symbol info & has comment of company name
             # 2nd <td> cell : company name
             # 3rd <td> cell : price
@@ -92,10 +103,12 @@ class y_toplosers:
             # more cells in <tr> data row...but I'm not interested in them at moment.
 
             # BS4 generator object comes from "extracted strings" BS4 operation (nice)
+            ################################ 3 ####################################
             extr_strings = datarow.stripped_strings
             co_sym = next(extr_strings)
             co_name = next(extr_strings)
             price = next(extr_strings)
+
             change = next(extr_strings)
             pct = next(extr_strings)
             vol = next(extr_strings)
@@ -110,28 +123,29 @@ class y_toplosers:
             price_cl = (re.sub('\,', '', price))                           # remove ,
             price_clean = float(price_cl)
 
+            ################################ 2 ####################################
             TRILLIONS = re.search('T', mktcap)
             BILLIONS = re.search('B', mktcap)
             MILLIONS = re.search('M', mktcap)
 
             if TRILLIONS:
                 mktcap_clean = float(re.sub('T', '', mktcap))
-                mb = "T"
+                mb = "ST"
                 logging.info( f'%s - {x} / {co_sym_lj} Mkt Cap: TRILLIONS - ST' % cmi_debug )
 
             if BILLIONS:
                 mktcap_clean = float(re.sub('B', '', mktcap))
-                mb = "B"
+                mb = "SB"
                 logging.info( f'%s - {x} / {co_sym_lj} Mkt cap: BILLIONS - SB' % cmi_debug )
 
             if MILLIONS:
                 mktcap_clean = float(re.sub('M', '', mktcap))
-                mb = "M"
+                mb = "SM"
                 logging.info( f'%s - {x} / {co_sym_lj} Mkt cap: MILLIONS - SM' % cmi_debug )
 
             if not TRILLIONS and not BILLIONS and not MILLIONS:
                 mktcap_clean = 0    # error condition - possible bad data
-                mb = "Z"            # Zillions !!
+                mb = "SZ"            # Zillions !!
                 logging.info( f'%s - {x} / {co_sym_lj} bad mktcap data N/A - SZ' % cmi_debug )
                 # handle bad data in mktcap html page field
 
@@ -142,14 +156,10 @@ class y_toplosers:
             change = float(re.sub('[\-+,%]', '', change))
             #float(re.sub('[\+,]', '', change)), \
 
-            # note: Pandas DataFrame : top_loserers pre-initalized as EMPTY
-            # Data treatment:
-            # Data is extracted as raw strings, so needs wrangeling...
-            #    price - stip out any thousand "," seperators and cast as true decimal via numpy
-            #    change - strip out chars '+' and ',' and cast as true decimal via numpy
-            #    pct - strip out chars '+ and %' and cast as true decimal via numpy
-            #    mktcap - strio out 'B' Billions & 'M' Millions
-                       #float(re.sub('\,', '', price)), \
+            ################################ 5 ####################################
+            # now construct our list for concatinating to the dataframe 
+            logging.info( f"%s ============= Data prepared for DF =============" % cmi_debug )
+
             self.list_data = [[ \
                        x, \
                        re.sub('\'', '', co_sym_lj), \
@@ -161,9 +171,6 @@ class y_toplosers:
                        mb, \
                        time_now ]]
 
-            #self.df0 = pd.DataFrame(self.data0, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time' ], index=[x] )
-            #self.tg_df0 = self.tg_df0._append(self.df0)    # append this ROW of data into the REAL DataFrame
-            # convert our list into a 1 row dataframe
             self.df_1_row = pd.DataFrame(self.list_data, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time' ], index=[x] )
             self.tg_df0 = pd.concat([self.tg_df0, self.df_1_row])  
             x+=1
@@ -172,6 +179,7 @@ class y_toplosers:
         return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
                         # sucess = lobal class accessor (y_toplosers.tg_df0) populated & updated
 
+####################################################################################
 # method #3
 # Hacking function - keep me arround for a while
     def prog_bar(self, x, y):
@@ -182,6 +190,7 @@ class y_toplosers:
             print ( ".", end="" )
         return
 
+####################################################################################
 # method #4
     def topg_listall(self):
         """Print the full DataFrame table list of Yahoo Finance Top loserers"""
@@ -194,6 +203,7 @@ class y_toplosers:
         print ( self.tg_df0.sort_values(by='Pct_change', ascending=False ) )    # only do after fixtures datascience dataframe has been built
         return
 
+####################################################################################
 # method #5
     def build_top10(self):
         """Get top 10 loserers from main DF (df0) -> temp DF (df1)"""
@@ -211,6 +221,7 @@ class y_toplosers:
         self.tg_df1.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
         return
 
+####################################################################################
 # method #7
     def print_top10(self):
         """Prints the Top 10 Dataframe"""
@@ -223,6 +234,7 @@ class y_toplosers:
         print ( self.tg_df1.sort_values(by='Pct_change', ascending=False ).head(self.rows_extr) )
         return
 
+####################################################################################
 # method #6
     def build_tenten60(self, cycle):
         """Build-up 10x10x060 historical DataFrame (df2) from source df1"""
