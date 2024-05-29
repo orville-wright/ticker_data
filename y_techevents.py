@@ -85,12 +85,12 @@ class y_techevents:
         Sabe JSON to class global attribute: self.te_resp0.text
         """
         cmi_debug = __name__+"::"+self.get_te_zones.__name__+".#"+str(self.yti)+"."+str(me)
-        logging.info( f"{cmi_debug} - IN" )
+        logging.info( f"{cmi_debug} - IN : {self.te_all_url}" )
         with requests.get( self.te_all_url, stream=True, timeout=5 ) as self.te_resp0:
             logging.info( f"{cmi_debug} - get() data / storing..." )
             self.soup = BeautifulSoup(self.te_resp0.text, 'html.parser')
             logging.info( f"{cmi_debug} - Data zone #1: [Entire page] {len(self.soup)} lines extracted / Done" )
-        #
+
         logging.info( f"{cmi_debug} - Data zone #2: [chrt-evts-mod]..." )
         self.te_zone = self.soup.find(attrs={"id": "chrt-evts-mod"} )
 
@@ -98,12 +98,12 @@ class y_techevents:
         try:
             self.te_lizones = self.te_zone.find_all('li')
             #logging.info( f"{cmi_debug} - Data zone #3: {len(self.te_lizones)} lines extracted / Done" )
-        except AttributeError as ae_inst:
+        except AttributeError as ae_inst:       # ae_inst = my custom AE var
             if ae_inst.__cause__ is None:       # interrogate error raised - was it for [NoneType]
-                logging.info( f"{cmi_debug} - Data zone #3 / SCAN FAIL - EMPTY BS4 data" )
+                logging.info( f"{cmi_debug} - Data zone #3 / SCAN FAIL : <li zone> EMPTY / No BS4 data" )
                 return -1
             else:
-                logging.info( f"{cmi_debug} - Data zone #3 / FAIL : {ae_inst.__cause__}" )
+                logging.info( f"{cmi_debug} - Data zone #3 / FAIL : <li zone> Attribute ERROR: {ae_inst.__cause__}" )
                 return -2
         else:
             logging.info( f"{cmi_debug} - Data zone #4: [today]" )
