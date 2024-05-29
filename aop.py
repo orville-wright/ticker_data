@@ -206,7 +206,7 @@ def main():
 
 # process Nasdaq.com unusual_vol ################
     if args['bool_uvol'] is True:
-        print ( "========== Unusually high Volume ** UP ** =====================================================" )
+        print ( "========== Unusually high Volume / Up =======================================================" )
         un_vol_activity = un_volumes(1, args)       # instantiate NEW nasdaq data class, args = global var
         un_vol_activity.get_un_vol_data()           # extract JSON data (Up & DOWN) from api.nasdaq.com
 
@@ -228,7 +228,7 @@ def main():
         print ( " " )
         print ( f"{un_vol_activity.up_unvol_listall()} " )
         print ( " ")
-        print ( "========== Unusually high Volume ** DOWN ** =====================================================" )
+        print ( "========== Unusually high Volume / Down =====================================================" )
         print ( f"{un_vol_activity.down_unvol_listall()} " )
         print ( " ")
         # Add unusual vol into recommendations list []
