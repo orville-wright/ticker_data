@@ -358,7 +358,7 @@ class smallcap_screen:
         # Allways make sure this is key #1 in the recommendations dict
         rx['1'] = ('Small cap % gainer:', lowsym.rstrip(), '$'+str(ulp), lowconame.rstrip(), '+%'+str(lowpctchange) )
 
-        print ( f"Best low-buy OPPTY: #{minv} | {lowconame.rstrip()} ({lowsym.rstrip()}) | ${lowestprice} | %{lowpctchange}" )
+        print ( f"Best low risk low-buy OPPTY: #{minv} | {lowconame.rstrip()} ({lowsym.rstrip()}) | ${lowestprice} | %{lowpctchange}" )
         print ( " " )
         print ( self.dg1_df1 )
         return rx       # dict{}

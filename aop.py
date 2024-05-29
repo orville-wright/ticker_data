@@ -177,7 +177,7 @@ def main():
 ########### Small Cap gainers & loosers ################
 # small caps are isolated outside the regular dataset by yahoo.com
     if args['bool_scr'] is True:
-        print ( "========== Tap Gainers / SMALL CAP @ +5% & > $299M Mkt-cap ==========" )
+        print ( "========== Small Cap / Top Gainers / +5% with Mkt-cap > $299M ==========" )
         small_cap_dataset = smallcap_screen(1)       # instantiate class
         small_cap_dataset.init_dummy_session()
  
