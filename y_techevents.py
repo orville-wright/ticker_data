@@ -68,6 +68,9 @@ class y_techevents:
         self.te_mid_url = "https://finance.yahoo.com/chart/" + self.symbol + "?Technical=intermediate"
         self.te_long_url = "https://finance.yahoo.com/chart/" + self.symbol + "?Technical=long"
         #
+        # 2024 new URL's
+        # https://finance.yahoo.com/chart/T
+
         logging.info( f"================================ Tech Events API endpoints ================================" )
         logging.info( f"{cmi_debug} - API endpoint #0: [ {self.te_url} ]" )
         logging.info( f"{cmi_debug} - API endpoint #1: [ {self.te_all_url} ]" )
@@ -89,26 +92,27 @@ class y_techevents:
         with requests.get( self.te_all_url, stream=True, timeout=5 ) as self.te_resp0:
             logging.info( f"{cmi_debug} - get() data / storing..." )
             self.soup = BeautifulSoup(self.te_resp0.text, 'html.parser')
-            logging.info( f"{cmi_debug} - Data zone #1: [Entire page] {len(self.soup)} lines extracted / Done" )
+            logging.info( f"{cmi_debug} - Zone #1 / [Entire page] {len(self.soup)} lines extracted / Done" )
 
-        logging.info( f"{cmi_debug} - Data zone #2: [chrt-evts-mod]..." )
-        self.te_zone = self.soup.find(attrs={"id": "chrt-evts-mod"} )
+        logging.info( f"{cmi_debug} - Zone #2 / Tech Events Dropdwn [id: dropdown-menu]..." )
+        self.te_zone = self.soup.find(attrs={"id": "dropdown-menu"} )
 
-        logging.info( f"{cmi_debug} - Data zone #3: [<li>]..." )
+        logging.info( f"{cmi_debug} - Zone #3 / Tech Events zone [tag: <li>]..." )
         try:
             self.te_lizones = self.te_zone.find_all('li')
-            #logging.info( f"{cmi_debug} - Data zone #3: {len(self.te_lizones)} lines extracted / Done" )
+            logging.info( f"{cmi_debug} - Zone #3 / [li tag] zones: {len(self.te_lizones)}" )
         except AttributeError as ae_inst:       # ae_inst = my custom AE var
             if ae_inst.__cause__ is None:       # interrogate error raised - was it for [NoneType]
-                logging.info( f"{cmi_debug} - Data zone #3 / SCAN FAIL : <li zone> EMPTY / No BS4 data" )
+                logging.info( f"{cmi_debug} - Data zone #3 / BS4 [li tag] search failed" )
                 return -1
             else:
-                logging.info( f"{cmi_debug} - Data zone #3 / FAIL : <li zone> Attribute ERROR: {ae_inst.__cause__}" )
+                logging.info( f"{cmi_debug} - Data zone #3 / [li tag] Attribute ERROR: {ae_inst.__cause__}" )
                 return -2
         else:
-            logging.info( f"{cmi_debug} - Data zone #4: [today]" )
-            self.bb_today = self.te_zone.find(attrs={"class": "W(1/4)--mobp W(1/2) IbBox"} )
-            return 0
+            logging.info( f"{cmi_debug} - Data zone #4: Embeded Data block [ul tag]" )
+            self.bb_datablock = self.te_zone.find_all('ul')
+            #self.bb_today = self.te_zone.find(attrs={"class": "W(1/4)--mobp W(1/2) IbBox"} )
+            return 0                            # success
 
 ###########################################################################
 # method #3
@@ -131,9 +135,20 @@ class y_techevents:
             5.  Tech Event Indicator: Bearish/Neutral/Bullish
 
         """
-        #logging.disable(0)                   # ENABLE Log level = INFO
+        #logging.disable(0)                  # ENABLE Log level = INFO
         #logging.disable(20)                 # DISABLE Logging
 
+        cmi_debug = __name__+"::"+self.build_te_data.__name__+".#"+str(self.yti)+"."+str(me)
+        logging.info( f"{cmi_debug} - CALLED" )
+        time_now = time.strftime("%H:%M:%S", time.localtime() )
+        logging.info( f"{cmi_debug} - Scan Tech Event indicators" )
+        bullcount = 0    # counter / how many BULLISH rankings for this symbol
+        rankalgo = 0     # FINAL Bull/Bear ranking value assigned to this symbol
+        y = 0            # current dict key/index (i.e. column we are working on..today/short/med/long)
+
+
+        ########################################################################################
+        # Internal helper method
         def algo_te_autorank(bull_bear, y, te_sml, rankalgo, te_timeframe, bullcount):
             # PRIVATE: Helper method, since we do this 4 x ~50 ticker_sybols
             #       figurre out which Technical indiciator we are looking at, which column we
@@ -158,40 +173,38 @@ class y_techevents:
             y += 1                                      # incr dict/index (timeframe column)
             return (y, rankalgo, bullcount)
 
-        # algo hinters
+        ####################################################
+        # algo hinter DICT to decode Techncial weightings
+        # We can customize these as we see fit
         bb_weights = { 'Bullish': {'Today': 5, 'Short': 4, 'Med': 4, 'Long': 4},
                         'Neutral': {'Today': 2, 'Short': 1, 'Med': 1, 'Long': 1},
                         'N/A': {'Today': 0, 'Short': 0, 'Med': 0, 'Long': 0},
                         'Bearish': {'Today': -5, 'Short': -4, 'Med': -3, 'Long': -2}
                         }
 
+        ####################################################
+        # algo hinter DICT to decode data range terminology
         bb_term = { 'Today': 'Today',
-                    'Short Term': 'Short',
-                    'Mid Term': 'Med',
-                    'Long Term': 'Long',
+                    'Short Term (2-3 weeks)': 'Short',
+                    'Mid Term (6 weeks - 9 months)': 'Med',
+                    'Long Term (9+ months)': 'Long',
                     'N/A': 'N/A'
                     }
 
-        cmi_debug = __name__+"::"+self.build_te_data.__name__+".#"+str(self.yti)+"."+str(me)
-        logging.info( f"{cmi_debug} - CALLED" )
-        time_now = time.strftime("%H:%M:%S", time.localtime() )
-        logging.info( f"{cmi_debug} - Scan Tech Event indicators" )
-        bullcount = 0    # counter / how many BULLISH rankings for this symbol
-        rankalgo = 0     # FINAL Bull/Bear ranking value assigned to this symbol
-        y = 0            # current dict key/index (i.e. column we are working on..today/short/med/long)
-
+        ######################################################################################
         # BEGIN : Auto ranking algo
         # TODAY is treated slightly differnt, becasue its the FIRST element & we know this...no need to guess col/pos
-        bb_today = self.bb_today.next_element.next_element.string    # get the Bull/Bear sentimewnt
+        """ bb_today = self.bb_today.next_element.next_element.string    # get the Bull/Bear sentimewnt
         self.te_sentiment.update({y: ("Today", "1D", bb_today)} )
         te_term = bb_term.get('Today')                     # decode yahoo time periods -> Short_Med_Lon_N/A
         bb_getrank = bb_weights.get(bb_today)              # select DICT index that matches timeframe : result -> DICT
         z = bb_getrank.get(te_term)                        # get algo ranking weight for this col/term tag (which is TODAY)
         logging.info( f"{cmi_debug} - #0 - y_col:{y} / te_term:{te_term}: / BB_state:{bb_today} / algo rank:{z}" )
-        timeframe_window = bb_weights.get(bb_today)        # get typple @ index = Bull-Bear State
+        timeframe_window = bb_weights.get(bb_today)        # get tupple @ index = Bull-Bear State
         rankalgo += z                                      # set rank weighting for @pos TODAY
         logging.info( f"{cmi_debug} - #0 - y_col:{y} / bb_today:{bb_today} / rank:{rankalgo}" )
         if bb_today == "Bullish": bullcount += 1           # keep count of BULLISH
+        """
 
         # CONTINUE : ranking/weighting algo
         # figurre out what COL we are in, what the BB status is and apply a weighting from HINTER table
@@ -199,10 +212,14 @@ class y_techevents:
         z = 0                                # reset ranking
         for j in self.te_lizones:            # eval historical sentiments across all timeframes
             for i in j:
-                te_strings = i.strings
-                te_sml = next(te_strings)
-                te_timeframe = next(te_strings)
-                if i.svg is not None:
+                te_strings = i.strings          #
+                te_timeframe = next(te_strings) # Timeframe string... "Short Term (2-3 weeks)", "Mid Term (6 weeks - 9 months)", "Long Term (9+ months)"
+                # te_sml = next(te_strings)       # Tech sentiment string... Bullish, Neutral, Bearish
+                print ( f">>>>>DEBUG: sentiment: {te_sml} <<<<<" )
+                algo_te_autorank(te_sml, y, te_sml, rankalgo, te_timeframe, bullcount)
+
+                """
+                 if i.svg is not None:
                     red = i.svg.parent.contents
                     red_down = re.search('180deg', str(red) )
                     grey_neutral = re.search('90deg', str(red) )
@@ -216,6 +233,7 @@ class y_techevents:
                     pass
                     y, rankalgo, bullcount = algo_te_autorank('N/A', y, te_sml, rankalgo, te_timeframe, bullcount)
                     z = 0
+                """
 
         self.te_sentiment.update({y: bullcount} )
         y += 1         # advance dict pointer
@@ -257,9 +275,9 @@ class y_techevents:
                 self.te_sentiment.clear()
                 cols += 1
             else:
-                print ( f"+", end="", flush=True )      # GOOD : suceeded to get TE indicators
-                self.build_te_data(me)
-                self.build_te_df(me+1)      # debug helper, since we call method multiple times
+                print ( f"+", end="", flush=True )          # GOOD : suceeded to get TE indicators
+                self.build_te_data(me)                      # extract Tech Events data elements
+                self.build_te_df(me+1)                      # debug helper, since we call method multiple times
                 cols += 1
 
             if cols == 8:

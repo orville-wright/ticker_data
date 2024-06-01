@@ -392,7 +392,7 @@ def main():
         ssot_te.reindex_combo_df()                          # re-order a new index (PERMENANT write)
 
         print ( f"DEBUG: dump combo_df - {ssot_te}" )
-        te.build_te_summary(ssot_te, 1)       # x = main INSTANCE:: combo_logic
+        te.build_te_summary(ssot_te, 1)                     # x = main INSTANCE:: combo_logic
         #
         # TODO: populate build_te_summary with symbol co_name, Cur_price  Prc_change  Pct_change, volume
         # would be good to check if this symbol is also in the UNUSUAL UP table also.
