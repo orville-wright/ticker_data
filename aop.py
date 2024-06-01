@@ -385,9 +385,9 @@ def main():
         ssot_te.polish_combo_df(1)
         ssot_te.tag_dupes()
         ssot_te.tag_uniques()
-        x.rank_hot()
-        x.rank_unvol()
-        x.rank_caps()
+        #x.rank_hot()
+        #x.rank_unvol()
+        #x.rank_caps()
         ssot_te.combo_df.sort_values(by=['Symbol'])         # sort by sumbol name (so dupes are linearly grouped)
         ssot_te.reindex_combo_df()                          # re-order a new index (PERMENANT write)
 
