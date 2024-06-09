@@ -96,7 +96,7 @@ class y_techevents:
             logging.info( f"{cmi_debug} - Zone #1 / [Entire page] {len(self.soup)} lines extracted / Done" )
 
         logging.info( f"{cmi_debug} - Zone #2 / Tech Events Dropdwn [id: dropdown-menu]..." )
-        self.te_zone = self.soup.find(attrs={"id": "dropdown-menu"} )
+        self.te_zone = self.soup.find('div' attrs={"id": "dropdown-menu"} )
 
         logging.info( f"{cmi_debug} - Zone #3 / Tech Events zone [tag: <li>]..." )
         try:
