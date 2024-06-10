@@ -40,7 +40,7 @@ class y_topgainers:
 # method #1
     def get_topg_data(self):
         """Connect to finance.yahoo.com and extract (scrape) the raw sring data out of"""
-        """the embedded webpage [Stock:Top Gainers] html data table. Returns a BS4 handle."""
+        """the embedded webpage [Stock:Day Gainers] html data table. Returns a BS4 handle."""
 
         cmi_debug = __name__+"::"+self.get_topg_data.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
