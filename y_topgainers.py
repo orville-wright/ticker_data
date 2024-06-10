@@ -44,7 +44,7 @@ class y_topgainers:
 
         cmi_debug = __name__+"::"+self.get_topg_data.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
-        r = requests.get("https://finance.yahoo.com/gainers" )
+        r = requests.get("https://finance.yahoo.com/screener/predefined/day_gainers/" )
         logging.info('%s - read html stream' % cmi_debug )
         self.soup = BeautifulSoup(r.text, 'html.parser')
         # ATTR style search. Results -> Dict
