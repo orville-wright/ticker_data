@@ -84,6 +84,7 @@ class y_cookiemonster:
 
         cmi_debug = __name__+"::"+self.get_js_data.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
+        js_url = "https://" + js_url
 
         #test_url = "https://www.whatismybrowser.com/detect/is-javascript-enabled"
         #test_url = "https://www.javatester.org/javascript.html"

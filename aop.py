@@ -182,7 +182,7 @@ def main():
         small_cap_dataset.init_dummy_session()       # setup cookie jar and headers
  
         #small_cap_dataset.get_data(1)
-        scap_reader = y_cookiemonster(1, 'https://finance.yahoo.com/screener/predefined/small_cap_gainers/' )
+        scap_reader = y_cookiemonster(1, "finance.yahoo.com/screener/predefined/small_cap_gainers/" )
         small_cap_dataset.ext_req = scap_reader.get_js_data()
         small_cap_dataset.ext_get_data(1)
         
