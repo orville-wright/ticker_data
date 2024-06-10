@@ -182,8 +182,8 @@ def main():
         small_cap_dataset.init_dummy_session()       # setup cookie jar and headers
  
         #small_cap_dataset.get_data(1)
-        # scap_test = y_cookiemonster(1)
-        small_cap_dataset.ext_req = scap_test.get_js_data()
+        scap_reader = y_cookiemonster(1)
+        small_cap_dataset.ext_req = scap_reader.get_js_data()
         small_cap_dataset.ext_get_data(1)
         
         x = small_cap_dataset.build_df0()         # build full dataframe

@@ -77,8 +77,10 @@ class y_cookiemonster:
 ###########################################################################################
 # method #2
     def get_js_data(self):
-        """Connect to finance.yahoo.com and extract (scrape) the raw sring data out of"""
-        """the embedded webpage [Stock:Top Gainers] html data table. Returns a BS4 handle."""
+        """Connect to finance.yahoo.com and open a Javascript Webpage"""
+        """Process with Javascript engine and return JS webpage handle"""
+        """Optionally the Javascript engine can render the webspage as Javascript and"""
+        """and then hand back the processed JS webpage. - This is currently didabled"""
 
         cmi_debug = __name__+"::"+self.get_js_data.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
