@@ -90,7 +90,7 @@ class y_cookiemonster:
         #test_url = "https://finance.yahoo.com/screener/predefined/small_cap_gainers/"
 
         logging.info( f"%s - Javascript engine setup..." % cmi_debug )
-        logging.info( f"%s - URL: {test_url}" % cmi_debug )
+        logging.info( f"%s - URL: {js_url}" % cmi_debug )
         logging.info( f"%s - Init JS_session HTMLsession() setup" % cmi_debug )
 
         js_session = HTMLSession()
