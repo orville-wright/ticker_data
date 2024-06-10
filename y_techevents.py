@@ -95,23 +95,37 @@ class y_techevents:
             self.soup = BeautifulSoup(self.te_resp0.text, 'html.parser')
             logging.info( f"{cmi_debug} - Zone #1 / [Entire page] {len(self.soup)} lines extracted / Done" )
 
+<<<<<<< HEAD
         logging.info( f"{cmi_debug} - Zone #2 / Tech Events Dropdwn [id: dropdown-menu]..." )
         self.te_zone = self.soup.find('div' attrs={"id": "dropdown-menu"} )
+=======
+        logging.info( f"{cmi_debug} - Zone #2 / search [ul zones]..." )
+        #self.te_zone = self.soup.find_all(attrs={"id": "dropdown-menu"} )
+        self.te_zone = self.soup.find_all("ul")
+        logging.info( f"{cmi_debug} - zone #2 / [ul zones] found: {len(self.te_zone)}" )
 
-        logging.info( f"{cmi_debug} - Zone #3 / Tech Events zone [tag: <li>]..." )
+        #logging.info( f"{cmi_debug} - Zone #2\n{self.te_zone}" )
+        #logging.info( f"{cmi_debug} - Zone #3 / Tech Events zone [tag: <li>]..." )
+
+
+        self.te_lizones = self.te_zone.li
+        logging.info( f"{cmi_debug} - >>>DEBUG<<< Zone #3 / [li zones]: {len(self.te_lizones)}" )
+        print ( f">>>DEBUG:<<< {self.te_lizones}" )
+>>>>>>> 09eb76969dd05044527a50e3003c66ae6da256fa
+
         try:
-            self.te_lizones = self.te_zone.find_all('li')
-            logging.info( f"{cmi_debug} - Zone #3 / [li tag] zones: {len(self.te_lizones)}" )
+            self.te_lizones = self.te_zone.find_all("li")
+            logging.info( f"{cmi_debug} - Zone #3 / [li zones]: {len(self.te_lizones)}" )
         except AttributeError as ae_inst:       # ae_inst = my custom AE var
             if ae_inst.__cause__ is None:       # interrogate error raised - was it for [NoneType]
-                logging.info( f"{cmi_debug} - Data zone #3 / BS4 [li tag] search failed" )
+                logging.info( f"{cmi_debug} - Zone #3 / [li tag] BS4 search failed: None" )
                 return -1
             else:
-                logging.info( f"{cmi_debug} - Data zone #3 / [li tag] Attribute ERROR: {ae_inst.__cause__}" )
+                logging.info( f"{cmi_debug} - Zone #3 / [li tag] Attribute ERROR: {ae_inst.__cause__}" )
                 return -2
         else:
-            logging.info( f"{cmi_debug} - Data zone #4: Embeded Data block [ul tag]" )
-            self.bb_datablock = self.te_zone.find_all('ul')
+            logging.info( f"{cmi_debug} - Zone #4: Embeded Data block [label tag]" )
+            self.bb_datablock = self.te_zone.find_all('label')
             #self.bb_today = self.te_zone.find(attrs={"class": "W(1/4)--mobp W(1/2) IbBox"} )
             return 0                            # success
 
@@ -211,11 +225,12 @@ class y_techevents:
         # figurre out what COL we are in, what the BB status is and apply a weighting from HINTER table
         y += 1                               # done with TODAY . incr dict key/index to next timeframe
         z = 0                                # reset ranking
-        for j in self.te_lizones:            # eval historical sentiments across all timeframes
+        #for j in self.te_lizones:           # eval historical sentiments across all timeframes
+        for j in self.bb_datablock:          # eval historical sentiments across all timeframes
             for i in j:
-                te_strings = i.strings          #
-                te_timeframe = next(te_strings) # Timeframe string... "Short Term (2-3 weeks)", "Mid Term (6 weeks - 9 months)", "Long Term (9+ months)"
-                # te_sml = next(te_strings)       # Tech sentiment string... Bullish, Neutral, Bearish
+                te_strings = i.strings
+                te_timeframe = next(te_strings)   # Timeframe string... "Short Term (2-3 weeks)", "Mid Term (6 weeks - 9 months)", "Long Term (9+ months)"
+                te_sml = next(te_strings)         # Tech sentiment string... Bullish, Neutral, Bearish
                 print ( f">>>>>DEBUG: sentiment: {te_sml} <<<<<" )
                 algo_te_autorank(te_sml, y, te_sml, rankalgo, te_timeframe, bullcount)
 
