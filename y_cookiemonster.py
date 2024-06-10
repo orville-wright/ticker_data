@@ -76,7 +76,7 @@ class y_cookiemonster:
 
 ###########################################################################################
 # method #2
-    def get_js_data(self):
+    def get_js_data(self, js_url):
         """Connect to finance.yahoo.com and open a Javascript Webpage"""
         """Process with Javascript engine and return JS webpage handle"""
         """Optionally the Javascript engine can render the webspage as Javascript and"""
@@ -87,7 +87,7 @@ class y_cookiemonster:
 
         #test_url = "https://www.whatismybrowser.com/detect/is-javascript-enabled"
         #test_url = "https://www.javatester.org/javascript.html"
-        test_url = "https://finance.yahoo.com/screener/predefined/small_cap_gainers/"
+        #test_url = "https://finance.yahoo.com/screener/predefined/small_cap_gainers/"
 
         logging.info( f"%s - Javascript engine setup..." % cmi_debug )
         logging.info( f"%s - URL: {test_url}" % cmi_debug )
@@ -99,7 +99,7 @@ class y_cookiemonster:
         #js_resp0 = js_session.get( test_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as js_resp0:
         #with js_session.get( test_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as js_resp0:
         # with js_session.get( 'https://www.javatester.org/javascript.html', stream=True, timeout=5 ) as self.js_resp0
-        with js_session.get( test_url ) as self.js_resp0:
+        with js_session.get( js_url ) as self.js_resp0:
         
             logging.info( f"%s - JS_session.get() sucessful !" % cmi_debug )
         
