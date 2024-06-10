@@ -95,10 +95,6 @@ class y_techevents:
             self.soup = BeautifulSoup(self.te_resp0.text, 'html.parser')
             logging.info( f"{cmi_debug} - Zone #1 / [Entire page] {len(self.soup)} lines extracted / Done" )
 
-<<<<<<< HEAD
-        logging.info( f"{cmi_debug} - Zone #2 / Tech Events Dropdwn [id: dropdown-menu]..." )
-        self.te_zone = self.soup.find('div' attrs={"id": "dropdown-menu"} )
-=======
         logging.info( f"{cmi_debug} - Zone #2 / search [ul zones]..." )
         #self.te_zone = self.soup.find_all(attrs={"id": "dropdown-menu"} )
         self.te_zone = self.soup.find_all("ul")
@@ -111,7 +107,6 @@ class y_techevents:
         self.te_lizones = self.te_zone.li
         logging.info( f"{cmi_debug} - >>>DEBUG<<< Zone #3 / [li zones]: {len(self.te_lizones)}" )
         print ( f">>>DEBUG:<<< {self.te_lizones}" )
->>>>>>> 09eb76969dd05044527a50e3003c66ae6da256fa
 
         try:
             self.te_lizones = self.te_zone.find_all("li")
