@@ -178,11 +178,11 @@ def main():
 # small caps are isolated outside the regular dataset by yahoo.com
     if args['bool_scr'] is True:
         print ( "========== Small Cap / Top Gainers / +5% with Mkt-cap > $299M ==========" )
-        small_cap_dataset = smallcap_screen(1)       # instantiate class
-        small_cap_dataset.init_dummy_session()
+        small_cap_dataset = smallcap_screen(1)       # instantiate class of a Small Scap Screener
+        small_cap_dataset.init_dummy_session()       # setup cookie jar and headers
  
         #small_cap_dataset.get_data(1)
-        scap_test = y_cookiemonster(1)
+        # scap_test = y_cookiemonster(1)
         small_cap_dataset.ext_req = scap_test.get_js_data()
         small_cap_dataset.ext_get_data(1)
         
