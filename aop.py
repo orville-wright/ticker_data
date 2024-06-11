@@ -139,7 +139,7 @@ def main():
         mlx_top_dataset = y_topgainers(1)             # instantiate class
         mlx_top_dataset.init_dummy_session()          # setup cookie jar and headers
  
-        mlx_top_dataset.ext_req = topgainer_reader.get_js_data('https://finance.yahoo.com/screener/predefined/day_gainers/')
+        mlx_top_dataset.ext_req = topgainer_reader.get_js_data('finance.yahoo.com/screener/predefined/day_gainers/')
         mlx_top_dataset.ext_get_data(1)
 
         # med_large_mega_gainers.get_topg_data()        # extract data from finance.Yahoo.com
