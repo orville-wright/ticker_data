@@ -134,11 +134,18 @@ def main():
 ########### 1 - TOP GAINERS ################
     if args['bool_tops'] is True:
         print ( "========== Large Cap / Top Gainers ===============================" )
-        med_large_mega_gainers = y_topgainers(1)      # instantiate class
-        med_large_mega_gainers.get_topg_data()        # extract data from finance.Yahoo.com
-        x = med_large_mega_gainers.build_tg_df0()     # build full dataframe
-        med_large_mega_gainers.build_top10()          # show top 10
-        med_large_mega_gainers.print_top10()          # print it
+        ## new
+        topgainer_reader = y_cookiemonster(1)         # instantiate class of cookiemonster
+        mlx_top_dataset = y_topgainers(1)             # instantiate class
+        mlx_top_dataset.init_dummy_session()          # setup cookie jar and headers
+ 
+        mlx_top_dataset.ext_req = topgainer_reader.get_js_data('https://finance.yahoo.com/screener/predefined/day_gainers/')
+        mlx_top_dataset.ext_get_data(1)
+
+        # med_large_mega_gainers.get_topg_data()        # extract data from finance.Yahoo.com
+        x = mlx_top_dataset.build_tg_df0()     # build full dataframe
+        mlx_top_dataset.build_top10()          # show top 10
+        mlx_top_dataset.print_top10()          # print it
         print ( " " )
 
 ########### 2 - TOP LOSERS ################
@@ -178,7 +185,7 @@ def main():
 # small caps are isolated outside the regular dataset by yahoo.com
     if args['bool_scr'] is True:
         print ( "========== Small Cap / Top Gainers / +5% with Mkt-cap > $299M ==========" )
-        scap_reader = y_cookiemonster(1)             # instantiate class of cookiemonster
+        scap_reader = y_cookiemonster(2)             # instantiate class of cookiemonster
         small_cap_dataset = smallcap_screen(1)       # instantiate class of a Small Scap Screener
         small_cap_dataset.init_dummy_session()       # setup cookie jar and headers
  

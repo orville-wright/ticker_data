@@ -24,8 +24,22 @@ class y_topgainers:
     tg_df2 = ""          # DataFrame - Top 10 ever 10 secs for 60 secs
     all_tag_tr = ""      # BS4 handle of the <tr> extracted data
     rows_extr = 0        # number of rows of data extracted
+    ext_req = ""         # request was handled by y_cookiemonster
     yti = 0
-    cycle = 0           # class thread loop counter
+    cycle = 0            # class thread loop counter
+
+    dummy_url = "https://finance.yahoo.com/screener/predefined/day_gainers"
+
+    yahoo_headers = { \
+                        'authority': 'finance.yahoo.com', \
+                        'path': '/screener/predefined/day_gainers/', \
+                        'referer': 'https://finance.yahoo.com/screener/', \
+                        'sec-ch-ua': '"Google Chrome";v="123", "Not:A-Brand";v="8", "Chromium";v="123"', \
+                        'sec-ch-ua-mobile': '"?0"', \
+                        'sec-fetch-mode': 'navigate', \
+                        'sec-fetch-user': '"?1', \
+                        'sec-fetch-site': 'same-origin', \
+                        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36' }
 
     def __init__(self, yti):
         cmi_debug = __name__+"::"+self.__init__.__name__
@@ -37,6 +51,39 @@ class y_topgainers:
         self.yti = yti
         return
 
+#######################################################################################
+
+    def init_dummy_session(self):
+        self.dummy_resp0 = requests.get(self.dummy_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
+        hot_cookies = requests.utils.dict_from_cookiejar(self.dummy_resp0.cookies)
+        #self.js_session.cookies.update({'A1': self.js_resp0.cookies['A1']} )    # yahoo cookie hack
+        return
+
+#######################################################################################
+# method 1
+    def ext_get_data(self, yti):
+        """
+        Connect to finance.yahoo.com and extract (scrape) the raw string data out of
+        the webpage data tables. Returns a BS4 handle.
+        Send hint which engine processed & rendered the html page
+        0. Simple HTML engine
+        1. JAVASCRIPT HTML render engine (down redering a complex JS page in to simple HTML)
+        """
+        self.yti = yti
+        cmi_debug = __name__+"::"+self.ext_get_data.__name__+".#"+str(self.yti)
+        logging.info('%s - IN' % cmi_debug )
+        logging.info('%s - ext request pre-processed by cookiemonster...' % cmi_debug )
+        # use an existing resposne from a previously managed req (handled by cookie monster) 
+        r = self.ext_req
+        logging.info( f"%s - BS4 stream processing..." % cmi_debug )
+        self.soup = BeautifulSoup(r.text, 'html.parser')
+        self.tag_tbody = self.soup.find('tbody')
+        self.tr_rows = self.tag_tbody.find(attrs={"class": "simpTblRow"})
+        #self.all_tag_tr = self.soup.find(attrs={"class": "simpTblRow"})
+        logging.info('%s Page processed by BS4 engine' % cmi_debug )
+        return
+    
+#######################################################################################    
 # method #1
     def get_topg_data(self):
         """Connect to finance.yahoo.com and extract (scrape) the raw sring data out of"""
