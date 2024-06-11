@@ -142,7 +142,6 @@ def main():
         mlx_top_dataset.ext_req = topgainer_reader.get_js_data('finance.yahoo.com/screener/predefined/day_gainers/')
         mlx_top_dataset.ext_get_data(1)
 
-        # med_large_mega_gainers.get_topg_data()        # extract data from finance.Yahoo.com
         x = mlx_top_dataset.build_tg_df0()     # build full dataframe
         mlx_top_dataset.build_top10()          # show top 10
         mlx_top_dataset.print_top10()          # print it
@@ -252,7 +251,7 @@ def main():
     NOTE: Most of this logic prepares/cleans/wrangles data into a perfect combo_df 'Single Source of Truth'.
     """
     if args['bool_deep'] is True and args['bool_scr'] is True and args['bool_uvol'] is True:
-        x = combo_logic(1, med_large_mega_gainers, small_cap_dataset, un_vol_activity, args )
+        x = combo_logic(1, mlx_top_dataset, small_cap_dataset, un_vol_activity, args )
         x.polish_combo_df(1)
         x.tag_dupes()
         x.tag_uniques()
@@ -388,7 +387,7 @@ def main():
         cmi_debug = __name__+"::Tech_events_all.#1"
         te = y_techevents(1)
 
-        ssot_te = combo_logic(1, med_large_mega_gainers, small_cap_dataset, un_vol_activity, args )
+        ssot_te = combo_logic(1, mlx_top_dataset, small_cap_dataset, un_vol_activity, args )
         ssot_te.polish_combo_df(1)
         ssot_te.tag_dupes()
         ssot_te.tag_uniques()
