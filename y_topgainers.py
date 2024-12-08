@@ -146,13 +146,13 @@ class y_topgainers:
                 change_val = next(extr_strs)                # 4 : Yes, advance iterator to next field (ignore dedciated sign field)
             else:
                 change_val = change_sign                    # 4 : get $ change, but its possibly +/- signed
-                if (re.search('\+', change_val)) or  (re.search('\-', change_val)) is True:
+                if (re.search(r'\+', change_val)) or  (re.search(r'\-', change_val)) is True:
                     logging.info( f"{cmi_debug} : {change_val} : $ CHANGE is signed [+-], stripping..." )
-                    change_cl = re.sub('[\+\-]', "", change_val)       # remove +/- sign
+                    change_cl = re.sub(r'[\+\-]', "", change_val)       # remove +/- sign
                     logging.info( f"%s : $ CHANGE +/- cleaned : {change_cl}" % cmi_debug )
                 else:
                     logging.info( f"{cmi_debug} : {change_val} : $ CHANGE is NOT signed [+-]" )
-                    change_cl = re.sub('[\,]', "", change_val)       # remove
+                    change_cl = re.sub(r'[\,]', "", change_val)       # remove
                     logging.info( f"%s : $ CHANGE , cleaned : {change_cl}" % cmi_debug )
 
             pct_sign = next(extr_strs)              # 5 : test for dedicated column for +/- indicator
@@ -161,12 +161,12 @@ class y_topgainers:
                 pct_val = next(extr_strs)           # 5 : advance iterator to next field (ignore dedciated sign field)
             else:
                 pct_val = pct_sign                  # 5 get % change, but its possibly +/- signed
-                if (re.search('\+', pct_val)) or  (re.search('\-', pct_val)) is True:
+                if (re.search(r'\+', pct_val)) or  (re.search(r'\-', pct_val)) is True:
                     logging.info( f"{cmi_debug} : {pct_val} : % CHANGE is signed [+-], stripping..." )
-                    pct_cl = re.sub('[\+\-]', "", pct_val)       # remove +/- signs
+                    pct_cl = re.sub(r'[\+\-]', "", pct_val)       # remove +/- signs
                     logging.info( f"{cmi_debug} : % CHANGE +/- striped : {pct_cl}" )
 
-            pct_cl = re.sub('[\%]', "", pct_cl)       # remove +/- signs
+            pct_cl = re.sub(r'[\%]', "", pct_cl)       # remove +/- signs
             logging.info( f"{cmi_debug} : % CHANGE ,/% striped : {pct_cl}" )
 
             ################################ 2 ####################################
@@ -180,15 +180,15 @@ class y_topgainers:
             # now wrangle the data...
             co_sym_lj = f"{co_sym:<6}"                                   # left justify TXT in DF & convert to raw string
             co_name_lj = np.array2string(np.char.ljust(co_name, 25) )    # left justify TXT in DF & convert to raw string
-            co_name_lj = (re.sub('[\'\"]', '', co_name_lj) )             # remove " ' and strip leading/trailing spaces    
-            price_cl = (re.sub('\,', '', price))                         # remove ,
+            co_name_lj = (re.sub(r'[\'\"]', '', co_name_lj) )             # remove " ' and strip leading/trailing spaces    
+            price_cl = (re.sub(r'\,', '', price))                         # remove ,
             price_clean = float(price_cl)
             change_clean = float(change_val)
 
             if pct_val == "N/A":
                 pct_val = float(0.0)                               # Bad data. FOund a filed with N/A instead of read num
             else:
-                pct_cl = re.sub('[\%\+\-,]', "", pct_val )
+                pct_cl = re.sub(r'[\%\+\-,]', "", pct_val )
                 pct_clean = float(pct_cl)
 
             ################################ 4 ####################################
@@ -224,7 +224,7 @@ class y_topgainers:
 
             self.list_data = [[ \
                        x, \
-                       re.sub('\'', '', co_sym_lj), \
+                       re.sub(r'\'', '', co_sym_lj), \
                        co_name_lj, \
                        price_clean, \
                        change_clean, \
