@@ -50,7 +50,9 @@ class y_toplosers:
         cmi_debug = __name__+"::"+self.get_topg_data.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
 
-        r = requests.get("https://finance.yahoo.com/losers" )
+        #r = requests.get("https://finance.yahoo.com/losers" )
+        r = requests.get("https://finance.yahoo.com/screener/predefined/day_losers/" )
+
         logging.info('%s - read html stream' % cmi_debug )
         self.soup = BeautifulSoup(r.text, 'html.parser')
 
@@ -84,7 +86,7 @@ class y_toplosers:
         self.rows_extr = int( len(self.tag_tbody.find_all('tr')) )
 
         for datarow in self.all_tag_tr:
-            """
+           # """
             # >>>DEBUG<< for when yahoo.com changes data model...
             y = 1
             for i in j.find_all('td'):
@@ -93,7 +95,7 @@ class y_toplosers:
                 y += 1
             print ( f"==============================================" )
             # >>>DEBUG<< for when yahoo.com changes data model...
-            """
+            #"""
             ################################ 1 ####################################
             # 1st <td> cell : ticker symbol info & has comment of company name
             # 2nd <td> cell : company name
@@ -116,11 +118,11 @@ class y_toplosers:
             mktcap = next(extr_strings)
 
             co_sym_lj = np.array2string(np.char.ljust(co_sym, 6) )         # left justify TXT in DF & convert to raw string
-            co_name_lj = (re.sub('[\'\"]', '', co_name) )                  # remove " ' and strip leading/trailing spaces
+            co_name_lj = (re.sub(r'[\'\"]', '', co_name) )                  # remove " ' and strip leading/trailing spaces
             co_name_lj = np.array2string(np.char.ljust(co_name_lj, 25) )   # left justify TXT in DF & convert to raw string
-            co_name_lj = (re.sub('[\']', '', co_name_lj) )                 # remove " ' and strip leading/trailing spaces
+            co_name_lj = (re.sub(r'[\']', '', co_name_lj) )                 # remove " ' and strip leading/trailing spaces
 
-            price_cl = (re.sub('\,', '', price))                           # remove ,
+            price_cl = (re.sub(r'\,', '', price))                           # remove ,
             price_clean = float(price_cl)
 
             ################################ 2 ####################################
@@ -129,17 +131,17 @@ class y_toplosers:
             MILLIONS = re.search('M', mktcap)
 
             if TRILLIONS:
-                mktcap_clean = float(re.sub('T', '', mktcap))
+                mktcap_clean = float(re.sub(r'T', '', mktcap))
                 mb = "ST"
                 logging.info( f'%s - {x} / {co_sym_lj} Mkt Cap: TRILLIONS - ST' % cmi_debug )
 
             if BILLIONS:
-                mktcap_clean = float(re.sub('B', '', mktcap))
+                mktcap_clean = float(re.sub(r'B', '', mktcap))
                 mb = "SB"
                 logging.info( f'%s - {x} / {co_sym_lj} Mkt cap: BILLIONS - SB' % cmi_debug )
 
             if MILLIONS:
-                mktcap_clean = float(re.sub('M', '', mktcap))
+                mktcap_clean = float(re.sub(r'M', '', mktcap))
                 mb = "SM"
                 logging.info( f'%s - {x} / {co_sym_lj} Mkt cap: MILLIONS - SM' % cmi_debug )
 
@@ -152,8 +154,8 @@ class y_toplosers:
             if pct == "N/A":            # Bad data. FOund a filed with N/A instead of read num
                 pct = "1.0"
 
-            pct = float(re.sub('[\-+,%]', '', pct))
-            change = float(re.sub('[\-+,%]', '', change))
+            pct = float(re.sub(r'[\-+,%]', '', pct))
+            change = float(re.sub(r'[\-+,%]', '', change))
             #float(re.sub('[\+,]', '', change)), \
 
             ################################ 5 ####################################
@@ -162,7 +164,7 @@ class y_toplosers:
 
             self.list_data = [[ \
                        x, \
-                       re.sub('\'', '', co_sym_lj), \
+                       re.sub(r'\'', '', co_sym_lj), \
                        co_name_lj, \
                        price_clean, \
                        change, \
@@ -215,6 +217,7 @@ class y_toplosers:
         logging.info('%s - Drop all rows from DF1' % cmi_debug )
         self.tg_df1.drop(self.tg_df1.index, inplace=True)
         logging.info('%s - Copy DF0 -> ephemerial DF1' % cmi_debug )
+        print ( f"{self.tg_df0}" )
         #self.tg_df1 = self.tg_df0.sort_values(by='Pct_change', ascending=False ).copy(deep=True)    # create new DF via copy of top 10 entries
         self.tg_df1 = self.tg_df0.sort_values(by='Pct_change', ascending=False ).head(self.rows_extr).copy(deep=True)    # create new DF via copy of top 10 entries
         self.tg_df1.rename(columns = {'Row':'ERank'}, inplace = True)   # Rank is more accurate for this Ephemerial DF

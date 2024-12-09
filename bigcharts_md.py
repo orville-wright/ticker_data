@@ -105,7 +105,7 @@ class bc_quote:
                     logging.info('%s - in section #1 - Found fancy UP/DOWN image' % cmi_debug )
                     logging.info('%s - in section #1 - READ +/- sign' % cmi_debug )
                     k = i.span.text
-                    change_pn = re.sub('[\n\ ]', '', i.div.text)    # remove trailing newline
+                    change_pn = re.sub(r'[\n\ ]', '', i.div.text)    # remove trailing newline
                     logging.info('%s - INSERT +/- sign data into quote dict' % cmi_debug )
                     self.quote['change_s'] = change_pn              # add change_sign into quote DICT
 
@@ -133,7 +133,7 @@ class bc_quote:
                     logging.info('%s - in section #2 - Found fancy UP/DOWN image' % cmi_debug )
                     logging.info('%s - in section #2 - read change_abs data' % cmi_debug )
                     k = i.span.text.strip()
-                    change_abs = re.sub('[\n\ ]', '', i.div.text)
+                    change_abs = re.sub(r'[\n\ ]', '', i.div.text)
                     if k in self.qlabels:
                         self.quote[self.qlabels[k]] = change_abs    # add to quote DICT
                         logging.info('%s - INSERT change_abs data into quote dict' % cmi_debug )
@@ -191,8 +191,8 @@ class bc_quote:
 
             flen = len(fin_data)
             for i in range(0, flen, 2):
-                clean1 = re.sub('[\n\r]', '', fin_data[i].text)
-                clean2 = re.sub('[\n\r]', '', fin_data[i+1].text)
+                clean1 = re.sub(r'[\n\r]', '', fin_data[i].text)
+                clean2 = re.sub(r'[\n\r]', '', fin_data[i+1].text)
                 clean1 = clean1.strip()
                 clean2 = clean2.strip()
                 k = clean1
@@ -219,7 +219,7 @@ class bc_quote:
 
         # change_s = -/+ indicator ('Positive/negative/unchanged') sign
         d = self.quote['change_s']
-        d = re.sub('[0-9,\.]', '', d)     # remove all nums, "," & "."
+        d = re.sub(r'[0-9,\.]', '', d)     # remove all nums, "," & "."
         self.quote['change_s'] = d        # update to new value (should be "+" or "-") - TODO: how is UNCHANGED handled?
 
         # market cap & mkt_cap_scale (i.e. Millions, Billions, Trillions)
@@ -231,13 +231,13 @@ class bc_quote:
             self.quote['mkt_cap'] = 0              # set Mkt_cap = ZERO
             self.quote['mkt_cap_s'] = ms           # M=Million, B=Billion, T=Trillion
         else:
-            mv = re.sub('[MBT]', '', m)            # remove trailing M, B, T
+            mv = re.sub(r'[MBT]', '', m)            # remove trailing M, B, T
             self.quote['mkt_cap_s'] = ms           # M=Million, B=Billion, T=Trillion
             self.quote['mkt_cap'] = float(mv)      # set mkt_cap to real num
 
         # make vol -> a real int
         d = self.quote['vol']
-        d = re.sub(',', '', d)                     # remove "," from num
+        d = re.sub(r',', '', d)                     # remove "," from num
         self.quote['vol'] = int(d)                 # update orignal STRING vlaue as real INT num
 
         # Some compound data elements next. Split thgem up & create new DICT fields as needed
@@ -246,17 +246,17 @@ class bc_quote:
         r = self.quote['range52w_t']               # e.g. '5.90 to 13.26'
         rt = r.partition(' to ')                   # seperator = ' to ' result is fast, light tupple
         rt_cl = rt[0]
-        rt_cl = re.sub(',', '', rt_cl)
+        rt_cl = re.sub(r',', '', rt_cl)
         self.quote['range52w_l'] = float(rt_cl)    # 52 Week HIGH
         rtt_cl = rt[2]
-        rtt_cl = re.sub(',', '', rtt_cl)
+        rtt_cl = re.sub(r',', '', rtt_cl)
         self.quote['range52w_h'] = float(rtt_cl)    # 52 week LOW
 
         # 52 week HIGH date & value
         h = self.quote['high52w_t']                # e.g. '5.90 to 13.26'
         ht = h.partition(' on ')                   # seperator = ' to ' result is fast, light tupple
         ht_cl = ht[0]
-        ht_cl = re.sub(',', '', ht_cl)
+        ht_cl = re.sub(r',', '', ht_cl)
         self.quote['high52w_p'] = float(ht_cl)     # 52 Week HIGH (shuld be same as range52w_h)
         htt_cl = ht[2]
         #htt_cl = re.sub(',', '', htt_cl)
@@ -266,15 +266,15 @@ class bc_quote:
         l = self.quote['low52w_t']                 # e.g. '5.90 to 13.26'
         lt = l.partition(' on ')                   # seperator = ' to ' result is fast, light tupple
         lt_cl = lt[0]
-        lt_cl = re.sub(',', '', lt_cl)
+        lt_cl = re.sub(r',', '', lt_cl)
         self.quote['low52w_p'] = float(lt_cl)      # 52 Week LOW (shuld be same as range52w_l)
         self.quote['low52w_d'] = lt[2]             # date of 52 week LOW
 
         # SHORT interest (num_of_shares) & shorted % (shorted share as % of outstanding shares)
         d = self.quote['short_i_t']                # e.g. '106,614,436 (1.22%)'
         dt = d.partition(' (')                     # seperator = ' ('
-        dt0 = re.sub(',', '', dt[0])               # remove "," from num
-        dt2 = re.sub('\)', '', dt[2])              # remove trailing ")" from % num
+        dt0 = re.sub(r',', '', dt[0])               # remove "," from num
+        dt2 = re.sub(r'\)', '', dt[2])              # remove trailing ")" from % num
         self.quote['short_i_c'] = dt2              # % of shares shorted
 
         if dt0[:1].isdigit() is True:              # test if string starts with a num (i.e. 0123456789)
@@ -287,17 +287,17 @@ class bc_quote:
         a = self.quote['range_a_p']                # e.g. '10.719 (50-day) 10.2152 (200-day)'
         at = a.split(' ')                          # seperator = ' ' 4 fields split, butonlu 2 of interest
         at_cl = at[0]
-        at_cl = re.sub(',', '', at_cl)
+        at_cl = re.sub(r',', '', at_cl)
         self.quote['avg50d_p'] = float(at_cl)      # 50 day avg price
         att_cl = at[2]
-        att_cl = re.sub(',', '', att_cl)
+        att_cl = re.sub(r',', '', att_cl)
         self.quote['avg200d_p'] = float(att_cl)     # 200 day avg price
 
         # 50day & 200day average volume range
         a = self.quote['range_a_v']                # e.g. '84,447,810 (50-day) 65,450,970 (200-day)'
         at = a.split(' ')                          # seperator = ' ' 4 fields split, butonlu 2 of interest
-        at0 = re.sub(',', '', at[0])               # remove "," from vol nums
-        at2 = re.sub(',', '', at[2])               # remove "," vol nums
+        at0 = re.sub(r',', '', at[0])               # remove "," from vol nums
+        at2 = re.sub(r',', '', at[2])               # remove "," vol nums
         self.quote['avg50d_v'] = int(at0)          # make vol num real int
         self.quote['avg200d_v'] = int(at2)         # make vol num real int
 

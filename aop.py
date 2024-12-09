@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#! /home/orville/venv/devel/bin/python3
 
 import urllib
 import urllib.request
@@ -96,7 +96,7 @@ def bkgrnd_worker():
     for r in range(4):
         logging.info('main::bkgrnd_worker():: Loop: %s' % r )
         time.sleep(30)    # wait immediatley to let remote update
-        work_inst.get_topg_data()        # extract data from finance.Yahoo.com
+    ~/venv/devel/bin/python3    work_inst.get_topg_data()        # extract data from finance.Yahoo.com
         work_inst.build_tg_df0()
         work_inst.build_top10()
         work_inst.build_tenten60(r)
@@ -134,7 +134,7 @@ def main():
 ########### 1 - TOP GAINERS ################
     if args['bool_tops'] is True:
         print ( "========== Large Cap / Top Gainers ===============================" )
-        ## new
+        ## new JS data extractor
         topgainer_reader = y_cookiemonster(1)         # instantiate class of cookiemonster
         mlx_top_dataset = y_topgainers(1)             # instantiate class
         mlx_top_dataset.init_dummy_session()          # setup cookie jar and headers

@@ -24,6 +24,10 @@ class y_cookiemonster:
     tg_df0 = ""          # DataFrame - Full list of top gainers
     tg_df1 = ""          # DataFrame - Ephemerial list of top 10 gainers. Allways overwritten
     tg_df2 = ""          # DataFrame - Top 10 ever 10 secs for 60 secs
+    tl_dfo = ""
+    tl_df1 = ""
+    tl_df2 = ""
+
     all_tag_tr = ""      # BS4 handle of the <tr> extracted data
     yti = 0
     cycle = 0           # class thread loop counter
