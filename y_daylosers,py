@@ -87,8 +87,10 @@ class y_daylosers:
 #######################################################################################
 # method #2
     def get_topl_data(self):
-        """Connect to finance.yahoo.com and extract (scrape) the raw sring data out of"""
-        """the embedded webpage [Stock:Top Day losers] html data table. Returns a BS4 handle."""
+        """
+        Connect to finance.yahoo.com and extract (scrape) the raw sring data out of
+        the embedded webpage [Stock:Top Day losers] html data table. Returns a BS4 handle.
+        """
 
         cmi_debug = __name__+"::"+self.get_topg_data.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
@@ -267,8 +269,10 @@ class y_daylosers:
 ####################################################################################
 # method #6
     def topg_listall(self):
-        """Print the full DataFrame table list of Yahoo Finance Top loserers"""
-        """Sorted by % Change"""
+        """
+        Print the full DataFrame table list of Yahoo Finance Top loserers
+        Sorted by % Change
+        """
 
         cmi_debug = __name__+"::"+self.topg_listall.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
@@ -280,9 +284,11 @@ class y_daylosers:
 ####################################################################################
 # method #7
     def build_top10(self):
-        """Get top 10 loserers from main DF (df0) -> temp DF (df1)"""
-        """Number of rows to grab is now set from num of rows that BS4 actually extracted (rows_extr)"""
-        """df1 is ephemerial. Is allways overwritten on each run"""
+        """
+        Get top 10 loserers from main DF (df0) -> temp DF (df1)
+        Number of rows to grab is now set from num of rows that BS4 actually extracted (rows_extr)
+        df1 is ephemerial. Is allways overwritten on each run
+        """
 
         cmi_debug = __name__+"::"+self.build_top10.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
@@ -299,8 +305,10 @@ class y_daylosers:
 ####################################################################################
 # method #8
     def print_top10(self):
-        """Prints the Top 10 Dataframe"""
-        """Number of rows to grab is now set from num of rows that BS4 actually extracted (rows_extr)"""
+        """
+        Prints the Top 10 Dataframe
+        Number of rows to grab is now set from num of rows that BS4 actually extracted (rows_extr)
+        """
 
         cmi_debug = __name__+"::"+self.print_top10.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
@@ -312,8 +320,10 @@ class y_daylosers:
 ####################################################################################
 # method #9
     def build_tenten60(self, cycle):
-        """Build-up 10x10x060 historical DataFrame (df2) from source df1"""
-        """Generally called on some kind of cycle"""
+        """
+        Build-up 10x10x060 historical DataFrame (df2) from source df1
+        Generally called on some kind of cycle
+        """
 
         cmi_debug = __name__+"::"+self.build_tenten60.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
