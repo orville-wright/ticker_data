@@ -268,7 +268,7 @@ class y_topgainers:
 
 ####################################################################################
 # method #7
-    def build_op10(self):
+    def build_top10(self):
         """Get top gainers from main DF (df0) -> temp DF (df1)"""
         """Number of rows to grab is now set from num of rows that BS4 actually extracted (rows_extr)"""
         """df1 is ephemerial. Is allways overwritten on each run"""
