@@ -96,7 +96,6 @@ def bkgrnd_worker():
     for r in range(4):
         logging.info('main::bkgrnd_worker():: Loop: %s' % r )
         time.sleep(30)    # wait immediatley to let remote update
-    ~/venv/devel/bin/python3    work_inst.get_topg_data()        # extract data from finance.Yahoo.com
         work_inst.build_tg_df0()
         work_inst.build_top10()
         work_inst.build_tenten60(r)
