@@ -23,7 +23,7 @@ logging.basicConfig(level=logging.INFO)
 
 # my private classes & methods
 from y_topgainers import y_topgainers
-from y_toplosers import y_toplosers
+from y_daylosers import y_daylosers
 from y_smallcaps import smallcap_screen
 from nasdaq_uvoljs import un_volumes
 from nasdaq_quotes import nquote
@@ -148,14 +148,19 @@ def main():
         print ( " " )
 
 ########### 2 - TOP LOSERS ################
-    if args['bool_tops'] is True:
         print ( "========== Large Cap / Top Loosers ================================" )
-        med_large_mega_loosers = y_toplosers(1)       # instantiate class
-        med_large_mega_loosers.get_topg_data()        # extract data from finance.Yahoo.com
-        x = med_large_mega_loosers.build_tg_df0()     # build full dataframe
-        med_large_mega_loosers.build_top10()          # show top 10
-        med_large_mega_loosers.print_top10()          # print it
-        print ( " ")
+        ## new JS data extractor
+        toploser_reader = y_cookiemonster(2)         # instantiate class of cookiemonster
+        mlx_loser_dataset = y_daylosers(1)           # instantiate class
+        mlx_loser_dataset.init_dummy_session()       # setup cookie jar and headers
+ 
+        mlx_loser_dataset.ext_req = toploser_reader.get_js_data('finance.yahoo.com/screener/predefined/day_losers/')
+        mlx_loser_dataset.ext_get_data(1)
+
+        x = mlx_loser_dataset.build_tl_df0()     # build full dataframe
+        mlx_loser_dataset.build_top10()          # show top 10
+        mlx_loser_dataset.print_top10()          # print it
+        print ( " " )
 
 ########### 3 10x10x60 ################
 # **THREAD** waiter
