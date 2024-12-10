@@ -54,7 +54,6 @@ class y_daylosers:
         return
 
 #######################################################################################
-rom y_daylosers import y_daylosers
     def init_dummy_session(self):
         self.dummy_resp0 = requests.get(self.dummy_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
         hot_cookies = requests.utils.dict_from_cookiejar(self.dummy_resp0.cookies)
