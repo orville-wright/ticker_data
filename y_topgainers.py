@@ -179,8 +179,8 @@ class y_topgainers:
             ################################ 3 ####################################
             # now wrangle the data...
             co_sym_lj = f"{co_sym:<6}"                                   # left justify TXT in DF & convert to raw string
-            co_name_lj = np.array2string(np.char.ljust(co_name, 25) )    # left justify TXT in DF & convert to raw string
-            co_name_lj = (re.sub(r'[\'\"]', '', co_name_lj) )             # remove " ' and strip leading/trailing spaces    
+            co_name_lj = np.array2string(np.char.ljust(co_name, 60) )    # left justify TXT in DF & convert to raw string
+            co_name_lj = (re.sub(r'[\'\"]', '', co_name_lj) )             # remove " ' and strip leading/trailing spaces     
             price_cl = (re.sub(r'\,', '', price))                         # remove ,
             price_clean = float(price_cl)
             change_clean = float(change_val)
@@ -192,7 +192,7 @@ class y_topgainers:
                 pct_clean = float(pct_cl)
 
             ################################ 4 ####################################
-            mktcap = (re.sub('[N\/A]', '0', mktcap))               # handle N/A
+            mktcap = (re.sub(r'[N\/A]', '0', mktcap))               # handle N/A
             TRILLIONS = re.search('T', mktcap)
             BILLIONS = re.search('B', mktcap)
             MILLIONS = re.search('M', mktcap)
@@ -297,6 +297,7 @@ class y_topgainers:
         logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
+        self.tg_df1.style.set_properties(**{'text-align': 'left'})
         print ( f"{self.tg_df1.sort_values(by='Pct_change', ascending=False ).head(self.rows_extr)}" )
         return
 

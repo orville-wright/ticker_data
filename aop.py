@@ -301,11 +301,9 @@ def main():
             print ( " " )       # empty list[] = no stock found yet (prob very early in trading morning)
             print ( f"No **hot** stock for >>LOW<< buy-in recommendations list yet" )
         else:
-            print ( f">>> DEBUG: \n {x.rx}")
             hotidx = x.rx[0]
             hotsym = x.rx[1]
-            hotp = x.combo_df.loc[hotidx, ['Cur_price']][0]
-            #hotp = x.combo_df.at[hotidx, 'Cur_price']         # bug need to access index
+            hotp = x.combo_df.at[hotidx, 'Cur_price']
             #hotp = x.combo_df.loc[[x.combo_df['Symbol'] == hotsym], ['Cur_price']]
             hotname = x.combo_df.at[hotidx, 'Co_name']
             hotpct = x.combo_df.at[hotidx, 'Pct_change']
@@ -316,7 +314,8 @@ def main():
 
             #recommended['3'] = ('Hottest:', hotsym.rstrip(), '$'+str(hotp), hotname.rstrip(), '+%'+str(x.combo_df.loc[hotidx, ['Pct_change']][0]) )
             recommended['3'] = ('Hottest:', hotsym.rstrip(), '$'+str(hotp), hotname.rstrip(), '+%'+str(x.combo_df.at[hotidx, 'Pct_change']) )
-            print ( f">>Lowest price<< **Hot** stock: {hotsym.rstrip()} - {hotname.rstrip()} / {'$'+str(hotp)} / {'+%'+str(hotpct)} gain" )
+            print ( f"==============================================================================================" )
+            print ( f"Best low-buy highest %gain **Hot** OPPTY: {hotsym.rstrip()} - {hotname.rstrip()} / {'$'+str(hotp)} / {'+%'+str(hotpct)} gain" )
             print ( " " )
             print ( " " )
 
