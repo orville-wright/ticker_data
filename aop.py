@@ -23,6 +23,7 @@ logging.basicConfig(level=logging.INFO)
 
 # my private classes & methods
 from y_topgainers import y_topgainers
+from y_daytest import y_daylosers
 from y_smallcaps import smallcap_screen
 from nasdaq_uvoljs import un_volumes
 from nasdaq_quotes import nquote

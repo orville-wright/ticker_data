@@ -8,25 +8,27 @@ import logging
 import argparse
 import time
 import threading
+import types
+import inspect
 from rich import print
 
 # logging setup
 logging.basicConfig(level=logging.INFO)
 
 #####################################################
-class y_topgainers:
-    """Class to extract Top Gainer data set from finance.yahoo.com"""
+class y_daylosers:
+    """Class to extract Top Losers data set from finance.yahoo.com"""
     # global accessors
-    tg_df0 = ""          # DataFrame - Full list of top gainers
-    tg_df1 = ""          # DataFrame - Ephemerial list of top 10 gainers. Allways overwritten
-    tg_df2 = ""          # DataFrame - Top 10 ever 10 secs for 60 secs
+    tl_df0 = ""          # DataFrame - Full list of top loserers
+    tl_df1 = ""          # DataFrame - Ephemerial list of top 10 loserers. Allways overwritten
+    tl_df2 = ""          # DataFrame - Top 10 ever 10 secs for 60 secs
     all_tag_tr = ""      # BS4 handle of the <tr> extracted data
     rows_extr = 0        # number of rows of data extracted
     ext_req = ""         # request was handled by y_cookiemonster
     yti = 0
     cycle = 0            # class thread loop counter
 
-    dummy_url = "https://finance.yahoo.com/screener/predefined/day_gainers"
+    dummy_url = "https://finance.yahoo.com/screener/predefined/day_losers"
 
     yahoo_headers = { \
                         'authority': 'finance.yahoo.com', \
@@ -43,14 +45,13 @@ class y_topgainers:
         cmi_debug = __name__+"::"+self.__init__.__name__
         logging.info( f'%s - Instantiate.#{yti}' % cmi_debug )
         # init empty DataFrame with present colum names
-        self.tg_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time'] )
-        self.tg_df1 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time'] )
-        self.tg_df2 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time'] )
+        self.tl_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time'] )
+        self.tl_df1 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change' 'Mkt_cap', 'M_B', 'Time'] )
+        self.tl_df2 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change' 'Mkt_cap', 'M_B', 'Time'] )
         self.yti = yti
         return
 
 #######################################################################################
-
     def init_dummy_session(self):
         self.dummy_resp0 = requests.get(self.dummy_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
         hot_cookies = requests.utils.dict_from_cookiejar(self.dummy_resp0.cookies)
@@ -80,25 +81,27 @@ class y_topgainers:
         #self.all_tag_tr = self.soup.find(attrs={"class": "simpTblRow"})
         logging.info('%s Page processed by BS4 engine' % cmi_debug )
         return
-    
-#######################################################################################    
-# method #3
-    def get_topg_data(self):
-        """Connect to finance.yahoo.com and extract (scrape) the raw sring data out of"""
-        """the embedded webpage [Stock:Top Day Gainers] html data table. Returns a BS4 handle."""
+
+#######################################################################################
+# method #2
+    def get_topl_data(self):
+        """
+        Connect to finance.yahoo.com and extract (scrape) the raw sring data out of
+        the embedded webpage [Stock:Top Day losers] html data table. Returns a BS4 handle.
+        """
 
         cmi_debug = __name__+"::"+self.get_topg_data.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
 
-        r = requests.get("https://finance.yahoo.com/screener/predefined/day_gainers/" )
+        r = requests.get("https://finance.yahoo.com/screener/predefined/day_losers/" )
 
         logging.info('%s - read html stream' % cmi_debug )
         self.soup = BeautifulSoup(r.text, 'html.parser')
         # ATTR style search. Results -> Dict
         # <tr tag in target merkup line has a very complex 'class=' but the attributes are unique. e.g. 'simpTblRow' is just one unique attribute
-        logging.info('%s - save data object handle' % cmi_debug )
+        logging.info('%s - save data handle' % cmi_debug )
         self.tag_tbody = self.soup.find('tbody')
-        self.all_tag_tr = self.soup.find_all(attrs={"class": "simpTblRow"})   # simpTblRow
+        self.all_tag_tr = self.soup.find_all(attrs={"class": "simpTblRow"})
 
         logging.info('%s - close url handle' % cmi_debug )
         r.close()
@@ -106,17 +109,17 @@ class y_topgainers:
 
 #######################################################################################
 # method #4
-    def build_tg_df0(self):
+    def build_tl_df0(self):
         """
         Build-out a fully populated Pandas DataFrame containg all the extracted/scraped fields from the
         html/markup table data Wrangle, clean/convert/format the data correctly.
         """
 
-        cmi_debug = __name__+"::"+self.build_tg_df0.__name__+".#"+str(self.yti)
+        cmi_debug = __name__+"::"+self.build_tl_df0.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         logging.info('%s - Create clean NULL DataFrame' % cmi_debug )
-        self.tg_df0 = pd.DataFrame()             # new df, but is NULLed
+        self.tl_df0 = pd.DataFrame()             # new df, but is NULLed
         x = 0
         self.rows_extr = int( len(self.tag_tbody.find_all('tr')) )
 
@@ -132,11 +135,20 @@ class y_topgainers:
             print ( f"==============================================" )
             # >>>DEBUG<< for when yahoo.com changes data model...
             """
+            ######################################################################
+            # 1st <td> cell : ticker symbol info & has comment of company name
+            # 2nd <td> cell : company name
+            # 3rd <td> cell : price
+            # 4th <td> cell : $ change
+            # 5th <td> cell : % change
+            # more cells in <tr> data row...but I'm not interested in them at moment.
+
+            # BS4 generator object comes from "extracted strings" BS4 operation (nice)
             ################################ 1 ####################################
-            extr_strs = datarow.strings
-            co_sym = next(extr_strs)             # 1 : ticker symbol info / e.g "NWAU"
-            co_name = next(extr_strs)            # 2 : company name / e.g "Consumer Automotive Finance, Inc."
-            price = next(extr_strs)              # 3 : price (Intraday) / e.g "0.0031"
+            extr_strs = datarow.stripped_strings
+            co_sym = next(extr_strs)         #1
+            co_name = next(extr_strs)        #2
+            price = next(extr_strs)          #3
 
             ################################ 1 ####################################
 
@@ -146,9 +158,9 @@ class y_topgainers:
                 change_val = next(extr_strs)                # 4 : Yes, advance iterator to next field (ignore dedciated sign field)
             else:
                 change_val = change_sign                    # 4 : get $ change, but its possibly +/- signed
-                if (re.search(r'\+', change_val)) or (re.search(r'\-', change_val)) is True:
+                if (re.search(r'\-', change_val)) or (re.search(r'\+', change_val)) is True:
                     logging.info( f"{cmi_debug} : {change_val} : $ CHANGE is signed [+-], stripping..." )
-                    change_cl = re.sub(r'[\+\-]', "", change_val)       # remove +/- sign
+                    change_cl = re.sub(r'[\-\+]', "", change_val)       # remove +/- sign
                     logging.info( f"%s : $ CHANGE +/- cleaned : {change_cl}" % cmi_debug )
                 else:
                     logging.info( f"{cmi_debug} : {change_val} : $ CHANGE is NOT signed [+-]" )
@@ -161,9 +173,9 @@ class y_topgainers:
                 pct_val = next(extr_strs)           # 5 : advance iterator to next field (ignore dedciated sign field)
             else:
                 pct_val = pct_sign                  # 5 get % change, but its possibly +/- signed
-                if (re.search(r'\+', pct_val)) or (re.search(r'\-', pct_val)) is True:
+                if (re.search(r'\-', pct_val)) or (re.search(r'\+', pct_val)) is True:
                     logging.info( f"{cmi_debug} : {pct_val} : % CHANGE is signed [+-], stripping..." )
-                    pct_cl = re.sub(r'[\+\-]', "", pct_val)       # remove +/- signs
+                    pct_cl = re.sub(r'[\-\+]', "", pct_val)       # remove +/- signs
                     logging.info( f"{cmi_debug} : % CHANGE +/- striped : {pct_cl}" )
 
             pct_cl = re.sub(r'[\%]', "", pct_cl)       # remove +/- signs
@@ -235,14 +247,14 @@ class y_topgainers:
 
             ################################ 6 ####################################
             self.df_1_row = pd.DataFrame(self.list_data, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time' ], index=[x] )
-            self.tg_df0 = pd.concat([self.tg_df0, self.df_1_row])  
+            self.tl_df0 = pd.concat([self.tl_df0, self.df_1_row])
             x+=1
 
         logging.info('%s - populated new DF0 dataset' % cmi_debug )
         return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
-                        # sucess = lobal class accessor (y_toplosers.tg_df0) populated & updated
+                        # sucess = lobal class accessor (y_topgainers.*_df0) populated & updated
 
-#########################################################################################
+####################################################################################
 # method #5
 # Hacking function - keep me arround for a while
     def prog_bar(self, x, y):
@@ -256,21 +268,23 @@ class y_topgainers:
 ####################################################################################
 # method #6
     def topg_listall(self):
-        """Print the full DataFrame table list of Yahoo Finance Top Gainers"""
-        """Sorted by % Change"""
+        """
+        Print the full DataFrame table list of Yahoo Finance Top loserers
+        Sorted by % Change
+        """
 
         cmi_debug = __name__+"::"+self.topg_listall.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
-        print ( self.tg_df0.sort_values(by='Pct_change', ascending=False ) )    # only do after fixtures datascience dataframe has been built
+        print ( self.tl_df0.sort_values(by='Pct_change', ascending=False ) )    # only do after fixtures datascience dataframe has been built
         return
 
 ####################################################################################
 # method #7
     def build_top10(self):
         """
-        Get top gainers from main DF (df0) -> temp DF (df1)
+        Get top 10 loserers from main DF (df0) -> temp DF (df1)
         Number of rows to grab is now set from num of rows that BS4 actually extracted (rows_extr)
         df1 is ephemerial. Is allways overwritten on each run
         """
@@ -278,11 +292,11 @@ class y_topgainers:
         cmi_debug = __name__+"::"+self.build_top10.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         logging.info('%s - Drop all rows from DF1' % cmi_debug )
-        self.tg_df1.drop(self.tg_df1.index, inplace=True)
+        self.tl_df1.drop(self.tl_df1.index, inplace=True)
         logging.info('%s - Copy DF0 -> ephemerial DF1' % cmi_debug )
-        self.tg_df1 = self.tg_df0.sort_values(by='Pct_change', ascending=False ).head(self.rows_extr).copy(deep=True)    # create new DF via copy of top 10 entries
-        self.tg_df1.rename(columns = {'Row':'ERank'}, inplace = True)    # Rank is more accurate for this Ephemerial DF
-        self.tg_df1.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
+        self.tl_df1 = self.tl_df0.sort_values(by='Pct_change', ascending=False ).head(self.rows_extr).copy(deep=True)    # create new DF via copy of top 10 entries
+        self.tl_df1.rename(columns = {'Row':'ERank'}, inplace = True)   # Rank is more accurate for this Ephemerial DF
+        self.tl_df1.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
         return
 
 ####################################################################################
@@ -290,24 +304,26 @@ class y_topgainers:
     def print_top10(self):
         """
         Prints the Top 10 Dataframe
-        Number of rows to print is now set from num of rows that BS4 actually extracted (rows_extr)
+        Number of rows to grab is now set from num of rows that BS4 actually extracted (rows_extr)
         """
 
         cmi_debug = __name__+"::"+self.print_top10.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         pd.set_option('display.max_rows', None)
         pd.set_option('max_colwidth', 30)
-        print ( f"{self.tg_df1.sort_values(by='Pct_change', ascending=False ).head(self.rows_extr)}" )
+        print ( f"{self.tl_df1.sort_values(by='Pct_change', ascending=False ).head(self.rows_extr)}" )
         return
 
 ####################################################################################
 # method #9
     def build_tenten60(self, cycle):
-        """Build-up 10x10x060 historical DataFrame (df2) from source df1"""
-        """Generally called on some kind of cycle"""
+        """
+        Build-up 10x10x060 historical DataFrame (df2) from source df1
+        Generally called on some kind of cycle
+        """
 
         cmi_debug = __name__+"::"+self.build_tenten60.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
-        self.tg_df2 = self.tg_df2.append(self.tg_df1, ignore_index=False)    # merge top 10 into
-        self.tg_df2.reset_index(inplace=True, drop=True)    # ensure index is allways unique + sequential
+        self.tl_df2 = self.tl_df2.append(self.tl_df1, ignore_index=False)    # merge top 10 into
+        self.tl_df2.reset_index(inplace=True, drop=True)    # ensure index is allways unique + sequential
         return
