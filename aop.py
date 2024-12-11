@@ -23,7 +23,7 @@ logging.basicConfig(level=logging.INFO)
 
 # my private classes & methods
 from y_topgainers import y_topgainers
-from y_daytest import y_daylosers
+from y_daylosers import y_daylosers
 from y_smallcaps import smallcap_screen
 from nasdaq_uvoljs import un_volumes
 from nasdaq_quotes import nquote
@@ -601,6 +601,7 @@ def main():
         wq.build_data_sets()
         # add Tech Events Sentiment to quote dict{}
         te_nq_quote = wq.qd_quote
+        """
         te = y_techevents(2)
         te.form_api_endpoints(nq_symbol)
         success = te.get_te_zones(2)
@@ -614,6 +615,7 @@ def main():
         else:
             te.te_is_bad()                     # FORCE Tech Events to be N/A
             te.te_into_nquote(te_nq_quote)     # NOTE: needs to be the point to new refactored class nasdqa_wrangler::nq_wrangler qd_quote{}
+        """
 
         print ( f"===================== Nasdaq quote data =======================" )
         print ( f"                          {nq_symbol}" )
@@ -622,11 +624,13 @@ def main():
         for k, v in wq.qd_quote.items():
             print ( f"{c} - {k} : {v}" )
             c += 1
+        """
         print ( f"===================== Technial Events =========================" )
         te.build_te_df(1)
         te.reset_te_df0()
         print ( f"{te.te_df0}" )
         print ( f"===============================================================" )
+        """
 
     """
     EXAMPLE #2
