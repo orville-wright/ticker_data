@@ -14,23 +14,27 @@ import argparse
 import time
 from rich import print
 
+from ml_yahoofinews import yfnews_reader
+
+
 # ML / NLP section #############################################################
 class ml_nlpreader:
     """Class to identify, rank, classifcy, impactfully real stock docs to read and 
     then read them.
     """
     # global accessors
+    args = []                  # class dict to hold global args being passed in from main() methods
+    yfn = ""
     yti = 0
     cycle = 0            # class thread loop counter
 
-    def __init__(self, yti):
+    def __init__(self, yti, global_args):
         cmi_debug = __name__+"::"+self.__init__.__name__
         logging.info( f'%s - Instantiate.#{yti}' % cmi_debug )
         # init empty DataFrame with present colum names
-        self.tg_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time'] )
-        self.tg_df1 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time'] )
-        self.tg_df2 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time'] )
+        self.args = global_args                                # Only set once per INIT. all methods are set globally
         self.yti = yti
+        yfn = yfnews_reader(1, "IBM", global_args )        # dummy symbol just for instantiation
         return
 
 #######################################################################################
@@ -179,5 +183,5 @@ class ml_nlpreader:
 
             nlp_summary()
             print ( f" " )
-            
+
         return
