@@ -33,6 +33,7 @@ from bigcharts_md import bc_quote
 from marketwatch_md import mw_quote
 from ml_yahoofinews import yfnews_reader
 from ml_urlhinter import url_hinter
+from ml_nlpreader import ml_nlpreader
 from y_techevents import y_techevents
 from nasdaq_wrangler import nq_wrangler
 from y_cookiemonster import y_cookiemonster
@@ -423,6 +424,17 @@ def main():
         print ( f"{te.te_df0}" )
     else:
         pass
+
+#################################################################################
+# News M/L NLP AI
+
+    if args['newsymbol'] is not False:
+            cmi_debug = __name__+"::_args_newsymbol.#1"
+            news_symbol = str(args['newsymbol'])       # symbol provided on CMDLine
+            print ( " " )
+            print ( f"========================= M/L NLP / News Sentiment AI {news_symbol} =========================" )
+            news_ai = ml_nlpreader(1, args)
+            news_ai.nlp_read_one(news_symbol, args)
 
 #################################################################################
 # 3 differnt methods to get a live quote ########################################
