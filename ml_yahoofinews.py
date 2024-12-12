@@ -63,7 +63,6 @@ class yfnews_reader:
                     'sec-fetch-site': 'cross-site', \
                     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36' }
 
-
     def __init__(self, yti, symbol, global_args):
         self.yti = yti
         cmi_debug = __name__+"::"+self.__init__.__name__+".#"+str(self.yti)
@@ -79,13 +78,16 @@ class yfnews_reader:
         self.url_netloc = self.a_urlp.netloc
         return
 
+##################################### 1 ############################################
+# method 1
     def share_hinter(self, hinst):
         cmi_debug = __name__+"::"+self.share_hinter.__name__+".#"+str(self.yti)
         logging.info( f'%s - CALLED {type(hinst)}' % cmi_debug )
         self.uh = hinst
         return
 
-# method #1
+##################################### 2 ############################################
+# method 2
     def yfn_bintro(self):
         """
         DELETE ME - redundent
@@ -126,7 +128,8 @@ class yfnews_reader:
 
         return
 
-# method 2
+##################################### 3 ############################################
+# method 3
     def update_headers(self, symbol):
         cmi_debug = __name__+"::"+self.update_headers.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
@@ -144,7 +147,8 @@ class yfnews_reader:
 
         return
 
-# method 3
+###################################### 4 ###########################################
+# method 4
     def update_cookies(self):
         # assumes that the requests session has already been established
         cmi_debug = __name__+"::"+self.update_cookies.__name__+".#"+str(self.yti)
@@ -152,7 +156,8 @@ class yfnews_reader:
         self.js_session.cookies.update({'B': self.js_resp0.cookies['B']} )    # yahoo cookie hack
         return
 
-# method 4
+###################################### 5 ###########################################
+# method 5
     def form_url_endpoint(self, symbol):
         """
         This is the explicit NEWS URL that is used for the request get()
@@ -172,7 +177,8 @@ class yfnews_reader:
         self.yfqnews_url = self.yfqnews_url
         return
 
-# method 5
+###################################### 6 ###########################################
+# method 6
     def init_dummy_session(self):
         cmi_debug = __name__+"::"+self.init_dummy_session.__name__+".#"+str(self.yti)
         """
@@ -187,7 +193,8 @@ class yfnews_reader:
             # if the get() succeds, the response handle is automatically saved in Class Global accessor -> self.js_resp0
         return
 
-# method 6
+###################################### 7 ###########################################
+# method 7
     def do_simple_get(self):
         """
         get simple raw HTML data structure (data not processed by JAVAScript engine)
@@ -211,7 +218,8 @@ class yfnews_reader:
 
         return
 
-# method 7
+###################################### 8 ###########################################
+# method 8
     def do_js_get(self):
         """
         get JAVAScript engine processed data structure
@@ -237,8 +245,9 @@ class yfnews_reader:
 
         return
 
-# session data extraction methods ##############################################
-# method #8
+###################################### 9 ###########################################
+# method 9
+# session data extraction methods
     def scan_news_feed(self, symbol, depth, scan_type):
         """
         Depth 0
@@ -293,7 +302,8 @@ class yfnews_reader:
 
         return
 
-# method #9
+###################################### 10 ###########################################
+# method 10
     def eval_article_tags(self, symbol):
         """
         Depth 1 - scanning news feed items
@@ -450,7 +460,8 @@ class yfnews_reader:
 
         return
 
-# method 10
+###################################### 11 ###########################################
+# method 11
     def interpret_page(self, item_idx, data_row):
         """
         Depth 2 Page interpreter
@@ -592,7 +603,8 @@ class yfnews_reader:
         return ( [nauthor, date_posted, time_posted, abs(days_old.days)] )  # return a list []
         """
 
-# method 11
+###################################### 12 ###########################################
+# method 12
     def news_article_depth_1(self, url):
         """
         DEPRECATED - will detele soon
@@ -643,7 +655,8 @@ class yfnews_reader:
 
         return tag_dataset, real_nurl
 
-# method 12
+###################################### 13 ###########################################
+# method 13
     def dump_ml_ingest(self):        # >>Xray DEBUG<<
         """
         Dump the contents of ml_ingest{}, which holds the NLP candidates
