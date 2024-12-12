@@ -15,24 +15,27 @@ import time
 from rich import print
 
 from ml_yahoofinews import yfnews_reader
-
+from ml_urlhinter import url_hinter
+from y_topgainers import y_topgainers
 
 # ML / NLP section #############################################################
 class ml_nlpreader:
     """Class to identify, rank, classifcy, impactfully real stock docs to read and 
     then read them.
     """
+
     # global accessors
-    args = []                  # class dict to hold global args being passed in from main() methods
+    args = []            # class dict to hold global args being passed in from main() methods
     yfn = ""
+    uh = ""              # URL Hinter
     yti = 0
     cycle = 0            # class thread loop counter
 
     def __init__(self, yti, global_args):
         cmi_debug = __name__+"::"+self.__init__.__name__
         logging.info( f'%s - Instantiate.#{yti}' % cmi_debug )
-        # init empty DataFrame with present colum names
-        self.args = global_args                                # Only set once per INIT. all methods are set globally
+
+        self.args = global_args                            # Only set once per INIT. all methods are set globally
         self.yti = yti
         yfn = yfnews_reader(1, "IBM", global_args )        # dummy symbol just for instantiation
         return
@@ -40,14 +43,19 @@ class ml_nlpreader:
 #######################################################################################
 # method #1
 
-    def nlp_summary():
+    def nlp_summary(self, yti):
         """
         NLP Support function
         Assumes ml_ingest is already pre-built
-        Cycles
-        thru each item in the ml_ingest{} and processes...
+        Cycles thru each item in the ml_ingest{} and processes...
         Prints a nice sumamry of each NLP candidates in ml_digest{}
         """
+
+        self.yti = yti
+        cmi_debug = __name__+"::"+self.ext_get_data.__name__+".#"+str(self.yti)
+        logging.info('%s - IN' % cmi_debug )
+        logging.info('%s - ext request pre-processed by cookiemonster...' % cmi_debug )
+
         locality_code = { 0: 'Local 0',
                     1: 'Local 1',
                     2: 'Local 2',
@@ -58,21 +66,21 @@ class ml_nlpreader:
         print ( " ")
         print ( f"====================== Depth 2 ======================" )
         cmi_debug = __name__+"::nlp_summary().#1"
-        for sn_idx, sn_row in yfn.ml_ingest.items():                            # cycle thru the NLP candidate list
+        for sn_idx, sn_row in self.yfn.ml_ingest.items():                            # cycle thru the NLP candidate list
             if sn_row['type'] == 0:                                             # REAL news, inferred from Depth 0
                 print( f"News article:  {sn_idx} / {sn_row['symbol']} / ", end="" )
                 t_url = urlparse(sn_row['url'])                                 # WARN: a rlparse() url_named_tupple (NOT the raw url)
-                uhint, uhdescr = uh.uhinter(20, t_url)
+                uhint, uhdescr = self.uh.uhinter(20, t_url)
                 thint = (sn_row['thint'])                                       # the hint we guessed at while interrogating page <tags>
                 logging.info ( f"%s - Logic.#0 hinting origin url: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
-                r_uhint, r_thint, r_xturl = yfn.interpret_page(sn_idx, sn_row)    # go deep, with everything we knonw about this item
+                r_uhint, r_thint, r_xturl = self.yfn.interpret_page(sn_idx, sn_row)    # go deep, with everything we knonw about this item
                 p_r_xturl = urlparse(r_xturl)
-                inf_type = yfn.uh.confidence_lvl(thint)     # returned var is a tupple
+                inf_type = self.yfn.uh.confidence_lvl(thint)     # returned var is a tupple
                 #
                 print ( f"- NLP candidate" )                # all type 0 are assumed to be REAL news
                 print ( f"Origin URL:    [ {t_url.netloc} ] / {uhdescr} / {inf_type[0]} / ", end="" )
                 print ( f"{locality_code.get(inf_type[1])}" )
-                uhint, uhdescr = uh.uhinter(21, p_r_xturl)
+                uhint, uhdescr = self.uh.uhinter(21, p_r_xturl)
                 print ( f"Target URL:    [ {p_r_xturl.netloc} ] / {uhdescr} / ", end="" )
                 print ( f"{locality_code.get(uhint)} [ u:{uhint} ])" )
                 print ( f"====================== Depth 2 ======================" )
@@ -80,17 +88,17 @@ class ml_nlpreader:
             elif sn_row['type'] == 1:                       # Micro-Ad, but could possibly be news...
                 print( f"News article:  {sn_idx} / {sn_row['symbol']} /", end="" )
                 t_url = urlparse(sn_row['url'])
-                uhint, uhdescr = uh.uhinter(30, t_url)      # hint on ORIGIN url
+                uhint, uhdescr = self.uh.uhinter(30, t_url)      # hint on ORIGIN url
                 #thint = (sn_row['thint'])                   # the hint we guess at while interrogating page <tags>
-                r_uhint, r_thint, r_xturl = yfn.interpret_page(sn_idx, sn_row)    # go deep, with everything we knonw about this item
+                r_uhint, r_thint, r_xturl = self.yfn.interpret_page(sn_idx, sn_row)    # go deep, with everything we knonw about this item
                 logging.info ( f"%s - Logic.#1 hinting origin url: t:1 / u:{r_uhint} / h: {r_thint} {uhdescr}" % cmi_debug )
                 p_r_xturl = urlparse(r_xturl)
-                inf_type = yfn.uh.confidence_lvl(r_thint)
+                inf_type = self.yfn.uh.confidence_lvl(r_thint)
                 # summary report...
                 print ( f"NLP candidate" )                      # all type 0 are assumed to be REAL news
                 print ( f"Origin URL:    [ {t_url.netloc} ] / {uhdescr} / {inf_type[0]} / ", end="" )
                 print ( f"{locality_code.get(inf_type[1], 'in flux')}" )
-                uhint, uhdescr = uh.uhinter(31, p_r_xturl)      # hint on TARGET url
+                uhint, uhdescr = self.uh.uhinter(31, p_r_xturl)      # hint on TARGET url
                 print ( f"Target URL:    [ {p_r_xturl.netloc} ] / {uhdescr} / ", end="" )
                 print ( f"{locality_code.get(uhint, 'in flux')} [ u:{uhint} ])" )
                 print ( f"====================== Depth 2 ======================" )
@@ -116,13 +124,15 @@ class ml_nlpreader:
 # method #2
 # Read the news for multiple stock symbols
 
-    def nlp_read_all():
+    def nlp_read_all(self, global_args):
         """
         The machine will read now!
         Read finance.yahoo.com / News 'Brief headlines' (i.e. short text docs) for ALL Top Gainer stocks.
         """
 
-        if args['bool_news'] is True:                   # read ALL news for top 10 gainers
+        self.args = global_args
+
+        if self.args['bool_news'] is True:                   # read ALL news for top 10 gainers
             cmi_debug = __name__+"::nlp_all.#1"
             print ( " " )
             print ( "========================= ML (NLP) / Yahoo Finance News Sentiment AI =========================" )
@@ -132,10 +142,10 @@ class ml_nlpreader:
             nx = newsai_test_dataset.build_tg_df0()     # build entire dataframe
             newsai_test_dataset.build_top10()           # build top 10 gainers
             print ( " " )
-            yfn = yfnews_reader(1, "IBM", args )        # dummy symbol just for instantiation
+            yfn = yfnews_reader(1, "IBM", self.args )        # dummy symbol just for instantiation
             yfn.init_dummy_session()
             #yfn.yfn_bintro()
-            uh = url_hinter(1, args)        # anyone needs to be able to get hints on a URL from anywhere
+            uh = url_hinter(1, self.args)        # anyone needs to be able to get hints on a URL from anywhere
             yfn.share_hinter(uh)                        # share the url hinter available
             print ( "============================== Prepare bulk NLP candidate list =================================" )
             print ( f"ML/NLP candidates: {newsai_test_dataset.tg_df1['Symbol'].tolist()}" )
@@ -147,7 +157,7 @@ class ml_nlpreader:
                 yfn.eval_article_tags(nlp_target)       # ml_ingest{} is built
                 print ( "============================== NLP candidates are ready =================================" )
 
-            nlp_summary()
+            self.nlp_summary(2)
             print ( f" " )
             print ( " " )
             print ( "========================= Tech Events performance Sentiment =========================" )
@@ -158,30 +168,33 @@ class ml_nlpreader:
 #######################################################################################
 # method #3
 # Read the news for just 1 stock symbol
-    def nlp_read_one():
+    def nlp_read_one(self, global_args):
         """
         The machine will read now!
         Read finance.yahoo.com / News 'Brief headlines' (i.e. short text docs) for ONE stock symbol.
         """
-        if args['newsymbol'] is not False:
+
+        self.args = global_args
+
+        if self.args['newsymbol'] is not False:
             cmi_debug = __name__+"::_args_newsymbol.#1"
-            news_symbol = str(args['newsymbol'])       # symbol provided on CMDLine
+            news_symbol = str(self.args['newsymbol'])       # symbol provided on CMDLine
             print ( " " )
             print ( f"========================= ML (NLP) / News Sentiment AI {news_symbol} =========================" )
-            yfn = yfnews_reader(1, news_symbol, args )  # dummy symbol just for instantiation
+            yfn = yfnews_reader(1, news_symbol, self.args )  # dummy symbol just for instantiation
             yfn.init_dummy_session()
             #yfn.yfn_bintro()
             yfn.update_headers(news_symbol)
             yfn.form_url_endpoint(news_symbol)
             yfn.do_simple_get()
-            uh = url_hinter(1, args)        # anyone needs to be able to get hints on a URL from anywhere
+            uh = url_hinter(1, self.args)        # anyone needs to be able to get hints on a URL from anywhere
             yfn.share_hinter(uh)
             yfn.scan_news_feed(news_symbol, 0, 0)       # (params) #1: level, #2: 0=HTML / 1=JavaScript
             yfn.eval_article_tags(news_symbol)          # ml_ingest{} is built
             print ( f" " )
             print ( "========================= Evaluate quality of ML/NLP candidates =========================" )
 
-            nlp_summary()
+            self.nlp_summary(3)
             print ( f" " )
 
         return
