@@ -52,7 +52,7 @@ class ml_nlpreader:
         self.args = global_args
         if self.args['bool_news'] is True:                   # read ALL news for top 10 gainers
             cmi_debug = __name__+"::"+self.nlp_read_all.__name__+".#"+str(self.yti)
-            logging.info( f'%s - Instantiate.#{yti}' % cmi_debug )
+            logging.info( f'%s - Instantiate.#{self.yti}' % cmi_debug )
             print ( " " )
             print ( "========================= ML (NLP) / Yahoo Finance News Sentiment AI =========================" )
             print ( f"Build NLP test dataset / for Top Gainers..." )
