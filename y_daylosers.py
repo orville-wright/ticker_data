@@ -77,34 +77,8 @@ class y_daylosers:
         logging.info( f"%s - BS4 stream processing..." % cmi_debug )
         self.soup = BeautifulSoup(r.text, 'html.parser')
         self.tag_tbody = self.soup.find('tbody')
-        self.tr_rows = self.tag_tbody.find(attrs={"class": "simpTblRow"})
-        #self.all_tag_tr = self.soup.find(attrs={"class": "simpTblRow"})
+        self.tr_rows = self.tag_tbody.find_all("tr")
         logging.info('%s Page processed by BS4 engine' % cmi_debug )
-        return
-
-#######################################################################################
-# method #2
-    def get_topl_data(self):
-        """
-        Connect to finance.yahoo.com and extract (scrape) the raw sring data out of
-        the embedded webpage [Stock:Top Day losers] html data table. Returns a BS4 handle.
-        """
-
-        cmi_debug = __name__+"::"+self.get_topg_data.__name__+".#"+str(self.yti)
-        logging.info('%s - IN' % cmi_debug )
-
-        r = requests.get("https://finance.yahoo.com/screener/predefined/day_losers/" )
-
-        logging.info('%s - read html stream' % cmi_debug )
-        self.soup = BeautifulSoup(r.text, 'html.parser')
-        # ATTR style search. Results -> Dict
-        # <tr tag in target merkup line has a very complex 'class=' but the attributes are unique. e.g. 'simpTblRow' is just one unique attribute
-        logging.info('%s - save data handle' % cmi_debug )
-        self.tag_tbody = self.soup.find('tbody')
-        self.all_tag_tr = self.soup.find_all(attrs={"class": "simpTblRow"})
-
-        logging.info('%s - close url handle' % cmi_debug )
-        r.close()
         return
 
 #######################################################################################
@@ -123,34 +97,42 @@ class y_daylosers:
         x = 0
         self.rows_extr = int( len(self.tag_tbody.find_all('tr')) )
 
-        for datarow in self.tag_tbody.find_all('tr'):
+        for datarow in self.tr_rows:
 
             """
-            # >>>DEBUG<< for when yahoo.com changes data model...
+            # >>>DEBUG<< for whedatarow.stripped_stringsn yahoo.com changes data model...
             y = 1
-            for i in datarow.find_all('td'):
-                print ( f"Data {y}: {i.text}" )
-                logging.info( f'%s - Data: {datarow.td.strings}' % cmi_debug )
+            print ( f"===================== Debug =========================" )
+            #print ( f"Data {y}: {datarow}" )
+            for i in datarow.find_all("td"):
+                print ( f"===================================================" )
+                if i.canvas is not None:
+                    print ( f"Data {y}: Found Canvas, skipping..." )
+                else:
+                    print ( f"Data {y}: {i.text}" )
+                    print ( f"Data g: {next(i.stripped_strings)}" )
+                #logging.info( f'%s - Data: {debug_data.strings}' % cmi_debug )
                 y += 1
-            print ( f"==============================================" )
+            print ( f"===================== Debug =========================" )
             # >>>DEBUG<< for when yahoo.com changes data model...
             """
-            ######################################################################
-            # 1st <td> cell : ticker symbol info & has comment of company name
-            # 2nd <td> cell : company name
-            # 3rd <td> cell : price
-            # 4th <td> cell : $ change
-            # 5th <td> cell : % change
-            # more cells in <tr> data row...but I'm not interested in them at moment.
 
-            # BS4 generator object comes from "extracted strings" BS4 operation (nice)
-            ################################ 1 ####################################
-            extr_strs = datarow.stripped_strings
-            co_sym = next(extr_strs)         #1
-            co_name = next(extr_strs)        #2
-            price = next(extr_strs)          #3
+            # Data Extractor Generator
+            def extr_gen():
+                for i in datarow.find_all("td"):
+                    if i.canvas is not None:
+                        yield ( f"canvas" )
+                    else:
+                        yield ( f"{next(i.stripped_strings)}" )
 
             ################################ 1 ####################################
+            extr_strs = extr_gen()
+            co_sym = next(extr_strs)             # 1 : ticker symbol info / e.g "NWAU"
+            co_name = next(extr_strs)            # 2 : company name / e.g "Consumer Automotive Finance, Inc."
+            mini_chart = next(extr_strs)         # 3 : embeded mini GFX chart
+            price = next(extr_strs)              # 3 : price (Intraday) / e.g "0.0031"
+
+            ################################ 2 ####################################
 
             change_sign = next(extr_strs)        # 4 : test for dedicated column for +/- indicator
             logging.info( f"{cmi_debug} : {co_sym} : Check dedicated [+-] field for $ CHANGE" )
@@ -158,9 +140,9 @@ class y_daylosers:
                 change_val = next(extr_strs)                # 4 : Yes, advance iterator to next field (ignore dedciated sign field)
             else:
                 change_val = change_sign                    # 4 : get $ change, but its possibly +/- signed
-                if (re.search(r'\-', change_val)) or (re.search(r'\+', change_val)) is True:
+                if (re.search(r'\+', change_val)) or (re.search(r'\-', change_val)) is True:
                     logging.info( f"{cmi_debug} : {change_val} : $ CHANGE is signed [+-], stripping..." )
-                    change_cl = re.sub(r'[\-\+]', "", change_val)       # remove +/- sign
+                    change_cl = re.sub(r'[\+\-]', "", change_val)       # remove +/- sign
                     logging.info( f"%s : $ CHANGE +/- cleaned : {change_cl}" % cmi_debug )
                 else:
                     logging.info( f"{cmi_debug} : {change_val} : $ CHANGE is NOT signed [+-]" )
@@ -173,26 +155,23 @@ class y_daylosers:
                 pct_val = next(extr_strs)           # 5 : advance iterator to next field (ignore dedciated sign field)
             else:
                 pct_val = pct_sign                  # 5 get % change, but its possibly +/- signed
-                if (re.search(r'\-', pct_val)) or (re.search(r'\+', pct_val)) is True:
+                if (re.search(r'\+', pct_val)) or (re.search(r'\-', pct_val)) is True:
                     logging.info( f"{cmi_debug} : {pct_val} : % CHANGE is signed [+-], stripping..." )
-                    pct_cl = re.sub(r'[\-\+]', "", pct_val)       # remove +/- signs
+                    pct_cl = re.sub(r'[\+\-]', "", pct_val)       # remove +/- signs
                     logging.info( f"{cmi_debug} : % CHANGE +/- striped : {pct_cl}" )
 
-            pct_cl = re.sub(r'[\%]', "", pct_cl)       # remove +/- signs
-            logging.info( f"{cmi_debug} : % CHANGE ,/% striped : {pct_cl}" )
-
-            ################################ 2 ####################################
+            ################################ 3 ####################################
             vol = next(extr_strs)            # 6 : volume with scale indicator/ e.g "70.250k"
             avg_vol = next(extr_strs)        # 7 : Avg. vol over 3 months) / e.g "61,447"
             mktcap = next(extr_strs)         # 8 : Market cap with scale indicator / e.g "15.753B"
             peratio = next(extr_strs)        # 9 : PE ratio TTM (Trailing 12 months) / e.g "N/A"
             #mini_gfx = next(extr_strs)      # 10 : IGNORED = mini-canvas graphic 52-week rnage (no TXT/strings avail)
 
-            ################################ 3 ####################################
+            ################################ 4 ####################################
             # now wrangle the data...
             co_sym_lj = f"{co_sym:<6}"                                   # left justify TXT in DF & convert to raw string
             co_name_lj = np.array2string(np.char.ljust(co_name, 60) )    # left justify TXT in DF & convert to raw string
-            co_name_lj = (re.sub(r'[\'\"]', '', co_name_lj) )             # remove " ' and strip leading/trailing spaces    
+            co_name_lj = (re.sub(r'[\'\"]', '', co_name_lj) )             # remove " ' and strip leading/trailing spaces     
             price_cl = (re.sub(r'\,', '', price))                         # remove ,
             price_clean = float(price_cl)
             change_clean = float(change_val)
@@ -203,7 +182,7 @@ class y_daylosers:
                 pct_cl = re.sub(r'[\%\+\-,]', "", pct_val )
                 pct_clean = float(pct_cl)
 
-            ################################ 4 ####################################
+            ################################ 5 ####################################
             mktcap = (re.sub(r'[N\/A]', '0', mktcap))               # handle N/A
             TRILLIONS = re.search('T', mktcap)
             BILLIONS = re.search('B', mktcap)
@@ -230,7 +209,7 @@ class y_daylosers:
                 logging.info( f'%s : #{x} : {co_sym_lj} bad mktcap data N/A : Z' % cmi_debug )
                 # handle bad data in mktcap html page field
 
-            ################################ 5 ####################################
+            ################################ 6 ####################################
             # now construct our list for concatinating to the dataframe 
             logging.info( f"%s ============= Data prepared for DF =============" % cmi_debug )
 
@@ -245,7 +224,7 @@ class y_daylosers:
                        mb, \
                        time_now ]]
 
-            ################################ 6 ####################################
+            ################################ 7 ####################################
             self.df_1_row = pd.DataFrame(self.list_data, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time' ], index=[x] )
             self.tl_df0 = pd.concat([self.tl_df0, self.df_1_row])
             x+=1

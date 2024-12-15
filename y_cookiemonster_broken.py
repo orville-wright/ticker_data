@@ -38,8 +38,8 @@ class cookie_monster:
     yahoo_headers = { \
                         'authority': 'finance.yahoo.com', \
                         'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7', \
-                        'path': '/screener/predefined/day_gainers/', \
-                        'referer': 'https://finance.yahoo.com/screener/', \
+                        'path': '/markets/stocks/most-active/', \
+                        'referer': 'https://finance.yahoo.com/stocks', \
                         'sec-ch-ua': '"Google Chrome";v="123", "Not:A-Brand";v="8", "Chromium";v="123"', \
                         'sec-ch-ua-mobile': '"?0"', \
                         'sec-fetch-mode': 'navigate', \
@@ -52,7 +52,7 @@ class cookie_monster:
     def __init__(self, yti, path, global_args):
         self.yti = yti
         cmi_debug = __name__+"::"+self.__init__.__name__+".#"+str(self.yti)
-        logging.info( f'%s - Instantiate.#{yti}' % cmi_debug )
+        logging.info( f'%s - Instance.#{yti}' % cmi_debug )
         # init empty DataFrame with preset colum names
         self.args = global_args
         self.path = path
@@ -68,8 +68,7 @@ class cookie_monster:
     def form_url_endpoint(self):
         """
         NOTE: assumes that path header/cookie has been set first
-        URL endpoint examples...
-        /screener/predefined/small_cap_gainers/
+/screener/predefined/day_gainers/        /screener/predefined/small_cap_gainers/
         /quote/IBM/?p=IBM
         /quote/IBM/press-releases?p=IBM
         """

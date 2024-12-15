@@ -26,12 +26,12 @@ class y_topgainers:
     yti = 0
     cycle = 0            # class thread loop counter
 
-    dummy_url = "https://finance.yahoo.com/screener/predefined/day_gainers"
+    dummy_url = "https://finance.yahoo.com/markets/stocks/most-active/"
 
     yahoo_headers = { \
                         'authority': 'finance.yahoo.com', \
-                        'path': '/screener/predefined/day_gainers/', \
-                        'referer': 'https://finance.yahoo.com/screener/', \
+                        'path': '/markets/stocks/most-active/', \
+                        'referer': 'https://finance.yahoo.com/markets/', \
                         'sec-ch-ua': '"Google Chrome";v="123", "Not:A-Brand";v="8", "Chromium";v="123"', \
                         'sec-ch-ua-mobile': '"?0"', \
                         'sec-fetch-mode': 'navigate', \
@@ -41,7 +41,7 @@ class y_topgainers:
 
     def __init__(self, yti):
         cmi_debug = __name__+"::"+self.__init__.__name__
-        logging.info( f'%s - Instantiate.#{yti}' % cmi_debug )
+        logging.info( f'%s Instance.#{yti}' % cmi_debug )
         # init empty DataFrame with present colum names
         self.tg_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time'] )
         self.tg_df1 = pd.DataFrame(columns=[ 'ERank', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time'] )
@@ -64,46 +64,24 @@ class y_topgainers:
         Connect to finance.yahoo.com and extract (scrape) the raw string data out of
         the webpage data tables. Returns a BS4 handle.
         Send hint which engine processed & rendered the html page
-        0. Simple HTML engine
-        1. JAVASCRIPT HTML render engine (down redering a complex JS page in to simple HTML)
+        not implimented yet...
+            0. Simple HTML engine
+            1. JAVASCRIPT HTML render engine (down redering a complex JS page in to simple HTML)
         """
         self.yti = yti
         cmi_debug = __name__+"::"+self.ext_get_data.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         logging.info('%s - ext request pre-processed by cookiemonster...' % cmi_debug )
-        # use an existing resposne from a previously managed req (handled by cookie monster) 
+        # use preexisting resposne from  managed req (handled by cookie monster) 
         r = self.ext_req
         logging.info( f"%s - BS4 stream processing..." % cmi_debug )
         self.soup = BeautifulSoup(r.text, 'html.parser')
         self.tag_tbody = self.soup.find('tbody')
-        self.tr_rows = self.tag_tbody.find(attrs={"class": "simpTblRow"})
+        self.tr_rows = self.tag_tbody.find_all("tr")
         #self.all_tag_tr = self.soup.find(attrs={"class": "simpTblRow"})
         logging.info('%s Page processed by BS4 engine' % cmi_debug )
         return
     
-#######################################################################################    
-# method #3
-    def get_topg_data(self):
-        """Connect to finance.yahoo.com and extract (scrape) the raw sring data out of"""
-        """the embedded webpage [Stock:Top Day Gainers] html data table. Returns a BS4 handle."""
-
-        cmi_debug = __name__+"::"+self.get_topg_data.__name__+".#"+str(self.yti)
-        logging.info('%s - IN' % cmi_debug )
-
-        r = requests.get("https://finance.yahoo.com/screener/predefined/day_gainers/" )
-
-        logging.info('%s - read html stream' % cmi_debug )
-        self.soup = BeautifulSoup(r.text, 'html.parser')
-        # ATTR style search. Results -> Dict
-        # <tr tag in target merkup line has a very complex 'class=' but the attributes are unique. e.g. 'simpTblRow' is just one unique attribute
-        logging.info('%s - save data object handle' % cmi_debug )
-        self.tag_tbody = self.soup.find('tbody')
-        self.all_tag_tr = self.soup.find_all(attrs={"class": "simpTblRow"})   # simpTblRow
-
-        logging.info('%s - close url handle' % cmi_debug )
-        r.close()
-        return
-
 #######################################################################################
 # method #4
     def build_tg_df0(self):
@@ -119,26 +97,46 @@ class y_topgainers:
         self.tg_df0 = pd.DataFrame()             # new df, but is NULLed
         x = 0
         self.rows_extr = int( len(self.tag_tbody.find_all('tr')) )
+        self.rows_tr_rows = int( len(self.tr_rows) )
+        #logging.info( f'%s - Rows 1 extracted: {self.rows_extr}' % cmi_debug )
+        #logging.info( f'%s - Rows 2 extracted: {self.rows_tr_rows}' % cmi_debug )
 
-        for datarow in self.tag_tbody.find_all('tr'):
+        for datarow in self.tr_rows:
 
             """
-            # >>>DEBUG<< for when yahoo.com changes data model...
+            # >>>DEBUG<< for whedatarow.stripped_stringsn yahoo.com changes data model...
             y = 1
-            for i in datarow.find_all('td'):
-                print ( f"Data {y}: {i.text}" )
-                logging.info( f'%s - Data: {datarow.td.strings}' % cmi_debug )
+            print ( f"===================== Debug =========================" )
+            #print ( f"Data {y}: {datarow}" )
+            for i in datarow.find_all("td"):
+                print ( f"===================================================" )
+                if i.canvas is not None:
+                    print ( f"Data {y}: Found Canvas, skipping..." )
+                else:
+                    print ( f"Data {y}: {i.text}" )
+                    print ( f"Data g: {next(i.stripped_strings)}" )
+                #logging.info( f'%s - Data: {debug_data.strings}' % cmi_debug )
                 y += 1
-            print ( f"==============================================" )
+            print ( f"===================== Debug =========================" )
             # >>>DEBUG<< for when yahoo.com changes data model...
             """
+          
+            # Data Extractor Generator
+            def extr_gen(): 
+                for i in datarow.find_all("td"):
+                    if i.canvas is not None:
+                        yield ( f"canvas" )
+                    else:
+                        yield ( f"{next(i.stripped_strings)}" )
+
             ################################ 1 ####################################
-            extr_strs = datarow.strings
+            extr_strs = extr_gen()
             co_sym = next(extr_strs)             # 1 : ticker symbol info / e.g "NWAU"
             co_name = next(extr_strs)            # 2 : company name / e.g "Consumer Automotive Finance, Inc."
+            mini_chart = next(extr_strs)         # 3 : embeded mini GFX chart
             price = next(extr_strs)              # 3 : price (Intraday) / e.g "0.0031"
 
-            ################################ 1 ####################################
+            ################################ 2 ####################################
 
             change_sign = next(extr_strs)        # 4 : test for dedicated column for +/- indicator
             logging.info( f"{cmi_debug} : {co_sym} : Check dedicated [+-] field for $ CHANGE" )
@@ -166,17 +164,14 @@ class y_topgainers:
                     pct_cl = re.sub(r'[\+\-]', "", pct_val)       # remove +/- signs
                     logging.info( f"{cmi_debug} : % CHANGE +/- striped : {pct_cl}" )
 
-            pct_cl = re.sub(r'[\%]', "", pct_cl)       # remove +/- signs
-            logging.info( f"{cmi_debug} : % CHANGE ,/% striped : {pct_cl}" )
-
-            ################################ 2 ####################################
+            ################################ 3 ####################################
             vol = next(extr_strs)            # 6 : volume with scale indicator/ e.g "70.250k"
             avg_vol = next(extr_strs)        # 7 : Avg. vol over 3 months) / e.g "61,447"
             mktcap = next(extr_strs)         # 8 : Market cap with scale indicator / e.g "15.753B"
             peratio = next(extr_strs)        # 9 : PE ratio TTM (Trailing 12 months) / e.g "N/A"
             #mini_gfx = next(extr_strs)      # 10 : IGNORED = mini-canvas graphic 52-week rnage (no TXT/strings avail)
 
-            ################################ 3 ####################################
+            ################################ 4 ####################################
             # now wrangle the data...
             co_sym_lj = f"{co_sym:<6}"                                   # left justify TXT in DF & convert to raw string
             co_name_lj = np.array2string(np.char.ljust(co_name, 60) )    # left justify TXT in DF & convert to raw string
@@ -191,7 +186,7 @@ class y_topgainers:
                 pct_cl = re.sub(r'[\%\+\-,]', "", pct_val )
                 pct_clean = float(pct_cl)
 
-            ################################ 4 ####################################
+            ################################ 5 ####################################
             mktcap = (re.sub(r'[N\/A]', '0', mktcap))               # handle N/A
             TRILLIONS = re.search('T', mktcap)
             BILLIONS = re.search('B', mktcap)
@@ -218,7 +213,7 @@ class y_topgainers:
                 logging.info( f'%s : #{x} : {co_sym_lj} bad mktcap data N/A : Z' % cmi_debug )
                 # handle bad data in mktcap html page field
 
-            ################################ 5 ####################################
+            ################################ 6 ####################################
             # now construct our list for concatinating to the dataframe 
             logging.info( f"%s ============= Data prepared for DF =============" % cmi_debug )
 
@@ -311,4 +306,28 @@ class y_topgainers:
         logging.info('%s - IN' % cmi_debug )
         self.tg_df2 = self.tg_df2.append(self.tg_df1, ignore_index=False)    # merge top 10 into
         self.tg_df2.reset_index(inplace=True, drop=True)    # ensure index is allways unique + sequential
+        return
+
+# Possible depreicated and no longer used
+#######################################################################################    
+# method #3
+    def get_topg_data(self):
+        """Connect to finance.yahoo.com and extract (scrape) the raw sring data out of"""
+        """the embedded webpage [Stock:Top Day Gainers] html data table. Returns a BS4 handle."""
+
+        cmi_debug = __name__+"::"+self.get_topg_data.__name__+".#"+str(self.yti)
+        logging.info('%s - IN' % cmi_debug )
+
+        r = requests.get("https://finance.yahoo.com/screener/predefined/day_gainers/" )
+
+        logging.info('%s - read html stream' % cmi_debug )
+        self.soup = BeautifulSoup(r.text, 'html.parser')
+        # ATTR style search. Results -> Dict
+        # <tr tag in target merkup line has a very complex 'class=' but the attributes are unique. e.g. 'simpTblRow' is just one unique attribute
+        logging.info('%s - save data object handle' % cmi_debug )
+        self.tag_tbody = self.soup.find('tbody')
+        self.all_tag_tr = self.soup.find_all(attrs={"class": "simpTblRow"})   # simpTblRow
+
+        logging.info('%s - close url handle' % cmi_debug )
+        r.close()
         return
