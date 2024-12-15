@@ -139,31 +139,36 @@ class y_topgainers:
             ################################ 2 ####################################
 
             change_sign = next(extr_strs)        # 4 : test for dedicated column for +/- indicator
-            logging.info( f"{cmi_debug} : {co_sym} : Check dedicated [+-] field for $ CHANGE" )
+            logging.info( f"{cmi_debug} : {co_sym} : Check $ CHANGE dedicated [+-] field..." )
             if change_sign == "+" or change_sign == "-":    # 4 : is $ change sign [+/-] a dedciated field
-                change_val = next(extr_strs)                # 4 : Yes, advance iterator to next field (ignore dedciated sign field)
+                change_val = next(extr_strs)     # 4 : Yes, advance iterator to next field (ignore dedciated sign field)
             else:
-                change_val = change_sign                    # 4 : get $ change, but its possibly +/- signed
-                if (re.search(r'\+', change_val)) or (re.search(r'\-', change_val)) is True:
-                    logging.info( f"{cmi_debug} : {change_val} : $ CHANGE is signed [+-], stripping..." )
+                change_val = change_sign         # 4 : get $ change, but its possibly +/- signed
+                #if (re.search(r'\+', change_val)) or (re.search(r'\-', change_val)) is True:
+                if (re.search('\+', change_val)) or (re.search('\-', change_val)) is not None:
+                    logging.info( f"{cmi_debug} : $ CHANGE: {change_val} [+-], stripping..." )
                     change_cl = re.sub(r'[\+\-]', "", change_val)       # remove +/- sign
-                    logging.info( f"%s : $ CHANGE +/- cleaned : {change_cl}" % cmi_debug )
+                    logging.info( f"{cmi_debug} : $ CHANGE cleaned to: {change_cl}" )
                 else:
                     logging.info( f"{cmi_debug} : {change_val} : $ CHANGE is NOT signed [+-]" )
                     change_cl = re.sub(r'[\,]', "", change_val)       # remove
-                    logging.info( f"%s : $ CHANGE , cleaned : {change_cl}" % cmi_debug )
+                    logging.info( f"{cmi_debug} : $ CHANGE: {change_cl}" )
 
             pct_sign = next(extr_strs)              # 5 : test for dedicated column for +/- indicator
-            logging.info( f"{cmi_debug} : {co_sym} : Check dedicated [+-] field for % CHANGE" )
+            logging.info( f"{cmi_debug} : {co_sym} : Check % CHANGE dedicated [+-] field..." )
             if pct_sign == "+" or pct_sign == "-":  # 5 : is %_change sign [+/-] a dedciated field
                 pct_val = next(extr_strs)           # 5 : advance iterator to next field (ignore dedciated sign field)
             else:
                 pct_val = pct_sign                  # 5 get % change, but its possibly +/- signed
-                if (re.search(r'\+', pct_val)) or (re.search(r'\-', pct_val)) is True:
-                    logging.info( f"{cmi_debug} : {pct_val} : % CHANGE is signed [+-], stripping..." )
+                if (re.search(r'\+', pct_val)) or (re.search(r'\-', pct_val)) is not None:
+                    logging.info( f"{cmi_debug} : % CHANGE {pct_val} [+-], stripping..." )
                     pct_cl = re.sub(r'[\+\-]', "", pct_val)       # remove +/- signs
-                    logging.info( f"{cmi_debug} : % CHANGE +/- striped : {pct_cl}" )
-
+                    logging.info( f"{cmi_debug} : % CHANGE cleaned to: {pct_cl}" )
+                else:
+                    logging.info( f"{cmi_debug} : {pct_val} : % CHANGE is NOT signed [+-]" )
+                    change_cl = re.sub(r'[\,]', "", pct_val)       # remove
+                    logging.info( f"{cmi_debug} : % CHANGE: {pct_val}" )
+ 
             ################################ 3 ####################################
             vol = next(extr_strs)            # 6 : volume with scale indicator/ e.g "70.250k"
             avg_vol = next(extr_strs)        # 7 : Avg. vol over 3 months) / e.g "61,447"

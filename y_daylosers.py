@@ -140,7 +140,7 @@ class y_daylosers:
                 change_val = next(extr_strs)                # 4 : Yes, advance iterator to next field (ignore dedciated sign field)
             else:
                 change_val = change_sign                    # 4 : get $ change, but its possibly +/- signed
-                if (re.search(r'\+', change_val)) or (re.search(r'\-', change_val)) is True:
+                if (re.search(r'\+', change_val)) or (re.search(r'\-', change_val)) is not None:
                     logging.info( f"{cmi_debug} : {change_val} : $ CHANGE is signed [+-], stripping..." )
                     change_cl = re.sub(r'[\+\-]', "", change_val)       # remove +/- sign
                     logging.info( f"%s : $ CHANGE +/- cleaned : {change_cl}" % cmi_debug )
@@ -155,7 +155,7 @@ class y_daylosers:
                 pct_val = next(extr_strs)           # 5 : advance iterator to next field (ignore dedciated sign field)
             else:
                 pct_val = pct_sign                  # 5 get % change, but its possibly +/- signed
-                if (re.search(r'\+', pct_val)) or (re.search(r'\-', pct_val)) is True:
+                if (re.search(r'\+', pct_val)) or (re.search(r'\-', pct_val)) is not None:
                     logging.info( f"{cmi_debug} : {pct_val} : % CHANGE is signed [+-], stripping..." )
                     pct_cl = re.sub(r'[\+\-]', "", pct_val)       # remove +/- signs
                     logging.info( f"{cmi_debug} : % CHANGE +/- striped : {pct_cl}" )
