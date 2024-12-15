@@ -157,8 +157,12 @@ class y_daylosers:
                 pct_val = pct_sign                  # 5 get % change, but its possibly +/- signed
                 if (re.search(r'\+', pct_val)) or (re.search(r'\-', pct_val)) is not None:
                     logging.info( f"{cmi_debug} : {pct_val} : % CHANGE is signed [+-], stripping..." )
-                    pct_cl = re.sub(r'[\+\-]', "", pct_val)       # remove +/- signs
-                    logging.info( f"{cmi_debug} : % CHANGE +/- striped : {pct_cl}" )
+                    pct_cl = re.sub(r'[\+\-\%]', "", pct_val)       # remove +/-/% signs
+                    logging.info( f"{cmi_debug} : % CHANGE cleaned to: {pct_cl}" )
+                else:
+                    logging.info( f"{cmi_debug} : {pct_val} : % CHANGE is NOT signed [+-]" )
+                    change_cl = re.sub(r'[\,\%]', "", pct_val)       # remove
+                    logging.info( f"{cmi_debug} : % CHANGE: {pct_val}" )
 
             ################################ 3 ####################################
             vol = next(extr_strs)            # 6 : volume with scale indicator/ e.g "70.250k"
