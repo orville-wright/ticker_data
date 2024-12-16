@@ -82,7 +82,7 @@ class yfnews_reader:
 # method 1
     def share_hinter(self, hinst):
         cmi_debug = __name__+"::"+self.share_hinter.__name__+".#"+str(self.yti)
-        logging.info( f'%s - CALLED {type(hinst)}' % cmi_debug )
+        logging.info( f'%s - IN {type(hinst)}' % cmi_debug )
         self.uh = hinst
         return
 
@@ -195,6 +195,7 @@ class yfnews_reader:
 
 ###################################### 7 ###########################################
 # method 7
+# Possibly DEPRICATED - Delete me ?
     def do_simple_get(self):
         """
         get simple raw HTML data structure (data not processed by JAVAScript engine)
@@ -265,41 +266,51 @@ class yfnews_reader:
         logging.info( f"%s - URL hinter engine state: {type(self.uh)} " % cmi_debug )
         if scan_type == 0:    # Simple HTML BS4 scraper
             logging.info( '%s - Read HTML/json data using pre-init session: resp0' % cmi_debug )
-            self.soup = BeautifulSoup(self.yfn_htmldata, "html.parser")
-            self.ul_tag_dataset = self.soup.find(attrs={"class": "My(0) P(0) Wow(bw) Ov(h)"} )    # produces : list iterator
+            self.soup = BeautifulSoup(self.yfn_jsdata, "html.parser")
+            self.ul_tag_dataset = self.soup.find(attrs={"class": "container yf-1ce4p3e"} )        # produces : list iterator
+            #self.ul_tag_dataset = self.soup.find(attrs={"class": "My(0) P(0) Wow(bw) Ov(h)"} )    # produces : list iterator
             # Depth 0 element zones
+
             #li class = where the data is hiding
-            li_superclass_all = self.ul_tag_dataset.find_all(attrs={"class": "js-stream-content Pos(r)"} )
-            li_superclass_one = self.ul_tag_dataset.find(attrs={"class": "js-stream-content Pos(r)"} )
+            #li_superclass_all = self.ul_tag_dataset.find_all(attrs={"class": "js-stream-content Pos(r)"} )
+            li_superclass_all = self.ul_tag_dataset.find_all(attrs={"class": "stream-items yf-1usaaz9"} )
+            li_superclass_all = self.ul_tag_dataset.find(attrs={"class": "stream-item story-item yf-1usaaz9"} )
             li_subset_all = self.ul_tag_dataset.find_all('li')
             li_subset_one = self.ul_tag_dataset.find('li')
-            mini_headline_all = self.ul_tag_dataset.div.find_all(attrs={'class': 'C(#959595)'})
-            mini_headline_one = self.ul_tag_dataset.div.find(attrs={'class': 'C(#959595)'})
+
+            mini_headline_all = li_subset_all.h3.find_all(attrs={'class': 'clamp  yf-18q3fnf'})
+            mini_headline_one = li_subset_all.h3.find(attrs={'class': 'clamp  yf-18q3fnf'})
+            #mini_headline_all = self.ul_tag_dataset.div.find_all(attrs={'class': 'C(#959595)'})
         else:
             logging.info( '%s - Read JavaScript/json data using pre-init session: resp2' % cmi_debug )
             self.js_resp2.html.render()    # WARN: Assumes sucessfull JavaScript get was previously issued
             self.soup = BeautifulSoup(self.yfn_jsdata, "html.parser")
             logging.info('%s - save JavaScript-engine/json BS4 data handle' % cmi_debug )
-            self.ul_tag_dataset = self.soup.find(attrs={"class": "My(0) P(0) Wow(bw) Ov(h)"} )    # TODO: might be diff for JS engine output
+            self.ul_tag_dataset = self.soup.find(attrs={"class": "container yf-1ce4p3e"} )        # produces : list iterator
 
-        logging.info( f'%s - Found: datasets: {len(self.ul_tag_dataset)}' % cmi_debug )
-        logging.info( f'%s - dataset.children: {len(list(self.ul_tag_dataset.children))} / childrens.descendants: {len(list(self.ul_tag_dataset.descendants))}' % cmi_debug )
+        logging.info( f'%s - Found: News containers: {len(self.ul_tag_dataset)}' % cmi_debug )
+        logging.info( f'%s - Found: News children: {len(list(self.ul_tag_dataset.children))} / News Descendants: {len(list(self.ul_tag_dataset.descendants))}' % cmi_debug )
+
+        print ( f"### DEBUG: {self.ul_tag_dataset}")
 
         # >>Xray DEBUG<<
         if self.args['bool_xray'] is True:
             print ( f" " )
             x = y = 1
-            print ( f"=============== <li>.children / descendants ====================" )
-            for child in self.ul_tag_dataset.children:
-                print ( f"{x}: {child.name} / (potential good News article)" )
-                y += 1
-                for element in child.descendants:
-                    print ( f"{y}: {element.name} ", end="" )
+            print ( f"=============== <li> zone : {x} children+descendants ====================" )
+            for child in self.ul_tag_dataset.li:
+                if child.name is not None:
+                    print ( f"Zone: {x}: {child.name} / (potential News article)" )
                     y += 1
-                print ( f"\n==================== End <li> zone : {x} =========================" )
-                x += 1
-        print ( " " )
-
+                    for element in child.descendants:
+                        print ( f"{y}: {element.name} ", end="" )
+                        y += 1
+                    print ( f"\n==================== End <li> zone : {x} =========================" )
+                    x += 1
+                else:
+                    print ( f"Zone: {x}: Empty no article data" )
+                    print ( f"\n==================== End <li> zone : {x} =========================" )
+ 
         return
 
 ###################################### 10 ###########################################

@@ -20,8 +20,8 @@ from y_topgainers import y_topgainers
 
 # ML / NLP section #############################################################
 class ml_nlpreader:
-    """Class to identify, rank, classifcy, impactfully real stock docs to read and 
-    then read them.
+    """
+    Class to identify, rank, classifcy stocks to read
     """
 
     # global accessors

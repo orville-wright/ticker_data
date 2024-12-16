@@ -49,16 +49,14 @@ class y_topgainers:
         self.yti = yti
         return
 
-#######################################################################################
-
+#method 1
     def init_dummy_session(self):
         self.dummy_resp0 = requests.get(self.dummy_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
         hot_cookies = requests.utils.dict_from_cookiejar(self.dummy_resp0.cookies)
         #self.js_session.cookies.update({'A1': self.js_resp0.cookies['A1']} )    # yahoo cookie hack
         return
 
-#######################################################################################
-# method #1
+# method #2
     def ext_get_data(self, yti):
         """
         Connect to finance.yahoo.com and extract (scrape) the raw string data out of
@@ -82,8 +80,7 @@ class y_topgainers:
         logging.info('%s Page processed by BS4 engine' % cmi_debug )
         return
     
-#######################################################################################
-# method #4
+# method #3
     def build_tg_df0(self):
         """
         Build-out a fully populated Pandas DataFrame containg all the extracted/scraped fields from the
@@ -242,19 +239,7 @@ class y_topgainers:
         return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
                         # sucess = lobal class accessor (y_toplosers.tg_df0) populated & updated
 
-#########################################################################################
-# method #5
-# Hacking function - keep me arround for a while
-    def prog_bar(self, x, y):
-        """simple progress dialogue function"""
-        if x % y == 0:
-            print ( " " )
-        else:
-            print ( ".", end="" )
-        return
-
-####################################################################################
-# method #6
+# method #4
     def topg_listall(self):
         """Print the full DataFrame table list of Yahoo Finance Top Gainers"""
         """Sorted by % Change"""
@@ -266,8 +251,7 @@ class y_topgainers:
         print ( self.tg_df0.sort_values(by='Pct_change', ascending=False ) )    # only do after fixtures datascience dataframe has been built
         return
 
-####################################################################################
-# method #7
+# method #5
     def build_top10(self):
         """
         Get top gainers from main DF (df0) -> temp DF (df1)
@@ -285,8 +269,7 @@ class y_topgainers:
         self.tg_df1.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
         return
 
-####################################################################################
-# method #8
+# method #6
     def print_top10(self):
         """
         Prints the Top 10 Dataframe
@@ -301,8 +284,7 @@ class y_topgainers:
         print ( f"{self.tg_df1.sort_values(by='Pct_change', ascending=False ).head(self.rows_extr)}" )
         return
 
-####################################################################################
-# method #9
+# method #7
     def build_tenten60(self, cycle):
         """Build-up 10x10x060 historical DataFrame (df2) from source df1"""
         """Generally called on some kind of cycle"""
@@ -311,28 +293,4 @@ class y_topgainers:
         logging.info('%s - IN' % cmi_debug )
         self.tg_df2 = self.tg_df2.append(self.tg_df1, ignore_index=False)    # merge top 10 into
         self.tg_df2.reset_index(inplace=True, drop=True)    # ensure index is allways unique + sequential
-        return
-
-# Possible depreicated and no longer used
-#######################################################################################    
-# method #3
-    def get_topg_data(self):
-        """Connect to finance.yahoo.com and extract (scrape) the raw sring data out of"""
-        """the embedded webpage [Stock:Top Day Gainers] html data table. Returns a BS4 handle."""
-
-        cmi_debug = __name__+"::"+self.get_topg_data.__name__+".#"+str(self.yti)
-        logging.info('%s - IN' % cmi_debug )
-
-        r = requests.get("https://finance.yahoo.com/screener/predefined/day_gainers/" )
-
-        logging.info('%s - read html stream' % cmi_debug )
-        self.soup = BeautifulSoup(r.text, 'html.parser')
-        # ATTR style search. Results -> Dict
-        # <tr tag in target merkup line has a very complex 'class=' but the attributes are unique. e.g. 'simpTblRow' is just one unique attribute
-        logging.info('%s - save data object handle' % cmi_debug )
-        self.tag_tbody = self.soup.find('tbody')
-        self.all_tag_tr = self.soup.find_all(attrs={"class": "simpTblRow"})   # simpTblRow
-
-        logging.info('%s - close url handle' % cmi_debug )
-        r.close()
         return

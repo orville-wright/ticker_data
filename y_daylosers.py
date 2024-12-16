@@ -12,7 +12,6 @@ import types
 import inspect
 from rich import print
 
-# logging setup
 logging.basicConfig(level=logging.INFO)
 
 #####################################################
@@ -51,15 +50,15 @@ class y_daylosers:
         self.yti = yti
         return
 
-#######################################################################################
+
+# method #1
     def init_dummy_session(self):
         self.dummy_resp0 = requests.get(self.dummy_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
         hot_cookies = requests.utils.dict_from_cookiejar(self.dummy_resp0.cookies)
         #self.js_session.cookies.update({'A1': self.js_resp0.cookies['A1']} )    # yahoo cookie hack
         return
 
-#######################################################################################
-# method #1
+# method #2
     def ext_get_data(self, yti):
         """
         Connect to finance.yahoo.com and extract (scrape) the raw string data out of
@@ -81,8 +80,7 @@ class y_daylosers:
         logging.info('%s Page processed by BS4 engine' % cmi_debug )
         return
 
-#######################################################################################
-# method #4
+# method #3
     def build_tl_df0(self):
         """
         Build-out a fully populated Pandas DataFrame containg all the extracted/scraped fields from the
@@ -237,19 +235,7 @@ class y_daylosers:
         return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
                         # sucess = lobal class accessor (y_topgainers.*_df0) populated & updated
 
-####################################################################################
-# method #5
-# Hacking function - keep me arround for a while
-    def prog_bar(self, x, y):
-        """simple progress dialogue function"""
-        if x % y == 0:
-            print ( " " )
-        else:
-            print ( ".", end="" )
-        return
-
-####################################################################################
-# method #6
+# method #4
     def topg_listall(self):
         """
         Print the full DataFrame table list of Yahoo Finance Top loserers
@@ -263,8 +249,7 @@ class y_daylosers:
         print ( self.tl_df0.sort_values(by='Pct_change', ascending=False ) )    # only do after fixtures datascience dataframe has been built
         return
 
-####################################################################################
-# method #7
+# method #5
     def build_top10(self):
         """
         Get top 10 loserers from main DF (df0) -> temp DF (df1)
@@ -282,8 +267,7 @@ class y_daylosers:
         self.tl_df1.reset_index(inplace=True, drop=True)    # reset index each time so its guaranteed sequential
         return
 
-####################################################################################
-# method #8
+# method #6
     def print_top10(self):
         """
         Prints the Top 10 Dataframe
@@ -297,8 +281,7 @@ class y_daylosers:
         print ( f"{self.tl_df1.sort_values(by='Pct_change', ascending=False ).head(self.rows_extr)}" )
         return
 
-####################################################################################
-# method #9
+# method #7
     def build_tenten60(self, cycle):
         """
         Build-up 10x10x060 historical DataFrame (df2) from source df1
