@@ -38,6 +38,7 @@ class yfnews_reader:
     ml_brief = []           # ML TXT matrix for Naieve Bayes Classifier pre Count Vectorizer
     ml_ingest = {}          # ML ingested NLP candidate articles
     ul_tag_dataset = ""     # BS4 handle of the <tr> extracted data
+    li_superclass = ""      # all possible News articles
     yfn_df0 = ""            # DataFrame 1
     yfn_df1 = ""            # DataFrame 2
     yti = 0                 # Unique instance identifier
@@ -194,32 +195,6 @@ class yfnews_reader:
         return
 
 ###################################### 7 ###########################################
-# method 7
-# Possibly DEPRICATED - Delete me ?
-    def do_simple_get(self):
-        """
-        get simple raw HTML data structure (data not processed by JAVAScript engine)
-        NOTE: get URL is assumed to have allready been set (self.yfqnews_url)
-              Assumes cookies have already been set up. NO cookie update done here
-        """
-        cmi_debug = __name__+"::"+self.do_simple_get.__name__+".#"+str(self.yti)
-        logging.info( f'%s - Simple HTML request get() on URL: {self.yfqnews_url}' % cmi_debug )
-        with self.js_session.get(self.yfqnews_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
-            logging.info('%s - Simple HTML Request get() completed!- store HTML response dataset' % cmi_debug )
-            self.yfn_htmldata = self.js_resp0.text
-            # On success, HTML response is saved in Class Global accessor -> self.js_resp0
-            # TODO: should do some get() failure testing here
-
-        # Xray DEBUG
-        if self.args['bool_xray'] is True:
-            print ( f"========================== {self.yti} / HTML get() session cookies ================================" )
-            for i in self.js_session.cookies.items():
-                print ( f"{i}" )
-            print ( f"========================== {self.yti} / HTML get() session cookies ================================" )
-
-        return
-
-###################################### 8 ###########################################
 # method 8
     def do_js_get(self):
         """
@@ -246,7 +221,7 @@ class yfnews_reader:
 
         return
 
-###################################### 9 ###########################################
+###################################### 8 ###########################################
 # method 9
 # session data extraction methods
     def scan_news_feed(self, symbol, depth, scan_type):
@@ -268,44 +243,38 @@ class yfnews_reader:
             logging.info( '%s - Read HTML/json data using pre-init session: resp0' % cmi_debug )
             self.soup = BeautifulSoup(self.yfn_jsdata, "html.parser")
             self.ul_tag_dataset = self.soup.find(attrs={"class": "container yf-1ce4p3e"} )        # produces : list iterator
-            #self.ul_tag_dataset = self.soup.find(attrs={"class": "My(0) P(0) Wow(bw) Ov(h)"} )    # produces : list iterator
             # Depth 0 element zones
-
-            #li class = where the data is hiding
-            #li_superclass_all = self.ul_tag_dataset.find_all(attrs={"class": "js-stream-content Pos(r)"} )
-            li_superclass_all = self.ul_tag_dataset.find_all(attrs={"class": "stream-items yf-1usaaz9"} )
-            li_superclass_all = self.ul_tag_dataset.find(attrs={"class": "stream-item story-item yf-1usaaz9"} )
+            #li classis= where the News Items data is hiding
+            li_superclass = self.ul_tag_dataset.find_all("ul")
+            li_superclass = self.ul_tag_dataset.find_all(attrs={"stream-item story-item yf-1usaaz9"} )
             li_subset_all = self.ul_tag_dataset.find_all('li')
-            li_subset_one = self.ul_tag_dataset.find('li')
-
-            mini_headline_all = li_subset_all.h3.find_all(attrs={'class': 'clamp  yf-18q3fnf'})
-            mini_headline_one = li_subset_all.h3.find(attrs={'class': 'clamp  yf-18q3fnf'})
-            #mini_headline_all = self.ul_tag_dataset.div.find_all(attrs={'class': 'C(#959595)'})
         else:
             logging.info( '%s - Read JavaScript/json data using pre-init session: resp2' % cmi_debug )
             self.js_resp2.html.render()    # WARN: Assumes sucessfull JavaScript get was previously issued
             self.soup = BeautifulSoup(self.yfn_jsdata, "html.parser")
             logging.info('%s - save JavaScript-engine/json BS4 data handle' % cmi_debug )
             self.ul_tag_dataset = self.soup.find(attrs={"class": "container yf-1ce4p3e"} )        # produces : list iterator
+            self.li_superclass = self.ul_tag_dataset.find_all(attrs={"stream-item story-item yf-1usaaz9"} )
 
-        logging.info( f'%s - Found: News containers: {len(self.ul_tag_dataset)}' % cmi_debug )
-        logging.info( f'%s - Found: News children: {len(list(self.ul_tag_dataset.children))} / News Descendants: {len(list(self.ul_tag_dataset.descendants))}' % cmi_debug )
-
-        print ( f"### DEBUG: {self.ul_tag_dataset}")
-
+        logging.info( f'%s - Depth: 0 / Found: News containers: {len(self.ul_tag_dataset)}' % cmi_debug )
+        logging.info( f'%s - Depth: 0 / Found: News Tags: {len(list(self.ul_tag_dataset.children))} / Tags: {len(list(self.ul_tag_dataset.descendants))}' % cmi_debug )
+        logging.info( f'%s - Depth: 0 / Found: News Articles: {len(self.li_superclass)}' % cmi_debug)
+ 
         # >>Xray DEBUG<<
         if self.args['bool_xray'] is True:
             print ( f" " )
             x = y = 1
             print ( f"=============== <li> zone : {x} children+descendants ====================" )
-            for child in self.ul_tag_dataset.li:
+            for child in self.li_superclass:
                 if child.name is not None:
-                    print ( f"Zone: {x}: {child.name} / (potential News article)" )
+                    print ( f"Zone: {x}: {child.h3.text} / (potential News article)" )
                     y += 1
+                    """
                     for element in child.descendants:
                         print ( f"{y}: {element.name} ", end="" )
                         y += 1
-                    print ( f"\n==================== End <li> zone : {x} =========================" )
+                    """
+                    print ( f"==================== End <li> zone : {x} =========================" )
                     x += 1
                 else:
                     print ( f"Zone: {x}: Empty no article data" )
@@ -313,7 +282,7 @@ class yfnews_reader:
  
         return
 
-###################################### 10 ###########################################
+###################################### 9 ###########################################
 # method 10
     def eval_article_tags(self, symbol):
         """
@@ -347,10 +316,13 @@ class yfnews_reader:
         self.article_teaser ="ERROR_default_data_0"
         ml_atype = 0
 
-        for li_tag in li_subset_all:                         # <li> is where the new articels hide
+        for li_tag in self.li_superclass:                    # <li> is where the new articels hide
             self.nlp_x += 1                                  # counter = which article we are looking at
             for element in li_tag.descendants:               # walk the full tag tree recurisvely
-                    if element.name == "a":a_counter += 1    # can do more logic tests in here if needed
+                    if element.name == "a":                  # Tag <a>
+                        a_counter += 1                       # can do more logic tests in here if needed
+                        logging.info( f'%s - News article: {a_counter}' % (cmi_debug) )      # good new zrticle found
+
             if a_counter == 0:
                 logging.info( f'%s - li count: {a_counter}' % (cmi_debug) )                  # good new zrticle found
                 print ( f"Empty news page - NO NEWS found" )
@@ -682,5 +654,30 @@ class yfnews_reader:
                 print ( f"          External: {d['exturl']}" )
             else:
                 print ( f"          Local:    {d['url']}" )
+
+        return
+
+# method 7
+# Possibly DEPRICATED - Delete me ?
+    def do_simple_get(self):
+        """
+        get simple raw HTML data structure (data not processed by JAVAScript engine)
+        NOTE: get URL is assumed to have allready been set (self.yfqnews_url)
+              Assumes cookies have already been set up. NO cookie update done here
+        """
+        cmi_debug = __name__+"::"+self.do_simple_get.__name__+".#"+str(self.yti)
+        logging.info( f'%s - Simple HTML request get() on URL: {self.yfqnews_url}' % cmi_debug )
+        with self.js_session.get(self.yfqnews_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
+            logging.info('%s - Simple HTML Request get() completed!- store HTML response dataset' % cmi_debug )
+            self.yfn_htmldata = self.js_resp0.text
+            # On success, HTML response is saved in Class Global accessor -> self.js_resp0
+            # TODO: should do some get() failure testing here
+
+        # Xray DEBUG
+        if self.args['bool_xray'] is True:
+            print ( f"========================== {self.yti} / HTML get() session cookies ================================" )
+            for i in self.js_session.cookies.items():
+                print ( f"{i}" )
+            print ( f"========================== {self.yti} / HTML get() session cookies ================================" )
 
         return
