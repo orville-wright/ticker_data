@@ -319,14 +319,44 @@ class yfnews_reader:
         for li_tag in self.li_superclass:                    # <li> is where the new articels hide
             self.nlp_x += 1                                  # counter = which article we are looking at
             for element in li_tag.descendants:               # walk the full tag tree recurisvely
-                    if element.name == "a":                  # Tag <a>
+                    if element.name == "a":                  # only intersted in Tags: <a> & <p> as this is where the date is
                         a_counter += 1                       # can do more logic tests in here if needed
-                        logging.info( f'%s - News article: {a_counter}' % (cmi_debug) )      # good new zrticle found
+                        logging.info( f'%s - A zone: {a_counter}' % (cmi_debug) )      # good new zrticle found
+                    if element.h3 is not None:
+                        logging.info( f'%s - Article found: {element.h3.text}' % (cmi_debug) )
+                        logging.info( f'%s - Article found: {element.href}' % (cmi_debug) )
+                        logging.info( f'%s - Article found: {element.p.text}' % (cmi_debug) )
 
             if a_counter == 0:
                 logging.info( f'%s - li count: {a_counter}' % (cmi_debug) )                  # good new zrticle found
-                print ( f"Empty news page - NO NEWS found" )
+                print ( f"Empty news page - No A zone found" )
                 break
+
+##hacking   
+            for xa in li_tag.find_all('a'):
+                print ( f"======================= 0 ===========================" )
+                print ( f"!### DEBUG: {xa} ")
+
+
+            def atag_gen():
+                for xa in li_tag.find_all('a'):
+                    yield ( f"{xa}" )
+
+            scan_a_zone = atag_gen()
+            print ( f"======================== 1 ==========================" )
+            #print ( f"!### DEBUG: generator: {scan_a_zone}" )
+            print ( f"========================= 2 =========================" )
+            print ( f"!### DEBUG: {next(scan_a_zone)} ")
+            print ( f"========================= 3 =========================" )
+            print ( f"!### DEBUG: {next(scan_a_zone)} ")
+            print ( f"========================== 4 ========================" )
+            print ( f"!### DEBUG: {next(scan_a_zone)} ")
+            print ( f"=========================== 5 =======================" )
+            print ( f"!### DEBUG: {next(scan_a_zone)} ")
+            print ( f"============================ 6 ======================" )
+            print ( f"!### DEBUG: {next(scan_a_zone)} ")
+            print ( f"==================================================" )
+            
 
         ################## key logic decisions made below ###################
             if a_counter > 0 and a_counter <= 3:
