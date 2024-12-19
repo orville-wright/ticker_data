@@ -338,8 +338,9 @@ class yfnews_reader:
         try:
             cg = 1
             while True:
+                self.article_teaser = next(scan_a_zone)
                 print ( f"========================= {cg} =========================" )
-                print ( f"{next(scan_a_zone)} ")
+                print ( f"{self.article_teaser} ")
                 cg += 1
 
                 self.article_url = next(scan_a_zone)
@@ -351,19 +352,24 @@ class yfnews_reader:
                 for safety_cycle in range(1):    # ABUSE for/loop BREAK as logic control exit (poor mans switch/case)
                     if self.a_urlp.scheme == "https" or self.a_urlp.scheme == "http":    # check URL scheme specifier
                         uhint, uhdescr = self.uh.uhinter(hcycle, self.article_url)    # raw url string
-                        logging.info( f'%s - Logic.#1 Pure-Abs url {uhint} {self.a_urlp.netloc} / {uhdescr}' % (cmi_debug) )
+                        logging.info( f'%s - Good url [{self.a_urlp.netloc}] / u:{uhint} / {uhdescr}' % (cmi_debug) )
                         pure_url = 1    # explicit pure URL to remote entity
-                        inf_type = self.uh.confidence_lvl(thint)                # return var is tuple
+                        if uhint == 0: thint = 1.0      # real news / remote-stub @ YFN stub
+                        if uhint == 1: thint = 0.0      # real news / local page
+                        if uhint == 2: thint = 4.0      # video (currently / FOR NOW, assume all videos are locally hosted on finanice.yahoo.com
+                        if uhint == 3: thint = 1.1      # shoudl never trigger here - see abive... <Pure-Abs url>
+                        if uhint == 4: thint = 7.0      # research report / FOR NOW, assume all research reports are locally hosted on finanice.yahoo.com
+                        inf_type = self.uh.confidence_lvl(thint)  # my private look-up / returns a tuple
                         #news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
+                        self.article_teaser ="ERROR_default_data_0"
                         ml_atype = 0
-                        thint = 1.1
                         hcycle += 1
                         break
                     else:
                         self.a_url = f"https://finance.yahoo.com{self.article_url}"
                         self.a_urlp = urlparse(self.a_url)
                         self.url_netloc = self.a_urlp.netloc      # FQDN netloc
-                        logging.info( f'%s - Logic.#2 / Origin url: {self.a_urlp.netloc}' % (cmi_debug) )
+                        logging.info( f'%s - Origin url: {self.a_urlp.netloc}' % (cmi_debug) )
                         uhint, uhdescr = self.uh.uhinter(hcycle, self.a_urlp)          # urlparse named tuple
                         if uhint == 0: thint = 1.0      # real news / remote-stub @ YFN stub
                         if uhint == 1: thint = 0.0      # real news / local page
@@ -378,7 +384,7 @@ class yfnews_reader:
                         hcycle += 1
                         break       # ...need 1 more level of analysis analysis to get headline & teaser text
 
-                print ( f"================= Article {x} / {symbol} / Depth 1 ==========================" )
+                print ( f"================= Article {x} / {symbol} / Depth 1" )
                 print ( f"News item:        {self.cycle}: {inf_type[0]} / Origin conf Indctrs [ t:{ml_atype} u:{uhint} h:{thint} ]" )
                 print ( f"News agency:      {news_agency}" )
                 print ( f"News origin:      {self.url_netloc}" )

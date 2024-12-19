@@ -59,7 +59,7 @@ parser.add_argument('-x','--xray', help='dump detailed debug data structures', a
 # Threading globals
 extract_done = threading.Event()
 yti = 1
-#uh = url_hinter(1, args)        # anyone needs to be able to get hints on a URL from anywhere
+uh = url_hinter(1, args)        # anyone needs to be able to get hints on a URL from anywhere
 
 #######################################################################
 # Global method for __main__
