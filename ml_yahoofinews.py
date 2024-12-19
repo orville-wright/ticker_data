@@ -316,48 +316,99 @@ class yfnews_reader:
         self.article_teaser ="ERROR_default_data_0"
         ml_atype = 0
 
-        for li_tag in self.li_superclass:                    # <li> is where the new articels hide
-            self.nlp_x += 1                                  # counter = which article we are looking at
-            for element in li_tag.descendants:               # walk the full tag tree recurisvely
-                    if element.name == "a":                  # only intersted in Tags: <a> & <p> as this is where the date is
-                        a_counter += 1                       # can do more logic tests in here if needed
-                        logging.info( f'%s - A zone: {a_counter}' % (cmi_debug) )      # good new zrticle found
+        ##hacking 
+        # # soup.find_all("a", attrs={"class": "sister"})
+        # ('a[href]')
+
+        ####################### Scan tags ########################################
+        def atag_gen():   # generator to extract H3 title and URL link to article
+            a_counter = 0
+            for li_tag in self.li_superclass:
+                self.nlp_x += 1
+                for element in li_tag.descendants:
+                    if element.name == "a":
+                        a_counter += 1
                         if element.h3 is not None:
-                            logging.info( f'%s - A zone Article: {element.h3.text}' % (cmi_debug) )
-                            if  element.has_attr('href') is True:
-                                #li_tag.a.get("href")
-                                logging.info( f'%s - A zone Href: {element.get("href")}' % (cmi_debug) )
+                            yield ( f"ZONE : {a_counter} : ATITLE : {element.h3.text}" )
+                            if element.has_attr('href') is True:
+                                #yield ( f'ZONE : {a_counter} : H3URL : {element.get("href")}' )
+                                yield ( f'{element.get("href")}' )
 
-            if a_counter == 0:
-                logging.info( f'%s - li count: {a_counter}' % (cmi_debug) )                  # good new zrticle found
-                print ( f"Empty news page - No A zone found" )
-                break
+        scan_a_zone = atag_gen()
+        try:
+            cg = 1
+            while True:
+                print ( f"========================= {cg} =========================" )
+                print ( f"{next(scan_a_zone)} ")
+                cg += 1
 
-        ####################### end scann ########################
+                self.article_url = next(scan_a_zone)
+                self.a_urlp = urlparse(self.article_url)
+                #news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
+                news_agency ="ERROR_default_data_1"
+                inf_type = "Undefined"
 
-##hacking 
-# # soup.find_all("a", attrs={"class": "sister"})
-# ('a[href]')
-            def atag_gen():
-                for xa in li_tag.find_all('a'):
-                    yield ( f"{xa}" )
+                for safety_cycle in range(1):    # ABUSE for/loop BREAK as logic control exit (poor mans switch/case)
+                    if self.a_urlp.scheme == "https" or self.a_urlp.scheme == "http":    # check URL scheme specifier
+                        uhint, uhdescr = self.uh.uhinter(hcycle, self.article_url)    # raw url string
+                        logging.info( f'%s - Logic.#1 Pure-Abs url {uhint} {self.a_urlp.netloc} / {uhdescr}' % (cmi_debug) )
+                        pure_url = 1    # explicit pure URL to remote entity
+                        inf_type = self.uh.confidence_lvl(thint)                # return var is tuple
+                        #news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
+                        ml_atype = 0
+                        thint = 1.1
+                        hcycle += 1
+                        break
+                    else:
+                        self.a_url = f"https://finance.yahoo.com{self.article_url}"
+                        self.a_urlp = urlparse(self.a_url)
+                        self.url_netloc = self.a_urlp.netloc      # FQDN netloc
+                        logging.info( f'%s - Logic.#2 / Origin url: {self.a_urlp.netloc}' % (cmi_debug) )
+                        uhint, uhdescr = self.uh.uhinter(hcycle, self.a_urlp)          # urlparse named tuple
+                        if uhint == 0: thint = 1.0      # real news / remote-stub @ YFN stub
+                        if uhint == 1: thint = 0.0      # real news / local page
+                        if uhint == 2: thint = 4.0      # video (currently / FOR NOW, assume all videos are locally hosted on finanice.yahoo.com
+                        if uhint == 3: thint = 1.1      # shoudl never trigger here - see abive... <Pure-Abs url>
+                        if uhint == 4: thint = 7.0      # research report / FOR NOW, assume all research reports are locally hosted on finanice.yahoo.com
+                        pure_url = 0                    # locally hosted entity
+                        ml_atype = 0                    # Real news
+                        inf_type = self.uh.confidence_lvl(thint)                # return var is tuple
+                        #news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
+                        # cant grab news agency / teaser yet, b/c we dont knonw the struct of this article (just its type)
+                        hcycle += 1
+                        break       # ...need 1 more level of analysis analysis to get headline & teaser text
 
-            scan_a_zone = atag_gen()
-            print ( f"======================== 1 ==========================" )
-            #print ( f"!### DEBUG: generator: {scan_a_zone}" )
-            print ( f"========================= 2 =========================" )
-            print ( f"!### DEBUG: {next(scan_a_zone)} ")
-            print ( f"========================= 3 =========================" )
-            print ( f"!### DEBUG: {next(scan_a_zone)} ")
-            print ( f"========================== 4 ========================" )
-            print ( f"!### DEBUG: {next(scan_a_zone)} ")
-            print ( f"=========================== 5 =======================" )
-            print ( f"!### DEBUG: {next(scan_a_zone)} ")
-            print ( f"============================ 6 ======================" )
-            print ( f"!### DEBUG: {next(scan_a_zone)} ")
-            print ( f"==================================================" )
-            
+                print ( f"================= Article {x} / {symbol} / Depth 1 ==========================" )
+                print ( f"News item:        {self.cycle}: {inf_type[0]} / Origin conf Indctrs [ t:{ml_atype} u:{uhint} h:{thint} ]" )
+                print ( f"News agency:      {news_agency}" )
+                print ( f"News origin:      {self.url_netloc}" )
+                print ( f"Article URL:      {self.article_url}" )
+                #print ( f"Article headline: {article_headline}" )
+                print ( f"Article teaser:   {self.article_teaser}" )
 
+                self.ml_brief.append(self.article_teaser)           # add Article teaser long TXT into ML pre count vectorizer matrix
+                auh = hashlib.sha256(self.article_url.encode())     # hash the url
+                aurl_hash = auh.hexdigest()
+                print ( f"Unique url hash:  {aurl_hash}" )
+
+                # build NLP candidate dict for deeper pre-NLP article analysis in Level 1
+                # ONLY insert type 0, 1 articels as NLP candidates. Bulk injected ads are excluded (pointless)
+                nd = {
+                    "symbol" : symbol,
+                    "urlhash" : aurl_hash,
+                    "type" : ml_atype,
+                    "thint" : thint,
+                    "uhint" : uhint,
+                    "url" : self.a_urlp.scheme+"://"+self.a_urlp.netloc+self.a_urlp.path
+                    }
+                self.ml_ingest.update({self.nlp_x : nd})
+
+        except StopIteration:
+            pass
+
+        return
+
+    """
         ################## key logic decisions made below ###################
             if a_counter > 0 and a_counter <= 3:
                 logging.info( f'%s - Tag <li> count: {a_counter}' % (cmi_debug) )        # good new zrticle found
@@ -451,7 +502,7 @@ class yfnews_reader:
                     "thint" : thint,
                     "uhint" : uhint,
                     "url" : self.a_urlp.scheme+"://"+self.a_urlp.netloc+self.a_urlp.path
-            		}
+                    }
                 self.ml_ingest.update({self.nlp_x : nd})
 
             else:
@@ -472,6 +523,7 @@ class yfnews_reader:
             self.cycle += 1
 
         return
+    """
 
 ###################################### 11 ###########################################
 # method 11
