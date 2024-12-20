@@ -341,7 +341,7 @@ class yfnews_reader:
             while True:
                 li_a_zone = next(scan_a_zone)
                 self.article_teaser = next(scan_a_zone)
-                print ( f"================== Article: [{cg}] / A-Zone: [{li_a_zone}] ==================" )
+                print ( f"================== Article: [ {cg} ] / A-Zone: [ {li_a_zone} ] ==================" )
 
                 self.article_url = next(scan_a_zone)
                 self.a_urlp = urlparse(self.article_url)
@@ -360,6 +360,7 @@ class yfnews_reader:
                         if uhint == 3: thint = 1.1      # shoudl never trigger here - see abive... <Pure-Abs url>
                         if uhint == 4: thint = 7.0      # research report / FOR NOW, assume all research reports are locally hosted on finanice.yahoo.com
                         inf_type = self.uh.confidence_lvl(thint)  # my private look-up / returns a tuple
+                        self.url_netloc = self.a_urlp.netloc      # get FQDN netloc
                         #news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
                         ml_atype = 0
                         hcycle += 1
@@ -367,7 +368,7 @@ class yfnews_reader:
                     else:
                         self.a_url = f"https://finance.yahoo.com{self.article_url}"
                         self.a_urlp = urlparse(self.a_url)
-                        self.url_netloc = self.a_urlp.netloc      # FQDN netloc
+                        self.url_netloc = self.a_urlp.netloc      # get FQDN netloc
                         logging.info( f'%s - Origin url: {self.a_urlp.netloc}' % (cmi_debug) )
                         uhint, uhdescr = self.uh.uhinter(hcycle, self.a_urlp)          # urlparse named tuple
                         if uhint == 0: thint = 1.0      # real news / remote-stub @ YFN stub
@@ -383,8 +384,8 @@ class yfnews_reader:
                         hcycle += 1
                         break       # ...need 1 more level of analysis analysis to get headline & teaser text
 
-                print ( f"{symbol} Article:     {cg} / Depth 1" )
-                print ( f"News item:        {self.cycle}: {inf_type[0]} / Origin conf Indctrs [ t:{ml_atype} u:{uhint} h:{thint} ]" )
+                print ( f"New article:      {symbol} / [ {cg} ] / Depth 1" )
+                print ( f"News item:        {self.cycle}: {inf_type[0]} / Origin confidence: [ t:{ml_atype} u:{uhint} h:{thint} ]" )
                 print ( f"News agency:      {news_agency}" )
                 print ( f"News origin:      {self.url_netloc}" )
                 print ( f"Article URL:      {self.article_url}" )
