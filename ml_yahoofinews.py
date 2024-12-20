@@ -366,7 +366,6 @@ class yfnews_reader:
                         if uhint == 4: thint = 7.0      # research report / FOR NOW, assume all research reports are locally hosted on finanice.yahoo.com
                         inf_type = self.uh.confidence_lvl(thint)  # my private look-up / returns a tuple
                         self.url_netloc = self.a_urlp.netloc      # get FQDN netloc
-                        #news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
                         ml_atype = 0
                         hcycle += 1
                         break
@@ -384,8 +383,6 @@ class yfnews_reader:
                         pure_url = 0                    # locally hosted entity
                         ml_atype = 0                    # Real news
                         inf_type = self.uh.confidence_lvl(thint)                # return var is tuple
-                        #news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
-                        # cant grab news agency / teaser yet, b/c we dont knonw the struct of this article (just its type)
                         hcycle += 1
                         break       # ...need 1 more level of analysis analysis to get headline & teaser text
 
@@ -412,7 +409,8 @@ class yfnews_reader:
                     "thint" : thint,
                     "uhint" : uhint,
                     "url" : self.a_urlp.scheme+"://"+self.a_urlp.netloc+self.a_urlp.path
-                    }
+                }
+                logging.info( f'%s - Add to ML Ingest DB: [ {cg} ]' % (cmi_debug) )
                 self.ml_ingest.update({self.nlp_x : nd})
                 cg += 1
 
