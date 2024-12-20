@@ -299,7 +299,7 @@ class yfnews_reader:
         """
 
         cmi_debug = __name__+"::"+self.eval_article_tags.__name__+".#"+str(self.yti)
-        logging.info('%s - IN' % cmi_debug )
+        logging.info('%s - IN \n' % cmi_debug )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         symbol = symbol.upper()
         li_superclass_all = self.ul_tag_dataset.find_all(attrs={"class": "js-stream-content Pos(r)"} )
@@ -341,9 +341,7 @@ class yfnews_reader:
             while True:
                 li_a_zone = next(scan_a_zone)
                 self.article_teaser = next(scan_a_zone)
-                print ( f"========================= {cg} : {li_a_zone} =========================" )
-                print ( f"{self.article_teaser} ")
-                cg += 1
+                print ( f"================== Article: [{cg}] / A-Zone: [{li_a_zone}] ==================" )
 
                 self.article_url = next(scan_a_zone)
                 self.a_urlp = urlparse(self.article_url)
@@ -385,7 +383,7 @@ class yfnews_reader:
                         hcycle += 1
                         break       # ...need 1 more level of analysis analysis to get headline & teaser text
 
-                print ( f"================= Article {x} / {symbol} / Depth 1" )
+                print ( f"{symbol} Article:     {cg} / Depth 1" )
                 print ( f"News item:        {self.cycle}: {inf_type[0]} / Origin conf Indctrs [ t:{ml_atype} u:{uhint} h:{thint} ]" )
                 print ( f"News agency:      {news_agency}" )
                 print ( f"News origin:      {self.url_netloc}" )
@@ -397,6 +395,7 @@ class yfnews_reader:
                 auh = hashlib.sha256(self.article_url.encode())     # hash the url
                 aurl_hash = auh.hexdigest()
                 print ( f"Unique url hash:  {aurl_hash}" )
+                print ( f" " )
 
                 # build NLP candidate dict for deeper pre-NLP article analysis in Level 1
                 # ONLY insert type 0, 1 articels as NLP candidates. Bulk injected ads are excluded (pointless)
@@ -409,6 +408,7 @@ class yfnews_reader:
                     "url" : self.a_urlp.scheme+"://"+self.a_urlp.netloc+self.a_urlp.path
                     }
                 self.ml_ingest.update({self.nlp_x : nd})
+                cg += 1
 
         except StopIteration:
             pass
