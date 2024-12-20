@@ -334,19 +334,24 @@ class yfnews_reader:
                             if element.has_attr('href') is True:
                                 #yield ( f'ZONE : {a_counter} : H3URL : {element.get("href")}' )
                                 yield ( f'{element.get("href")}' )
+                                news_ag = li_tag.find(attrs={'class': 'publishing yf-1weyqlp'}) 
+                                if news_ag is not None:
+                                    news_ag = news_ag.text.split("•")
+                                    yield ( f"{news_ag[0]}")
+                                else:
+                                    yield ( f"Failed to extract News Agency" )
 
         scan_a_zone = atag_gen()
         try:
             cg = 1
+            news_agency ="ERROR_default_data_1"
             while True:
                 li_a_zone = next(scan_a_zone)
                 self.article_teaser = next(scan_a_zone)
                 print ( f"================== Article: [ {cg} ] / A-Zone: [ {li_a_zone} ] ==================" )
-
                 self.article_url = next(scan_a_zone)
                 self.a_urlp = urlparse(self.article_url)
-                #news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
-                news_agency ="ERROR_default_data_1"
+                news_agency = next(scan_a_zone)
                 inf_type = "Undefined"
 
                 for safety_cycle in range(1):    # ABUSE for/loop BREAK as logic control exit (poor mans switch/case)
