@@ -329,7 +329,8 @@ class yfnews_reader:
                     if element.name == "a":
                         a_counter += 1
                         if element.h3 is not None:
-                            yield ( f"ZONE : {a_counter} : ATITLE : {element.h3.text}" )
+                            yield ( f"{a_counter}")
+                            yield ( f"{element.h3.text}" )
                             if element.has_attr('href') is True:
                                 #yield ( f'ZONE : {a_counter} : H3URL : {element.get("href")}' )
                                 yield ( f'{element.get("href")}' )
@@ -338,8 +339,9 @@ class yfnews_reader:
         try:
             cg = 1
             while True:
+                li_a_zone = next(scan_a_zone)
                 self.article_teaser = next(scan_a_zone)
-                print ( f"========================= {cg} =========================" )
+                print ( f"========================= {cg} : {li_a_zone} =========================" )
                 print ( f"{self.article_teaser} ")
                 cg += 1
 
@@ -361,7 +363,6 @@ class yfnews_reader:
                         if uhint == 4: thint = 7.0      # research report / FOR NOW, assume all research reports are locally hosted on finanice.yahoo.com
                         inf_type = self.uh.confidence_lvl(thint)  # my private look-up / returns a tuple
                         #news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
-                        self.article_teaser ="ERROR_default_data_0"
                         ml_atype = 0
                         hcycle += 1
                         break
