@@ -65,11 +65,11 @@ class url_hinter:
                     'bad': ('ERROR_unknown_state', 99)
                     }
 
-        logging.info ( f"%s - Recvd url as: {type(input_url)}" % cmi_debug )
+        logging.info ( f"%s - Recvd article url as: {type(input_url)}" % cmi_debug )
         t_check = isinstance(input_url, str)
 
         if t_check:
-            logging.info ( f"%s - Hint url: {input_url}" % cmi_debug )
+            logging.info ( f"%s - Hint url: {{input_url}}" % cmi_debug )    # {{}} handles urls with %
             a_url = urlparse(input_url)                 # conv url string into aprsed named tuple object
             if a_url.netloc == "finance.yahoo.com":
                 urlp_attr = a_url.path.split('/', 2)    # work on path=object ONLY

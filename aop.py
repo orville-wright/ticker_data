@@ -433,7 +433,7 @@ def main():
             cmi_debug = __name__+"::_args_newsymbol.#1"
             news_symbol = str(args['newsymbol'])       # symbol provided on CMDLine
             print ( " " )
-            print ( f"========================= M/L NLP / News Sentiment AI {news_symbol} =========================" )
+            print ( f"M/L news reader for Stock [ {news_symbol} ] =========================" )
             news_ai = ml_nlpreader(1, args)
             news_ai.nlp_read_one(news_symbol, args)
 

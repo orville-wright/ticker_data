@@ -89,7 +89,7 @@ class ml_nlpreader:
         """
         The machine will read now!
         Read finance.yahoo.com / News 'Brief headlines' (i.e. short text docs) 
-        Reads news for only ONE stock symbol.
+        Reads ALL news artivles for only ONE stock symbol.
         """
 
         self.args = global_args
@@ -98,20 +98,22 @@ class ml_nlpreader:
         logging.info( f'%s - IN.#{self.yti}' % cmi_debug )
         news_symbol = str(self.args['newsymbol'])       # symbol provided on CMDLine
         print ( " " )
-        print ( f"========================= ML (NLP) / News Sentiment AI {news_symbol} =========================" )
-        yfn = yfnews_reader(1, news_symbol, self.args )  # dummy symbol just for instantiation
-        yfn.init_dummy_session()
+        print ( f"ML (NLP) / News Sentiment for 1 symbol [ {news_symbol} ] =========================" )
+        self.yfn = yfnews_reader(1, news_symbol, self.args )  # create instance of YFN News reader
+        self.yfn.init_dummy_session()
         #yfn.yfn_bintro()
-        yfn.update_headers(news_symbol)
-        yfn.form_url_endpoint(news_symbol)
-        yfn.do_js_get()                         # get() & process the page html/JS data
-        uh = url_hinter(1, self.args)           # anyone needs to be able to get hints on a URL from anywhere
-        yfn.share_hinter(uh)
-        yfn.scan_news_feed(news_symbol, 0, 1)   #  p0: symbol - p1: Level - p2: [0=HTML / 1=JavaScript]
-        yfn.eval_article_tags(news_symbol)      # ml_ingest{} is built
+        self.yfn.update_headers(news_symbol)
+        self.yfn.form_url_endpoint(news_symbol)
+        self.yfn.do_js_get()                         # get() & process the page html/JS data
+        self.uh = url_hinter(1, self.args)           # create instance of urh hinter
+        self.yfn.uh = self.uh                        # send it outside to our YFN News reader instance
+        #self.yfn.share_hinter(uh)
+        self.yfn.scan_news_feed(news_symbol, 0, 1)   #  p0: symbol - p1: Level - p2: [0=HTML / 1=JavaScript]
+        self.yfn.eval_article_tags(news_symbol)      # ml_ingest{} is built
         print ( f" " )
         print ( "========================= Evaluate quality of ML/NLP candidates =========================" )
 
+        self.yfn.dump_ml_ingest()
         self.nlp_summary(3)
         print ( f" " )
 
@@ -143,6 +145,7 @@ class ml_nlpreader:
         print ( f"====================== Depth 2 ======================" )
         cmi_debug = __name__+"::nlp_summary().#1"
         for sn_idx, sn_row in self.yfn.ml_ingest.items():                       # cycle thru the NLP candidate list
+            print ( f"### DEBUG:\n {sn_idx} \n{sn_row}" )
             if sn_row['type'] == 0:                                             # REAL news, inferred from Depth 0
                 print( f"News article:  {sn_idx} / {sn_row['symbol']} / ", end="" )
                 t_url = urlparse(sn_row['url'])                                 # WARN: a rlparse() url_named_tupple (NOT the raw url)

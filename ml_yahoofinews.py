@@ -52,7 +52,7 @@ class yfnews_reader:
     article_url = "https://www.defaul_instance_url.com"
     this_article_url = "https://www.default_interpret_page_url.com"
 
-                            # yahoo.com header/cookie hack
+                            # yahoo.com header/cookie hack 
     yahoo_headers = { \
                     'authority': 'yahoo.com', \
                     'path': '/v1/finance/trending/US?lang=en-US&region=US&count=5&corsDomain=finance.yahoo.com', \
@@ -85,48 +85,6 @@ class yfnews_reader:
         cmi_debug = __name__+"::"+self.share_hinter.__name__+".#"+str(self.yti)
         logging.info( f'%s - IN {type(hinst)}' % cmi_debug )
         self.uh = hinst
-        return
-
-##################################### 2 ############################################
-# method 2
-    def yfn_bintro(self):
-        """
-        DELETE ME - redundent
-        Initial blind intro to yahoo.com/news JAVASCRIPT page
-        NOTE: BeautifulSoup scraping required as no REST API endpoint is available.
-              Javascript engine processing may be required to process/read rich meida JS page data
-        """
-
-        cmi_debug = __name__+"::"+self.yfn_bintro.__name__+".#"+str(self.yti)
-        logging.info('%s - IN' % cmi_debug )
-
-        # Initial blind get - present ourself to yahoo.com so we can extract critical cookies
-        logging.info('%s - blind intro get()' % cmi_debug )
-        self.js_session.cookies.update(self.yahoo_headers)    # redundent as it's done in INIT but I'm not sure its persisting from there
-        with self.js_session.get("https://www.finance.yahoo.com", stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
-            logging.info('%s - EXTRACT/INSERT 8 special cookies  ' % cmi_debug )
-            self.js_session.cookies.update({'B': self.js_resp0.cookies['B']} )    # yahoo cookie hack
-
-        # 2nd get with the secret yahoo.com cookies now inserted
-        # NOTE: Just the finaince.Yahoo.com MAIN landing page - generic news
-        logging.info('%s - rest API read json' % cmi_debug )
-        with self.js_session.get("https://www.finance.yahoo.com", stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp2:
-            # read the webpage with our Javascript engine processor
-            logging.info('%s - Javascript engine processing disabled...' % cmi_debug )
-            #self.js_resp2.html.render()    # render JS page
-            logging.info('%s - Javascript engine completed!' % cmi_debug )
-
-            # Setup some initial data structures via an authenticated/valid connection
-            logging.info('%s - store FULL json dataset' % cmi_debug )
-            # self.uvol_all_data = json.loads(self.js_resp2.text)
-            logging.info('%s - store data 1' % cmi_debug )
-
-        # Xray DEBUG
-        if self.args['bool_xray'] is True:
-            print ( f"=========================== {self.yti} / session cookies ===========================" )
-            for i in self.js_session.cookies.items():
-                print ( f"{i}" )
-
         return
 
 ##################################### 3 ############################################
@@ -227,11 +185,8 @@ class yfnews_reader:
     def scan_news_feed(self, symbol, depth, scan_type):
         """
         Depth 0
-        1. Scan a stock symbol NEWS FEED for articles (e.g. https://finance.yahoo.com/quote/OTLY/news?p=OTLY )
-        2. Evaluate the items found. Prints stats, take a HIGH-LEVEL guess at each article type (i.e. internal HTML structure).
-        3. Insert NLP candidates into ml_ingest{} for deeper level 1 analysis later.
-        TODO: add args - DEPTH (0, 1, 2) doesn't do anythig (yet)
-        NOTE: Assumes connection/cookies/headers have previously been setup
+        Scan a stock symbol NEWS FEED for articles (e.g. https://finance.yahoo.com/quote/OTLY/news?p=OTLY )
+        Share class accessors of where the New Articles live i.e. the <li> section
         """
         cmi_debug = __name__+"::"+self.scan_news_feed.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
@@ -256,9 +211,9 @@ class yfnews_reader:
             self.ul_tag_dataset = self.soup.find(attrs={"class": "container yf-1ce4p3e"} )        # produces : list iterator
             self.li_superclass = self.ul_tag_dataset.find_all(attrs={"stream-item story-item yf-1usaaz9"} )
 
-        logging.info( f'%s - Depth: 0 / Found: News containers: {len(self.ul_tag_dataset)}' % cmi_debug )
-        logging.info( f'%s - Depth: 0 / Found: News Tags: {len(list(self.ul_tag_dataset.children))} / Tags: {len(list(self.ul_tag_dataset.descendants))}' % cmi_debug )
-        logging.info( f'%s - Depth: 0 / Found: News Articles: {len(self.li_superclass)}' % cmi_debug)
+        logging.info( f'%s - Depth: 0 / Found News containers: {len(self.ul_tag_dataset)}' % cmi_debug )
+        logging.info( f'%s - Depth: 0 / Found Sub cotainers:   {len(list(self.ul_tag_dataset.children))} / Tags: {len(list(self.ul_tag_dataset.descendants))}' % cmi_debug )
+        logging.info( f'%s - Depth: 0 / Found News Articles:   {len(self.li_superclass)}' % cmi_debug)
  
         # >>Xray DEBUG<<
         if self.args['bool_xray'] is True:
@@ -287,15 +242,17 @@ class yfnews_reader:
     def eval_article_tags(self, symbol):
         """
         Depth 1 - scanning news feed items
-        INFO: we are NOT looking deeply inside each news article
+        INFO: we are NOT looking deeply inside each news article ye
         NOTE: assumes connection was previously setup & html data structures are pre-loaded
               leverages default JS session/request handle
-              Level 0 logic - interrogate items wihtin the main [News Feed page]
+              Depth 1 -Iinterrogate items within the main [News Feed page]
         1. cycle though the top-level NEWS FEED page for this stock
         2. Scan each article found
         3. For each article, extract KEY news elements (i.e. Headline, Brief, local URL, remote UIRL)
         4. leverage the URL hinter. Make a decision on TYPE & HINTER results
         5. Decide worthness of REAL news articles & insert into ml_ingest{} NLP candidate list
+        6. Exreact some key info
+        7. Create a Candidate list of articles in [ml_ingest] array 
         """
 
         cmi_debug = __name__+"::"+self.eval_article_tags.__name__+".#"+str(self.yti)
@@ -421,100 +378,6 @@ class yfnews_reader:
 
     """
         ################## key logic decisions made below ###################
-            if a_counter > 0 and a_counter <= 3:
-                logging.info( f'%s - Tag <li> count: {a_counter}' % (cmi_debug) )        # good new zrticle found
-                self.article_url = li_tag.a.get("href")
-                self.a_urlp = urlparse(self.article_url)
-                news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
-                news_agency ="ERROR_default_data_1"
-                inf_type = "Undefined"
-
-                for safety_cycle in range(1):    # ABUSE for/loop BREAK as logic control exit (poor mans switch/case)
-                    if self.a_urlp.scheme == "https" or self.a_urlp.scheme == "http":    # check URL scheme specifier
-                        logging.info( f'%s - Logic.#1 Pure-Abs url {uhint} {self.a_urlp.netloc} / {uhdescr}' % (cmi_debug) )
-                        pure_url = 1    # explicit pure URL to remote entity
-                        uhint, uhdescr = self.uh.uhinter(hcycle, self.article_url)    # raw url string
-                        inf_type = self.uh.confidence_lvl(thint)                # return var is tuple
-                        news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
-                        ml_atype = 0
-                        thint = 1.1
-                        hcycle += 1
-                        break
-                    else:
-                        self.a_url = f"https://finance.yahoo.com{self.article_url}"
-                        self.a_urlp = urlparse(self.a_url)
-                        self.url_netloc = self.a_urlp.netloc      # FQDN netloc
-                        logging.info( f'%s - Logic.#2 / Origin url: {self.a_urlp.netloc}' % (cmi_debug) )
-                        uhint, uhdescr = self.uh.uhinter(hcycle, self.a_urlp)          # urlparse named tuple
-                        if uhint == 0: thint = 1.0      # real news / remote-stub @ YFN stub
-                        if uhint == 1: thint = 0.0      # real news / local page
-                        if uhint == 2: thint = 4.0      # video (currently / FOR NOW, assume all videos are locally hosted on finanice.yahoo.com
-                        if uhint == 3: thint = 1.1      # shoudl never trigger here - see abive... <Pure-Abs url>
-                        if uhint == 4: thint = 7.0      # research report / FOR NOW, assume all research reports are locally hosted on finanice.yahoo.com
-                        pure_url = 0                    # locally hosted entity
-                        ml_atype = 0                    # Real news
-                        inf_type = self.uh.confidence_lvl(thint)                # return var is tuple
-                        news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
-                        # cant grab news agency / teaser yet, b/c we dont knonw the struct of this article (just its type)
-                        hcycle += 1
-                        break       # ...need 1 more level of analysis analysis to get headline & teaser text
-
-                if not li_tag.find('p'):                # Micro-Ad
-                    self.url_netloc = self.a_urlp.netloc
-                    logging.info( f'%s - Logic.#3 / Micro-ad Origin url: {self.url_netloc}' % (cmi_debug) )
-                    microad_headline = li_tag.find(attrs={'class': 'Ov(h)'}).strings
-                    microad_news_agency = li_tag.find(attrs={'class': 'C(#959595)'}).string
-                    article_headline = next(microad_headline)                   # grab the Micro-ad Headline
-                    news_agency = microad_news_agency
-                    self.article_teaser = "No Micro-ad headine"
-                    if pure_url == 0: thint = 5.0                               # local entity
-                    if pure_url == 1: thint = 5.1                               # remote entity
-                    inf_type = self.uh.confidence_lvl(thint)                    # return var is tuple
-                    ml_atype = 1
-                elif uhint == 2:        # TODO: news_agency == "Yahoo Finance Video" to identifiy thint = 4.0 (FYN hosted video) vs. 4.1 externally authoured video
-                    logging.info( f'%s - Logic.#4 / Video Origin url: {self.url_netloc}' % (cmi_debug) )
-                    videostory_headline = li_tag.find(attrs={'class': 'Ov(h)'})
-                    self.article_teaser = videostory_headline.p.text
-                    self.article_teaser = videostory_headline.p.text
-                    uhint, uhdescr = self.uh.uhinter(hcycle, self.a_urlp)       # urlparse named tuple
-                    if uhint == 2:
-                        thint = 4.0
-                    else:
-                        thint = 9.9
-                    inf_type = self.uh.confidence_lvl(thint)                    # return var is tuple
-                    self.url_netloc = self.a_urlp.netloc
-                    article_headline = li_tag.a.text        # taken from YFN news feed thumbnail, not actual article page
-                    ml_atype = 0
-                else:
-                    logging.info( f'%s - Logic.#5 / Tag <p> vanilla news / Origin url: {self.url_netloc}' % (cmi_debug) )
-                    a_teaser = li_tag.p.text
-                    self.article_teaser = f"{a_teaser:.170}" + " [...]"
-                    article_headline = li_tag.a.text        # taken from YFN news feed thumbnail, not actual article page
-
-                print ( f"================= Article {x} / {symbol} / Depth 1 ==========================" )
-                print ( f"News item:        {self.cycle}: {inf_type[0]} / Origin conf Indctrs [ t:{ml_atype} u:{uhint} h:{thint} ]" )
-                print ( f"News agency:      {news_agency}" )
-                print ( f"News origin:      {self.url_netloc}" )
-                print ( f"Article URL:      {self.article_url}" )
-                print ( f"Article headline: {article_headline}" )
-                print ( f"Article teaser:   {self.article_teaser}" )
-
-                self.ml_brief.append(self.article_teaser)           # add Article teaser long TXT into ML pre count vectorizer matrix
-                auh = hashlib.sha256(self.article_url.encode())     # hash the url
-                aurl_hash = auh.hexdigest()
-                print ( f"Unique url hash:  {aurl_hash}" )
-
-                # build NLP candidate dict for deeper pre-NLP article analysis in Level 1
-                # ONLY insert type 0, 1 articels as NLP candidates. Bulk injected ads are excluded (pointless)
-                nd = {
-                    "symbol" : symbol,
-                    "urlhash" : aurl_hash,
-                    "type" : ml_atype,
-                    "thint" : thint,
-                    "uhint" : uhint,
-                    "url" : self.a_urlp.scheme+"://"+self.a_urlp.netloc+self.a_urlp.path
-                    }
-                self.ml_ingest.update({self.nlp_x : nd})
 
             else:
                 found_ad = li_tag.a.text
@@ -572,27 +435,33 @@ class yfnews_reader:
             nr = s.get( self.this_article_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
             nsoup = BeautifulSoup(nr.text, 'html.parser')
             logging.info( '%s - setting BS4 <tag> zones for eval...' % cmi_debug )
-            rem_news = nsoup.find(attrs={"class": "caas-readmore"} )            # stub news article - remotely hosted
-            #local_news = nsoup.find(attrs={"class": "caas-body"})              # full news article - locally hosted
-            local_news = nsoup.find(attrs={"class": "caas-content-wrapper"} )   # full news article - locally hosted
-            local_story = nsoup.find(attrs={"class": "caas-body-wrapper"} )     # Op-Ed article - locally hosted
-            local_video = nsoup.find(attrs={"class": "caas-body"} )             # Video story (minimal supporting text) stub - locally hosted
+            
+            self.yfn_jsdata
+
+            local_news = nsoup.find(attrs={"class": "body yf-tsvcyu"})   # full news article - locally hosted
+            rem_news = nsoup.find(attrs={"class": "body yf-tsvcyu"})     # stub news article - remotely hosted
+            local_story = nsoup.find(attrs={"class": "body yf-tsvcyu"})  # Op-Ed article - locally hosted
+            local_video = nsoup.find(attrs={"class": "body yf-tsvcyu"})  # Video story (minimal supporting text) stub - locally hosted
+
+            #rem_news = nsoup.find(attrs={"class": "caas-readmore"} )           # stub news article - remotely hosted
+            #local_news = nsoup.find(attrs={"class": "caas-content-wrapper"} )  # full news article - locally hosted
 
             if uhint == 0:                    # Local-remote stub or Local-local article
-                logging.info ( f"%s - Depth: 2 / Read Local-remote stub / u: {uhint} h: {thint}" % cmi_debug )
+                logging.info ( f"%s - Depth: 2 / Fake Local stub / u: {uhint} h: {thint}" % cmi_debug )
+                print ( f"### DEBUG: {rem_news}" )
                 if rem_news.find('a'):                     # BAD, no <a> zone in page or article is a REAL remote URL already
                     rem_url = rem_news.a.get("href")
-                    # remotely hosted news article. with a real external URL, Also has [Continue reading] button TEXT
+                    # Fake local news stub article, points to a remotely  news article external URL, Also has [Continue reading] button TEXT
                     logging.info ( f"%s - Depth: 2 / Good <a> Remote-stub / News article @: {rem_url}" % cmi_debug )
                     logging.info ( f"%s - Depth: 2 / Insert ext url into ml_ingest" % cmi_debug )
                     ext_url_item = {'exturl': rem_url }     # build a new dict entry (external; absolute url)
                     data_row.update(ext_url_item )          # insert new dict entry into ml_ingest via an AUGMENTED data_row
-                    self.ml_ingest[idx] = data_row           # now PERMENTALY update the ml_ingest record @ index = id
+                    self.ml_ingest[idx] = data_row          # now PERMENTALY update the ml_ingest record @ index = id
                     logging.info ( f"%s - Depth: 2 / NLP candidate is ready" % cmi_debug )
                     return uhint, thint, rem_url
                     #
             if uhint == 1:
-                logging.info ( f"%s - Depth: 2 / Read Local artice / u: {uhint} t: {thint}" % cmi_debug )
+                logging.info ( f"%s - Depth: 2 / Full Local artice / u: {uhint} t: {thint}" % cmi_debug )
                 if local_news.find('p'):                     # <p> is where the ENTIRE article is written
                     author = local_news.find(attrs={"class": "caas-attr-item-author"} )
                     pubdate = local_news.find(attrs={"class": "caas-attr-time-style"} )
@@ -772,5 +641,48 @@ class yfnews_reader:
             for i in self.js_session.cookies.items():
                 print ( f"{i}" )
             print ( f"========================== {self.yti} / HTML get() session cookies ================================" )
+
+        return
+
+
+##################################### 2 ############################################
+# method 2
+    def yfn_bintro(self):
+        """
+        DELETE ME - redundent
+        Initial blind intro to yahoo.com/news JAVASCRIPT page
+        NOTE: BeautifulSoup scraping required as no REST API endpoint is available.
+              Javascript engine processing may be required to process/read rich meida JS page data
+        """
+
+        cmi_debug = __name__+"::"+self.yfn_bintro.__name__+".#"+str(self.yti)
+        logging.info('%s - IN' % cmi_debug )
+
+        # Initial blind get - present ourself to yahoo.com so we can extract critical cookies
+        logging.info('%s - blind intro get()' % cmi_debug )
+        self.js_session.cookies.update(self.yahoo_headers)    # redundent as it's done in INIT but I'm not sure its persisting from there
+        with self.js_session.get("https://www.finance.yahoo.com", stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
+            logging.info('%s - EXTRACT/INSERT 8 special cookies  ' % cmi_debug )
+            self.js_session.cookies.update({'B': self.js_resp0.cookies['B']} )    # yahoo cookie hack
+
+        # 2nd get with the secret yahoo.com cookies now inserted
+        # NOTE: Just the finaince.Yahoo.com MAIN landing page - generic news
+        logging.info('%s - rest API read json' % cmi_debug )
+        with self.js_session.get("https://www.finance.yahoo.com", stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp2:
+            # read the webpage with our Javascript engine processor
+            logging.info('%s - Javascript engine processing disabled...' % cmi_debug )
+            #self.js_resp2.html.render()    # render JS page
+            logging.info('%s - Javascript engine completed!' % cmi_debug )
+
+            # Setup some initial data structures via an authenticated/valid connection
+            logging.info('%s - store FULL json dataset' % cmi_debug )
+            # self.uvol_all_data = json.loads(self.js_resp2.text)
+            logging.info('%s - store data 1' % cmi_debug )
+
+        # Xray DEBUG
+        if self.args['bool_xray'] is True:
+            print ( f"=========================== {self.yti} / session cookies ===========================" )
+            for i in self.js_session.cookies.items():
+                print ( f"{i}" )
 
         return
