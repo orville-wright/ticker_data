@@ -251,8 +251,8 @@ class yfnews_reader:
             #    nr = s.get( self.this_article_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
             #    nsoup = BeautifulSoup(nr.text, 'html.parser')
             hx = self.do_js_get(bs4_obj_idx)
-            nsoup = BeautifulSoup(self.yfn_jsdata.text, "html.parser")    # store gloabll. dont use caches object 
             logging.info( f'%s - FRESH JS page in use: [ {bs4_obj_idx} ]' % cmi_debug )
+            nsoup = BeautifulSoup(self.yfn_jsdata.text, "html.parser")    # store gloabl. dont use cache object 
             logging.info( f'%s - set BS4 data objects' % cmi_debug )
 
             self.ul_tag_dataset = soup.find(attrs={"class": "container yf-1ce4p3e"} )        # produces : list iterator
@@ -494,6 +494,8 @@ class yfnews_reader:
             cx_soup = self.yfn_jsdb[cached_state]
             logging.info( f'%s - EXISTS in cache: {cached_state}' % cmi_debug )
             dataset_1 = self.yfn_jsdata
+            logging.info( f'%s - cache holds oject type:   {type(cx_soup)}' % cmi_debug )
+            logging.info( f'%s - Dataset holds oject type: {type(dataset_1)}' % cmi_debug )
             nsoup = BeautifulSoup(dataset_1, "html.parser")
             #self.ul_tag_dataset = soup.find(attrs={"class": "container yf-1ce4p3e"} )        # produces : list iterator
             #self.li_superclass = self.ul_tag_dataset.find_all(attrs={"stream-item story-item yf-1usaaz9"} )
@@ -510,6 +512,8 @@ class yfnews_reader:
                 logging.info( f'%s - EXISTS in cache: {cached_state}' % cmi_debug )
                 cy_soup = self.yfn_jsdb[cached_state]
                 dataset_2 = self.yfn_jsdata
+                logging.info( f'%s - cache holds oject type:   {type(cy_soup)}' % cmi_debug )
+                logging.info( f'%s - Dataset holds oject type: {type(dataset_2)}' % cmi_debug )
                 nsoup = BeautifulSoup(dataset_2, "html.parser")
             else:
                 logging.info( f'%s - FAILED to read JS doc and set BS4 obejcts' % cmi_debug )
