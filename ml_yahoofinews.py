@@ -15,6 +15,7 @@ import time
 import threading
 import json
 from rich import print
+from rich.markup import escape
 
 # logging setup
 logging.basicConfig(level=logging.INFO)
@@ -257,7 +258,7 @@ class yfnews_reader:
 
             self.ul_tag_dataset = soup.find(attrs={"class": "container yf-1ce4p3e"} )        # produces : list iterator
             print ( f"#################################################################" )
-            print ( f"### DEBUG: \n{self.ul_tag_dataset}" )
+            print ( f"### DEBUG: {self.ul_tag_dataset}" )
             self.li_superclass = self.ul_tag_dataset.find_all(attrs={"stream-item story-item yf-1usaaz9"} )
 
             # Depth 0 element zones
@@ -516,7 +517,7 @@ class yfnews_reader:
                 logging.info( f'%s - Dataset holds oject type: {type(dataset_2)}' % cmi_debug )
                 print ( f"############################### debug ################################" )
                 print ( f"### DEBUG: {cy_soup.html}" )
-                print ( f"### DEBUG: {dataset_2}" )
+                print ( f"### DEBUG: {escape(dataset_2)}" )
                 print ( f"################################ END #################################" )
                 nsoup = BeautifulSoup(dataset_2, "html.parser")
             else:
