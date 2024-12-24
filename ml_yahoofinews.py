@@ -497,7 +497,7 @@ class yfnews_reader:
             dataset_1 = self.yfn_jsdata
             logging.info( f'%s - cache holds oject type:   {type(cx_soup)}' % cmi_debug )
             logging.info( f'%s - Dataset holds oject type: {type(dataset_1)}' % cmi_debug )
-            nsoup = BeautifulSoup(dataset_1, "html.parser")
+            nsoup = BeautifulSoup(escape(dataset_1), "html.parser")
             #self.ul_tag_dataset = soup.find(attrs={"class": "container yf-1ce4p3e"} )        # produces : list iterator
             #self.li_superclass = self.ul_tag_dataset.find_all(attrs={"stream-item story-item yf-1usaaz9"} )
         except KeyError as error:
@@ -515,11 +515,11 @@ class yfnews_reader:
                 dataset_2 = self.yfn_jsdata
                 logging.info( f'%s - cache holds oject type:   {type(cy_soup)}' % cmi_debug )
                 logging.info( f'%s - Dataset holds oject type: {type(dataset_2)}' % cmi_debug )
-                print ( f"############################### debug ################################" )
-                print ( f"### DEBUG: {cy_soup.html}" )
-                print ( f"### DEBUG: {escape(dataset_2)}" )
-                print ( f"################################ END #################################" )
-                nsoup = BeautifulSoup(dataset_2, "html.parser")
+                #print ( f"############################### debug ################################" )
+                #print ( f"### DEBUG: {escape(cy_soup.text)}" )
+                #print ( f"### DEBUG: {escape(dataset_2)}" )
+                #print ( f"################################ END #################################" )
+                nsoup = BeautifulSoup(escape(dataset_2), "html.parser")
             else:
                 logging.info( f'%s - FAILED to read JS doc and set BS4 obejcts' % cmi_debug )
                 return 10, 10.0, "ERROR_unknown_state!"
@@ -560,14 +560,16 @@ class yfnews_reader:
         if uhint == 1:
             logging.info ( f"%s - Depth: 2.1 / Fake Local news stub / [ u: {uhint} h: {thint} ]" % cmi_debug )
             #rem_news = nsoup.find(attrs={"class": "article-wrap no-bb"})
-            logging.info( f'%s - Depth: 2.1 / BS4 processed doc length: {len(nsoup)}' % cmi_debug )
+            logging.info( f'%s - Depth: 2.1 / BS4 processed doc length: {len(full_page)}' % cmi_debug )
 
-            #print ( f"############################ rem news #############################" )
-            #print ( f"### DEBUG:\n{nsoup.prettify()}" )
+            print ( f"############################ rem news #############################" )
+            #print ( f"### DEBUG:{full_page.prettify()}" )
+            print ( f"### DEBUG:{full_page}" )
+            print ( f"############################ rem news #############################" )
 
             # follow link into page & read
-            author_zone = local_news_meta.find("div", attrs={"class": "byline-attr-author yf-1k5w6kz"} )
-            pubdate_zone = local_news_meta.find("div", attrs={"class": "byline-attr-time-style"} )
+            author_zone = full_page.find("div", attrs={"class": "byline-attr-author yf-1k5w6kz"} )
+            pubdate_zone = full_page.find("div", attrs={"class": "byline-attr-time-style"} )
             author = author_zone.string
             pubdate = pubdate_zone.time.string
 
