@@ -514,14 +514,14 @@ class yfnews_reader:
                 dataset_2 = self.yfn_jsdata
                 logging.info( f'%s - cache holds oject type:   {type(cy_soup)}' % cmi_debug )
                 logging.info( f'%s - Dataset holds oject type: {type(dataset_2)}' % cmi_debug )
+                print ( f"############################### debug ################################" )
+                print ( f"### DEBUG: \n {cy_soup.text}" )
+                print ( f"################################ END #################################" )
                 nsoup = BeautifulSoup(dataset_2, "html.parser")
             else:
                 logging.info( f'%s - FAILED to read JS doc and set BS4 obejcts' % cmi_debug )
                 return 10, 10.0, "ERROR_unknown_state!"
 
-                #print ( f"############################### debug ################################" )
-                #print ( f"### DEBUG: \n{cy_soup.html.html}" )
-                #print ( f"################################ END #################################" )
         
         logging.info( f'%s - set BS4 data zones for Article: [ {idx} ]' % cmi_debug )
         local_news = nsoup.find(attrs={"class": "body yf-tsvcyu"})   # full news article - locally hosted
