@@ -161,9 +161,10 @@ class yfnews_reader:
         get JAVAScript engine processed data structure
         NOTE: URL must be set before in (self.yfqnews_url)
               Assumes cookies have already been set up. NO cookie update done here
-               ALLWAYS create a CACHE entry in js cache DB
+            ALLWAYS create a CACHE entry in js cache DB
+            Return hash of url that was read
         """
-        cmi_debug = __name__+"::"+self.do_js_get.__name__+".#"+str(self.yti)+".#"+str(idx_x)
+        cmi_debug = __name__+"::"+self.do_js_get.__name__+".#"+str(self.yti)+"."+str(idx_x)
         logging.info('%s - IN' % cmi_debug )
         
         logging.info( f'%s - url: {self.yfqnews_url}' % cmi_debug )
@@ -173,11 +174,11 @@ class yfnews_reader:
             self.js_resp2.html.render()
             # TODO: should do some get() failure testing here
             logging.info( f'%s - JS rendered! - store JS dataset [ {idx_x} ]' % cmi_debug )
-            self.yfn_jsdata = self.js_resp2.text                # store Full JAVAScript dataset handle
+            self.yfn_jsdata = self.js_resp2.text                # store Full JAVAScript dataset TEXT page
             auh = hashlib.sha256(self.yfqnews_url.encode())     # hash the url
             aurl_hash = auh.hexdigest()
-            logging.info( f'%s - ADD cache entry into jsdb: [ {aurl_hash} ]' % cmi_debug )
-            self.yfn.jsdb[aurl_hash] = self.js_resp2            # create CACHE entry in jsdb !! just response, not full page TEXT data !!
+            logging.info( f'%s - CREATE cache entry: [ {aurl_hash} ]' % cmi_debug )
+            self.yfn_jsdb[aurl_hash] = self.js_resp2            # create CACHE entry in jsdb !! just response, not full page TEXT data !!
 
         # Xray DEBUG
         if self.args['bool_xray'] is True:
@@ -186,14 +187,14 @@ class yfnews_reader:
                 print ( f"{i}" )
             print ( f"========================== {self.yti} / JS get() session cookies ================================" )
 
-        return
+        return aurl_hash
 
 ###################################### 8 ###########################################
 # method 9
 # session data extraction methods
-    def scan_news_feed(self, symbol, depth, scan_type, bs4_obj_idx):
+    def scan_news_feed(self, symbol, depth, scan_type, bs4_obj_idx, hash_state):
         """
-        Depth 0
+        Depth 0 : Surface scan of all news articles in the news section for a stock ticker
         Scan_type:  0 = html | 1 = Javascript render engine
         Scan a stock symbol NEWS FEED for articles (e.g. https://finance.yahoo.com/quote/OTLY/news?p=OTLY )
         Share class accessors of where the New Articles live i.e. the <li> section
@@ -204,29 +205,38 @@ class yfnews_reader:
         depth = int(depth)
         
         logging.info( f'%s - Scan news for: {symbol} / {self.yfqnews_url}' % cmi_debug )
-        logging.info( f"%s - URL hinter engine state: {type(self.uh)} " % cmi_debug )
+        logging.info( f"%s - URL Hinter state: {type(self.uh)} " % cmi_debug )
         if scan_type == 0:    # Simple HTML BS4 scraper
-            logging.info( f'%s - Read prefetched json page index: [ {bs4_obj_idx} ]' % cmi_debug )
-            !!! check cache for resp object...
-             
-            this_html_page = f"self.yfn_jsdata_{bs4_obj_idx}"
-            soup = BeautifulSoup(this_html_page, "html.parser")
+            logging.info( f'%s - Check urlhash cache state: {hash_state}' % cmi_debug )
+        try:
+            self.yfn_jsdb[hash_state]
+            logging.info( f'%s - URL EXISTS in cache: {hash_state}' % cmi_debug )
+            cx_soup = self.yfn_jsdb[hash_state]
+            soup = BeautifulSoup(cx_soup.text, "html.parser")
+            logging.info( f'%s - set BS4 data objects' % cmi_debug )
             self.ul_tag_dataset = soup.find(attrs={"class": "container yf-1ce4p3e"} )        # produces : list iterator
-            # Depth 0 element zones
-            #li classis= where the News Items data is hiding
-            li_superclass = self.ul_tag_dataset.find_all("ul")
-            li_superclass = self.ul_tag_dataset.find_all(attrs={"stream-item story-item yf-1usaaz9"} )
-            li_subset_all = self.ul_tag_dataset.find_all('li')
-        else:
-            logging.info( f'%s - Read prefetched JS page index: [ {bs4_obj_idx} ]' % cmi_debug )
-            #self.js_resp2.html.render()    # WARN: Assumes sucessfull JavaScript get was previously issued
-            this_js_page = f"self.yfn_jsdata_{bs4_obj_idx}"
-            soup = BeautifulSoup(this_js_page, "html.parser")
-            logging.info('%s - set BS4 data objects' % cmi_debug )
-            self.ul_tag_dataset = soup.find(attrs={"class": "container yf-1ce4p3e"} )        # produces : list iterator
-            print ( f"### DEBUG: \n{self.ul_tag_dataset}" )
-
             self.li_superclass = self.ul_tag_dataset.find_all(attrs={"stream-item story-item yf-1usaaz9"} )
+        except KeyError as error:
+            logging.info( f'%s - MISSING in cache: Must read JS page' % cmi_debug )
+            logging.info( f'%s - Force read news url: {self.yfqnews_url}' % cmi_debug )
+            #with requests.Session() as s:
+            #    nr = s.get( self.this_article_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
+            #    nsoup = BeautifulSoup(nr.text, 'html.parser')
+            hx = self.do_js_get(bs4_obj_idx)
+            nsoup = BeautifulSoup(self.yfn_jsdata.text, "html.parser")    # store gloabll. dont use caches object 
+            logging.info( f'%s - FRESH JS page in use: [ {bs4_obj_idx} ]' % cmi_debug )
+            logging.info( f'%s - set BS4 data objects' % cmi_debug )
+
+            self.ul_tag_dataset = soup.find(attrs={"class": "container yf-1ce4p3e"} )        # produces : list iterator
+            print ( f"#################################################################" )
+            print ( f"### DEBUG: \n{self.ul_tag_dataset}" )
+            self.li_superclass = self.ul_tag_dataset.find_all(attrs={"stream-item story-item yf-1usaaz9"} )
+
+            # Depth 0 element zones
+            # <li classis> is ZONE where the News Items data is hiding
+            #li_superclass = self.ul_tag_dataset.find_all("ul")
+            #li_subset_all = self.ul_tag_dataset.find_all('li')
+            #self.js_resp2.html.render()    # WARN: Assumes sucessfull JavaScript get was previously issued
 
         logging.info( f'%s - Depth: 0 / Found News containers: {len(self.ul_tag_dataset)}' % cmi_debug )
         logging.info( f'%s - Depth: 0 / Found Sub cotainers:   {len(list(self.ul_tag_dataset.children))} / Tags: {len(list(self.ul_tag_dataset.descendants))}' % cmi_debug )
@@ -256,10 +266,10 @@ class yfnews_reader:
 
 ###################################### 9 ###########################################
 # method 10
-    def eval_article_tags(self, symbol, page_index):
+    def eval_news_feed_stories(self, symbol):
         """
-        Depth 1 - scanning news feed items
-        INFO: we are NOT looking deeply inside each news article ye
+        Depth 1 - scanning news feed stories and some metatdata (depth 1)
+        INFO: we are NOT looking deeply inside each metat data article (depth 1) yet
         NOTE: assumes connection was previously setup & html data structures are pre-loaded
               leverages default JS session/request handle
               Depth 1 -Iinterrogate items within the main [News Feed page]
@@ -272,7 +282,7 @@ class yfnews_reader:
         7. Create a Candidate list of articles in [ml_ingest] array 
         """
 
-        cmi_debug = __name__+"::"+self.eval_article_tags.__name__+".#"+str(self.yti)
+        cmi_debug = __name__+"::"+self.eval_news_feed_stories.__name__+".#"+str(self.yti)
         logging.info('%s - IN \n' % cmi_debug )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         symbol = symbol.upper()
@@ -294,10 +304,10 @@ class yfnews_reader:
         # # soup.find_all("a", attrs={"class": "sister"})
         # ('a[href]')
 
-        ####################### Scan tags ########################################
-        def atag_gen():   # generator to extract H3 title and URL link to article
+        ## GENERATOR: Scan & find critical tags
+        def atag_gen():                         #  extract <h3>, agency, author, publish date
             a_counter = 0
-            for li_tag in self.li_superclass:
+            for li_tag in self.li_superclass:   # BS4 object set from scan_news_feed()
                 self.nlp_x += 1
                 for element in li_tag.descendants:
                     if element.name == "a":
@@ -315,6 +325,8 @@ class yfnews_reader:
                                 else:
                                     yield ( f"Failed to extract News Agency" )
 
+        ########## end Generatior
+
         scan_a_zone = atag_gen()
         try:
             cg = 1
@@ -330,32 +342,32 @@ class yfnews_reader:
 
                 for safety_cycle in range(1):    # ABUSE for/loop BREAK as logic control exit (poor mans switch/case)
                     if self.a_urlp.scheme == "https" or self.a_urlp.scheme == "http":    # check URL scheme specifier
-                        uhint, uhdescr = self.uh.uhinter(hcycle, self.article_url)    # raw url string
-                        logging.info( f'%s - Good url [{self.a_urlp.netloc}] / u:{uhint} / {uhdescr}' % (cmi_debug) )
-                        pure_url = 1    # explicit pure URL to remote entity
-                        if uhint == 0: thint = 1.0      # real news / remote-stub @ YFN stub
-                        if uhint == 1: thint = 0.0      # real news / local page
+                        uhint, uhdescr = self.uh.uhinter(hcycle, self.article_url)       # raw url string
+                        logging.info( f'%s - Source url [{self.a_urlp.netloc}] / u:{uhint} / {uhdescr}' % (cmi_debug) )
+                        pure_url = 1                    # explicit pure URL to remote entity
+                        if uhint == 0: thint = 0.0      # Fake news / remote-stub @ YFN stub
+                        if uhint == 1: thint = 1.0      # real news / local page
                         if uhint == 2: thint = 4.0      # video (currently / FOR NOW, assume all videos are locally hosted on finanice.yahoo.com
                         if uhint == 3: thint = 1.1      # shoudl never trigger here - see abive... <Pure-Abs url>
                         if uhint == 4: thint = 7.0      # research report / FOR NOW, assume all research reports are locally hosted on finanice.yahoo.com
                         inf_type = self.uh.confidence_lvl(thint)  # my private look-up / returns a tuple
                         self.url_netloc = self.a_urlp.netloc      # get FQDN netloc
-                        ml_atype = 0
+                        ml_atype = uhint
                         hcycle += 1
                         break
                     else:
                         self.a_url = f"https://finance.yahoo.com{self.article_url}"
                         self.a_urlp = urlparse(self.a_url)
                         self.url_netloc = self.a_urlp.netloc      # get FQDN netloc
-                        logging.info( f'%s - Origin url: {self.a_urlp.netloc}' % (cmi_debug) )
+                        logging.info( f'%s - Source url: {self.a_urlp.netloc}' % (cmi_debug) )
                         uhint, uhdescr = self.uh.uhinter(hcycle, self.a_urlp)          # urlparse named tuple
-                        if uhint == 0: thint = 1.0      # real news / remote-stub @ YFN stub
-                        if uhint == 1: thint = 0.0      # real news / local page
+                        if uhint == 0: thint = 0.0      # real news / remote-stub @ YFN stub
+                        if uhint == 1: thint = 1.0      # real news / local page
                         if uhint == 2: thint = 4.0      # video (currently / FOR NOW, assume all videos are locally hosted on finanice.yahoo.com
                         if uhint == 3: thint = 1.1      # shoudl never trigger here - see abive... <Pure-Abs url>
                         if uhint == 4: thint = 7.0      # research report / FOR NOW, assume all research reports are locally hosted on finanice.yahoo.com
                         pure_url = 0                    # locally hosted entity
-                        ml_atype = 0                    # Real news
+                        ml_atype = uhint                    # Real news
                         inf_type = self.uh.confidence_lvl(thint)                # return var is tuple
                         hcycle += 1
                         break       # ...need 1 more level of analysis analysis to get headline & teaser text
@@ -449,11 +461,13 @@ class yfnews_reader:
         self.this_article_url = url
         symbol = symbol.upper()
 
-        logging.info( f'%s - urlhash cache state: {cached_state}' % cmi_debug )
+        logging.info( f'%s - Check urlhash cache state: {cached_state}' % cmi_debug )
         try:
-            self.yfn.jsdb[data_row[cached_state]]
+            cx_soup = self.yfn_jsdb[cached_state]
             logging.info( f'%s - EXISTS in cache: {cached_state}' % cmi_debug )
-            nsoup = self.yfn.jsdb[data_row[cached_state]]
+            nsoup = BeautifulSoup(cx_soup.text, "html.parser")
+            #self.ul_tag_dataset = soup.find(attrs={"class": "container yf-1ce4p3e"} )        # produces : list iterator
+            #self.li_superclass = self.ul_tag_dataset.find_all(attrs={"stream-item story-item yf-1usaaz9"} )
         except KeyError as error:
             logging.info( f'%s - MISSING in cache: Must read JS page' % cmi_debug )
             logging.info( f'%s - Force read news url: {url}' % cmi_debug )
@@ -462,28 +476,60 @@ class yfnews_reader:
             #    nsoup = BeautifulSoup(nr.text, 'html.parser')
             self.yfqnews_url = url
             self.do_js_get(idx)
-            nsoup = BeautifulSoup(self.yfn_jsdata, "html.parser")
+            logging.info( f'%s - REPEAT check for urlhash in cache: {cached_state}' % cmi_debug )
+            if self.yfn_jsdb[cached_state]:
+                logging.info( f'%s - EXISTS in cache: {cached_state}' % cmi_debug )
+                cx_soup = self.yfn_jsdb[cached_state]
+                nsoup = BeautifulSoup(cx_soup.text, "html.parser")
+            else:
+                logging.info( f'%s - FAILED to read JS doc and set BS4 obejcts' % cmi_debug )
+                return 10, 10.0, "ERROR_unknown_state!"
 
-        print ( f"############################ yfn_jsdata #############################" )
-        print ( f"### DEBUG: {self.yfn_jsdata.text}" )
-        print ( f"################################ END #################################" )
+        #print ( f"############################### nsoup ################################" )
+        #print ( f"### DEBUG: \n{nsoup}" )
+        #print ( f"################################ END #################################" )
         
         
-        logging.info( f'%s - Article: [ {idx} ] / Set BS4 page Zones...' % cmi_debug )
+        logging.info( f'%s - set BS4 data zones for Article: [ {idx} ]' % cmi_debug )
         local_news = nsoup.find(attrs={"class": "body yf-tsvcyu"})   # full news article - locally hosted
-        local_news_meta = nsoup.find(attrs={"class": "main yf-cfn520"})   # comes above/before article            
+        local_news_meta = nsoup.find(attrs={"class": "main yf-cfn520"})   # comes above/before article
+        local_stub_news = nsoup.find_all(attrs={"class": "article yf-l7apfj"})
         local_story = nsoup.find(attrs={"class": "body yf-tsvcyu"})  # Op-Ed article - locally hosted
         local_video = nsoup.find(attrs={"class": "body yf-tsvcyu"})  # Video story (minimal supporting text) stub - locally hosted
         #rem_news = nsoup.find(attrs={"class": "caas-readmore"} )           # stub news article - remotely hosted
         #local_news = nsoup.find(attrs={"class": "caas-content-wrapper"} )  # full news article - locally hosted
 
-        if uhint == 0:      # Fake local stub Micro article lins out to external article
-            logging.info ( f"%s - Depth: 2 / Fake Local stub / [ u: {uhint} h: {thint} ]" % cmi_debug )
-            rem_news = nsoup.find(attrs={"class": "main yf-cfn520"})
+
+        if uhint == 0:
+                logging.info ( f"%s - Depth: 2 / Local Full artice / [ u: {uhint} t: {thint} ]" % cmi_debug )
+                logging.info( f'%s - Depth: 2 / BS4 processed doc length: {len(nsoup)}' % cmi_debug )
+                author_zone = local_news_meta.find("div", attrs={"class": "byline-attr-author yf-1k5w6kz"} )                    
+                pubdate_zone = local_news_meta.find("div", attrs={"class": "byline-attr-time-style"} )
+                author = author_zone.string
+                pubdate = pubdate_zone.time.string
+                logging.info ( f"%s - Depth: 2 / Extracted Author & Pub dates from article" % cmi_debug )
+                logging.info ( f"%s - Depth: 2 / Author: {author} / Published: {pubdate}" % cmi_debug )
+                article_zone = local_news.find_all("p" )
+                if article_zone is not None:
+                #if local_news.find('p'):                     # <p> is where the ENTIRE article is written
+                    #article = article_zone
+                    logging.info ( f"%s - Depth: 2 / GOOD <p> zone / Local full TEXT article" % cmi_debug )
+                    #pub_clean = pubdate.text.lstrip()
+                    #published = pub_clean.split('·', 1)
+                    #author_clean = author.text.lstrip()
+                    logging.info ( f"%s - Depth: 2 / NLP candidate is ready" % cmi_debug )
+                    return uhint, thint, url
+            
+        # Fake local news stub / Micro article links out to externally hosted article
+        if uhint == 1:
+            logging.info ( f"%s - Depth: 2 / Fake Local news stub / [ u: {uhint} h: {thint} ]" % cmi_debug )
+            #rem_news = nsoup.find(attrs={"class": "article-wrap no-bb"})
+            logging.info( f'%s - Depth: 2 / BS4 processed doc length: {len(nsoup)}' % cmi_debug )
+
             print ( f"############################ rem news #############################" )
-            print ( f"### DEBUG: {local_news_meta}" )
+            print ( f"### DEBUG:\n{nsoup.prettify()}" )
+
             # follow link into page & read
-            logging.info( '%s - setting BS4 Fake Local zones...' % cmi_debug )
             author_zone = local_news_meta.find("div", attrs={"class": "byline-attr-author yf-1k5w6kz"} )
             pubdate_zone = local_news_meta.find("div", attrs={"class": "byline-attr-time-style"} )
             author = author_zone.string
@@ -491,10 +537,10 @@ class yfnews_reader:
 
             logging.info ( f"%s - Depth: 2 / Extracted Author & Pub dates from article" % cmi_debug )
             logging.info ( f"%s - Author: {author} / Published: {pubdate}" % cmi_debug )
-            rem_article_zone = rem_news.find_all("p")
+            rem_article_zone = local_stub_news.find_all("p")
             rem_article = rem_article_zone.p.string
-            if rem_news.find('a'):                     # BAD, no <a> zone in page or article is a REAL remote URL already
-                rem_url = rem_news.a.get("href")
+            if local_stub_news.find('a'):                     # BAD, no <a> zone in page or article is a REAL remote URL already
+                rem_url = local_stub_news.a.get("href")
                 # Fake local news stub article, points to a remotely  news article external URL, Also has [Continue reading] button TEXT
                 logging.info ( f"%s - Depth: 2 / Good <a> Remote-stub / News article @: {rem_url}" % cmi_debug )
                 logging.info ( f"%s - Depth: 2 / Insert ext url into ml_ingest" % cmi_debug )
@@ -503,27 +549,7 @@ class yfnews_reader:
                 self.ml_ingest[idx] = data_row          # now PERMENTALY update the ml_ingest record @ index = id
                 logging.info ( f"%s - Depth: 2 / NLP candidate is ready" % cmi_debug )
                 return uhint, thint, rem_url
-                    #
-        if uhint == 1:
-            logging.info ( f"%s - Depth: 2 / Local Full artice / [ u: {uhint} t: {thint} ]" % cmi_debug )
-            author_zone = local_news_meta.find("div", attrs={"class": "byline-attr-author yf-1k5w6kz"} )                    
-            pubdate_zone = local_news_meta.find("div", attrs={"class": "byline-attr-time-style"} )
-            author = author_zone.string
-            pubdate = pubdate_zone.time.string
-            logging.info ( f"%s - Depth: 2 / Extracted Author & Pub dates from article" % cmi_debug )
-            logging.info ( f"%s - Depth: 2 / Author: {author} / Published: {pubdate}" % cmi_debug )
-            article_zone = local_news.find_all("p" )
-            if article_zone is not None:
-            #if local_news.find('p'):                     # <p> is where the ENTIRE article is written
-                #article = article_zone
-                logging.info ( f"%s - Depth: 2 / GOOD <p> zone / Local full TEXT article" % cmi_debug )
-                #pub_clean = pubdate.text.lstrip()
-                #published = pub_clean.split('·', 1)
-                #author_clean = author.text.lstrip()
-                logging.info ( f"%s - Depth: 2 / NLP candidate is ready" % cmi_debug )
-                return uhint, thint, url
-                #
-            elif rem_news.text == "Story continues":         # local articles have a [story continues...] button
+            elif local_stub_news.text == "Story continues":         # local articles have a [story continues...] button
                 logging.info ( f"%s - Depth: 2 / GOOD [story continues...] stub" % cmi_debug )
                 logging.info ( f"%s - Depth: 2 / confidence level / u: {uhint} h: {thint}" % cmi_debug )
                 return uhint, thint, self.this_article_url      # REAL local news
@@ -544,6 +570,7 @@ class yfnews_reader:
 
         if uhint == 2:
             if local_video.find('p'):          # video page only has a small <p> zone. NOT much TEXT (all the news is in the video)
+                logging.info( f'%s - Depth: 2 / BS4 processed doc length: {len(nsoup)}' % cmi_debug )
                 logging.info ( f"%s - Depth: 2 / GOOD [Video report] minimal text" % cmi_debug )
                 logging.info ( f"%s - Depth: 2 / confidence level / u: {uhint} h: {thint}" % cmi_debug )
                 return uhint, thint, self.this_article_url                   # VIDEO story with Minimal text article

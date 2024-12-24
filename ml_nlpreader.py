@@ -104,12 +104,12 @@ class ml_nlpreader:
         #yfn.yfn_bintro()
         self.yfn.update_headers(news_symbol)
         self.yfn.form_url_endpoint(news_symbol)
-        self.yfn.do_js_get(0)                        # get() & process the page html/JS data
+        hash_state = self.yfn.do_js_get(0)           # get() & process the page html/JS data
         self.uh = url_hinter(1, self.args)           # create instance of urh hinter
         self.yfn.uh = self.uh                        # send it outside to our YFN News reader instance
         #self.yfn.share_hinter(uh)
-        self.yfn.scan_news_feed(news_symbol, 0, 1, 0)   #   symbo | Depth | html/javascrip | data_page_index
-        self.yfn.eval_article_tags(news_symbol)      # ml_ingest{} is built
+        self.yfn.scan_news_feed(news_symbol, 0, 1, 0, hash_state)   #   symbol | Depth | html/JS | data_page_index
+        self.yfn.eval_news_feed_stories(news_symbol)       # ml_ingest{} is built
         print ( f" " )
         print ( "========================= Evaluate quality of ML/NLP candidates =========================" )
 
@@ -142,16 +142,16 @@ class ml_nlpreader:
                     }
 
         print ( " ")
-        print ( f"NLP Candidate Summary =====================================" )
-        cmi_debug = __name__+"::nlp_summary().#1"
+        print ( f"============================ NLP Candidate Summary ============================" )
+
         for sn_idx, sn_row in self.yfn.ml_ingest.items():                       # cycle thru the NLP candidate list
-            print ( f"### DEBUG:\n {sn_idx} \n{sn_row}" )
+            print ( f"### DEBUG: Page: [ {sn_idx} ] / Data row: {sn_row}" )
             if sn_row['type'] == 0:                                             # REAL news, inferred from Depth 0
-                print( f"News article:  {sn_idx} / {sn_row['symbol']} / ", end="" )
+                print( f"Local News article:  {sn_idx} / {sn_row['symbol']} / ", end="" )
                 t_url = urlparse(sn_row['url'])                                 # WARN: a rlparse() url_named_tupple (NOT the raw url)
                 uhint, uhdescr = self.uh.uhinter(20, t_url)
                 thint = (sn_row['thint'])                                       # the hint we guessed at while interrogating page <tags>
-                logging.info ( f"%s - Logic.#0 hinting origin url: t:0 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
+                logging.info ( f"%s - Logic.#0 Hints for url: [ t:0 / u:{uhint} / h: {thint} ] / {uhdescr}" % cmi_debug )
 
                 # WARNING : This is a deep analysis on the page
                 r_uhint, r_thint, r_xturl = self.yfn.interpret_page(sn_idx, sn_row)    # go deep, with everything we knonw about this item
@@ -168,7 +168,7 @@ class ml_nlpreader:
                 print ( f"================= NLP Sumamry @ Depth 2 ======================" )
                 # summary report...
             elif sn_row['type'] == 1:                       # Micro-Ad, but could possibly be news...
-                print( f"News article:  {sn_idx} / {sn_row['symbol']} /", end="" )
+                print( f"Fake News stub micro article:  {sn_idx} / {sn_row['symbol']} /", end="" )
                 t_url = urlparse(sn_row['url'])
                 uhint, uhdescr = self.uh.uhinter(30, t_url)      # hint on ORIGIN url
                 #thint = (sn_row['thint'])                   # the hint we guess at while interrogating page <tags>

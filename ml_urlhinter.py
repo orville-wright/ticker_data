@@ -37,11 +37,11 @@ class url_hinter:
 
 
 # method #1
-    def uhinter(self, hcycle, input_url):
+    def uhinter(self, hcycle, recvd_url):
         """
         NLP Support function - Exact copy of main::url_hinter()
         Only a few hint types are possible...
-        0 = remote stub article - (URL starts with /m/.... and has FQDN:  https://finance.yahoo.com/
+        0 = Fake stub article - (URL starts with /m/.... and has FQDN:  https://finance.yahoo.com/
         1 = local full article - (URL starts with /news/... and has FQDN: https://finance.yahoo.com/
         2 = local full video - (URL starts with /video/... and has FQDN: https://finance.yahoo.com/
         3 = remote full article - (URL is a pure link to remote article:  https://www.independent.co.uk/news/...
@@ -54,9 +54,12 @@ class url_hinter:
         cmi_debug = __name__+"::uhinter.eng#"+str(self.yti)+"_cyc#"+str(hcycle)
         logging.info('%s - IN' % cmi_debug )
 
+        input_url = recvd_url
+
         # INFO: This metainfo does NOT defin locality. You cant inferr locality truth from it.
-        uhint_code = { 'm': ('Extern brief', 0),
-                    'news': ('Internal News', 1),
+        uhint_code = {
+                    'm': ('Fake micro news', 1),
+                    'news': ('Internal News', 0),
                     'video': ('Video story', 2),
                     'rabs': ('External publication', 3),
                     'research': ('Research report', 4),
@@ -67,10 +70,10 @@ class url_hinter:
 
         logging.info ( f"%s - Recvd article url as: {type(input_url)}" % cmi_debug )
         t_check = isinstance(input_url, str)
+        logging.info ( f"%s - Hint url: {input_url}" % cmi_debug )    # {{}} handles urls with %
 
         if t_check:
-            logging.info ( f"%s - Hint url: {{input_url}}" % cmi_debug )    # {{}} handles urls with %
-            a_url = urlparse(input_url)                 # conv url string into aprsed named tuple object
+            a_url = urlparse(input_url)                 # conv url string into apparsed named tuple object
             if a_url.netloc == "finance.yahoo.com":
                 urlp_attr = a_url.path.split('/', 2)    # work on path=object ONLY
                 uhint = uhint_code.get(urlp_attr[1])    # retrieve uhint code/descr tuple from split section #1
@@ -87,11 +90,11 @@ class url_hinter:
                     logging.info ( f"%s - Decoded url as [{a_url.netloc}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
                     return uhint[1], uhint[0]
         else:
-            logging.info ( f"%s - recvd pre-parsed urlparse object" % cmi_debug )
+            logging.info ( f"%s - recvd good encoded url tuple" % cmi_debug )
             if input_url.netloc == "finance.yahoo.com":                         # e.g.  ParseResult(scheme='https', netloc='finance.yahoo.com', path='/m/49c60293...
                 urlp_attr = input_url.path.split('/', 2)                        # work on path=object ONLY
                 uhint = uhint_code.get(urlp_attr[1])                            # retrieve uhint code/descr tuple
-                logging.info ( f"%s - decoded url as [{input_url.netloc}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
+                logging.info ( f"%s - Decoded url as [{input_url.netloc}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
                 return uhint[1], uhint[0]
             else:
                 uhint = uhint_code.get('rabs')            # get our encodings for absolute URL
@@ -136,8 +139,9 @@ class url_hinter:
               They do not match/align with the URL Hint code. Since that could be a 'fake out'
         """
         cmi_debug = __name__+"::"+"confidence_lvl.#1"
-        tcode = { 0.0: ('Full article page', 0),
-                1.0: ('Stub referr page', 0),
+        tcode = {
+                0.0: ('Full Local article page', 0),
+                1.0: ('Fake local micro-stub', 0),
                 1.1: ('External publication link', 1),
                 2.0: ('OP-Ed page', 0),
                 2.1: ('OP-Ed stub', 1),
@@ -157,6 +161,6 @@ class url_hinter:
                 10.0: ('ERROR unknown state', 9),
                 99.9: ('Default NO-YET-SET', 9),
                 }
-        logging.info ( f"%s - Decode CL from hint: [{thint}]" % cmi_debug )
+        logging.info ( f"%s - Decode CONFIDENCE from hint: [{thint}]" % cmi_debug )
         thint_descr = tcode.get(thint)    # tuple : page type description / locality code 0=local/1=remote
         return thint_descr
