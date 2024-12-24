@@ -515,7 +515,7 @@ class yfnews_reader:
                 logging.info( f'%s - cache holds oject type:   {type(cy_soup)}' % cmi_debug )
                 logging.info( f'%s - Dataset holds oject type: {type(dataset_2)}' % cmi_debug )
                 print ( f"############################### debug ################################" )
-                print ( f"### DEBUG: \n {cy_soup.text}" )
+                print ( f"### DEBUG: \n {cy_soup.html}" )
                 print ( f"################################ END #################################" )
                 nsoup = BeautifulSoup(dataset_2, "html.parser")
             else:
