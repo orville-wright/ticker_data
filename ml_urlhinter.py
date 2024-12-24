@@ -41,8 +41,9 @@ class url_hinter:
         """
         NLP Support function - Exact copy of main::url_hinter()
         Only a few hint types are possible...
-        0 = Fake stub article - (URL starts with /m/.... and has FQDN:  https://finance.yahoo.com/
-        1 = local full article - (URL starts with /news/... and has FQDN: https://finance.yahoo.com/
+        This is [ u: ] value...
+        0 = local full article - (URL starts with /news/... and has FQDN: https://finance.yahoo.com/
+        1 = Fake local micro stub article - (URL starts with /m/.... and has FQDN:  https://finance.yahoo.com/
         2 = local full video - (URL starts with /video/... and has FQDN: https://finance.yahoo.com/
         3 = remote full article - (URL is a pure link to remote article:  https://www.independent.co.uk/news/...
         4 = research report - (URL starts with /research/... origin FQDN:  https://finance.yahoo.com/research/reports/.....
@@ -56,10 +57,10 @@ class url_hinter:
 
         input_url = recvd_url
 
-        # INFO: This metainfo does NOT defin locality. You cant inferr locality truth from it.
+        # INFO: U code only - This metainfo does NOT define locality. You cant inferr locality truth from it.
         uhint_code = {
-                    'm': ('Fake micro news', 1),
-                    'news': ('Internal News', 0),
+                    'news': ('Local News', 0),
+                    'm': ('Fake local micro news', 1),
                     'video': ('Video story', 2),
                     'rabs': ('External publication', 3),
                     'research': ('Research report', 4),
@@ -69,42 +70,42 @@ class url_hinter:
                     }
 
         logging.info ( f"%s - Recvd article url as: {type(input_url)}" % cmi_debug )
-        t_check = isinstance(input_url, str)
-        logging.info ( f"%s - Hint url: {input_url}" % cmi_debug )    # {{}} handles urls with %
+        t_check = isinstance(input_url, str)            # check is url is not a GOOD class:urllib.parse.ParseResult
+        # DEBUG : logging.info ( f"%s - Hint url: {input_url}" % cmi_debug )    # {{}} handles urls with %
 
         if t_check:
             a_url = urlparse(input_url)                 # conv url string into apparsed named tuple object
             if a_url.netloc == "finance.yahoo.com":
                 urlp_attr = a_url.path.split('/', 2)    # work on path=object ONLY
                 uhint = uhint_code.get(urlp_attr[1])    # retrieve uhint code/descr tuple from split section #1
-                logging.info ( f"%s - decoded url as [{a_url.netloc}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
+                logging.info ( f"%s - Logic: #0 / decoded url: [{a_url.netloc}] / Type: [{urlp_attr[1]}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
                 return uhint[1], uhint[0]
             else:
                 uhint = uhint_code.get('rabs')            # get our encodings for absolute URL
                 logging.info ( f"%s - Extract pure-abs url component: [{a_url.netloc}] u:{uhint[1]} / {uhint[0]}" % cmi_debug )
                 if a_url.path == "finance.yahoo.com":     # paranoid check b/c urls are nortotiously junky
-                    logging.info ( f"%s - ERROR mangled url: [{a_url.netloc}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
+                    logging.info ( f"%s - Logic: #1 / ERROR mangled url: [{a_url.netloc}] / Type: [{urlp_attr[1]}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
                     error_state = uhint_code.get('err')
                     return error_state[1], error_state[0]
                 else:
-                    logging.info ( f"%s - Decoded url as [{a_url.netloc}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
+                    logging.info ( f"%s - Logic: #1 / decoded url: [{a_url.netloc}] / Type: [{urlp_attr[1]}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
                     return uhint[1], uhint[0]
         else:
             logging.info ( f"%s - recvd good encoded url tuple" % cmi_debug )
             if input_url.netloc == "finance.yahoo.com":                         # e.g.  ParseResult(scheme='https', netloc='finance.yahoo.com', path='/m/49c60293...
                 urlp_attr = input_url.path.split('/', 2)                        # work on path=object ONLY
                 uhint = uhint_code.get(urlp_attr[1])                            # retrieve uhint code/descr tuple
-                logging.info ( f"%s - Decoded url as [{input_url.netloc}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
-                return uhint[1], uhint[0]
+                logging.info ( f"%s - Logic: #2 / Decoded url as [{input_url.netloc}] / Type: [{urlp_attr[1]}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
+                return uhint[1], uhint[0]    # u code / description
             else:
                 uhint = uhint_code.get('rabs')            # get our encodings for absolute URL
-                logging.info ( f"%s - Extract pure-abs url component: [{input_url.netloc}] u:{uhint[1]} / {uhint[0]}" % cmi_debug )
+                logging.info ( f"%s - Evaluate url path: [{input_url.netloc}] u:{uhint[1]} / {uhint[0]}" % cmi_debug )
                 if input_url.path == "finance.yahoo.com":                           # paranoid tripple check b/c urls are nortotiously junky
-                    logging.info ( f"%s - ERROR mangled url: [{input_url.netloc}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
+                    logging.info ( f"%s - Logic: #3 / ERROR mangled path: [{input_url.netloc}] / Type: [{urlp_attr[1]}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
                     error_state = uhint_code.get('err')
                     return error_state[1], error_state[0]
                 else:
-                    logging.info ( f"%s - Decoded url as [{input_url.netloc}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
+                    logging.info ( f"%s - Logic: #4 / Decoded url: [{input_url.netloc}] / Type: [{urlp_attr[1]}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
                     return uhint[1], uhint[0]
 
         #error_state = uhint_code.get('bad')             # should NEVER get here - did recv a url raw string or a urlparse object named tuple
@@ -129,8 +130,9 @@ class url_hinter:
         """
         NLP Support function #1
         INFO: Does *not* print any output
-        RETURNSL a dict of computed confidence level codes & info
-        r_uhint = locality confidence code (0=remote, 1=local, 9=ERROR_bad_page_struct, 10=ERROR_unknown_state)
+        RETURNS a dict of computed confidence level codes & info
+        r_uhint = locality confidence code
+            : (0=local, 1=remote, 9=ERROR_bad_page_struct, 10=ERROR_unknown_state)  !! may not be correct
         tc = type confidence code (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
         ru = Real remote url (extracted)
         su = Fake url from Depth 0 news feed
@@ -161,6 +163,6 @@ class url_hinter:
                 10.0: ('ERROR unknown state', 9),
                 99.9: ('Default NO-YET-SET', 9),
                 }
-        logging.info ( f"%s - Decode CONFIDENCE from hint: [{thint}]" % cmi_debug )
+        logging.info ( f"%s - Decode localoty CONF from hint: [{thint}]" % cmi_debug )
         thint_descr = tcode.get(thint)    # tuple : page type description / locality code 0=local/1=remote
         return thint_descr

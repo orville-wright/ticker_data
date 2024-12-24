@@ -149,7 +149,7 @@ class ml_nlpreader:
             if sn_row['type'] == 0:                                             # REAL news, inferred from Depth 0
                 print( f"Local News article:  {sn_idx} / {sn_row['symbol']} / ", end="" )
                 t_url = urlparse(sn_row['url'])                                 # WARN: a rlparse() url_named_tupple (NOT the raw url)
-                uhint, uhdescr = self.uh.uhinter(20, t_url)
+                uhint, uhdescr = self.uh.uhinter(0, t_url)
                 thint = (sn_row['thint'])                                       # the hint we guessed at while interrogating page <tags>
                 logging.info ( f"%s - Logic.#0 Hints for url: [ t:0 / u:{uhint} / h: {thint} ] / {uhdescr}" % cmi_debug )
 
@@ -159,34 +159,36 @@ class ml_nlpreader:
                 p_r_xturl = urlparse(r_xturl)
                 inf_type = self.yfn.uh.confidence_lvl(thint)     # returned var is a tupple
                 #
-                print ( f"============ NLP candidate" )                # all type 0 are assumed to be REAL news
+                print ( f"============ NLP candidate for Type: 0" )                # all type 0 are assumed to be REAL news
                 print ( f"Origin URL:    [ {t_url.netloc} ] / {uhdescr} / {inf_type[0]} / ", end="" )
                 print ( f"{locality_code.get(inf_type[1])}" )
                 uhint, uhdescr = self.uh.uhinter(21, p_r_xturl)
                 print ( f"Target URL:    [ {p_r_xturl.netloc} ] / {uhdescr} / ", end="" )
                 print ( f"{locality_code.get(uhint)} [ u:{uhint} ])" )
                 print ( f"================= NLP Sumamry @ Depth 2 ======================" )
-                # summary report...
+ 
+ 
             elif sn_row['type'] == 1:                       # Micro-Ad, but could possibly be news...
                 print( f"Fake News stub micro article:  {sn_idx} / {sn_row['symbol']} /", end="" )
                 t_url = urlparse(sn_row['url'])
-                uhint, uhdescr = self.uh.uhinter(30, t_url)      # hint on ORIGIN url
-                #thint = (sn_row['thint'])                   # the hint we guess at while interrogating page <tags>
+                uhint, uhdescr = self.uh.uhinter(1, t_url)      # hint on ORIGIN url
+                thint = (sn_row['thint'])                   # the hint we guess at while interrogating page <tags>
+                logging.info ( f"%s - Logic.#1 hinting origin url: t:1 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
+
                 r_uhint, r_thint, r_xturl = self.yfn.interpret_page(sn_idx, sn_row)    # go deep, with everything we knonw about this item
-                logging.info ( f"%s - Logic.#1 hinting origin url: t:1 / u:{r_uhint} / h: {r_thint} {uhdescr}" % cmi_debug )
                 p_r_xturl = urlparse(r_xturl)
-                inf_type = self.yfn.uh.confidence_lvl(r_thint)
+                inf_type = self.yfn.uh.confidence_lvl(thint)
                 # summary report...
-                print ( f"NLP candidate" )                      # all type 0 are assumed to be REAL news
+                print ( f"============ NLP candidate for Type: 1" )
                 print ( f"Origin URL:    [ {t_url.netloc} ] / {uhdescr} / {inf_type[0]} / ", end="" )
                 print ( f"{locality_code.get(inf_type[1], 'in flux')}" )
                 uhint, uhdescr = self.uh.uhinter(31, p_r_xturl)      # hint on TARGET url
                 print ( f"Target URL:    [ {p_r_xturl.netloc} ] / {uhdescr} / ", end="" )
                 print ( f"{locality_code.get(uhint, 'in flux')} [ u:{uhint} ])" )
-                print ( f"====================== Depth 2 ======================" )
+                print ( f"================= NLP Sumamry @ Depth 2 ======================" )
                 #
             elif sn_row['type'] == 2:                     # possibly not news? (Micro Ad)
-                print ( f"Logic.#2 - Bulk injected - NOT an NLP candidate" )
+                print ( f"Logic.#2 - Video story - NOT an NLP candidate" )
                 logging.info ( f"%s - #3 skipping..." % cmi_debug )
                 print ( f"====================== Depth 2 ======================" )
                 #

@@ -189,6 +189,34 @@ class yfnews_reader:
 
         return aurl_hash
 
+###################################### 7 ###########################################
+# Possibly DEPRICATED - Delete me ?
+    def do_simple_get(self):
+        """
+        get simple raw HTML data structure (data not processed by JAVAScript engine)
+        NOTE: get URL is assumed to have allready been set (self.yfqnews_url)
+              Assumes cookies have already been set up. NO cookie update done here
+        """
+        cmi_debug = __name__+"::"+self.do_simple_get.__name__+".#"+str(self.yti)
+        logging.info( f'%s - url: {self.yfqnews_url}' % cmi_debug )
+
+        with self.js_session.get(self.yfqnews_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
+            logging.info('%s - Simple HTML Request get()...' % cmi_debug )
+            self.yfn_htmldata = self.js_resp0.text
+            auh = hashlib.sha256(self.yfqnews_url.encode())     # hash the url
+            aurl_hash = auh.hexdigest()
+            logging.info( f'%s - CREATE cache entry: [ {aurl_hash} ]' % cmi_debug )
+            self.yfn_jsdb[aurl_hash] = self.js_resp0            # create CACHE entry in jsdb !! just response, not full page TEXT data !!
+
+        # Xray DEBUG
+        if self.args['bool_xray'] is True:
+            print ( f"========================== {self.yti} / HTML get() session cookies ================================" )
+            for i in self.js_session.cookies.items():
+                print ( f"{i}" )
+            print ( f"========================== {self.yti} / HTML get() session cookies ================================" )
+
+        return
+
 ###################################### 8 ###########################################
 # method 9
 # session data extraction methods
@@ -465,7 +493,8 @@ class yfnews_reader:
         try:
             cx_soup = self.yfn_jsdb[cached_state]
             logging.info( f'%s - EXISTS in cache: {cached_state}' % cmi_debug )
-            nsoup = BeautifulSoup(cx_soup.text, "html.parser")
+            dataset_1 = self.yfn_jsdata
+            nsoup = BeautifulSoup(dataset_1, "html.parser")
             #self.ul_tag_dataset = soup.find(attrs={"class": "container yf-1ce4p3e"} )        # produces : list iterator
             #self.li_superclass = self.ul_tag_dataset.find_all(attrs={"stream-item story-item yf-1usaaz9"} )
         except KeyError as error:
@@ -479,16 +508,16 @@ class yfnews_reader:
             logging.info( f'%s - REPEAT check for urlhash in cache: {cached_state}' % cmi_debug )
             if self.yfn_jsdb[cached_state]:
                 logging.info( f'%s - EXISTS in cache: {cached_state}' % cmi_debug )
-                cx_soup = self.yfn_jsdb[cached_state]
-                nsoup = BeautifulSoup(cx_soup.text, "html.parser")
+                cy_soup = self.yfn_jsdb[cached_state]
+                dataset_2 = self.yfn_jsdata
+                nsoup = BeautifulSoup(dataset_2, "html.parser")
             else:
                 logging.info( f'%s - FAILED to read JS doc and set BS4 obejcts' % cmi_debug )
                 return 10, 10.0, "ERROR_unknown_state!"
 
-        #print ( f"############################### nsoup ################################" )
-        #print ( f"### DEBUG: \n{nsoup}" )
-        #print ( f"################################ END #################################" )
-        
+                #print ( f"############################### debug ################################" )
+                #print ( f"### DEBUG: \n{cy_soup.html.html}" )
+                #print ( f"################################ END #################################" )
         
         logging.info( f'%s - set BS4 data zones for Article: [ {idx} ]' % cmi_debug )
         local_news = nsoup.find(attrs={"class": "body yf-tsvcyu"})   # full news article - locally hosted
@@ -496,38 +525,39 @@ class yfnews_reader:
         local_stub_news = nsoup.find_all(attrs={"class": "article yf-l7apfj"})
         local_story = nsoup.find(attrs={"class": "body yf-tsvcyu"})  # Op-Ed article - locally hosted
         local_video = nsoup.find(attrs={"class": "body yf-tsvcyu"})  # Video story (minimal supporting text) stub - locally hosted
+        full_page = nsoup()  # full news article - locally hosted
         #rem_news = nsoup.find(attrs={"class": "caas-readmore"} )           # stub news article - remotely hosted
-        #local_news = nsoup.find(attrs={"class": "caas-content-wrapper"} )  # full news article - locally hosted
 
 
+        
         if uhint == 0:
-                logging.info ( f"%s - Depth: 2 / Local Full artice / [ u: {uhint} t: {thint} ]" % cmi_debug )
-                logging.info( f'%s - Depth: 2 / BS4 processed doc length: {len(nsoup)}' % cmi_debug )
+                logging.info ( f"%s - Depth: 2.0 / Local Full artice / [ u: {uhint} h: {thint} ]" % cmi_debug )
+                logging.info( f'%s - Depth: 2.0 / BS4 processed doc length: {len(nsoup)}' % cmi_debug )
                 author_zone = local_news_meta.find("div", attrs={"class": "byline-attr-author yf-1k5w6kz"} )                    
                 pubdate_zone = local_news_meta.find("div", attrs={"class": "byline-attr-time-style"} )
                 author = author_zone.string
                 pubdate = pubdate_zone.time.string
-                logging.info ( f"%s - Depth: 2 / Extracted Author & Pub dates from article" % cmi_debug )
-                logging.info ( f"%s - Depth: 2 / Author: {author} / Published: {pubdate}" % cmi_debug )
+                logging.info ( f"%s - Depth: 2.0 / Extracted Author & Pub dates from article" % cmi_debug )
+                logging.info ( f"%s - Depth: 2.0 / Author: {author} / Published: {pubdate}" % cmi_debug )
                 article_zone = local_news.find_all("p" )
                 if article_zone is not None:
                 #if local_news.find('p'):                     # <p> is where the ENTIRE article is written
                     #article = article_zone
-                    logging.info ( f"%s - Depth: 2 / GOOD <p> zone / Local full TEXT article" % cmi_debug )
+                    logging.info ( f"%s - Depth: 2.0 / GOOD <p> zone / Local full TEXT article" % cmi_debug )
                     #pub_clean = pubdate.text.lstrip()
                     #published = pub_clean.split('·', 1)
                     #author_clean = author.text.lstrip()
-                    logging.info ( f"%s - Depth: 2 / NLP candidate is ready" % cmi_debug )
+                    logging.info ( f"%s - Depth: 2.0 / NLP candidate is ready" % cmi_debug )
                     return uhint, thint, url
             
         # Fake local news stub / Micro article links out to externally hosted article
         if uhint == 1:
-            logging.info ( f"%s - Depth: 2 / Fake Local news stub / [ u: {uhint} h: {thint} ]" % cmi_debug )
+            logging.info ( f"%s - Depth: 2.1 / Fake Local news stub / [ u: {uhint} h: {thint} ]" % cmi_debug )
             #rem_news = nsoup.find(attrs={"class": "article-wrap no-bb"})
-            logging.info( f'%s - Depth: 2 / BS4 processed doc length: {len(nsoup)}' % cmi_debug )
+            logging.info( f'%s - Depth: 2.1 / BS4 processed doc length: {len(nsoup)}' % cmi_debug )
 
-            print ( f"############################ rem news #############################" )
-            print ( f"### DEBUG:\n{nsoup.prettify()}" )
+            #print ( f"############################ rem news #############################" )
+            #print ( f"### DEBUG:\n{nsoup.prettify()}" )
 
             # follow link into page & read
             author_zone = local_news_meta.find("div", attrs={"class": "byline-attr-author yf-1k5w6kz"} )
@@ -535,32 +565,32 @@ class yfnews_reader:
             author = author_zone.string
             pubdate = pubdate_zone.time.string
 
-            logging.info ( f"%s - Depth: 2 / Extracted Author & Pub dates from article" % cmi_debug )
-            logging.info ( f"%s - Author: {author} / Published: {pubdate}" % cmi_debug )
+            logging.info ( f"%s - Depth: 2.1 / Extracted Author & Pub dates from article" % cmi_debug )
+            logging.info ( f"%s - Depth: 2.1 / Author: {author} / Published: {pubdate}" % cmi_debug )
             rem_article_zone = local_stub_news.find_all("p")
             rem_article = rem_article_zone.p.string
             if local_stub_news.find('a'):                     # BAD, no <a> zone in page or article is a REAL remote URL already
                 rem_url = local_stub_news.a.get("href")
                 # Fake local news stub article, points to a remotely  news article external URL, Also has [Continue reading] button TEXT
-                logging.info ( f"%s - Depth: 2 / Good <a> Remote-stub / News article @: {rem_url}" % cmi_debug )
-                logging.info ( f"%s - Depth: 2 / Insert ext url into ml_ingest" % cmi_debug )
+                logging.info ( f"%s - Depth: 2.1 / Good <a> Remote-stub / News article @: {rem_url}" % cmi_debug )
+                logging.info ( f"%s - Depth: 2.1 / Insert ext url into ml_ingest" % cmi_debug )
                 ext_url_item = {'exturl': rem_url }     # build a new dict entry (external; absolute url)
                 data_row.update(ext_url_item )          # insert new dict entry into ml_ingest via an AUGMENTED data_row
                 self.ml_ingest[idx] = data_row          # now PERMENTALY update the ml_ingest record @ index = id
-                logging.info ( f"%s - Depth: 2 / NLP candidate is ready" % cmi_debug )
+                logging.info ( f"%s - Depth: 2.1 / NLP candidate is ready" % cmi_debug )
                 return uhint, thint, rem_url
             elif local_stub_news.text == "Story continues":         # local articles have a [story continues...] button
-                logging.info ( f"%s - Depth: 2 / GOOD [story continues...] stub" % cmi_debug )
-                logging.info ( f"%s - Depth: 2 / confidence level / u: {uhint} h: {thint}" % cmi_debug )
+                logging.info ( f"%s - Depth: 2.1 / GOOD [story continues...] stub" % cmi_debug )
+                logging.info ( f"%s - Depth: 2.1 / confidence level / u: {uhint} h: {thint}" % cmi_debug )
                 return uhint, thint, self.this_article_url      # REAL local news
                 #
             elif local_story.button.text == "Read full article":    # test to make 100% sure its a low quality story
-                logging.info ( f"%s - Depth: 2 / GOOD [Read full article] stub" % cmi_debug )
-                logging.info ( f"%s - Depth: 2 / confidence level / u: {uhint} h: {thint}" % cmi_debug )
+                logging.info ( f"%s - Depth: 2.1 / GOOD [Read full article] stub" % cmi_debug )
+                logging.info ( f"%s - Depth: 2.1 / confidence level / u: {uhint} h: {thint}" % cmi_debug )
                 return uhint, thint, self.this_article_url              # Curated Report
                 #
             else:
-                logging.info ( f"%s - Depth: 2 / NO local page interpreter available / u: {uhint} t: {thint}" % cmi_debug )
+                logging.info ( f"%s - Depth: 2.1 / NO local page interpreter available / u: {uhint} t: {thint}" % cmi_debug )
                 return uhint, 9.9, self.this_article_url
                 #else:
                 # still need to catch OP-ED...which is similar to [story continues...] and [Read full article]
@@ -570,30 +600,30 @@ class yfnews_reader:
 
         if uhint == 2:
             if local_video.find('p'):          # video page only has a small <p> zone. NOT much TEXT (all the news is in the video)
-                logging.info( f'%s - Depth: 2 / BS4 processed doc length: {len(nsoup)}' % cmi_debug )
-                logging.info ( f"%s - Depth: 2 / GOOD [Video report] minimal text" % cmi_debug )
-                logging.info ( f"%s - Depth: 2 / confidence level / u: {uhint} h: {thint}" % cmi_debug )
+                logging.info ( f'%s - Depth: 2.2 / BS4 processed doc length: {len(nsoup)}' % cmi_debug )
+                logging.info ( f"%s - Depth: 2.2 / GOOD [Video report] minimal text" % cmi_debug )
+                logging.info ( f"%s - Depth: 2.2 / confidence level / u: {uhint} h: {thint}" % cmi_debug )
                 return uhint, thint, self.this_article_url                   # VIDEO story with Minimal text article
             else:
-                logging.info ( f"%s - Depth: 2 / ERROR failed to interpret [Video report] page" % cmi_debug )
-                logging.info ( f"%s - Depth: 2 / confidence level / u: {uhint} h: {thint}" % cmi_debug )
+                logging.info ( f"%s - Depth: 2.2 / ERROR failed to interpret [Video report] page" % cmi_debug )
+                logging.info ( f"%s - Depth: 2.2 / confidence level / u: {uhint} h: {thint}" % cmi_debug )
                 return uhint, 9.9, self.this_article_url                   # VIDEO story with Minimal text article
 
         if uhint == 3:
-            logging.info ( f"%s - Depth: 2 / External publication - CANT interpret remote article @ [Depth 2]" % cmi_debug )
-            logging.info ( f"%s - Depth: 2 / confidence level / u: {uhint} h: {thint}" % cmi_debug )
+            logging.info ( f"%s - Depth: 2.2 / External publication - CANT interpret remote article @ [Depth 2]" % cmi_debug )
+            logging.info ( f"%s - Depth: 2.2 / confidence level / u: {uhint} h: {thint}" % cmi_debug )
             return uhint, thint, self.this_article_url                      # Explicit remote article - can't interpret off-site article
 
         if uhint == 4:
-            logging.info ( f"%s - Depth: 2 / POSSIBLE Research report " % cmi_debug )
-            logging.info ( f"%s - Depth: 2 / confidence level / u: {uhint} h: {thint}" % cmi_debug )
+            logging.info ( f"%s - Depth: 2.2 / POSSIBLE Research report " % cmi_debug )
+            logging.info ( f"%s - Depth: 2.2 / confidence level / u: {uhint} h: {thint}" % cmi_debug )
             # TODO:
             # test the target url? is it a finance.yahoo.com hosted research report?
             # if yes...we can interpret the page. There's lots of text data in that page...
             # e.g. https://finance.yahoo.com/research/reports/MS_0P0000XWEY_AnalystReport_1632872327000
             return uhint, thint, self.this_article_url                      # Explicit remote article - can't see into this off-site article
 
-        logging.info ( f"%s - Depth: 2 / ERROR NO page interpreter logic triggered" % cmi_debug )
+        logging.info ( f"%s - Depth: 2.10 / ERROR NO page interpreter logic triggered" % cmi_debug )
         return 10, 10.0, "ERROR_unknown_state!"              # error unknown state
 
 
@@ -693,31 +723,6 @@ class yfnews_reader:
                 print ( f"          External: {d['exturl']}" )
             else:
                 print ( f"          Local:    {d['url']}" )
-
-        return
-
-# method 7
-# Possibly DEPRICATED - Delete me ?
-    def do_simple_get(self):
-        """
-        get simple raw HTML data structure (data not processed by JAVAScript engine)
-        NOTE: get URL is assumed to have allready been set (self.yfqnews_url)
-              Assumes cookies have already been set up. NO cookie update done here
-        """
-        cmi_debug = __name__+"::"+self.do_simple_get.__name__+".#"+str(self.yti)
-        logging.info( f'%s - Simple HTML request get() on URL: {self.yfqnews_url}' % cmi_debug )
-        with self.js_session.get(self.yfqnews_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
-            logging.info('%s - Simple HTML Request get() completed!- store HTML response dataset' % cmi_debug )
-            self.yfn_htmldata = self.js_resp0.text
-            # On success, HTML response is saved in Class Global accessor -> self.js_resp0
-            # TODO: should do some get() failure testing here
-
-        # Xray DEBUG
-        if self.args['bool_xray'] is True:
-            print ( f"========================== {self.yti} / HTML get() session cookies ================================" )
-            for i in self.js_session.cookies.items():
-                print ( f"{i}" )
-            print ( f"========================== {self.yti} / HTML get() session cookies ================================" )
 
         return
 
