@@ -507,11 +507,11 @@ class yfnews_reader:
             #    nr = s.get( self.this_article_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
             #    nsoup = BeautifulSoup(nr.text, 'html.parser')
             self.yfqnews_url = url
-            self.do_js_get(idx)
+            xhash = self.do_js_get(idx)
             logging.info( f'%s - REPEAT check for urlhash in cache: {cached_state}' % cmi_debug )
             if self.yfn_jsdb[cached_state]:
                 logging.info( f'%s - EXISTS in cache: {cached_state}' % cmi_debug )
-                cy_soup = self.yfn_jsdb[cached_state]
+                cy_soup = self.yfn_jsdb[cached_state]           # get() response 
                 dataset_2 = self.yfn_jsdata
                 logging.info( f'%s - cache holds oject type:   {type(cy_soup)}' % cmi_debug )
                 logging.info( f'%s - Dataset holds oject type: {type(dataset_2)}' % cmi_debug )
@@ -519,26 +519,28 @@ class yfnews_reader:
                 #print ( f"### DEBUG: {escape(cy_soup.text)}" )
                 #print ( f"### DEBUG: {escape(dataset_2)}" )
                 #print ( f"################################ END #################################" )
-                nsoup = BeautifulSoup(escape(dataset_2), "html.parser")
+                self.nsoup = BeautifulSoup(cy_soup.text, "html.parser")
             else:
                 logging.info( f'%s - FAILED to read JS doc and set BS4 obejcts' % cmi_debug )
                 return 10, 10.0, "ERROR_unknown_state!"
 
         
         logging.info( f'%s - set BS4 data zones for Article: [ {idx} ]' % cmi_debug )
-        local_news = nsoup.find(attrs={"class": "body yf-tsvcyu"})   # full news article - locally hosted
-        local_news_meta = nsoup.find(attrs={"class": "main yf-cfn520"})   # comes above/before article
-        local_stub_news = nsoup.find_all(attrs={"class": "article yf-l7apfj"})
-        local_story = nsoup.find(attrs={"class": "body yf-tsvcyu"})  # Op-Ed article - locally hosted
-        local_video = nsoup.find(attrs={"class": "body yf-tsvcyu"})  # Video story (minimal supporting text) stub - locally hosted
-        full_page = nsoup()  # full news article - locally hosted
+        local_news = self.nsoup.find(attrs={"class": "body yf-tsvcyu"})   # full news article - locally hosted
+        local_news_meta = self.nsoup.find(attrs={"class": "main yf-cfn520"})   # comes above/before article
+        local_stub_news = self.nsoup.find_all(attrs={"class": "article yf-l7apfj"})
+        local_story = self.nsoup.find(attrs={"class": "body yf-tsvcyu"})  # Op-Ed article - locally hosted
+        local_video = self.nsoup.find(attrs={"class": "body yf-tsvcyu"})  # Video story (minimal supporting text) stub - locally hosted
+        full_page = self.nsoup()  # full news article - locally hosted
         #rem_news = nsoup.find(attrs={"class": "caas-readmore"} )           # stub news article - remotely hosted
 
 
         
         if uhint == 0:
                 logging.info ( f"%s - Depth: 2.0 / Local Full artice / [ u: {uhint} h: {thint} ]" % cmi_debug )
-                logging.info( f'%s - Depth: 2.0 / BS4 processed doc length: {len(nsoup)}' % cmi_debug )
+                logging.info( f'%s - Depth: 2.0 / BS4 processed doc length: {len(self.nsoup)}' % cmi_debug )
+                logging.info( f'%s - Depth: 2.0 / nsoup type is: {type(self.nsoup)}' % cmi_debug )
+                
                 author_zone = local_news_meta.find("div", attrs={"class": "byline-attr-author yf-1k5w6kz"} )                    
                 pubdate_zone = local_news_meta.find("div", attrs={"class": "byline-attr-time-style"} )
                 author = author_zone.string
@@ -559,17 +561,20 @@ class yfnews_reader:
         # Fake local news stub / Micro article links out to externally hosted article
         if uhint == 1:
             logging.info ( f"%s - Depth: 2.1 / Fake Local news stub / [ u: {uhint} h: {thint} ]" % cmi_debug )
+            logging.info( f'%s - Depth: 2.1 / BS4 processed doc length: {len(self.nsoup)}' % cmi_debug )
+            logging.info( f'%s - Depth: 2.1 / nsoup type is: {type(self.nsoup)}' % cmi_debug )
             #rem_news = nsoup.find(attrs={"class": "article-wrap no-bb"})
-            logging.info( f'%s - Depth: 2.1 / BS4 processed doc length: {len(full_page)}' % cmi_debug )
-
+            # //*[@id="nimbus-app"]/section/section/section/article/div/div[1]/div[2]/div[1]
+            hack_y = self.nsoup.section.section.section
+            #hack_x = self.nsoup.body.find_all("section")
             print ( f"############################ rem news #############################" )
             #print ( f"### DEBUG:{full_page.prettify()}" )
-            print ( f"### DEBUG:{full_page}" )
+            print ( f"### DEBUG:{hack_y}" )
             print ( f"############################ rem news #############################" )
 
             # follow link into page & read
-            author_zone = full_page.find("div", attrs={"class": "byline-attr-author yf-1k5w6kz"} )
-            pubdate_zone = full_page.find("div", attrs={"class": "byline-attr-time-style"} )
+            author_zone = local_news_meta.find(attrs={"class": "byline-attr-author yf-1k5w6kz"} )
+            pubdate_zone = local_news_meta.find(attrs={"class": "byline-attr-time-style"} )
             author = author_zone.string
             pubdate = pubdate_zone.time.string
 

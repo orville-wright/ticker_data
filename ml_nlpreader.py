@@ -164,7 +164,7 @@ class ml_nlpreader:
                 print ( f"{locality_code.get(inf_type[1])}" )
                 uhint, uhdescr = self.uh.uhinter(21, p_r_xturl)
                 print ( f"Target URL:    [ {p_r_xturl.netloc} ] / {uhdescr} / ", end="" )
-                print ( f"{locality_code.get(uhint)} [ u:{uhint} ])" )
+                print ( f"{locality_code.get(uhint)} [ u:{uhint} ]" )
                 print ( f"================= NLP Sumamry @ Depth 2 ======================" )
  
  
@@ -184,7 +184,7 @@ class ml_nlpreader:
                 print ( f"{locality_code.get(inf_type[1], 'in flux')}" )
                 uhint, uhdescr = self.uh.uhinter(31, p_r_xturl)      # hint on TARGET url
                 print ( f"Target URL:    [ {p_r_xturl.netloc} ] / {uhdescr} / ", end="" )
-                print ( f"{locality_code.get(uhint, 'in flux')} [ u:{uhint} ])" )
+                print ( f"{locality_code.get(uhint, 'in flux')} [ u:{uhint} ]" )
                 print ( f"================= NLP Sumamry @ Depth 2 ======================" )
                 #
             elif sn_row['type'] == 2:                     # possibly not news? (Micro Ad)
