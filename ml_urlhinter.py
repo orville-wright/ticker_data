@@ -21,12 +21,6 @@ class url_hinter:
     hcycle = 0              # method call  counter
     args = []               # class dict to hold global args being passed in from main() methods
 
-
-    # global accessors
-    yti = 0                 # Unique instance identifier
-    hcycle = 0              # method call  counter
-    args = []               # class dict to hold global args being passed in from main() methods
-
     def __init__(self, yti, global_args):
         cmi_debug = __name__+"::"+self.__init__.__name__+".#"+str(yti)
         #cmi_debug = __name__+"::"+self.__init__.__name__+".#"+str(self.yti)

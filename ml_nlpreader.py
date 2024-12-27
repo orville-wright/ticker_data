@@ -107,7 +107,6 @@ class ml_nlpreader:
         hash_state = self.yfn.do_js_get(0)           # get() & process the page html/JS data
         self.uh = url_hinter(1, self.args)           # create instance of urh hinter
         self.yfn.uh = self.uh                        # send it outside to our YFN News reader instance
-        #self.yfn.share_hinter(uh)
         self.yfn.scan_news_feed(news_symbol, 0, 1, 0, hash_state)   #   symbol | Depth | html/JS | data_page_index
         self.yfn.eval_news_feed_stories(news_symbol)       # ml_ingest{} is built
         print ( f" " )

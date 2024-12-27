@@ -159,15 +159,14 @@ class yfnews_reader:
 # method 8
     def do_js_get(self, idx_x):
         """
-        get JAVAScript engine processed data structure
-        NOTE: URL must be set before in (self.yfqnews_url)
-              Assumes cookies have already been set up. NO cookie update done here
-            ALLWAYS create a CACHE entry in js cache DB
-            Return hash of url that was read
+        Use JAVAScript engine to process page
+        Assumes cookies have already been set up. NO cookie update done here
+        ALLWAYS create a CACHE entry in js cache DB
+        Return hash of url that was read
         """
         cmi_debug = __name__+"::"+self.do_js_get.__name__+".#"+str(self.yti)+"."+str(idx_x)
         logging.info('%s - IN' % cmi_debug )
-        logging.info( f' URL: %s', self.yfqnews_url )
+        logging.info( f'ml_yahoofinews::do_js_get - URL: %s', self.yfqnews_url )
 
         with self.js_session.get(self.yfqnews_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp2:
             logging.info('%s - Javascript engine processing...' % cmi_debug )
@@ -178,9 +177,9 @@ class yfnews_reader:
             self.yfn_jsdata = self.js_resp2.text                # store Full JAVAScript dataset TEXT page
             auh = hashlib.sha256(self.yfqnews_url.encode())     # hash the url
             aurl_hash = auh.hexdigest()
-            logging.info( f'%s - CREATE cache entry: [ {aurl_hash} ]' % cmi_debug )
+            logging.info( f'%s - CREATED cache entry: [ {aurl_hash} ]' % cmi_debug )
             self.yfn_jsdb[aurl_hash] = self.js_resp2            # create CACHE entry in jsdb !! just response, not full page TEXT data !!
-
+  
         # Xray DEBUG
         if self.args['bool_xray'] is True:
             print ( f"========================== {self.yti} / JS get() session cookies ================================" )
@@ -463,32 +462,34 @@ class yfnews_reader:
         ttype = data_row['type']
         thint = data_row['thint']
         uhint = data_row['uhint']
-        url = data_row['url']
+        durl = data_row['url']
         cached_state = data_row['urlhash']
 
         self.this_article_url = data_row['url']
         symbol = symbol.upper()
         logging.info( f'%s - urlhash cache lookup: {cached_state}' % cmi_debug )
         logging.info( f'%s -'  % cmi_debug )
-        logging.info( ' URL: %s' % url )           # urls containg "%" break logging module (NO FIX) 
+        logging.info( ' URL: %s' % durl )           # urls containg "%" break logging module (NO FIX) 
 
         
         try:
             cx_soup = self.yfn_jsdb[cached_state]
-            logging.info( f'%s - EXISTS in cache: {cached_state}' % cmi_debug )
+            logging.info( f'%s - CHECKING cache... {cached_state}' % cmi_debug )
+            logging.info( f'%s - Cached object FOUND: {cached_state}' % cmi_debug )
             dataset_1 = self.yfn_jsdata
-            logging.info( f'%s - cache holds oject type:   {type(cx_soup)}' % cmi_debug )
-            logging.info( f'%s - Dataset holds oject type: {type(dataset_1)}' % cmi_debug )
             nsoup = BeautifulSoup(escape(dataset_1), "html.parser")
+            logging.info( f'%s - Cache BS4 object:   {type(cx_soup)}' % cmi_debug )
+            logging.info( f'%s - Dataset object    : {type(dataset_1)}' % cmi_debug )
+            logging.info( f'%s - Cache URL object  : {type(durl)}' % cmi_debug )
             #self.ul_tag_dataset = soup.find(attrs={"class": "container yf-1ce4p3e"} )        # produces : list iterator
             #self.li_superclass = self.ul_tag_dataset.find_all(attrs={"stream-item story-item yf-1usaaz9"} )
         except KeyError as error:
-            logging.info( f'%s - MISSING in cache: Must read JS page' % cmi_debug )
-            logging.info( f' - Force read news url: %s' % url )     # urls containg "%" break logging module (NO FIX)
+            logging.info( f'%s - MISSING in cache, must read JS page' % cmi_debug )
+            logging.info( f'ml_yahoofinews::interpret_page: - %s' % durl )     # urls containg "%" break logging module (NO FIX)
             #with requests.Session() as s:
             #nr = s.get( self.this_article_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
             #nsoup = BeautifulSoup(nr.text, 'html.parser')
-            self.yfqnews_url = url
+            self.yfqnews_url = urlparse(durl)
             xhash = self.do_js_get(idx)
             #xhash = self.do_simple_get(url)
             #self.yfqnews_url = url
@@ -498,8 +499,9 @@ class yfnews_reader:
                 cy_soup = self.yfn_jsdb[cached_state]           # get() response 
                 dataset_2 = self.yfn_jsdata
                 #dataset_2 = self.yfn_htmldata                   # not process by JS engine. Basic HTML get()
-                logging.info( f'%s - cache holds oject type:   {type(cy_soup)}' % cmi_debug )
-                logging.info( f'%s - Dataset holds oject type: {type(dataset_2)}' % cmi_debug )
+                logging.info ( f'%s - cache url:     {type(durl)}' % cmi_debug )
+                logging.info ( f'%s - cache request: {type(cy_soup)}' % cmi_debug )
+                logging.info ( f'%s - Cache dataset: {type(self.yfn_jsdata)}' % cmi_debug )
                 #print ( f"############################### debug ################################" )
                 #print ( f"### DEBUG: {escape(cy_soup.text)}" )
                 #print ( f"### DEBUG: {escape(dataset_2)}" )
@@ -521,11 +523,11 @@ class yfnews_reader:
         #rem_news = nsoup.find(attrs={"class": "caas-readmore"} )           # stub news article - remotely hosted
 
 
-        
+        # Depth 2.0 :Local news article / Hosted in YFN
         if uhint == 0:
                 logging.info ( f"%s - Depth: 2.0 / Local Full artice / [ u: {uhint} h: {thint} ]" % cmi_debug )
-                logging.info( f'%s - Depth: 2.0 / BS4 processed doc length: {len(self.nsoup)}' % cmi_debug )
-                logging.info( f'%s - Depth: 2.0 / nsoup type is: {type(self.nsoup)}' % cmi_debug )
+                logging.info ( f'%s - Depth: 2.0 / BS4 processed doc length: {len(self.nsoup)}' % cmi_debug )
+                logging.info ( f'%s - Depth: 2.0 / nsoup type is: {type(self.nsoup)}' % cmi_debug )
                 
                 author_zone = local_news_meta.find("div", attrs={"class": "byline-attr-author yf-1k5w6kz"} )                    
                 pubdate_zone = local_news_meta.find("div", attrs={"class": "byline-attr-time-style"} )
@@ -533,37 +535,35 @@ class yfnews_reader:
                 pubdate = pubdate_zone.time.string
                 logging.info ( f"%s - Depth: 2.0 / Extracted Author & Pub dates from article" % cmi_debug )
                 logging.info ( f"%s - Depth: 2.0 / Author: {author} / Published: {pubdate}" % cmi_debug )
-                article_zone = local_news.find_all("p" )
-                if article_zone is not None:
-                #if local_news.find('p'):                     # <p> is where the ENTIRE article is written
+                if local_news.find_all("p" ) is not None:
+                #if article_zone is not None:
                     #article = article_zone
                     logging.info ( f"%s - Depth: 2.0 / GOOD <p> zone / Local full TEXT article" % cmi_debug )
-                    #pub_clean = pubdate.text.lstrip()
-                    #published = pub_clean.split('·', 1)
-                    #author_clean = author.text.lstrip()
                     logging.info ( f"%s - Depth: 2.0 / NLP candidate is ready" % cmi_debug )
-                #print ( f"############################ rem news #############################" )
-                #print ( f"### DEBUG:{full_page.prettify()}" )
-                #print ( f"### DEBUG:{self.nsoup.text}" )
-                #print ( f"############################ rem news #############################" )
-
-        return uhint, thint, url
-            
-        # Fake local news stub / Micro article links out to externally hosted article
+                    #print ( f"############################ rem news #############################" )
+                    #print ( f"### DEBUG:{full_page.prettify()}" )
+                    #print ( f"### DEBUG:{self.nsoup.text}" )
+                    #print ( f"############################ rem news #############################" )
+                return uhint, thint, url
+        
+           
+        # Depth 2.1 : Fake local news stub / Micro article links out to externally hosted article
         if uhint == 1:
             logging.info ( f"%s - Depth: 2.1 / Fake Local news stub / [ u: {uhint} h: {thint} ]" % cmi_debug )
-            logging.info( f'%s - Depth: 2.1 / BS4 processed doc length: {len(self.nsoup)}' % cmi_debug )
-            logging.info( f'%s - Depth: 2.1 / nsoup type is: {type(self.nsoup)}' % cmi_debug )
+            logging.info ( f'%s - Depth: 2.1 / BS4 processed doc length: {len(self.nsoup)}' % cmi_debug )
+            logging.info ( f'%s - Depth: 2.1 / nsoup type is: {type(self.nsoup)}' % cmi_debug )
+            local_news = self.nsoup.find(attrs={"class": "body yf-tsvcyu"})   # full news article - locally hosted
+            local_news_meta = self.nsoup.find(attrs={"class": "main yf-cfn520"})   # comes above/before article
+
             #rem_news = nsoup.find(attrs={"class": "article-wrap no-bb"})
             # //*[@id="nimbus-app"]/section/section/section/article/div/div[1]/div[2]/div[1]
             #hack_y = self.nsoup.section.section.section
             #hack_y = self.nsoup.body.find_all("section")
             #hack_y = self.nsoup.body.find_all(True)
             #hack_y = self.nsoup.find_all('section')
-
             print ( f"############################ rem news #############################" )
             #print ( f"### DEBUG:{full_page.prettify()}" )
-            print ( f"### DEBUG:{self.nsoup}" )
+            print ( f"### DEBUG:{self.head}" )
             print ( f"############################ rem news #############################" )
 
             # follow link into page & read
@@ -604,7 +604,8 @@ class yfnews_reader:
                 #    logging.info ( f"%s - Depth: 2 / NO <a> / Simple-stub [OP-ED]" % cmi_debug )
                 #    logging.info ( f"%s - Depth: 2 / confidence level {uhint} / 2.0 " % cmi_debug )
                 #    return uhint, 2.0, self.this_article_url          # OP-ED story (doesn't have [story continues...] button)
-
+                return uhint, thint, url
+        
         if uhint == 2:
             if local_video.find('p'):          # video page only has a small <p> zone. NOT much TEXT (all the news is in the video)
                 logging.info ( f'%s - Depth: 2.2 / BS4 processed doc length: {len(nsoup)}' % cmi_debug )
