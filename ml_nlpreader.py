@@ -102,7 +102,8 @@ class ml_nlpreader:
         self.yfn = yfnews_reader(1, news_symbol, self.args )  # create instance of YFN News reader
         self.yfn.init_dummy_session('https://www.finance.yahoo.com')
         #yfn.yfn_bintro()
-        self.yfn.update_headers(news_symbol)
+        hpath = '/quote/' + news_symbol + '/news?p=' + news_symbol
+        self.yfn.update_headers(hpath)
         self.yfn.form_url_endpoint(news_symbol)
         hash_state = self.yfn.do_js_get(0)           # get() & process the page html/JS data
         self.mlnlp_uh = url_hinter(1, self.args)     # create instance of urh hinter

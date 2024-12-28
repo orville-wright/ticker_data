@@ -92,13 +92,14 @@ class yfnews_reader:
 
 ##################################### 3 ############################################
 # method 3
-    def update_headers(self, symbol):
+    def update_headers(self, these_headers):
         cmi_debug = __name__+"::"+self.update_headers.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
 
-        self.symbol = symbol
+        #self.symbol = symbol
         logging.info('%s - set cookies/headers path: object' % cmi_debug )
-        self.path = '/quote/' + self.symbol + '/news?p=' + self.symbol
+        #self.path = '/quote/' + self.symbol + '/news?p=' + self.symbol
+        self.path = these_headers
         self.js_session.cookies.update({'path': self.path} )
         logging.info( f"%s - set cookies/headers path: {self.path}" % cmi_debug )
 
@@ -492,7 +493,11 @@ class yfnews_reader:
             #nr = s.get( self.this_article_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
             #nsoup = BeautifulSoup(nr.text, 'html.parser')
             self.yfqnews_url = durl
+            ip_urlp = urlparse(durl)
+            ip_path = ip_urlp.path
+            ip_headers = '/m/' + ip_path
             self.init_dummy_session(durl)
+            self.update_headers(ip_headers)
             xhash = self.do_js_get(idx)
             #xhash = self.do_simple_get(url)
             #self.yfqnews_url = url
