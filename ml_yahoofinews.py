@@ -468,8 +468,8 @@ class yfnews_reader:
         self.this_article_url = data_row['url']
         symbol = symbol.upper()
         logging.info( f'%s - urlhash cache lookup: {cached_state}' % cmi_debug )
-        logging.info( f'%s -'  % cmi_debug+" - "+{durl} )
-        #logging.info( ' URL: %s' % durl )     # urls containg "%" break logging module (NO FIX) 
+        logging.info( f'%s - '  % cmi_debug )
+        logging.info( 'URL: %s' % durl )     # urls containg "%" break logging module (NO FIX) 
 
         
         try:
@@ -484,8 +484,11 @@ class yfnews_reader:
             #self.ul_tag_dataset = soup.find(attrs={"class": "container yf-1ce4p3e"} )        # produces : list iterator
             #self.li_superclass = self.ul_tag_dataset.find_all(attrs={"stream-item story-item yf-1usaaz9"} )
         except KeyError as error:
-            logging.info( f'%s - MISSING in cache, must read JS page' % cmi_debug )
+            logging.info( f'%s - MISSING from cache / must read page' % cmi_debug )
             logging.info( f'ml_yahoofinews::interpret_page: - %s' % durl )     # urls containg "%" break logging module (NO FIX)
+            logging.info( f'%s - Cache BS4 object:   {type(cx_soup)}' % cmi_debug )
+            logging.info( f'%s - Dataset object    : {type(dataset_1)}' % cmi_debug )
+            logging.info( f'%s - Cache URL object  : {type(durl)}' % cmi_debug )
             #with requests.Session() as s:
             #nr = s.get( self.this_article_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
             #nsoup = BeautifulSoup(nr.text, 'html.parser')
