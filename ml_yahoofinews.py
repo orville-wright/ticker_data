@@ -491,7 +491,7 @@ class yfnews_reader:
             #with requests.Session() as s:
             #nr = s.get( self.this_article_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
             #nsoup = BeautifulSoup(nr.text, 'html.parser')
-            self.yfqnews_url = urlparse(durl.geturl())
+            self.yfqnews_url = durl
             xhash = self.do_js_get(idx)
             #xhash = self.do_simple_get(url)
             #self.yfqnews_url = url
