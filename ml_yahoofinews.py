@@ -555,7 +555,7 @@ class yfnews_reader:
             logging.info ( f"%s - Depth: 2.1 / Fake Local news stub / [ u: {uhint} h: {thint} ]" % cmi_debug )
             logging.info ( f'%s - Depth: 2.1 / BS4 processed doc length: {len(self.nsoup)}' % cmi_debug )
             logging.info ( f'%s - Depth: 2.1 / nsoup type is: {type(self.nsoup)}' % cmi_debug )
-            local_news_meta = self.nsoup.head.find_all()   # full news article - locally hosted
+            local_news_meta = self.nsoup.head.find()   # full news article - locally hosted
             #local_news = self.nsoup.find(attrs={"class": "body yf-tsvcyu"})   # full news article - locally hosted
             #local_news_meta = self.nsoup.find(attrs={"class": "main yf-cfn520"})   # comes above/before article
             #local_news_meta = self.nsoup.main
@@ -584,7 +584,7 @@ class yfnews_reader:
                     print ( f"zone: no zone")
                 pass
 
-            print ( f"{local_news_meta}" )
+            print ( f"{local_news_meta.title}" )
             # follow link into page & read
             author_zone = local_news_meta.find('div', attrs={"class": "byline-attr-author yf-1k5w6kz"} )
             pubdate_zone = local_news_meta.find('div', attrs={"class": "byline-attr-time-style"} )
