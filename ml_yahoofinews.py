@@ -567,6 +567,7 @@ class yfnews_reader:
             #hack_y = self.nsoup.body.find_all("section")
             #hack_y = self.nsoup.body.find_all(True)
             #hack_y = self.nsoup.find_all('section')
+            print ( f"### DEBUG - {local_news_meta.title}" )
 
             for i in range(0, len(local_news_meta)):
                 try:
@@ -584,7 +585,6 @@ class yfnews_reader:
                     print ( f"zone: no zone")
                 pass
 
-            print ( f"{local_news_meta.title}" )
             # follow link into page & read
             author_zone = local_news_meta.find('div', attrs={"class": "byline-attr-author yf-1k5w6kz"} )
             pubdate_zone = local_news_meta.find('div', attrs={"class": "byline-attr-time-style"} )
