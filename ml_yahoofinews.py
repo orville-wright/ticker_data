@@ -468,8 +468,8 @@ class yfnews_reader:
         self.this_article_url = data_row['url']
         symbol = symbol.upper()
         logging.info( f'%s - urlhash cache lookup: {cached_state}' % cmi_debug )
-        logging.info( f'%s -'  % cmi_debug )
-        logging.info( ' URL: %s' % durl )           # urls containg "%" break logging module (NO FIX) 
+        logging.info( f'%s -'  % cmi_debug+" - "+{durl} )
+        #logging.info( ' URL: %s' % durl )     # urls containg "%" break logging module (NO FIX) 
 
         
         try:
@@ -489,7 +489,7 @@ class yfnews_reader:
             #with requests.Session() as s:
             #nr = s.get( self.this_article_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
             #nsoup = BeautifulSoup(nr.text, 'html.parser')
-            self.yfqnews_url = urlparse(durl)
+            self.yfqnews_url = urlparse(durl.geturl())
             xhash = self.do_js_get(idx)
             #xhash = self.do_simple_get(url)
             #self.yfqnews_url = url
