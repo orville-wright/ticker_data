@@ -244,7 +244,7 @@ class yfnews_reader:
             cx_soup = self.yfn_jsdb[hash_state]
             self.nsoup = BeautifulSoup(cx_soup.text, "html.parser")   # !!!! this was soup = but I have no idea where "soup" gets set
             logging.info( f'%s - set BS4 data objects' % cmi_debug )
-            self.ul_tag_dataset = nsoup.find(attrs={"class": "container yf-1ce4p3e"} )        # produces : list iterator
+            self.ul_tag_dataset = self.nsoup.find(attrs={"class": "container yf-1ce4p3e"} )        # produces : list iterator
             self.li_superclass = self.ul_tag_dataset.find_all(attrs={"stream-item story-item yf-1usaaz9"} )
         except KeyError as error:
             logging.info( f'%s - MISSING in cache: Must read JS page' % cmi_debug )
@@ -257,7 +257,7 @@ class yfnews_reader:
             nsoup = BeautifulSoup(self.yfn_jsdata.text, "html.parser")    # store gloabl. dont use cache object 
             logging.info( f'%s - set BS4 data objects' % cmi_debug )
 
-            self.ul_tag_dataset = nsoup.find(attrs={"class": "container yf-1ce4p3e"} )        # produces : list iterator
+            self.ul_tag_dataset = self.nsoup.find(attrs={"class": "container yf-1ce4p3e"} )        # produces : list iterator
             print ( f"#################################################################" )
             print ( f"### DEBUG: {self.ul_tag_dataset}" )
             self.li_superclass = self.ul_tag_dataset.find_all(attrs={"stream-item story-item yf-1usaaz9"} )
@@ -692,7 +692,7 @@ class yfnews_reader:
             nsoup = BeautifulSoup(nr.text, 'html.parser')
             # fake stub/page local finance.yahoo.com news artitle?
             logging.info( '%s - Check for fake local URL/Remote article URL' % cmi_debug )
-            frl = nsoup.find(attrs={"class": "caas-readmore caas-readmore-collapse caas-readmore-outsidebody caas-readmore-asidepresent"})
+            frl = self.nsoup.find(attrs={"class": "caas-readmore caas-readmore-collapse caas-readmore-outsidebody caas-readmore-asidepresent"})
             print ( f"{frl}" )
             y = 1
             for child in frl.children:
@@ -708,7 +708,7 @@ class yfnews_reader:
                     logging.info( '%s - News article is LOCAL at finance.yahoo.com' % cmi_debug )
                     # fnl_tag_dataset = soup.find_all('a')
                     logging.info( '%s - Extract key elements/tags from HTML data' % cmi_debug )
-                    tag_dataset = nsoup.div.find_all(attrs={'class': 'D(tbc)'} )
+                    tag_dataset = self.nsoup.div.find_all(attrs={'class': 'D(tbc)'} )
                 else:
                     logging.info( '%s - Fake stub/page discovered / Article is REMOTE' % cmi_debug )
                     logging.info( f"%s - remote URL: {frl.a.get('href')}" % cmi_debug )
