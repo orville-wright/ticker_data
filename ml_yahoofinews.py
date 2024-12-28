@@ -474,6 +474,7 @@ class yfnews_reader:
         
         logging.info( f'%s - CHECKING cache... {cached_state}' % cmi_debug )
         try:
+            self.yfn_jsdb[cached_state]
             cx_soup = self.yfn_jsdb[cached_state]
             logging.info( f'%s - Cached object FOUND: {cached_state}' % cmi_debug )
             dataset_1 = self.yfn_jsdata
