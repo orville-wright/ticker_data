@@ -158,7 +158,7 @@ class ml_nlpreader:
                 r_uhint, r_thint, r_xturl = self.yfn.interpret_page(sn_idx, sn_row)    # go deep, with everything we knonw about this item
                 
                 p_r_xturl = urlparse(r_xturl)
-                inf_type = self.yfn.uh.confidence_lvl(thint)     # returned var is a tupple
+                inf_type = self.mlnlp_uh.confidence_lvl(thint)     # returned var is a tupple
                 #
                 print ( f"============ NLP candidate for Type: 0" )                # all type 0 are assumed to be REAL news
                 print ( f"Origin URL:    [ {t_url.netloc} ] / {uhdescr} / {inf_type[0]} / ", end="" )
@@ -178,7 +178,7 @@ class ml_nlpreader:
 
                 r_uhint, r_thint, r_xturl = self.yfn.interpret_page(sn_idx, sn_row)    # go deep, with everything we knonw about this item
                 p_r_xturl = urlparse(r_xturl)
-                inf_type = self.yfn.uh.confidence_lvl(thint)
+                inf_type = self.mlnlp_uh.confidence_lvl(thint)
                 # summary report...
                 print ( f"============ NLP candidate for Type: 1" )
                 print ( f"Origin URL:    [ {t_url.netloc} ] / {uhdescr} / {inf_type[0]} / ", end="" )
