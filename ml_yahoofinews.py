@@ -94,14 +94,15 @@ class yfnews_reader:
 # method 3
     def update_headers(self, these_headers):
         cmi_debug = __name__+"::"+self.update_headers.__name__+".#"+str(self.yti)
-        logging.info('%s - IN' % cmi_debug )
 
-        #self.symbol = symbol
+        # hack to help logging() bug to handle URLs with % in string
         logging.info('%s - set cookies/headers path: object' % cmi_debug )
-        #self.path = '/quote/' + self.symbol + '/news?p=' + self.symbol
+        cmi_debug = __name__+"::"+self.update_headers.__name__+".#"+str(self.yti)+" - "+these_headers
+        logging.info('%s' % cmi_debug )
+
         self.path = these_headers
         self.js_session.cookies.update({'path': self.path} )
-        logging.info( f"%s - set cookies/headers path: {self.path}" % cmi_debug )
+        cmi_debug = __name__+"::"+self.update_headers.__name__+".#"+str(self.yti)
 
         if self.args['bool_xray'] is True:
             print ( f"=========================== {self.yti} / session cookies ===========================" )
@@ -166,19 +167,18 @@ class yfnews_reader:
         Return hash of url that was read
         """
         cmi_debug = __name__+"::"+self.do_js_get.__name__+".#"+str(self.yti)+"."+str(idx_x)
-        logging.info('%s - IN' % cmi_debug )
-        logging.info( f'ml_yahoofinews::do_js_get - URL: %s', self.yfqnews_url )
+        logging.info( f'ml_yahoofinews::do_js_get.#{self.yti}.#{idx_x}   - URL: %s', self.yfqnews_url )
 
         with self.js_session.get(self.yfqnews_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp2:
-            logging.info('%s - Javascript engine processing...' % cmi_debug )
+            logging.info('%s    - Javascript engine processing...' % cmi_debug )
             # on scussess, raw HTML (non-JS) response is saved in Class Global accessor -> self.js_resp2
             self.js_resp2.html.render()
             # TODO: should do some get() failure testing here
-            logging.info( f'%s - JS rendered! - store JS dataset [ {idx_x} ]' % cmi_debug )
+            logging.info( f'%s    - JS rendered! - store JS dataset [ {idx_x} ]' % cmi_debug )
             self.yfn_jsdata = self.js_resp2.text                # store Full JAVAScript dataset TEXT page
             auh = hashlib.sha256(self.yfqnews_url.encode())     # hash the url
             aurl_hash = auh.hexdigest()
-            logging.info( f'%s - CREATED cache entry: [ {aurl_hash} ]' % cmi_debug )
+            logging.info( f'%s    - CREATED cache entry: [ {aurl_hash} ]' % cmi_debug )
             self.yfn_jsdb[aurl_hash] = self.js_resp2            # create CACHE entry in jsdb !! just response, not full page TEXT data !!
   
         # Xray DEBUG
@@ -555,7 +555,7 @@ class yfnews_reader:
             logging.info ( f"%s - Depth: 2.1 / Fake Local news stub / [ u: {uhint} h: {thint} ]" % cmi_debug )
             logging.info ( f'%s - Depth: 2.1 / BS4 processed doc length: {len(self.nsoup)}' % cmi_debug )
             logging.info ( f'%s - Depth: 2.1 / nsoup type is: {type(self.nsoup)}' % cmi_debug )
-            local_news_meta = self.nsoup.find_all("section")   # full news article - locally hosted
+            local_news_meta = self.nsoup.head.find_all()   # full news article - locally hosted
             #local_news = self.nsoup.find(attrs={"class": "body yf-tsvcyu"})   # full news article - locally hosted
             #local_news_meta = self.nsoup.find(attrs={"class": "main yf-cfn520"})   # comes above/before article
             #local_news_meta = self.nsoup.main
@@ -569,24 +569,22 @@ class yfnews_reader:
             #hack_y = self.nsoup.find_all('section')
 
             for i in range(0, len(local_news_meta)):
-                print ( f"############################ I #############################" )
                 try:
-                    print ( f"zone: {i}\n{local_news_meta[i]['class']}")
+                    print ( f"zone: {i}: {local_news_meta[i]['class']}")
+                    """
+                    #for j in range(0, len(local_news_meta[i]['class'])):
+                    for j in range(0, len(local_news_meta[i]['class'])):
+                        try:
+                            print ( f"class: {local_news_meta[i]['class'][j]}")
+                        except KeyError:
+                            print ( f"class: no class")
+                    """
+
                 except KeyError:
-                    print ( f"zone: {i} no class")
- 
-                print ( f"############################ J #############################" )
-                for j in range(0, len(local_news_meta[i]['class'])):
-                    try:
-                        print ( f"zone: {local_news_meta[i]['class'][j]}")
-                    except KeyError:
-                        print ( f"zone: {j} no class")
-                        pass
-                    print ( f"############################ J #############################" )
-
+                    print ( f"zone: no zone")
                 pass
-                print ( f"############################ I #############################" )
 
+            print ( f"{local_news_meta}" )
             # follow link into page & read
             author_zone = local_news_meta.find('div', attrs={"class": "byline-attr-author yf-1k5w6kz"} )
             pubdate_zone = local_news_meta.find('div', attrs={"class": "byline-attr-time-style"} )

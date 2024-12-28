@@ -147,13 +147,12 @@ class ml_nlpreader:
         print ( f"============================ NLP Candidate Summary ============================" )
 
         for sn_idx, sn_row in self.yfn.ml_ingest.items():                       # cycle thru the NLP candidate list
-            print ( f"### DEBUG: Page: [ {sn_idx} ] / Data row: {sn_row}" )
             if sn_row['type'] == 0:                                             # REAL news, inferred from Depth 0
-                print( f"Local News article:  {sn_idx} / {sn_row['symbol']} / ", end="" )
+                print( f"\nLocal News article:  {sn_idx} / {sn_row['symbol']}" )
                 t_url = urlparse(sn_row['url'])                                 # WARN: a rlparse() url_named_tupple (NOT the raw url)
                 uhint, uhdescr = self.mlnlp_uh.uhinter(0, t_url)
                 thint = (sn_row['thint'])                                       # the hint we guessed at while interrogating page <tags>
-                logging.info ( f"%s - Logic.#0 Hints for url: [ t:0 / u:{uhint} / h: {thint} ] / {uhdescr}" % cmi_debug )
+                logging.info ( f"%s      - Logic.#0 Hints for url: [ t:0 / u:{uhint} / h: {thint} ] / {uhdescr}" % cmi_debug )
 
                 # WARNING : This is a deep analysis on the page
                 r_uhint, r_thint, r_xturl = self.yfn.interpret_page(sn_idx, sn_row)    # go deep, with everything we knonw about this item
@@ -161,47 +160,47 @@ class ml_nlpreader:
                 p_r_xturl = urlparse(r_xturl)
                 inf_type = self.mlnlp_uh.confidence_lvl(thint)     # returned var is a tupple
                 #
-                print ( f"============ NLP candidate for Type: 0" )                # all type 0 are assumed to be REAL news
+                print ( f"============ NLP candidate for article type: 0" )                # all type 0 are assumed to be REAL news
                 print ( f"Origin URL:    [ {t_url.netloc} ] / {uhdescr} / {inf_type[0]} / ", end="" )
                 print ( f"{locality_code.get(inf_type[1])}" )
                 uhint, uhdescr = self.mlnlp_uh.uhinter(21, p_r_xturl)
                 print ( f"Target URL:    [ {p_r_xturl.netloc} ] / {uhdescr} / ", end="" )
                 print ( f"{locality_code.get(uhint)} [ u:{uhint} ]" )
-                print ( f"================= NLP Sumamry @ Depth 2 ======================" )
+                print ( f"=================== =================== ===================" )
  
  
             elif sn_row['type'] == 1:                       # Micro-Ad, but could possibly be news...
-                print( f"Fake News stub micro article:  {sn_idx} / {sn_row['symbol']} /", end="" )
+                print( f"\nFake News stub micro article:  {sn_idx} / {sn_row['symbol']}" )
                 t_url = urlparse(sn_row['url'])
                 uhint, uhdescr = self.mlnlp_uh.uhinter(1, t_url)      # hint on ORIGIN url
                 thint = (sn_row['thint'])                   # the hint we guess at while interrogating page <tags>
-                logging.info ( f"%s - Logic.#1 hinting origin url: t:1 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
+                logging.info ( f"%s      - Logic.#1 hinting origin url: t:1 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
 
                 r_uhint, r_thint, r_xturl = self.yfn.interpret_page(sn_idx, sn_row)    # go deep, with everything we knonw about this item
                 p_r_xturl = urlparse(r_xturl)
                 inf_type = self.mlnlp_uh.confidence_lvl(thint)
                 # summary report...
-                print ( f"============ NLP candidate for Type: 1" )
+                print ( f"============ NLP candidate for article type: 1" )
                 print ( f"Origin URL:    [ {t_url.netloc} ] / {uhdescr} / {inf_type[0]} / ", end="" )
                 print ( f"{locality_code.get(inf_type[1], 'in flux')}" )
                 uhint, uhdescr = self.mlnlp_uh.uhinter(31, p_r_xturl)      # hint on TARGET url
                 print ( f"Target URL:    [ {p_r_xturl.netloc} ] / {uhdescr} / ", end="" )
                 print ( f"{locality_code.get(uhint, 'in flux')} [ u:{uhint} ]" )
-                print ( f"================= NLP Sumamry @ Depth 2 ======================" )
+                print ( f"=================== =================== ===================" )
                 #
             elif sn_row['type'] == 2:                     # possibly not news? (Micro Ad)
-                print ( f"Logic.#2 - Video story - NOT an NLP candidate" )
+                print ( f"\nLogic.#2 - Video story - NOT an NLP candidate" )
                 logging.info ( f"%s - #3 skipping..." % cmi_debug )
-                print ( f"====================== Depth 2 ======================" )
+                print ( f"=================== =================== ===================" )
                 #
             elif sn_row['type'] == 9:                     # possibly not news? (Micro Ad)
-                print ( f"Logic.#9 - Article type NOT yet define - NOT an NLP candidate" )
+                print ( f"\nLogic.#9 - Article type NOT yet define - NOT an NLP candidate" )
                 logging.info ( f"%s - #3 skipping..." % cmi_debug )
-                print ( f"====================== Depth 2 ======================" )
+                print ( f"=================== =================== ===================" )
                 #
             else:
-                print ( f"Logic.#ERR - ERROR unknown article type in ml_ingest" )
+                print ( f"\nLogic.#ERR - ERROR unknown article type in ml_ingest" )
                 logging.info ( f"%s - #4 skipping..." % cmi_debug )
-                print ( f"====================== Depth 2 ======================" )
+                print ( f"=================== =================== ===================" )
 
         return

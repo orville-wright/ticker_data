@@ -18,7 +18,7 @@ class url_hinter:
 
     # global accessors
     yti = 0                 # Unique instance identifier
-    hcycle = 0              # method call  counter
+    hcycle = 0              # method call counter
     args = []               # class dict to hold global args being passed in from main() methods
 
     def __init__(self, yti, global_args):
@@ -47,8 +47,6 @@ class url_hinter:
         """
 
         cmi_debug = __name__+"::uhinter.eng#"+str(self.yti)+"_cyc#"+str(hcycle)
-        logging.info('%s - IN' % cmi_debug )
-
         input_url = recvd_url
 
         # INFO: U code only - This metainfo does NOT define locality. You cant inferr locality truth from it.
@@ -157,6 +155,6 @@ class url_hinter:
                 10.0: ('ERROR unknown state', 9),
                 99.9: ('Default NO-YET-SET', 9),
                 }
-        logging.info ( f"%s - Inferr localty Conf from hint: [{thint}]" % cmi_debug )
+        logging.info ( f"%s   - Inferr localty Conf from hint: [{thint}]" % cmi_debug )
         thint_descr = tcode.get(thint)    # tuple : page type description / locality code 0=local/1=remote
         return thint_descr
