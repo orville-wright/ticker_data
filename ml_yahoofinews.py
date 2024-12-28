@@ -569,7 +569,7 @@ class yfnews_reader:
             #hack_y = self.nsoup.body.find_all(True)
             #hack_y = self.nsoup.find_all('section')
             print ( f"############################ rem news #############################" )
-            print ( f"### DEBUG:{self.soup.find('div', attrs={"class": "byline-attr-author yf-1k5w6kz"} )} " )
+            print ( f"### DEBUG:{self.nsoup.find('div', attrs={"class": "byline-attr-author yf-1k5w6kz"} )} " )
             #print ( f"### DEBUG:{self.nsoup.main}" )
             print ( f"############################ rem news #############################" )
 
