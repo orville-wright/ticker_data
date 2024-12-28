@@ -563,13 +563,14 @@ class yfnews_reader:
             local_news_meta = self.nsoup.main
 
             #rem_news = nsoup.find(attrs={"class": "article-wrap no-bb"})
-            # //*[@id="nimbus-app"]/section/section/section/article/div/div[1]/div[2]/div[1]
+            # /section/section/section/article/div/div[1]/div[2]/div[1]
+            # /section/section/section/article/div/div[1]/div[2]/div[1]/div/div[2]
             #hack_y = self.nsoup.section.section.section
             #hack_y = self.nsoup.body.find_all("section")
             #hack_y = self.nsoup.body.find_all(True)
             #hack_y = self.nsoup.find_all('section')
             print ( f"############################ rem news #############################" )
-            print ( f"### DEBUG:{self.nsoup.find('div', attrs={"class": "byline-attr-author yf-1k5w6kz"} )} " )
+            print ( f"### DEBUG:{self.nsoup.main.section.section.article.div}" )
             #print ( f"### DEBUG:{self.nsoup.main}" )
             print ( f"############################ rem news #############################" )
 
