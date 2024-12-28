@@ -478,7 +478,7 @@ class yfnews_reader:
             self.yfn_jsdb[cached_state]
             cx_soup = self.yfn_jsdb[cached_state]
             logging.info( f'%s - Cached object FOUND: {cached_state}' % cmi_debug )
-            dataset_1 = self.yfn_jsdata
+            dataset_1 = self.yfn_jsdata     # processed data from request.get() response
             nsoup = BeautifulSoup(escape(dataset_1), "html.parser")
             logging.info( f'%s - Cache BS4 object:   {type(cx_soup)}' % cmi_debug )
             logging.info( f'%s - Dataset object    : {type(dataset_1)}' % cmi_debug )
@@ -502,7 +502,7 @@ class yfnews_reader:
             #self.yfqnews_url = url
             logging.info( f'%s - REPEAT cache lookup for urlhash: {cached_state}' % cmi_debug )
             if self.yfn_jsdb[cached_state]:
-                logging.info( f'%s - EXISTS in cache: {cached_state}' % cmi_debug )
+                logging.info( f'%s - Cached object FOUND: {cached_state}' % cmi_debug )
                 cy_soup = self.yfn_jsdb[cached_state]           # get() response 
                 dataset_2 = self.yfn_jsdata
                 #dataset_2 = self.yfn_htmldata                   # not process by JS engine. Basic HTML get()
@@ -514,7 +514,7 @@ class yfnews_reader:
                 #print ( f"### DEBUG: {escape(dataset_2)}" )
                 #print ( f"################################ END #################################" )
                 #self.nsoup = BeautifulSoup(cy_soup.text, "html.parser")
-                self.nsoup = BeautifulSoup(dataset_2, "html.parser")
+                nsoup = BeautifulSoup(escape(dataset_2), "html.parser")
             else:
                 logging.info( f'%s - FAILED to read JS doc and set BS4 obejcts' % cmi_debug )
                 return 10, 10.0, "ERROR_unknown_state!"
