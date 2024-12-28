@@ -559,7 +559,8 @@ class yfnews_reader:
             logging.info ( f'%s - Depth: 2.1 / BS4 processed doc length: {len(self.nsoup)}' % cmi_debug )
             logging.info ( f'%s - Depth: 2.1 / nsoup type is: {type(self.nsoup)}' % cmi_debug )
             local_news = self.nsoup.find(attrs={"class": "body yf-tsvcyu"})   # full news article - locally hosted
-            local_news_meta = self.nsoup.find(attrs={"class": "main yf-cfn520"})   # comes above/before article
+            #local_news_meta = self.nsoup.find(attrs={"class": "main yf-cfn520"})   # comes above/before article
+            local_news_meta = self.nsoup.main
 
             #rem_news = nsoup.find(attrs={"class": "article-wrap no-bb"})
             # //*[@id="nimbus-app"]/section/section/section/article/div/div[1]/div[2]/div[1]
@@ -567,10 +568,10 @@ class yfnews_reader:
             #hack_y = self.nsoup.body.find_all("section")
             #hack_y = self.nsoup.body.find_all(True)
             #hack_y = self.nsoup.find_all('section')
-            print ( f"############################ rem news #############################" )
+            #print ( f"############################ rem news #############################" )
             #print ( f"### DEBUG:{full_page.prettify()}" )
-            print ( f"### DEBUG:{self.nsoup.main}" )
-            print ( f"############################ rem news #############################" )
+            #print ( f"### DEBUG:{self.nsoup.main}" )
+            #print ( f"############################ rem news #############################" )
 
             # follow link into page & read
             author_zone = local_news_meta.find(attrs={"class": "byline-attr-author yf-1k5w6kz"} )
