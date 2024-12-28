@@ -569,7 +569,7 @@ class yfnews_reader:
             #hack_y = self.nsoup.find_all('section')
             print ( f"############################ rem news #############################" )
             #print ( f"### DEBUG:{full_page.prettify()}" )
-            print ( f"### DEBUG:{self.head}" )
+            print ( f"### DEBUG:{self.nsoup.head}" )
             print ( f"############################ rem news #############################" )
 
             # follow link into page & read
