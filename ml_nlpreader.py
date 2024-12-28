@@ -62,7 +62,7 @@ class ml_nlpreader:
             newsai_test_dataset.build_top10()           # build top 10 gainers
             print ( " " )
             yfn = yfnews_reader(1, "IBM", self.args )   # dummy symbol just for instantiation
-            yfn.init_dummy_session()
+            yfn.init_dummy_session('https://www.finance.yahoo.com')
             #yfn.yfn_bintro()
             uh = url_hinter(1, self.args)               # anyone needs to be able to get hints on a URL from anywhere
             yfn.share_hinter(uh)                        # share the url hinter available
@@ -100,7 +100,7 @@ class ml_nlpreader:
         print ( " " )
         print ( f"ML (NLP) / News Sentiment for 1 symbol [ {news_symbol} ] =========================" )
         self.yfn = yfnews_reader(1, news_symbol, self.args )  # create instance of YFN News reader
-        self.yfn.init_dummy_session()
+        self.yfn.init_dummy_session('https://www.finance.yahoo.com')
         #yfn.yfn_bintro()
         self.yfn.update_headers(news_symbol)
         self.yfn.form_url_endpoint(news_symbol)
