@@ -468,11 +468,13 @@ class yfnews_reader:
 
         self.this_article_url = data_row['url']
         symbol = symbol.upper()
-        logging.info( f'%s - urlhash cache lookup: {cached_state}' % cmi_debug )
-        logging.info( f'%s - '  % cmi_debug )
-        logging.info( 'URL: %s' % durl )     # urls containg "%" break logging module (NO FIX) 
 
-        
+        logging.info( f'%s - urlhash cache lookup: {cached_state}' % cmi_debug )
+        cmi_debug = __name__+"::"+self.interpret_page.__name__+".#"+str(item_idx)+" - "+durl
+        logging.info( f'%s' % cmi_debug )     # hack fix for urls containg "%" break logging module (NO FIX
+        #logging.info( f'ml_yahoofinews::interpret_page: - %s' % durl )     # urls containg "%" break logging module (NO FIX)
+        cmi_debug = __name__+"::"+self.interpret_page.__name__+".#"+str(item_idx)
+
         logging.info( f'%s - CHECKING cache... {cached_state}' % cmi_debug )
         try:
             self.yfn_jsdb[cached_state]
@@ -483,37 +485,32 @@ class yfnews_reader:
             logging.info( f'%s - Cache BS4 object:   {type(cx_soup)}' % cmi_debug )
             logging.info( f'%s - Dataset object    : {type(dataset_1)}' % cmi_debug )
             logging.info( f'%s - Cache URL object  : {type(durl)}' % cmi_debug )
-            #self.ul_tag_dataset = soup.find(attrs={"class": "container yf-1ce4p3e"} )        # produces : list iterator
-            #self.li_superclass = self.ul_tag_dataset.find_all(attrs={"stream-item story-item yf-1usaaz9"} )
         except KeyError:
             logging.info( f'%s - MISSING from cache / must read page' % cmi_debug )
             logging.info( f'%s - Cache URL object  : {type(durl)}' % cmi_debug )
-            logging.info( f'ml_yahoofinews::interpret_page: - %s' % durl )     # urls containg "%" break logging module (NO FIX)
-            #with requests.Session() as s:
-            #nr = s.get( self.this_article_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
-            #nsoup = BeautifulSoup(nr.text, 'html.parser')
+ 
+            cmi_debug = __name__+"::"+self.interpret_page.__name__+".#"+str(item_idx)+" - "+durl
+            logging.info( f'%s' % cmi_debug )     # hack fix for urls containg "%" break logging module (NO FIX
+            #logging.info( f'ml_yahoofinews::interpret_page: - %s' % durl )     # urls containg "%" break logging module (NO FIX)
+            cmi_debug = __name__+"::"+self.interpret_page.__name__+".#"+str(item_idx)
+ 
             self.yfqnews_url = durl
             ip_urlp = urlparse(durl)
             ip_headers = ip_urlp.path
             self.init_dummy_session(durl)
             self.update_headers(ip_headers)
             xhash = self.do_js_get(idx)
-            #xhash = self.do_simple_get(url)
-            #self.yfqnews_url = url
+            #xhash = self.do_simple_get(url)             # for testing non JS Basic HTML get()
+            #self.yfqnews_url = url                      # ""   ""
             logging.info( f'%s - REPEAT cache lookup for urlhash: {cached_state}' % cmi_debug )
             if self.yfn_jsdb[cached_state]:
                 logging.info( f'%s - Cached object FOUND: {cached_state}' % cmi_debug )
-                cy_soup = self.yfn_jsdb[cached_state]           # get() response 
+                cy_soup = self.yfn_jsdb[cached_state]    # get() response 
                 dataset_2 = self.yfn_jsdata
-                #dataset_2 = self.yfn_htmldata                   # not process by JS engine. Basic HTML get()
+                #dataset_2 = self.yfn_htmldata           # for testing non JS Basic HTML get()
                 logging.info ( f'%s - cache url:     {type(durl)}' % cmi_debug )
                 logging.info ( f'%s - cache request: {type(cy_soup)}' % cmi_debug )
                 logging.info ( f'%s - Cache dataset: {type(self.yfn_jsdata)}' % cmi_debug )
-                #print ( f"############################### debug ################################" )
-                #print ( f"### DEBUG: {escape(cy_soup.text)}" )
-                #print ( f"### DEBUG: {escape(dataset_2)}" )
-                #print ( f"################################ END #################################" )
-                #self.nsoup = BeautifulSoup(cy_soup.text, "html.parser")
                 self.nsoup = BeautifulSoup(escape(dataset_2), "html.parser")
             else:
                 logging.info( f'%s - FAILED to read JS doc and set BS4 obejcts' % cmi_debug )
@@ -558,9 +555,10 @@ class yfnews_reader:
             logging.info ( f"%s - Depth: 2.1 / Fake Local news stub / [ u: {uhint} h: {thint} ]" % cmi_debug )
             logging.info ( f'%s - Depth: 2.1 / BS4 processed doc length: {len(self.nsoup)}' % cmi_debug )
             logging.info ( f'%s - Depth: 2.1 / nsoup type is: {type(self.nsoup)}' % cmi_debug )
-            local_news = self.nsoup.find(attrs={"class": "body yf-tsvcyu"})   # full news article - locally hosted
+            local_news_meta = self.nsoup.find_all("section")   # full news article - locally hosted
+            #local_news = self.nsoup.find(attrs={"class": "body yf-tsvcyu"})   # full news article - locally hosted
             #local_news_meta = self.nsoup.find(attrs={"class": "main yf-cfn520"})   # comes above/before article
-            local_news_meta = self.nsoup.main
+            #local_news_meta = self.nsoup.main
 
             #rem_news = nsoup.find(attrs={"class": "article-wrap no-bb"})
             # /section/section/section/article/div/div[1]/div[2]/div[1]
@@ -569,10 +567,25 @@ class yfnews_reader:
             #hack_y = self.nsoup.body.find_all("section")
             #hack_y = self.nsoup.body.find_all(True)
             #hack_y = self.nsoup.find_all('section')
-            print ( f"############################ rem news #############################" )
-            print ( f"### DEBUG:{self.nsoup.main.section}" )
-            #print ( f"### DEBUG:{self.nsoup.main}" )
-            print ( f"############################ rem news #############################" )
+
+            for i in range(0, len(local_news_meta)):
+                print ( f"############################ I #############################" )
+                try:
+                    print ( f"zone: {i}\n{local_news_meta[i]['class']}")
+                except KeyError:
+                    print ( f"zone: {i} no class")
+ 
+                print ( f"############################ J #############################" )
+                for j in range(0, len(local_news_meta[i]['class'])):
+                    try:
+                        print ( f"zone: {local_news_meta[i]['class'][j]}")
+                    except KeyError:
+                        print ( f"zone: {j} no class")
+                        pass
+                    print ( f"############################ J #############################" )
+
+                pass
+                print ( f"############################ I #############################" )
 
             # follow link into page & read
             author_zone = local_news_meta.find('div', attrs={"class": "byline-attr-author yf-1k5w6kz"} )
