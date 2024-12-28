@@ -426,8 +426,9 @@ def main():
     else:
         pass
 
-#################################################################################
-# News M/L NLP AI
+# M/L AI News REader  ###############################################################
+        #  Currently read all enws for ONE stock
+        # =====================================================================
 
     if args['newsymbol'] is not False:
             cmi_debug = __name__+"::_args_newsymbol.#1"

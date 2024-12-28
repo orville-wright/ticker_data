@@ -28,29 +28,29 @@ class yfnews_reader:
     """
 
     # global accessors
-    symbol = ""             # Unique company symbol
-    yfqnews_url = ""        # the URL that is being worked on
-    js_session = ""         # main requests session
-    js_resp0 = ""           # HTML session get() - response handle
-    js_resp2 = ""           # JAVAScript session get() - response handle
-    yfn_all_data = ""       # JSON dataset contains ALL data
+    symbol = None           # Unique company symbol
+    yfqnews_url = None      # the URL that is being worked on
+    js_session = None       # main requests session
+    js_resp0 = None         # HTML session get() - response handle
+    js_resp2 = None         # JAVAScript session get() - response handle
+    yfn_all_data = None     # JSON dataset contains ALL data
     yfn_htmldata = "ERROR"  # Page in HTML
     yfn_jsdata = "ERROR"    # Page in JavaScript-HTML
     yfn_jsdb = {}           # database to hold jsdata objects
     ml_brief = []           # ML TXT matrix for Naieve Bayes Classifier pre Count Vectorizer
     ml_ingest = {}          # ML ingested NLP candidate articles
-    ul_tag_dataset = ""     # BS4 handle of the <tr> extracted data
-    li_superclass = ""      # all possible News articles
-    yfn_df0 = ""            # DataFrame 1
-    yfn_df1 = ""            # DataFrame 2
+    ul_tag_dataset = None   # BS4 handle of the <tr> extracted data
+    li_superclass = None    # all possible News articles
+    yfn_df0 = None          # DataFrame 1
+    yfn_df1 = None          # DataFrame 2
     yti = 0                 # Unique instance identifier
     cycle = 0               # class thread loop counter
     nlp_x = 0
-    soup = ""               # BS4 shared handle between UP & DOWN (1 URL, 2 embeded data sets in HTML doc)
+    soup = None             # BS4 shared handle between UP & DOWN (1 URL, 2 embeded data sets in HTML doc)
     args = []               # class dict to hold global args being passed in from main() methods
-    uh = ""                 # global url hinter class
-    url_netloc = ""
-    a_urlp = ""
+    yfn_uh = None           # global url hinter class
+    url_netloc = None
+    a_urlp = None
     article_url = "https://www.defaul_instance_url.com"
     this_article_url = "https://www.default_interpret_page_url.com"
 
@@ -87,7 +87,7 @@ class yfnews_reader:
     def share_hinter(self, hinst):
         cmi_debug = __name__+"::"+self.share_hinter.__name__+".#"+str(self.yti)
         logging.info( f'%s - IN {type(hinst)}' % cmi_debug )
-        self.uh = hinst
+        self.yfn_uh = hinst
         return
 
 ##################################### 3 ############################################
@@ -234,7 +234,7 @@ class yfnews_reader:
         depth = int(depth)
         
         logging.info( f'%s - Scan news for: {symbol} / {self.yfqnews_url}' % cmi_debug )
-        logging.info( f"%s - URL Hinter state: {type(self.uh)} " % cmi_debug )
+        logging.info( f"%s - URL Hinter state: {type(self.yfn_uh)} " % cmi_debug )
         if scan_type == 0:    # Simple HTML BS4 scraper
             logging.info( f'%s - Check urlhash cache state: {hash_state}' % cmi_debug )
         try:
@@ -371,7 +371,7 @@ class yfnews_reader:
 
                 for safety_cycle in range(1):    # ABUSE for/loop BREAK as logic control exit (poor mans switch/case)
                     if self.a_urlp.scheme == "https" or self.a_urlp.scheme == "http":    # check URL scheme specifier
-                        uhint, uhdescr = self.uh.uhinter(hcycle, self.article_url)       # raw url string
+                        uhint, uhdescr = self.yfn_uh.uhinter(hcycle, self.article_url)       # raw url string
                         logging.info( f'%s - Source url [{self.a_urlp.netloc}] / u:{uhint} / {uhdescr}' % (cmi_debug) )
                         pure_url = 1                    # explicit pure URL to remote entity
                         if uhint == 0: thint = 0.0      # Fake news / remote-stub @ YFN stub
@@ -379,7 +379,7 @@ class yfnews_reader:
                         if uhint == 2: thint = 4.0      # video (currently / FOR NOW, assume all videos are locally hosted on finanice.yahoo.com
                         if uhint == 3: thint = 1.1      # shoudl never trigger here - see abive... <Pure-Abs url>
                         if uhint == 4: thint = 7.0      # research report / FOR NOW, assume all research reports are locally hosted on finanice.yahoo.com
-                        inf_type = self.uh.confidence_lvl(thint)  # my private look-up / returns a tuple
+                        inf_type = self.yfn_uh.confidence_lvl(thint)  # my private look-up / returns a tuple
                         self.url_netloc = self.a_urlp.netloc      # get FQDN netloc
                         ml_atype = uhint
                         hcycle += 1
@@ -389,7 +389,7 @@ class yfnews_reader:
                         self.a_urlp = urlparse(self.a_url)
                         self.url_netloc = self.a_urlp.netloc      # get FQDN netloc
                         logging.info( f'%s - Source url: {self.a_urlp.netloc}' % (cmi_debug) )
-                        uhint, uhdescr = self.uh.uhinter(hcycle, self.a_urlp)          # urlparse named tuple
+                        uhint, uhdescr = self.yfn_uh.uhinter(hcycle, self.a_urlp)          # urlparse named tuple
                         if uhint == 0: thint = 0.0      # real news / remote-stub @ YFN stub
                         if uhint == 1: thint = 1.0      # real news / local page
                         if uhint == 2: thint = 4.0      # video (currently / FOR NOW, assume all videos are locally hosted on finanice.yahoo.com
@@ -397,7 +397,7 @@ class yfnews_reader:
                         if uhint == 4: thint = 7.0      # research report / FOR NOW, assume all research reports are locally hosted on finanice.yahoo.com
                         pure_url = 0                    # locally hosted entity
                         ml_atype = uhint                    # Real news
-                        inf_type = self.uh.confidence_lvl(thint)                # return var is tuple
+                        inf_type = self.yfn_uh.confidence_lvl(thint)                # return var is tuple
                         hcycle += 1
                         break       # ...need 1 more level of analysis analysis to get headline & teaser text
 
