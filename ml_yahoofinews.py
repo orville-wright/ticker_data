@@ -141,15 +141,15 @@ class yfnews_reader:
 
 ###################################### 6 ###########################################
 # method 6
-    def init_dummy_session(self):
+    def init_dummy_session(self, id_url):
         cmi_debug = __name__+"::"+self.init_dummy_session.__name__+".#"+str(self.yti)
         """
-        NOTE: we ping finance.yahoo.com
+        NOTE: we ping 'https://www.finance.yahoo.com'
               No need for a API specific url, as this should be the FIRST get for this url. Goal is to find & extract secret cookies
         Overwrites js_resp0 - initial session handle, *NOT* the main data session handle (js_resp2)
         """
 
-        with self.js_session.get('https://www.finance.yahoo.com', stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
+        with self.js_session.get(id_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
             logging.info('%s - extract & update GOOD cookie  ' % cmi_debug )
             # self.js_session.cookies.update({'B': self.js_resp0.cookies['B']} )    # yahoo cookie hack
             # if the get() succeds, the response handle is automatically saved in Class Global accessor -> self.js_resp0
@@ -492,6 +492,7 @@ class yfnews_reader:
             #nr = s.get( self.this_article_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
             #nsoup = BeautifulSoup(nr.text, 'html.parser')
             self.yfqnews_url = durl
+            self.init_dummy_session(durl)
             xhash = self.do_js_get(idx)
             #xhash = self.do_simple_get(url)
             #self.yfqnews_url = url
