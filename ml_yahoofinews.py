@@ -570,7 +570,7 @@ class yfnews_reader:
             #hack_y = self.nsoup.body.find_all(True)
             #hack_y = self.nsoup.find_all('section')
             print ( f"############################ rem news #############################" )
-            print ( f"### DEBUG:{self.nsoup.main.section.section.article.div}" )
+            print ( f"### DEBUG:{self.nsoup.main.section}" )
             #print ( f"### DEBUG:{self.nsoup.main}" )
             print ( f"############################ rem news #############################" )
 
