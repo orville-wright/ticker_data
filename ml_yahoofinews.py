@@ -574,8 +574,8 @@ class yfnews_reader:
             #print ( f"############################ rem news #############################" )
 
             # follow link into page & read
-            author_zone = local_news_meta.find(attrs={"class": "byline-attr-author yf-1k5w6kz"} )
-            pubdate_zone = local_news_meta.find(attrs={"class": "byline-attr-time-style"} )
+            author_zone = local_news_meta.find('div', attrs={"class": "byline-attr-author yf-1k5w6kz"} )
+            pubdate_zone = local_news_meta.find('div', attrs={"class": "byline-attr-time-style"} )
             author = author_zone.string
             pubdate = pubdate_zone.time.string
 
