@@ -34,8 +34,8 @@ class yfnews_reader:
     js_resp0 = None         # HTML session get() - response handle
     js_resp2 = None         # JAVAScript session get() - response handle
     yfn_all_data = None     # JSON dataset contains ALL data
-    yfn_htmldata = "ERROR"  # Page in HTML
-    yfn_jsdata = "ERROR"    # Page in JavaScript-HTML
+    yfn_htmldata = None     # Page in HTML
+    yfn_jsdata = None       # Page in JavaScript-HTML
     yfn_jsdb = {}           # database to hold jsdata objects
     ml_brief = []           # ML TXT matrix for Naieve Bayes Classifier pre Count Vectorizer
     ml_ingest = {}          # ML ingested NLP candidate articles
@@ -546,7 +546,7 @@ class yfnews_reader:
                     #print ( f"### DEBUG:{full_page.prettify()}" )
                     #print ( f"### DEBUG:{self.nsoup.text}" )
                     #print ( f"############################ rem news #############################" )
-                return uhint, thint, url
+                return uhint, thint, durl
         
            
         # Depth 2.1 : Fake local news stub / Micro article links out to externally hosted article
