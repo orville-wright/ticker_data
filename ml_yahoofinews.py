@@ -46,7 +46,7 @@ class yfnews_reader:
     yti = 0                 # Unique instance identifier
     cycle = 0               # class thread loop counter
     nlp_x = 0
-    soup = None             # BS4 shared handle between UP & DOWN (1 URL, 2 embeded data sets in HTML doc)
+    nsoup = None            # BS4 shared handle between UP & DOWN (1 URL, 2 embeded data sets in HTML doc)
     args = []               # class dict to hold global args being passed in from main() methods
     yfn_uh = None           # global url hinter class
     url_netloc = None
@@ -242,7 +242,7 @@ class yfnews_reader:
             self.yfn_jsdb[hash_state]
             logging.info( f'%s - URL EXISTS in cache: {hash_state}' % cmi_debug )
             cx_soup = self.yfn_jsdb[hash_state]
-            nsoup = BeautifulSoup(cx_soup.text, "html.parser")   # !!!! this was soup = but I have no idea where "soup" gets set
+            self.nsoup = BeautifulSoup(cx_soup.text, "html.parser")   # !!!! this was soup = but I have no idea where "soup" gets set
             logging.info( f'%s - set BS4 data objects' % cmi_debug )
             self.ul_tag_dataset = nsoup.find(attrs={"class": "container yf-1ce4p3e"} )        # produces : list iterator
             self.li_superclass = self.ul_tag_dataset.find_all(attrs={"stream-item story-item yf-1usaaz9"} )
@@ -479,7 +479,7 @@ class yfnews_reader:
             cx_soup = self.yfn_jsdb[cached_state]
             logging.info( f'%s - Cached object FOUND: {cached_state}' % cmi_debug )
             dataset_1 = self.yfn_jsdata     # processed data from request.get() response
-            nsoup = BeautifulSoup(escape(dataset_1), "html.parser")
+            self.nsoup = BeautifulSoup(escape(dataset_1), "html.parser")
             logging.info( f'%s - Cache BS4 object:   {type(cx_soup)}' % cmi_debug )
             logging.info( f'%s - Dataset object    : {type(dataset_1)}' % cmi_debug )
             logging.info( f'%s - Cache URL object  : {type(durl)}' % cmi_debug )
@@ -514,7 +514,7 @@ class yfnews_reader:
                 #print ( f"### DEBUG: {escape(dataset_2)}" )
                 #print ( f"################################ END #################################" )
                 #self.nsoup = BeautifulSoup(cy_soup.text, "html.parser")
-                nsoup = BeautifulSoup(escape(dataset_2), "html.parser")
+                self.nsoup = BeautifulSoup(escape(dataset_2), "html.parser")
             else:
                 logging.info( f'%s - FAILED to read JS doc and set BS4 obejcts' % cmi_debug )
                 return 10, 10.0, "ERROR_unknown_state!"
