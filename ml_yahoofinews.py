@@ -472,9 +472,9 @@ class yfnews_reader:
         logging.info( 'URL: %s' % durl )     # urls containg "%" break logging module (NO FIX) 
 
         
+        logging.info( f'%s - CHECKING cache... {cached_state}' % cmi_debug )
         try:
             cx_soup = self.yfn_jsdb[cached_state]
-            logging.info( f'%s - CHECKING cache... {cached_state}' % cmi_debug )
             logging.info( f'%s - Cached object FOUND: {cached_state}' % cmi_debug )
             dataset_1 = self.yfn_jsdata
             nsoup = BeautifulSoup(escape(dataset_1), "html.parser")
@@ -483,12 +483,10 @@ class yfnews_reader:
             logging.info( f'%s - Cache URL object  : {type(durl)}' % cmi_debug )
             #self.ul_tag_dataset = soup.find(attrs={"class": "container yf-1ce4p3e"} )        # produces : list iterator
             #self.li_superclass = self.ul_tag_dataset.find_all(attrs={"stream-item story-item yf-1usaaz9"} )
-        except KeyError as error:
+        except KeyError:
             logging.info( f'%s - MISSING from cache / must read page' % cmi_debug )
-            logging.info( f'ml_yahoofinews::interpret_page: - %s' % durl )     # urls containg "%" break logging module (NO FIX)
-            logging.info( f'%s - Cache BS4 object:   {type(cx_soup)}' % cmi_debug )
-            logging.info( f'%s - Dataset object    : {type(dataset_1)}' % cmi_debug )
             logging.info( f'%s - Cache URL object  : {type(durl)}' % cmi_debug )
+            logging.info( f'ml_yahoofinews::interpret_page: - %s' % durl )     # urls containg "%" break logging module (NO FIX)
             #with requests.Session() as s:
             #nr = s.get( self.this_article_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
             #nsoup = BeautifulSoup(nr.text, 'html.parser')
