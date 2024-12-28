@@ -494,8 +494,7 @@ class yfnews_reader:
             #nsoup = BeautifulSoup(nr.text, 'html.parser')
             self.yfqnews_url = durl
             ip_urlp = urlparse(durl)
-            ip_path = ip_urlp.path
-            ip_headers = '/m/' + ip_path
+            ip_headers = ip_urlp.path
             self.init_dummy_session(durl)
             self.update_headers(ip_headers)
             xhash = self.do_js_get(idx)
@@ -553,8 +552,7 @@ class yfnews_reader:
                     #print ( f"### DEBUG:{self.nsoup.text}" )
                     #print ( f"############################ rem news #############################" )
                 return uhint, thint, durl
-        
-           
+
         # Depth 2.1 : Fake local news stub / Micro article links out to externally hosted article
         if uhint == 1:
             logging.info ( f"%s - Depth: 2.1 / Fake Local news stub / [ u: {uhint} h: {thint} ]" % cmi_debug )
