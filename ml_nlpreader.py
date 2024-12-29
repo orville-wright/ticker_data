@@ -157,6 +157,7 @@ class ml_nlpreader:
                 # WARNING : This is a deep analysis on the page
                 r_uhint, r_thint, r_xturl = self.yfn.interpret_page(sn_idx, sn_row)    # go deep, with everything we knonw about this item
                 
+                logging.info ( f"%s      - URL to inferr confidence: {r_xturl}" % cmi_debug )
                 p_r_xturl = urlparse(r_xturl)
                 inf_type = self.mlnlp_uh.confidence_lvl(thint)     # returned var is a tupple
                 #
@@ -167,16 +168,16 @@ class ml_nlpreader:
                 print ( f"Target URL:    [ {p_r_xturl.netloc} ] / {uhdescr} / ", end="" )
                 print ( f"{locality_code.get(uhint)} [ u:{uhint} ]" )
                 print ( f"=================== =================== ===================" )
- 
- 
             elif sn_row['type'] == 1:                       # Micro-Ad, but could possibly be news...
                 print( f"\nFake News stub micro article:  {sn_idx} / {sn_row['symbol']}" )
                 t_url = urlparse(sn_row['url'])
                 uhint, uhdescr = self.mlnlp_uh.uhinter(1, t_url)      # hint on ORIGIN url
                 thint = (sn_row['thint'])                   # the hint we guess at while interrogating page <tags>
-                logging.info ( f"%s      - Logic.#1 hinting origin url: t:1 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
+                logging.info ( f"%s       - Logic.#1 hint origin url: t:1 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
 
                 r_uhint, r_thint, r_xturl = self.yfn.interpret_page(sn_idx, sn_row)    # go deep, with everything we knonw about this item
+                logging.info ( f"%s       - Logic.#1 hint ext url: {r_xturl}" % cmi_debug )
+
                 p_r_xturl = urlparse(r_xturl)
                 inf_type = self.mlnlp_uh.confidence_lvl(thint)
                 # summary report...

@@ -537,7 +537,6 @@ class yfnews_reader:
                 pubdate_zone = local_news_meta.find("div", attrs={"class": "byline-attr-time-style"} )
                 author = author_zone.string
                 pubdate = pubdate_zone.time.string
-                logging.info ( f"%s - Depth: 2.0 / Extracted Author & Pub dates from article" % cmi_debug )
                 logging.info ( f"%s - Depth: 2.0 / Author: {author} / Published: {pubdate}" % cmi_debug )
                 if local_news.find_all("p" ) is not None:
                 #if article_zone is not None:
@@ -564,71 +563,61 @@ class yfnews_reader:
 
             local_news_meta_desc = self.nsoup.find("meta", attrs={"name": "description"})
             local_news_bmart_cap = local_news_bmart.find("div", attrs={"class": "caas-title-wrapper"})
-            #local_news_bmart_cap = local_news_bmart.find_all("div")
+            local_news_bmart_ath = local_news_bmart.find("div", attrs={"class": "caas-attr-item-author"})
+            local_news_bmart_dte = local_news_bmart.find("div", attrs={"class": "caas-attr-time-style"})
             local_news_bmain_azone = local_news_bmain.find("a")
-            #local_news_bmain_cap = local_news_bmain.find_all(attrs={"class": "cover-title yf-1at0uqp"})
 
-            print ( f"### DEBUG - {local_news_meta.title.string}" )
-            print ( f"### DEBUG - {local_news_meta_desc['content']}" )
-            print ( f"### DEBUG - {local_news_bmart_cap}" )
-            print ( f"### DEBUG - {local_news_bmain_azone['href']}" )
-            print ( f"### DEBUG - {local_news_bmain_azone.text}" )
-
+            """
+            print ( f"### DEBUG - Meta tle: {local_news_meta.title.string}" )
+            print ( f"### DEBUG - Meta:     {local_news_meta_desc['content']}" )
+            print ( f"### DEBUG - Caption:  {local_news_bmart_cap.h1.text}" )
+            print ( f"### DEBUG - Authour:  {local_news_bmart_ath.text}" )
+            print ( f"### DEBUG - Date:     {local_news_bmart_dte.text}" )
+            print ( f"### DEBUG - Ext link: {local_news_bmain_azone['href']}" )
+            print ( f"### DEBUG - Article:  {local_news_bmain_azone.text}" )
+            """
+            
+            """
             for i in range(0, len(local_news_bmart_divs)):
                 try:
                     print ( f"zone: {i}: {local_news_bmart_divs[i]['class']}")
-                    """
                     #for j in range(0, len(local_news_meta[i]['class'])):
-                    for j in range(0, len(local_news_meta[i]['class'])):
-                        try:
-                            print ( f"class: {local_news_meta[i]['class'][j]}")
-                        except KeyError:
-                            print ( f"class: no class")
-                    """
-
+                    #    try:
+                    #        print ( f"class: {local_news_meta[i]['class'][j]}")
+                    #    except KeyError:
+                    #        print ( f"class: no class")
                 except KeyError:
                     print ( f"zone: {i}: no zone")
                 pass
+            """
 
-            # follow link into page & read
-            author_zone = local_news_meta.find('div', attrs={"class": "byline-attr-author yf-1k5w6kz"} )
-            pubdate_zone = local_news_meta.find('div', attrs={"class": "byline-attr-time-style"} )
-            author = author_zone.string
-            pubdate = pubdate_zone.time.string
+            author = local_news_bmart_ath.text
+            pubdate = local_news_bmart_dte.text
 
-            logging.info ( f"%s - Depth: 2.1 / Extracted Author & Pub dates from article" % cmi_debug )
+            logging.info ( f"%s - Depth: 2.1 / Caption: {local_news_bmart_cap.h1.text}" % cmi_debug )
             logging.info ( f"%s - Depth: 2.1 / Author: {author} / Published: {pubdate}" % cmi_debug )
-            rem_article_zone = local_stub_news.find_all("p")
-            rem_article = rem_article_zone.p.string
-            if local_stub_news.find('a'):                     # BAD, no <a> zone in page or article is a REAL remote URL already
-                rem_url = local_stub_news.a.get("href")
-                # Fake local news stub article, points to a remotely  news article external URL, Also has [Continue reading] button TEXT
-                logging.info ( f"%s - Depth: 2.1 / Good <a> Remote-stub / News article @: {rem_url}" % cmi_debug )
-                logging.info ( f"%s - Depth: 2.1 / Insert ext url into ml_ingest" % cmi_debug )
-                ext_url_item = {'exturl': rem_url }     # build a new dict entry (external; absolute url)
-                data_row.update(ext_url_item )          # insert new dict entry into ml_ingest via an AUGMENTED data_row
-                self.ml_ingest[idx] = data_row          # now PERMENTALY update the ml_ingest record @ index = id
-                logging.info ( f"%s - Depth: 2.1 / NLP candidate is ready" % cmi_debug )
-                return uhint, thint, rem_url
-            elif local_stub_news.text == "Story continues":         # local articles have a [story continues...] button
+            logging.info ( f"%s - Depth: 2.1 / External link: {local_news_bmain_azone['href']}" % cmi_debug )
+
+            thint = 1.1
+            if local_news_bmart is not None:                         # article has some content
+                logging.info ( f"%s - Depth: 2.1 / Good article stub / External location @: {local_news_bmain_azone['href']}" % cmi_debug )
+                ext_url_item =  local_news_bmain_azone['href']       # build a new dict entry (external; absolute url)
+                logging.info ( f"%s - Depth: 2.1 / Insert url into ml_ingest:[{ext_url_item}] " % cmi_debug )
+                data_row.update(url = ext_url_item)                  # insert new dict entry into ml_ingest via an AUGMENTED data_row
+                self.ml_ingest[idx] = data_row                       # now PERMENTALY update the ml_ingest record @ index = id
+                logging.info ( f"%s - Depth: 2.1 / NLP candidate is ready [ u: {uhint} h: {thint} ]" % cmi_debug )
+                return uhint, thint, ext_url_item
+            elif local_stub_news.text == "Story continues":          # local articles have a [story continues...] button
                 logging.info ( f"%s - Depth: 2.1 / GOOD [story continues...] stub" % cmi_debug )
                 logging.info ( f"%s - Depth: 2.1 / confidence level / u: {uhint} h: {thint}" % cmi_debug )
-                return uhint, thint, self.this_article_url      # REAL local news
-                #
-            elif local_story.button.text == "Read full article":    # test to make 100% sure its a low quality story
+                return uhint, thint, self.this_article_url           # REAL local news
+            elif local_story.button.text == "Read full article":     # test to make 100% sure its a low quality story
                 logging.info ( f"%s - Depth: 2.1 / GOOD [Read full article] stub" % cmi_debug )
                 logging.info ( f"%s - Depth: 2.1 / confidence level / u: {uhint} h: {thint}" % cmi_debug )
                 return uhint, thint, self.this_article_url              # Curated Report
-                #
             else:
                 logging.info ( f"%s - Depth: 2.1 / NO local page interpreter available / u: {uhint} t: {thint}" % cmi_debug )
                 return uhint, 9.9, self.this_article_url
-                #else:
-                # still need to catch OP-ED...which is similar to [story continues...] and [Read full article]
-                #    logging.info ( f"%s - Depth: 2 / NO <a> / Simple-stub [OP-ED]" % cmi_debug )
-                #    logging.info ( f"%s - Depth: 2 / confidence level {uhint} / 2.0 " % cmi_debug )
-                #    return uhint, 2.0, self.this_article_url          # OP-ED story (doesn't have [story continues...] button)
-                return uhint, thint, url
         
         if uhint == 2:
             if local_video.find('p'):          # video page only has a small <p> zone. NOT much TEXT (all the news is in the video)
@@ -649,43 +638,10 @@ class yfnews_reader:
         if uhint == 4:
             logging.info ( f"%s - Depth: 2.2 / POSSIBLE Research report " % cmi_debug )
             logging.info ( f"%s - Depth: 2.2 / confidence level / u: {uhint} h: {thint}" % cmi_debug )
-            # TODO:
-            # test the target url? is it a finance.yahoo.com hosted research report?
-            # if yes...we can interpret the page. There's lots of text data in that page...
-            # e.g. https://finance.yahoo.com/research/reports/MS_0P0000XWEY_AnalystReport_1632872327000
             return uhint, thint, self.this_article_url                      # Explicit remote article - can't see into this off-site article
 
         logging.info ( f"%s - Depth: 2.10 / ERROR NO page interpreter logic triggered" % cmi_debug )
         return 10, 10.0, "ERROR_unknown_state!"              # error unknown state
-
-
-    """
-        SAVE - good code. need to re-impliment soon - gets date/time of a good news article
-        else:
-            #print ( f"Tag sections in news page: {len(a_subset)}" )   # DEBUG
-            for erow in range(len(a_subset)):       # cycyle through tag sections in this dataset (not predictible or consistent)
-                if a_subset[erow].time:             # if this element row has a <time> tag...
-                    nztime = a_subset[erow].time['datetime']
-                    ndate = a_subset[erow].time.text
-                    dt_ISO8601 = datetime.strptime(nztime, "%Y-%m-%dT%H:%M:%S.%fz")
-                    if a_subset[erow].div:  # if this element row has a sub <div>
-                        nauthor = str( "{:.15}".format(a_subset[erow].div.find(attrs={'itemprop': 'name'}).text) )
-                        # nauthor = a_subset[erow].div.find(attrs={'itemprop': 'name'}).text
-                        #shorten down the above data element for the pandas DataFrame insert that happens later...
-                        # if self.args['bool_xray'] is True:        # DEBUG Xray
-                        #    taglist = []
-                        #    for tag in a_subset[erow].find_all(True):
-                        #        taglist.append(tag.name)
-                        #    print ( "Unique tags:", set(taglist) )
-                logging.info('%s - Cycle: Follow News deep URL extratcion' % cmi_debug )
-                # print ( f"Details: {ndate} / Time: {dt_ISO8601} / Author: {nauthor}" )        # DEBUG
-                days_old = (dt_ISO8601.date() - right_now)
-                date_posted = str(dt_ISO8601.date())
-                time_posted = str(dt_ISO8601.time())
-                # print ( f"News article age: DATE: {date_posted} / TIME: {time_posted} / AGE: {abs(days_old.days)}" )  # DEBUG
-
-        return ( [nauthor, date_posted, time_posted, abs(days_old.days)] )  # return a list []
-    """
 
 ###################################### 12 ###########################################
 # method 12
