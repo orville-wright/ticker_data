@@ -61,7 +61,7 @@ class url_hinter:
                     'bad': ('ERROR_unknown_state', 99)
                     }
 
-        logging.info ( f"%s  - IN / Send article url: {type(input_url)}" % cmi_debug )
+        logging.info ( f"%s   - IN Recvd article url: {type(input_url)}" % cmi_debug )
         t_check = isinstance(input_url, str)            # check is url is not a GOOD class:urllib.parse.ParseResult
         # DEBUG : logging.info ( f"%s - Hint url: {input_url}" % cmi_debug )    # {{}} handles urls with %
 
@@ -70,31 +70,30 @@ class url_hinter:
             if a_url.netloc == "finance.yahoo.com":
                 urlp_attr = a_url.path.split('/', 2)    # work on path=object ONLY
                 uhint = uhint_code.get(urlp_attr[1])    # retrieve uhint code/descr tuple from split section #1
-                logging.info ( f"%s - Logic 0 / decoded url: [{a_url.netloc}] / Type: [{urlp_attr[1]}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
+                logging.info ( f"%s - Logic +0 Decoded url: [{a_url.netloc}] / Type: [{urlp_attr[1]}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
                 return uhint[1], uhint[0]
             else:
                 a_url = urlparse(input_url)
                 uhint = uhint_code.get('rabs')            # get our encodings for absolute URL
-                logging.info ( f"%s - Logic 1 / Extract abs url: [{a_url.netloc}] u:{uhint[1]} / {uhint[0]}" % cmi_debug )
+                logging.info ( f"%s - Logic +1 Extract abs url: [{a_url.netloc}] u:{uhint[1]} / {uhint[0]}" % cmi_debug )
                 if a_url.path == "finance.yahoo.com":     # paranoid check b/c urls are nortotiously junky
-                    logging.info ( f"%s - Logic 2 / ERROR mangled url: [{a_url.netloc}] / Type: [{a_url.netloc}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
+                    logging.info ( f"%s - Logic +2 / ERROR mangled url: [{a_url.netloc}] / Type: [{a_url.netloc}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
                     error_state = uhint_code.get('err')
                     return error_state[1], error_state[0]
                 else:
-                    logging.info ( f"%s - Logic 3 / Decoded url: [{a_url.netloc}] / Type: [{a_url.netloc}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
+                    logging.info ( f"%s - Logic +3 Decoded url: [{a_url.netloc}] / Type: [{a_url.netloc}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
                     return uhint[1], uhint[0]
         else:     # URL recvd as <class 'urllib.parse.ParseResult'>
-            logging.info ( f"%s  - Logic 4 Recvd encoded url" % cmi_debug )
+            logging.info ( f"%s  - Logic +4 Recvd encoded url" % cmi_debug )
             if input_url.netloc == "finance.yahoo.com":        # scheme='https', netloc='finance.yahoo.com', path='/m/49c60293...
                 urlp_attr = input_url.path.split('/', 2)                        # work on path=object ONLY
                 uhint = uhint_code.get(urlp_attr[1])                            # retrieve uhint code/descr tuple
-                logging.info ( f"%s  - Logic 5 / Decoded url as [{input_url.netloc}] / Type: [{urlp_attr[1]}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
+                logging.info ( f"%s  - Logic +5 Decoded url: [{input_url.netloc}] / Type: [{urlp_attr[1]}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
                 return uhint[1], uhint[0]    # u code / description
             else:
                 #a_url = urlparse(input_url)
                 uhint = uhint_code.get('rabs')            # get our encodings for absolute URL
-                logging.info ( f"%s - Evaluate url path: [{input_url.netloc}] u:{uhint[1]} / {uhint[0]}" % cmi_debug )
-                logging.info ( f"%s - Logic 6 / Decoded url: [{input_url.netloc}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
+                logging.info ( f"%s - Logic +6 / Decoded url: [{input_url.netloc}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
                 error_state = uhint_code.get('rabs')
                 return error_state[1], error_state[0]
 
