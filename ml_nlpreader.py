@@ -152,12 +152,12 @@ class ml_nlpreader:
                 t_url = urlparse(sn_row['url'])                                 # WARN: a rlparse() url_named_tupple (NOT the raw url)
                 uhint, uhdescr = self.mlnlp_uh.uhinter(0, t_url)
                 thint = (sn_row['thint'])                                       # the hint we guessed at while interrogating page <tags>
-                logging.info ( f"%s      - Logic.#0 Hints for url: [ t:0 / u:{uhint} / h: {thint} ] / {uhdescr}" % cmi_debug )
+                logging.info ( f"%s       - Logic.#0 Hints for url: [ t:0 / u:{uhint} / h: {thint} ] / {uhdescr}" % cmi_debug )
 
                 # WARNING : This is a deep analysis on the page
                 r_uhint, r_thint, r_xturl = self.yfn.interpret_page(sn_idx, sn_row)    # go deep, with everything we knonw about this item
                 
-                logging.info ( f"%s      - Inferr conf: {r_xturl}" % cmi_debug )
+                logging.info ( f"%s       - Inferr conf: {r_xturl}" % cmi_debug )
                 p_r_xturl = urlparse(r_xturl)
                 inf_type = self.mlnlp_uh.confidence_lvl(thint)     # returned var is a tupple
                 #

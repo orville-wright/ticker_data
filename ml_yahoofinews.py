@@ -95,9 +95,9 @@ class yfnews_reader:
     def update_headers(self, these_headers):
         cmi_debug = __name__+"::"+self.update_headers.__name__+".#"+str(self.yti)
 
-        # hack to help logging() bug to handle URLs with % in string
-        logging.info('%s - set cookies/headers path: object' % cmi_debug )
-        cmi_debug = __name__+"::"+self.update_headers.__name__+".#"+str(self.yti)+" - "+these_headers
+        # HACK! to help logging() bug to handle URLs with % in string
+        logging.info('%s  - set cookies/headers PATH object' % cmi_debug )
+        cmi_debug = __name__+"::"+self.update_headers.__name__+".#"+str(self.yti)+"  - "+these_headers
         logging.info('%s' % cmi_debug )
 
         self.path = these_headers
