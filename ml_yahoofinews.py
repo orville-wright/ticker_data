@@ -555,23 +555,28 @@ class yfnews_reader:
             logging.info ( f"%s - Depth: 2.1 / Fake Local news stub / [ u: {uhint} h: {thint} ]" % cmi_debug )
             logging.info ( f'%s - Depth: 2.1 / BS4 processed doc length: {len(self.nsoup)}' % cmi_debug )
             logging.info ( f'%s - Depth: 2.1 / nsoup type is: {type(self.nsoup)}' % cmi_debug )
-            local_news_meta = self.nsoup.head.find()   # full news article - locally hosted
-            #local_news = self.nsoup.find(attrs={"class": "body yf-tsvcyu"})   # full news article - locally hosted
-            #local_news_meta = self.nsoup.find(attrs={"class": "main yf-cfn520"})   # comes above/before article
-            #local_news_meta = self.nsoup.main
 
-            #rem_news = nsoup.find(attrs={"class": "article-wrap no-bb"})
-            # /section/section/section/article/div/div[1]/div[2]/div[1]
-            # /section/section/section/article/div/div[1]/div[2]/div[1]/div/div[2]
-            #hack_y = self.nsoup.section.section.section
-            #hack_y = self.nsoup.body.find_all("section")
-            #hack_y = self.nsoup.body.find_all(True)
-            #hack_y = self.nsoup.find_all('section')
-            print ( f"### DEBUG - {local_news_meta.title}" )
+            local_news_meta = self.nsoup.find("head")
+            local_news_body = self.nsoup.find("body")
+            local_news_bmain = local_news_body.find("main")
+            local_news_bmart = local_news_bmain.find("article")
+            local_news_bmart_divs = local_news_bmart.find_all("div")
 
-            for i in range(0, len(local_news_meta)):
+            local_news_meta_desc = self.nsoup.find("meta", attrs={"name": "description"})
+            local_news_bmart_cap = local_news_bmart.find("div", attrs={"class": "caas-title-wrapper"})
+            #local_news_bmart_cap = local_news_bmart.find_all("div")
+            local_news_bmain_azone = local_news_bmain.find("a")
+            #local_news_bmain_cap = local_news_bmain.find_all(attrs={"class": "cover-title yf-1at0uqp"})
+
+            print ( f"### DEBUG - {local_news_meta.title.string}" )
+            print ( f"### DEBUG - {local_news_meta_desc['content']}" )
+            print ( f"### DEBUG - {local_news_bmart_cap}" )
+            print ( f"### DEBUG - {local_news_bmain_azone['href']}" )
+            print ( f"### DEBUG - {local_news_bmain_azone.text}" )
+
+            for i in range(0, len(local_news_bmart_divs)):
                 try:
-                    print ( f"zone: {i}: {local_news_meta[i]['class']}")
+                    print ( f"zone: {i}: {local_news_bmart_divs[i]['class']}")
                     """
                     #for j in range(0, len(local_news_meta[i]['class'])):
                     for j in range(0, len(local_news_meta[i]['class'])):
@@ -582,7 +587,7 @@ class yfnews_reader:
                     """
 
                 except KeyError:
-                    print ( f"zone: no zone")
+                    print ( f"zone: {i}: no zone")
                 pass
 
             # follow link into page & read
