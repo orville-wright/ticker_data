@@ -157,7 +157,7 @@ class ml_nlpreader:
                 # WARNING : This is a deep analysis on the page
                 r_uhint, r_thint, r_xturl = self.yfn.interpret_page(sn_idx, sn_row)    # go deep, with everything we knonw about this item
                 
-                logging.info ( f"%s      - URL to inferr confidence: {r_xturl}" % cmi_debug )
+                logging.info ( f"%s      - Inferr conf: {r_xturl}" % cmi_debug )
                 p_r_xturl = urlparse(r_xturl)
                 inf_type = self.mlnlp_uh.confidence_lvl(thint)     # returned var is a tupple
                 #
