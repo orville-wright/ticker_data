@@ -61,7 +61,7 @@ class url_hinter:
                     'bad': ('ERROR_unknown_state', 99)
                     }
 
-        logging.info ( f"%s   - IN Recvd article url: {type(input_url)}" % cmi_debug )
+        logging.info ( f"%s  - IN Recvd article url: {type(input_url)}" % cmi_debug )
         t_check = isinstance(input_url, str)            # check is url is not a GOOD class:urllib.parse.ParseResult
         # DEBUG : logging.info ( f"%s - Hint url: {input_url}" % cmi_debug )    # {{}} handles urls with %
 
