@@ -249,9 +249,6 @@ class yfnews_reader:
         except KeyError as error:
             logging.info( f'%s - MISSING in cache: Must read JS page' % cmi_debug )
             logging.info( f'%s - Force read news url: {self.yfqnews_url}' % cmi_debug )
-            #with requests.Session() as s:
-            #    nr = s.get( self.this_article_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
-            #    nsoup = BeautifulSoup(nr.text, 'html.parser')
             hx = self.do_js_get(bs4_obj_idx)
             logging.info( f'%s - FRESH JS page in use: [ {bs4_obj_idx} ]' % cmi_debug )
             nsoup = BeautifulSoup(self.yfn_jsdata.text, "html.parser")    # store gloabl. dont use cache object 
@@ -261,12 +258,6 @@ class yfnews_reader:
             print ( f"#################################################################" )
             print ( f"### DEBUG: {self.ul_tag_dataset}" )
             self.li_superclass = self.ul_tag_dataset.find_all(attrs={"stream-item story-item yf-1usaaz9"} )
-
-            # Depth 0 element zones
-            # <li classis> is ZONE where the News Items data is hiding
-            #li_superclass = self.ul_tag_dataset.find_all("ul")
-            #li_subset_all = self.ul_tag_dataset.find_all('li')
-            #self.js_resp2.html.render()    # WARN: Assumes sucessfull JavaScript get was previously issued
 
         logging.info( f'%s - Depth: 0 / Found News containers: {len(self.ul_tag_dataset)}' % cmi_debug )
         logging.info( f'%s - Depth: 0 / Found Sub cotainers:   {len(list(self.ul_tag_dataset.children))} / Tags: {len(list(self.ul_tag_dataset.descendants))}' % cmi_debug )
@@ -417,7 +408,7 @@ class yfnews_reader:
                 print ( f" " )
 
                 # build NLP candidate dict for deeper pre-NLP article analysis in Level 1
-                # ONLY insert type 0, 1 articels as NLP candidates. Bulk injected ads are excluded (pointless)
+                # ONLY insert type 0, 1 articles as NLP candidates !!
                 nd = {
                     "symbol" : symbol,
                     "urlhash" : aurl_hash,
@@ -458,7 +449,7 @@ class yfnews_reader:
         #logging.info('%s - IN' % cmi_debug )
         right_now = date.today()
         idx = item_idx
-        data_row = data_row
+        #data_row = data_row
         symbol = data_row['symbol']
         ttype = data_row['type']
         thint = data_row['thint']
@@ -602,8 +593,10 @@ class yfnews_reader:
             if local_news_bmart is not None:                         # article has some content
                 logging.info ( f"%s - Depth: 2.1 / Good article stub / External location @: {local_news_bmain_azone['href']}" % cmi_debug )
                 ext_url_item =  local_news_bmain_azone['href']       # build a new dict entry (external; absolute url)
-                logging.info ( f"%s - Depth: 2.1 / Insert url into ml_ingest:[{ext_url_item}] " % cmi_debug )
-                data_row.update(url = ext_url_item)                  # insert new dict entry into ml_ingest via an AUGMENTED data_row
+                logging.info ( f"%s - Depth: 2.1 / Insert url into ml_ingest: [{ext_url_item}] " % cmi_debug )
+                # !! this is wrong - need to add new field exturl to the data_row dict
+                #data_row.update(url = ext_url_item)                 # insert new dict entry into ml_ingest via an AUGMENTED data_row
+                data_row.update({"exturl": ext_url_item})            # insert new dict entry into ml_ingest via an AUGMENTED data_row
                 self.ml_ingest[idx] = data_row                       # now PERMENTALY update the ml_ingest record @ index = id
                 logging.info ( f"%s - Depth: 2.1 / NLP candidate is ready [ u: {uhint} h: {thint} ]" % cmi_debug )
                 return uhint, thint, ext_url_item
@@ -645,19 +638,97 @@ class yfnews_reader:
 
 ###################################### 12 ###########################################
 # method 12
-    def news_article_depth_1(self, url):
+    def extract_article_data(self, doc_idx):
         """
-        DEPRECATED - will detele soon
-        Analyze 1 (ONE) individual news article taken from the list of articles for this stock.
-        Set data extractor into KEY element zone within news article HTML dataset.
-        Extract critical news elements, fields & data objects are full news artcile.
-        Note: - called for each news article on the MAIN news page
-        Note: - doing this recurisvely will be network expensive...but that is the plan
+        Depth 2:
+        Only do this once the article has beenb evaluated and we knonw exactly where/what each article is
+        Any article we read, should have its resp & BS4 objects cached in yfn_jsdb{}
+        Set the Body Data zone, the <p> TAG zone
+        Extract all of the full article raw text
+        Store it in a Database
+        Associate it to themetadata info for this article
+        Its now available for the LLM to read and process
         """
 
-        cmi_debug = __name__+"::"+self.news_article_depth_1.__name__+".#"+str(self.yti)
+        cmi_debug = __name__+"::"+self.extract_article_data.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
         deep_url = url      # pass in the url that we want to deeply analyze
+
+
+################ NEW code
+        e_idx = doc_idx
+
+        for sn_idx, sn_row in self.ml_ingest.items():                           # cycle thru the NLP candidate list
+            if sn_row['type'] == 0:                                             # REAL news, inferred from Depth 0
+                print( f"\nLocal News article:  {sn_idx} / {sn_row['symbol']}" )
+                t_url = urlparse(sn_row['url'])                                 # WARN: a rlparse() url_named_tupple (NOT the raw url)
+                uhint, uhdescr = self.mlnlp_uh.uhinter(0, t_url)
+                thint = (sn_row['thint'])                                       # the hint we guessed at while interrogating page <tags>
+                logging.info ( f"%s       - Logic.#0 Hints for url: [ t:0 / u:{uhint} / h: {thint} ] / {uhdescr}" % cmi_debug )
+
+
+
+        data_row = data_row
+        symbol = data_row['symbol']
+        ttype = data_row['type']
+        thint = data_row['thint']
+        uhint = data_row['uhint']
+        durl = data_row['url']
+        cached_state = data_row['urlhash']
+
+        self.this_article_url = data_row['url']
+        symbol = symbol.upper()
+
+        logging.info( f'%s - urlhash cache lookup: {cached_state}' % cmi_debug )
+        cmi_debug = __name__+"::"+self.interpret_page.__name__+".#"+str(item_idx)+" - "+durl
+        logging.info( f'%s' % cmi_debug )     # hack fix for urls containg "%" break logging module (NO FIX
+        #logging.info( f'ml_yahoofinews::interpret_page: - %s' % durl )     # urls containg "%" break logging module (NO FIX)
+        cmi_debug = __name__+"::"+self.interpret_page.__name__+".#"+str(item_idx)
+
+        logging.info( f'%s - CHECKING cache... {cached_state}' % cmi_debug )
+        try:
+            self.yfn_jsdb[cached_state]
+            cx_soup = self.yfn_jsdb[cached_state]
+            logging.info( f'%s - Cached object FOUND: {cached_state}' % cmi_debug )
+            dataset_1 = self.yfn_jsdata     # processed data from request.get() response
+            self.nsoup = BeautifulSoup(escape(dataset_1), "html.parser")
+            logging.info( f'%s - Cache BS4 object:   {type(cx_soup)}' % cmi_debug )
+            logging.info( f'%s - Dataset object    : {type(dataset_1)}' % cmi_debug )
+            logging.info( f'%s - Cache URL object  : {type(durl)}' % cmi_debug )
+        except KeyError:
+            logging.info( f'%s - MISSING from cache / must read page' % cmi_debug )
+            logging.info( f'%s - Cache URL object  : {type(durl)}' % cmi_debug )
+ 
+            cmi_debug = __name__+"::"+self.interpret_page.__name__+".#"+str(item_idx)+" - "+durl
+            logging.info( f'%s' % cmi_debug )     # hack fix for urls containg "%" break logging module (NO FIX
+            #logging.info( f'ml_yahoofinews::interpret_page: - %s' % durl )     # urls containg "%" break logging module (NO FIX)
+            cmi_debug = __name__+"::"+self.interpret_page.__name__+".#"+str(item_idx)
+ 
+            self.yfqnews_url = durl
+            ip_urlp = urlparse(durl)
+            ip_headers = ip_urlp.path
+            self.init_dummy_session(durl)
+            self.update_headers(ip_headers)
+            xhash = self.do_js_get(idx)
+            #xhash = self.do_simple_get(url)             # for testing non JS Basic HTML get()
+            #self.yfqnews_url = url                      # ""   ""
+            logging.info( f'%s - REPEAT cache lookup for urlhash: {cached_state}' % cmi_debug )
+            if self.yfn_jsdb[cached_state]:
+                logging.info( f'%s - Cached object FOUND: {cached_state}' % cmi_debug )
+                cy_soup = self.yfn_jsdb[cached_state]    # get() response 
+                dataset_2 = self.yfn_jsdata
+                #dataset_2 = self.yfn_htmldata           # for testing non JS Basic HTML get()
+                logging.info ( f'%s - cache url:     {type(durl)}' % cmi_debug )
+                logging.info ( f'%s - cache request: {type(cy_soup)}' % cmi_debug )
+                logging.info ( f'%s - Cache dataset: {type(self.yfn_jsdata)}' % cmi_debug )
+                self.nsoup = BeautifulSoup(escape(dataset_2), "html.parser")
+            else:
+                logging.info( f'%s - FAILED to read JS doc and set BS4 obejcts' % cmi_debug )
+                return 10, 10.0, "ERROR_unknown_state!"
+
+
+################
+
         logging.info( f'%s - Follow URL: {deep_url}' % (cmi_debug) )
         logging.info( '%s - Open/get() article data' % cmi_debug )
         with requests.Session() as s:
