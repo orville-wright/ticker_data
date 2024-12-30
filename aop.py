@@ -437,6 +437,10 @@ def main():
             print ( f"M/L news reader for Stock [ {news_symbol} ] =========================" )
             news_ai = ml_nlpreader(1, args)
             news_ai.nlp_read_one(news_symbol, args)
+            news_ai.yfn.dump_ml_ingest()
+            news_ai.nlp_summary(3)
+            print ( f" " )
+            news_ai.yfn.dump_ml_ingest()
 
 #################################################################################
 # 3 differnt methods to get a live quote ########################################

@@ -115,9 +115,11 @@ class ml_nlpreader:
         print ( f" " )
         print ( "========================= Evaluate quality of ML/NLP candidates =========================" )
 
-        self.yfn.dump_ml_ingest()
-        self.nlp_summary(3)
-        print ( f" " )
+        # moved out to main control loop... confusing to do this here...
+        #self.yfn.dump_ml_ingest()
+        #self.nlp_summary(3)
+        #print ( f" " )
+        #self.yfn.dump_ml_ingest()
 
         return
 
