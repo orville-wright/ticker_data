@@ -17,6 +17,8 @@ import json
 from rich import print
 from rich.markup import escape
 
+from ml_cvbow import ml_cvbow
+
 # logging setup
 logging.basicConfig(level=logging.INFO)
 
@@ -409,6 +411,7 @@ class yfnews_reader:
 
                 # build NLP candidate dict for deeper pre-NLP article analysis in Level 1
                 # ONLY insert type 0, 1 articles as NLP candidates !!
+                # WARN: after interpret_page() this DICT may contain new fields i.e. 'exturl:'
                 nd = {
                     "symbol" : symbol,
                     "urlhash" : aurl_hash,
@@ -641,7 +644,7 @@ class yfnews_reader:
     def extract_article_data(self, item_idx):
         """
         Depth 3:
-        Only do this once the article has beenb evaluated and we knonw exactly where/what each article is
+        Only do this once the article has been evaluated and we knonw exactly where/what each article is
         Any article we read, should have its resp & BS4 objects cached in yfn_jsdb{}
         Set the Body Data zone, the <p> TAG zone
         Extract all of the full article raw text
@@ -653,6 +656,9 @@ class yfnews_reader:
         cmi_debug = __name__+"::"+self.extract_article_data.__name__+".#"+str(self.yti)
         logging.info( f'%s - IN / Work on item... [ {item_idx} ]' % cmi_debug )
 
+        logging.info( f'%s - Setup ML Tokenizor/Vectorizor...' % cmi_debug )
+        vectorz = ml_cvbow(item_idx, self.args)
+        
         data_row = self.ml_ingest[item_idx]
         symbol = data_row['symbol']
         cached_state = data_row['urlhash']
@@ -734,8 +740,15 @@ class yfnews_reader:
 
             print ( f"============================== ML TEXT Data ==============================")
             for i in range(0, len(local_stub_news_p)):
-                print ( f"zone: {i} {local_stub_news_p[i].text}" )
-
+                print ( f"========================== Vectorizor ===========================================" )
+                word_count = len(re.findall(r'\w+', local_stub_news_p[i].text))
+                print ( f"Chunk: {i} / Tokenize [ words: {word_count} / chars {len(local_stub_news_p[i].text)} ]" )
+                #print ( f"zone: {i} {local_stub_news_p[i].text}" )
+                vectorz.corpus.append(local_stub_news_p[i].text)
+                vectorz.fitandtransform()
+                vectorz.view_tdmatrix()
+                vectorz.get_hfword()
+                print ( f"=================================================================================" )
             print ( f"============================== ML TEXT Data ==============================")
 
         return

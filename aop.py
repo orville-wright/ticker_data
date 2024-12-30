@@ -28,7 +28,7 @@ from y_smallcaps import smallcap_screen
 from nasdaq_uvoljs import un_volumes
 from nasdaq_quotes import nquote
 from shallow_logic import combo_logic
-from ml_cvbow import y_bow
+from ml_cvbow import ml_cvbow
 from bigcharts_md import bc_quote
 from marketwatch_md import mw_quote
 from ml_yahoofinews import yfnews_reader
@@ -438,7 +438,8 @@ def main():
             news_ai = ml_nlpreader(1, args)
             news_ai.nlp_read_one(news_symbol, args)
             news_ai.yfn.dump_ml_ingest()
-            news_ai.nlp_summary(3)
+            news_ai.nlp_summary(3, 1)       # what doc num in ml_ingest to look for
+                                            # This is where evaluate_page() happens
             print ( f" " )
             news_ai.yfn.dump_ml_ingest()
             print ( f" " )
