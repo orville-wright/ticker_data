@@ -73,7 +73,7 @@ class ml_nlpreader:
                 yfn.form_url_endpoint(nlp_target)
                 yfn.do_simple_get()
                 yfn.scan_news_feed(nlp_target, 0, 1, 0)    #depth = 0, redner = Javascript render engine
-                yfn.eval_article_tags(nlp_target)       # ml_ingest{} is built
+                yfn.eval_article_tags(nlp_target)          # ml_ingest{} is built
                 print ( "============================== NLP candidates are ready =================================" )
 
             self.nlp_summary(2)
@@ -139,7 +139,8 @@ class ml_nlpreader:
         print ( " ")
         print ( f"============================ NLP Candidate Summary ============================" )
 
-        for sn_idx, sn_row in self.yfn.ml_ingest.items():                       # cycle thru the NLP candidate list
+        # WARN: We cycle completely thru the ml_ingest NLP candidate list !!
+        for sn_idx, sn_row in self.yfn.ml_ingest.items():
             if sn_row['type'] == 0:                                             # REAL news, inferred from Depth 0
                 print( f"\nLocal News article:  {sn_idx} / {sn_row['symbol']}" )
                 t_url = urlparse(sn_row['url'])                                 # WARN: a rlparse() url_named_tupple (NOT the raw url)

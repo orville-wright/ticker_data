@@ -441,6 +441,7 @@ def main():
             news_ai.nlp_summary(3)
             print ( f" " )
             news_ai.yfn.dump_ml_ingest()
+            print ( f" " )
             news_ai.yfn.extract_article_data(1)
 
 #################################################################################

@@ -651,8 +651,7 @@ class yfnews_reader:
         """
 
         cmi_debug = __name__+"::"+self.extract_article_data.__name__+".#"+str(self.yti)
-        logging.info('%s - IN' % cmi_debug )
-        self.dump_ml_ingest()
+        logging.info( f'%s - IN Working on item... [ {item_idx} ]' % cmi_debug )
 
         data_row = self.ml_ingest[item_idx]
         symbol = data_row['symbol']
@@ -731,6 +730,9 @@ class yfnews_reader:
             local_stub_news = self.nsoup.find_all(attrs={"class": "article yf-l7apfj"})
             local_stub_news_p = local_news.find_all("p")
 
+            print ( f"### DEBUG\n{local_stub_news_p.text}" )
+
+            """
             y = 1
             for child in local_stub_news_p.children:
                 print ( f"{y}: {child.name}" )
@@ -738,6 +740,7 @@ class yfnews_reader:
                 for element in child.descendants:
                     print ( f"{y}: {element.name} ", end="" )
                     y += 1
+            """
 
         return
         """
