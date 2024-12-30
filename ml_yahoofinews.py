@@ -730,7 +730,10 @@ class yfnews_reader:
             local_stub_news = self.nsoup.find_all(attrs={"class": "article yf-l7apfj"})
             local_stub_news_p = local_news.find_all("p")
 
-            print ( f"### DEBUG\n{local_stub_news_p.text}" )
+            for i in range(0, len(local_stub_news_p)):
+                print ( f"zone: {i} {local_stub_news_p[i].text}" )
+
+            #print ( f"### DEBUG\n{local_stub_news_p.text}" )
 
             """
             y = 1
