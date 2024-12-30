@@ -36,7 +36,7 @@ class yfnews_reader:
     yfn_all_data = None     # JSON dataset contains ALL data
     yfn_htmldata = None     # Page in HTML
     yfn_jsdata = None       # Page in JavaScript-HTML
-    yfn_jsdb = {}           # database to hold jsdata objects
+    yfn_jsdb = {}           # database to hold response handles from multiple js.session_get() ops
     ml_brief = []           # ML TXT matrix for Naieve Bayes Classifier pre Count Vectorizer
     ml_ingest = {}          # ML ingested NLP candidate articles
     ul_tag_dataset = None   # BS4 handle of the <tr> extracted data
@@ -679,11 +679,14 @@ class yfnews_reader:
             self.yfn_jsdb[cached_state]
             cx_soup = self.yfn_jsdb[cached_state]
             logging.info( f'%s - Cached object FOUND: {cached_state}' % cmi_debug )
-            dataset_1 = self.yfn_jsdata       # processed data from request.get() response
-            self.nsoup = BeautifulSoup(escape(dataset_1), "html.parser")
             logging.info( f'%s - Cache BS4 object:   {type(cx_soup)}' % cmi_debug )
             logging.info( f'%s - Dataset object    : {type(dataset_1)}' % cmi_debug )
             logging.info( f'%s - Cache URL object  : {type(durl)}' % cmi_debug )
+            # render the page & populate the dataset
+            cx_soup.html.render()           # since we dont cache the raw data, we need to render the page again
+            self.yfn_jsdata = cx_soup.text  # store the rendered raw data
+            dataset_1 = self.yfn_jsdata
+            self.nsoup = BeautifulSoup(escape(dataset_1), "html.parser")
         except KeyError:
             logging.info( f'%s - MISSING from cache / must read page' % cmi_debug )
             logging.info( f'%s - Cache URL object  : {type(durl)}' % cmi_debug )
@@ -699,12 +702,14 @@ class yfnews_reader:
             self.init_dummy_session(durl)
             self.update_headers(ip_headers)
             xhash = self.do_js_get(item_idx)
-            #xhash = self.do_simple_get(url)             # for testing non JS Basic HTML get()
-            #self.yfqnews_url = url                      # ""   ""
+            cy_soup = self.yfn_jsdb[cached_state]     # get() response 
+            #xhash = self.do_simple_get(url)          # for testing non JS Basic HTML get()
+            #self.yfqnews_url = url                   # ""   ""
             logging.info( f'%s - REPEAT cache lookup for urlhash: {cached_state}' % cmi_debug )
             if self.yfn_jsdb[cached_state]:
                 logging.info( f'%s - Cached object FOUND: {cached_state}' % cmi_debug )
-                cy_soup = self.yfn_jsdb[cached_state]    # get() response 
+                cy_soup.html.render()
+                self.yfn_jsdata = cy_soup.text
                 dataset_2 = self.yfn_jsdata
                 #dataset_2 = self.yfn_htmldata           # for testing non JS Basic HTML get()
                 logging.info ( f'%s - cache url:     {type(durl)}' % cmi_debug )
