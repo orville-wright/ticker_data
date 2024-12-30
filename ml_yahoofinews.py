@@ -678,14 +678,14 @@ class yfnews_reader:
         try:
             self.yfn_jsdb[cached_state]
             cx_soup = self.yfn_jsdb[cached_state]
+            logging.info( f'%s - Rendering JS data from cache...' % cmi_debug )
             cx_soup.html.render()           # since we dont cache the raw data, we need to render the page again
             self.yfn_jsdata = cx_soup.text  # store the rendered raw data
             dataset_1 = self.yfn_jsdata
-
             logging.info( f'%s - Cached object FOUND: {cached_state}' % cmi_debug )
             logging.info( f'%s - Cache req/get objct: {type(cx_soup)}' % cmi_debug )
             logging.info( f'%s - Dataset object    : {type(dataset_1)}' % cmi_debug )
-            logging.info( f'%s - Cache URL object  : {type(cx_soup.url)}' % cmi_debug )
+            logging.info( f'%s - Cache URL object  : {cx_soup.url}' % cmi_debug )
             # render the page & populate the dataset
             #with self.js_session.get(durl, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp2:
             #logging.info('%s    - Javascript engine processing...' % cmi_debug )
