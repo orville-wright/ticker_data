@@ -26,6 +26,7 @@ class yfnews_reader:
     """
     Read Yahoo Finance news reader, Word Vectorizer, Positive/Negative sentiment analyzer
     """
+    yfn_jsdata = None       # Page in JavaScript-HTML
 
     # global accessors
     symbol = None           # Unique company symbol
@@ -221,7 +222,6 @@ class yfnews_reader:
 
 ###################################### 8 ###########################################
 # method 9
-# session data extraction methods
     def scan_news_feed(self, symbol, depth, scan_type, bs4_obj_idx, hash_state):
         """
         Depth 0 : Surface scan of all news articles in the news section for a stock ticker
@@ -640,7 +640,7 @@ class yfnews_reader:
 # method 12
     def extract_article_data(self, item_idx):
         """
-        Depth 2:
+        Depth 3:
         Only do this once the article has beenb evaluated and we knonw exactly where/what each article is
         Any article we read, should have its resp & BS4 objects cached in yfn_jsdb{}
         Set the Body Data zone, the <p> TAG zone
@@ -651,7 +651,7 @@ class yfnews_reader:
         """
 
         cmi_debug = __name__+"::"+self.extract_article_data.__name__+".#"+str(self.yti)
-        logging.info( f'%s - IN Working on item... [ {item_idx} ]' % cmi_debug )
+        logging.info( f'%s - IN / Work on item... [ {item_idx} ]' % cmi_debug )
 
         data_row = self.ml_ingest[item_idx]
         symbol = data_row['symbol']
@@ -670,26 +670,22 @@ class yfnews_reader:
         # shoud make this a method and call it when needed
         # it would retrun self.nsoup and set self.yfn_jsdata
         logging.info( f'%s - urlhash cache lookup: {cached_state}' % cmi_debug )
-        cmi_debug = __name__+"::"+self.interpret_page.__name__+".#"+str(item_idx)+" - "+durl
+        cmi_debug = __name__+"::"+self.extract_article_data.__name__+".#"+str(item_idx)+" - URL: "+durl
         logging.info( f'%s' % cmi_debug )     # hack fix for urls containg "%" break logging module (NO FIX
-        cmi_debug = __name__+"::"+self.interpret_page.__name__+".#"+str(item_idx)
+        cmi_debug = __name__+"::"+self.extract_article_data.__name__+".#"+str(item_idx)
 
         logging.info( f'%s - CHECKING cache... {cached_state}' % cmi_debug )
         try:
             self.yfn_jsdb[cached_state]
             cx_soup = self.yfn_jsdb[cached_state]
-            logging.info( f'%s - Rendering JS data from cache...' % cmi_debug )
+            logging.info( f'%s - Found cahce entry / Render data from cache...' % cmi_debug )
             cx_soup.html.render()           # since we dont cache the raw data, we need to render the page again
             self.yfn_jsdata = cx_soup.text  # store the rendered raw data
             dataset_1 = self.yfn_jsdata
-            logging.info( f'%s - Cached object FOUND: {cached_state}' % cmi_debug )
-            logging.info( f'%s - Cache req/get objct: {type(cx_soup)}' % cmi_debug )
-            logging.info( f'%s - Dataset object    : {type(dataset_1)}' % cmi_debug )
-            logging.info( f'%s - Cache URL object  : {cx_soup.url}' % cmi_debug )
-            # render the page & populate the dataset
-            #with self.js_session.get(durl, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp2:
-            #logging.info('%s    - Javascript engine processing...' % cmi_debug )
-            #xhash = self.do_js_get(item_idx)
+            logging.info( f'%s - Cached object    : {cached_state}' % cmi_debug )
+            logging.info( f'%s - Cache req/get    : {type(cx_soup)}' % cmi_debug )
+            logging.info( f'%s - Cahce Dataset    : {type(dataset_1)}' % cmi_debug )
+            logging.info( f'%s - Cache URL object : {cx_soup.url}' % cmi_debug )
             self.nsoup = BeautifulSoup(escape(dataset_1), "html.parser")
         except KeyError:
             logging.info( f'%s - MISSING from cache / must read page' % cmi_debug )
@@ -697,7 +693,6 @@ class yfnews_reader:
  
             cmi_debug = __name__+"::"+self.interpret_page.__name__+".#"+str(item_idx)+" - "+durl
             logging.info( f'%s' % cmi_debug )     # hack fix for urls containg "%" break logging module (NO FIX
-            #logging.info( f'ml_yahoofinews::interpret_page: - %s' % durl )     # urls containg "%" break logging module (NO FIX)
             cmi_debug = __name__+"::"+self.interpret_page.__name__+".#"+str(item_idx)
  
             self.yfqnews_url = durl
@@ -709,68 +704,41 @@ class yfnews_reader:
             cy_soup = self.yfn_jsdb[cached_state]     # get() response 
             #xhash = self.do_simple_get(url)          # for testing non JS Basic HTML get()
             #self.yfqnews_url = url                   # ""   ""
-            logging.info( f'%s - REPEAT cache lookup for urlhash: {cached_state}' % cmi_debug )
+            logging.info( f'%s - REtry cache lookup for: {cached_state}' % cmi_debug )
             if self.yfn_jsdb[cached_state]:
-                logging.info( f'%s - Cached object FOUND: {cached_state}' % cmi_debug )
+                logging.info( f'%s - Found cache entry: {cached_state}' % cmi_debug )
                 cy_soup.html.render()
                 self.yfn_jsdata = cy_soup.text
                 dataset_2 = self.yfn_jsdata
                 #dataset_2 = self.yfn_htmldata           # for testing non JS Basic HTML get()
-                logging.info ( f'%s - cache url:     {type(durl)}' % cmi_debug )
-                logging.info ( f'%s - cache request: {type(cy_soup)}' % cmi_debug )
-                logging.info ( f'%s - Cache dataset: {type(self.yfn_jsdata)}' % cmi_debug )
+                logging.info ( f'%s - Cache url:     {cy_soup.url}' % cmi_debug )
+                logging.info ( f'%s - Cache req/get: {type(cy_soup)}' % cmi_debug )
+                logging.info ( f'%s - Cache Dataset: {type(self.yfn_jsdata)}' % cmi_debug )
                 self.nsoup = BeautifulSoup(escape(dataset_2), "html.parser")
             else:
-                logging.info( f'%s - FAILED to read JS doc and set BS4 obejcts' % cmi_debug )
+                logging.info( f'%s - FAIL to set BS4 data !' % cmi_debug )
                 return 10, 10.0, "ERROR_unknown_state!"
 
-################
-
-        logging.info( f'%s - Extracting ML TEXT data now...: {durl}' % (cmi_debug) )
+        logging.info( f'%s - Extract ML TEXT dataset: {durl}' % (cmi_debug) )
         if external is True:    # page is Micro stub Fake news article
             logging.info( f'%s - Skipping Micro article stub... [ {item_idx} ]' % cmi_debug )
-            # Do no deep data extraction
-            # just used the CAPTION Teaser text from the YFN local url
+            # Do not do deep data extraction
+            # just use the CAPTION Teaser text from the YFN local url
             # we extracted that in interpret_page()
         else:
-            logging.info( f'%s - set BS4 data zones for Article: [ {item_idx} ]' % cmi_debug )
+            logging.info( f'%s - set BS4 data zones for article: [ {item_idx} ]' % cmi_debug )
             local_news = self.nsoup.find(attrs={"class": "body yf-tsvcyu"})             # full news article - locally hosted
             local_news_meta = self.nsoup.find(attrs={"class": "main yf-cfn520"})        # comes above/before article
             local_stub_news = self.nsoup.find_all(attrs={"class": "article yf-l7apfj"})
             local_stub_news_p = local_news.find_all("p")
 
+            print ( f"============================== ML TEXT Data ==============================")
             for i in range(0, len(local_stub_news_p)):
                 print ( f"zone: {i} {local_stub_news_p[i].text}" )
 
-            #print ( f"### DEBUG\n{local_stub_news_p.text}" )
-
-            """
-            y = 1
-            for child in local_stub_news_p.children:
-                print ( f"{y}: {child.name}" )
-                y += 1
-                for element in child.descendants:
-                    print ( f"{y}: {element.name} ", end="" )
-                    y += 1
-            """
+            print ( f"============================== ML TEXT Data ==============================")
 
         return
-        """
-        if frl.has_attr("a") is False:
-            logging.info( "%s - Article HAS an <a> tag & MAYBE an <href> tag?" )
-            if frl.a.get('href') == 0:    # we found a real href
-                logging.info( '%s - News article is LOCAL at finance.yahoo.com' % cmi_debug )
-                # fnl_tag_dataset = soup.find_all('a')
-                logging.info( '%s - Extract key elements/tags from HTML data' % cmi_debug )
-                tag_dataset = self.nsoup.div.find_all(attrs={'class': 'D(tbc)'} )
-            else:
-                logging.info( '%s - Fake stub/page discovered / Article is REMOTE' % cmi_debug )
-                logging.info( f"%s - remote URL: {frl.a.get('href')}" % cmi_debug )
-                tag_dataset = 0
-                real_nurl = frl.a.get('href')    # article is REMOTE at this real location
-        else:
-            logging.info( "%s - Article has NO <a> or <href> tags / structure is BAD!" % cmi_debug )
-        """
 
 ###################################### 13 ###########################################
 # method 13
@@ -788,48 +756,5 @@ class yfnews_reader:
                 print ( f"          External: {d['exturl']}" )
             else:
                 print ( f"          Local:    {d['url']}" )
-
-        return
-
-
-##################################### 2 ############################################
-# method 2
-    def yfn_bintro(self):
-        """
-        DELETE ME - redundent
-        Initial blind intro to yahoo.com/news JAVASCRIPT page
-        NOTE: BeautifulSoup scraping required as no REST API endpoint is available.
-              Javascript engine processing may be required to process/read rich meida JS page data
-        """
-
-        cmi_debug = __name__+"::"+self.yfn_bintro.__name__+".#"+str(self.yti)
-        logging.info('%s - IN' % cmi_debug )
-
-        # Initial blind get - present ourself to yahoo.com so we can extract critical cookies
-        logging.info('%s - blind intro get()' % cmi_debug )
-        self.js_session.cookies.update(self.yahoo_headers)    # redundent as it's done in INIT but I'm not sure its persisting from there
-        with self.js_session.get("https://www.finance.yahoo.com", stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
-            logging.info('%s - EXTRACT/INSERT 8 special cookies  ' % cmi_debug )
-            self.js_session.cookies.update({'B': self.js_resp0.cookies['B']} )    # yahoo cookie hack
-
-        # 2nd get with the secret yahoo.com cookies now inserted
-        # NOTE: Just the finaince.Yahoo.com MAIN landing page - generic news
-        logging.info('%s - rest API read json' % cmi_debug )
-        with self.js_session.get("https://www.finance.yahoo.com", stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp2:
-            # read the webpage with our Javascript engine processor
-            logging.info('%s - Javascript engine processing disabled...' % cmi_debug )
-            #self.js_resp2.html.render()    # render JS page
-            logging.info('%s - Javascript engine completed!' % cmi_debug )
-
-            # Setup some initial data structures via an authenticated/valid connection
-            logging.info('%s - store FULL json dataset' % cmi_debug )
-            # self.uvol_all_data = json.loads(self.js_resp2.text)
-            logging.info('%s - store data 1' % cmi_debug )
-
-        # Xray DEBUG
-        if self.args['bool_xray'] is True:
-            print ( f"=========================== {self.yti} / session cookies ===========================" )
-            for i in self.js_session.cookies.items():
-                print ( f"{i}" )
 
         return

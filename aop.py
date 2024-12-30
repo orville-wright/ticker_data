@@ -443,6 +443,8 @@ def main():
             news_ai.yfn.dump_ml_ingest()
             print ( f" " )
             news_ai.yfn.extract_article_data(1)
+            news_ai.yfn.extract_article_data(3)
+            news_ai.yfn.extract_article_data(5)
 
 #################################################################################
 # 3 differnt methods to get a live quote ########################################
