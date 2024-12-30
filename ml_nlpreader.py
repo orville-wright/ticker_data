@@ -87,13 +87,11 @@ class ml_nlpreader:
 # method #2
     def nlp_read_one(self, news_symbol, global_args):
         """
-        The machine will read now!
+        The machine will now read !
         Read finance.yahoo.com / News 'Brief headlines' (i.e. short text docs) 
         Reads ALL news artivles for only ONE stock symbol.
         """
-
         self.args = global_args
-
         cmi_debug = __name__+"::"+self.nlp_read_one.__name__+".#"+str(self.yti)
         logging.info( f'%s - IN.#{self.yti}' % cmi_debug )
         news_symbol = str(self.args['newsymbol'])       # symbol provided on CMDLine
@@ -113,13 +111,6 @@ class ml_nlpreader:
         self.yfn.scan_news_feed(news_symbol, 0, 1, 0, hash_state)   
         self.yfn.eval_news_feed_stories(news_symbol) # ml_ingest{} get built here
         print ( f" " )
-        print ( "========================= Evaluate quality of ML/NLP candidates =========================" )
-
-        # moved out to main control loop... confusing to do this here...
-        #self.yfn.dump_ml_ingest()
-        #self.nlp_summary(3)
-        #print ( f" " )
-        #self.yfn.dump_ml_ingest()
 
         return
 

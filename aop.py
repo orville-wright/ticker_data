@@ -438,6 +438,7 @@ def main():
             news_ai = ml_nlpreader(1, args)
             news_ai.nlp_read_one(news_symbol, args)
             news_ai.yfn.dump_ml_ingest()
+            news_ai.yfn.extract_article_data(1)
             news_ai.nlp_summary(3)
             print ( f" " )
             news_ai.yfn.dump_ml_ingest()

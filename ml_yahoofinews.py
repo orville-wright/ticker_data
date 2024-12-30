@@ -666,6 +666,10 @@ class yfnews_reader:
 
         symbol = symbol.upper()
 
+        # TODO:
+        # since this code is exact duplicate of interpret_page(), we
+        # shoud make this a method and call it when needed
+        # it would retrun self.nsoup and set self.yfn_jsdata
         logging.info( f'%s - urlhash cache lookup: {cached_state}' % cmi_debug )
         cmi_debug = __name__+"::"+self.interpret_page.__name__+".#"+str(item_idx)+" - "+durl
         logging.info( f'%s' % cmi_debug )     # hack fix for urls containg "%" break logging module (NO FIX
@@ -714,7 +718,7 @@ class yfnews_reader:
 
 ################
 
-        logging.info( f'%s - Extracting TEXT data now...: {durl}' % (cmi_debug) )
+        logging.info( f'%s - Extracting ML TEXT data now...: {durl}' % (cmi_debug) )
         if external is True:    # page is Micro stub Fake news article
             logging.info( f'%s - Skipping Micro article stub... [ {item_idx} ]' % cmi_debug )
             # Do no deep data extraction
