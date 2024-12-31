@@ -737,38 +737,31 @@ class yfnews_reader:
             local_news_meta = self.nsoup.find(attrs={"class": "main yf-cfn520"})        # comes above/before article
             local_stub_news = self.nsoup.find_all(attrs={"class": "article yf-l7apfj"})
             local_stub_news_p = local_news.find_all("p")
- 
-            ##### M/L Gen AI NLP starts here !!!
+
+            ############################################
+            ##### M/L Gen AI NLP starts here !!! #######
             logging.info( f'%s - Init ML NLP Tokenizor/Vectorizer...' % cmi_debug )
             vectorz = ml_cvbow(item_idx, self.args)
             stop_words = stopwords.words('english')
-            print ( f"============================== ML NLP Data ==============================")
+            print ( f"====================== Gen AI ML NLP transformer : for News article [ {item_idx} ] ====================")
             for i in range(0, len(local_stub_news_p)):
-                print ( f"========================== Vectorizor ===========================================" )
                 ngram_count = len(re.findall(r'\w+', local_stub_news_p[i].text))
                 ngram_tkzed = word_tokenize(local_stub_news_p[i].text)
-                print ( f"Chunk: {i} / Tokenize [ n-grams: {ngram_count} / tkzd n-grams: {len(ngram_tkzed)} / alphas: {len(local_stub_news_p[i].text)} ]" )
-                print ( f"zone: {i} {local_stub_news_p[i].text}" )
+                print ( f"Chunk: {i:03} / Tokenize [ n-grams: {ngram_count:03} / tkzd n-grams: {len(ngram_tkzed):03} / alphas: {len(local_stub_news_p[i].text):03} ]", end="" )
                 ngram_sw_remv = [word for word in ngram_tkzed if word.lower() not in stop_words]    # remove stopwords
                 ngram_final = ' '.join(ngram_sw_remv)   # reform the scentence
-                print ( f"### DEBUG 0: {ngram_final}" )
                 vectorz.reset_corpus(ngram_final)
                 vectorz.fitandtransform()
-                #vectorz.corpus.append(ngram_final)      # put the new stopwords_removed scentence into the BOW vector
-                #vectorz.corpus.append(local_stub_news_p[i].text)
-                print ( f"### DEBUG 1: {vectorz.corpus}" )
-                #vectorz.view_tdmatrix()
+                #vectorz.view_tdmatrix()     # Debug: dump Vectorized Tranformer info
                 hfw = []    # force hfw list to be empty
                 hfw = vectorz.get_hfword()
-
                 ngram_sw_remv = ""
                 ngram_final= ""
                 ngram_count = 0
                 ngram_tkzed = 0
 
-                print ( f"Highest frequency word(s) in scentence: {hfw}" )
-                print ( f"=================================================================================" )
-            print ( f"============================== ML TEXT Data ==============================")
+                print ( f" / HFN: {hfw}" )
+            print ( f"======================================== End: {item_idx} ===============================================")
 
         return
 

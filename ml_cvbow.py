@@ -141,7 +141,7 @@ class ml_cvbow:
                     vmax_words.append(vword)            # add to list
 
         else:
-            vmax_words.append("Boring_doc_no_HIGH-Frequency_words")
+            vmax_words.append("Boring:_no_High-Frequency_ngrams")
 
         return vmax_words        # the English word with the highest frequency count
 
@@ -154,7 +154,7 @@ class ml_cvbow:
         logging.info('%s - IN' % cmi_debug )
 
 	# reset corpus to something new OR empty
-        if new_corpus == 0
+        if new_corpus == 0:
             self.corpus = []
             return
         else:
