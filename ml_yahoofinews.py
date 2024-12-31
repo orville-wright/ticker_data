@@ -738,27 +738,25 @@ class yfnews_reader:
             local_stub_news = self.nsoup.find_all(attrs={"class": "article yf-l7apfj"})
             local_stub_news_p = local_news.find_all("p")
  
-##### M/L Gen AI NLP starts here !!!
+            ##### M/L Gen AI NLP starts here !!!
             logging.info( f'%s - Init ML NLP Tokenizor/Vectorizer...' % cmi_debug )
             vectorz = ml_cvbow(item_idx, self.args)
             stop_words = stopwords.words('english')
-            print ( f"### DEBUG: stopwords: {len(stop_words)} \n{stop_words}" )
-
-            print ( f"============================== ML TEXT Data ==============================")
+            print ( f"============================== ML NLP Data ==============================")
             for i in range(0, len(local_stub_news_p)):
                 print ( f"========================== Vectorizor ===========================================" )
                 ngram_count = len(re.findall(r'\w+', local_stub_news_p[i].text))
                 ngram_tkzed = word_tokenize(local_stub_news_p[i].text)
                 print ( f"Chunk: {i} / Tokenize [ n-grams: {ngram_count} / tkzd n-grams: {len(ngram_tkzed)} / alphas: {len(local_stub_news_p[i].text)} ]" )
                 #print ( f"zone: {i} {local_stub_news_p[i].text}" )
-                ngram_sw_remv = [word for word in ngram_tkzed if word.lower() not in stop_words]
-                ngram_final = ' '.join(ngram_sw_remv)
-                vectorz.corpus.append(ngram_final)
+                ngram_sw_remv = [word for word in ngram_tkzed if word.lower() not in stop_words]    # remove stopwords
+                ngram_final = ' '.join(ngram_sw_remv)   # reform the scentence
+                vectorz.corpus.append(ngram_final)      # put the new stopwords_removed scentence into the BOW vector
                 #vectorz.corpus.append(local_stub_news_p[i].text)
 
                 vectorz.fitandtransform()
                 vectorz.view_tdmatrix()
-                vectorz.get_hfword()
+                print ( f"Highest frequency word in scentence: {vectorz.get_hfword()}" )
                 print ( f"=================================================================================" )
             print ( f"============================== ML TEXT Data ==============================")
 
