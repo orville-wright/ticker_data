@@ -738,10 +738,11 @@ class yfnews_reader:
             local_stub_news = self.nsoup.find_all(attrs={"class": "article yf-l7apfj"})
             local_stub_news_p = local_news.find_all("p")
  
+##### M/L Gen AI NLP starts here !!!
             logging.info( f'%s - Init ML NLP Tokenizor/Vectorizer...' % cmi_debug )
             vectorz = ml_cvbow(item_idx, self.args)
-            stop_words = set(stopwords.words('english'))
-            print ( f"### DEBUG: {stop_words}" )
+            stop_words = set([stopwords.words('english')])
+            print ( f"### DEBUG: stopwords: {len(stop_words)} \n{stop_words}" )
 
             print ( f"============================== ML TEXT Data ==============================")
             for i in range(0, len(local_stub_news_p)):
@@ -750,8 +751,8 @@ class yfnews_reader:
                 ngram_tkzed = word_tokenize(local_stub_news_p[i].text)
                 print ( f"Chunk: {i} / Tokenize [ n-grams: {ngram_count} / tkzd n-grams: {len(ngram_tkzed)} / alphas: {len(local_stub_news_p[i].text)} ]" )
                 #print ( f"zone: {i} {local_stub_news_p[i].text}" )
-                ngram_swremv = [word for word in ngram_tkzed if word.lower() not in stopwords.words(stop_words)]
-                ngram_final = ' '.join(ngram_swremv)
+                ngram_sw_remv = [word for word in ngram_tkzed if word.lower() not in stop_words]
+                ngram_final = ' '.join(ngram_sw_remv)
                 vectorz.corpus.append(ngram_final)
                 #vectorz.corpus.append(local_stub_news_p[i].text)
 
