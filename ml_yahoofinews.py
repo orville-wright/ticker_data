@@ -756,7 +756,10 @@ class yfnews_reader:
 
                 vectorz.fitandtransform()
                 #vectorz.view_tdmatrix()
-                print ( f"Highest frequency word in scentence: {vectorz.get_hfword()[0]}" )
+                hfw = []    # force hfw list to be empty
+                hfw = vectorz.get_hfword()
+                hfw_s = print (*hfw, sep = ' / ')
+                print ( f"Highest frequency word(s) in scentence: {hfw_s}" )
                 print ( f"=================================================================================" )
             print ( f"============================== ML TEXT Data ==============================")
 
