@@ -755,8 +755,8 @@ class yfnews_reader:
                 #vectorz.corpus.append(local_stub_news_p[i].text)
 
                 vectorz.fitandtransform()
-                vectorz.view_tdmatrix()
-                print ( f"Highest frequency word in scentence: {vectorz.get_hfword()}" )
+                #vectorz.view_tdmatrix()
+                print ( f"Highest frequency word in scentence: {{vectorz.get_hfword()}}" )
                 print ( f"=================================================================================" )
             print ( f"============================== ML TEXT Data ==============================")
 
