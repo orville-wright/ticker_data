@@ -36,7 +36,7 @@ class ml_cvbow:
     cv_df0 = ""             # DataFrame - Full list of top loserers
     cv_df1 = ""             # DataFrame - Ephemerial list of top 10 loserers. Allways overwritten
     cv_df2 = ""             # DataFrame - Top 10 ever 10 secs for 60 secs
-    yti = 0            # instance UID
+    yti = 0                 # instance UID
     cycle = 0               # class thread loop counter
     args = []
 
@@ -144,3 +144,23 @@ class ml_cvbow:
             vmax_words.append("Boring_doc_no_HIGH-Frequency_words")
 
         return vmax_words        # the English word with the highest frequency count
+
+####################################### 4 ########################################
+    def reset_corpus(self, new_corpus):
+        """
+        reset the corpus and initialize it with something new
+        """
+        cmi_debug = __name__+"::"+self.reset_corpus.__name__+".#"+str(self.yti)
+        logging.info('%s - IN' % cmi_debug )
+
+	# reset corpus to something new OR empty
+        if new_corpus == 0
+            self.corpus = []
+            return
+        else:
+            self.corpus.clear()
+            self.vectorizer = CountVectorizer()  # Re-initialize the vectorizer as EMPTY
+            self.corpus.append(new_corpus)
+
+        return
+

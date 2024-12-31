@@ -752,10 +752,11 @@ class yfnews_reader:
                 ngram_sw_remv = [word for word in ngram_tkzed if word.lower() not in stop_words]    # remove stopwords
                 ngram_final = ' '.join(ngram_sw_remv)   # reform the scentence
                 print ( f"### DEBUG 0: {ngram_final}" )
-                vectorz.corpus = vectorz.corpus.append(ngram_final)      # put the new stopwords_removed scentence into the BOW vector
+                vectorz.reset_corpus(ngram_final)
+                vectorz.fitandtransform()
+                #vectorz.corpus.append(ngram_final)      # put the new stopwords_removed scentence into the BOW vector
                 #vectorz.corpus.append(local_stub_news_p[i].text)
                 print ( f"### DEBUG 1: {vectorz.corpus}" )
-                vectorz.fitandtransform()
                 #vectorz.view_tdmatrix()
                 hfw = []    # force hfw list to be empty
                 hfw = vectorz.get_hfword()
