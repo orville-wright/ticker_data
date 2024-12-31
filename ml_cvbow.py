@@ -32,7 +32,7 @@ class ml_cvbow:
     fo_tokens = ""          # Vocabulary of tokens in a doc (NOT a Term doc Matrix)
     vectorizer = ""         # tokenized & count matrix handle
     corpus = []             # Corpus of text documents we ar working with
-    stopwords = []          # Stopwords
+    stop_words = []         # Stopwords
     cv_df0 = ""             # DataFrame - Full list of top loserers
     cv_df1 = ""             # DataFrame - Ephemerial list of top 10 loserers. Allways overwritten
     cv_df2 = ""             # DataFrame - Top 10 ever 10 secs for 60 secs
@@ -45,7 +45,9 @@ class ml_cvbow:
         logging.info('%s - INSTANTIATE' % cmi_debug )
         # init empty DataFrame with present colum names
         self.args = global_args
-        self.vectorizer = CountVectorizer(stop_words=stopwords)
+        stop_words = set(stopwords.words('english'))
+        self.vectorizer = CountVectorizer()
+        #self.vectorizer = CountVectorizer(stop_words=stopwords)
         return
 
 ####################################### 1 #########################################
@@ -94,11 +96,11 @@ class ml_cvbow:
         #print ( f"DATA: {self.ft_tdmatrix.data}" )
         #print ( f"INDICES: {self.ft_tdmatrix.indices}" )
         #print ( f"INDPTR: {self.ft_tdmatrix.indptr}" )
-        vmax = self.ft_tdmatrix.max()                               # find the the highest frequency count word (just count, NOT the real word)
-        for i in range(0, self.ft_tdmatrix.nnz):                    # num of indexed items in this CSR matrix
-            for kv in self.vectorizer.vocabulary_.items():          # feature words held in vocab dict{}...index=word, value=feature_index_ptr
-                if kv[1] == self.ft_tdmatrix.indices[i]:            # {value} = this index?
-                    vword = kv[0]                                   # yes, get {key} (i.e. the english word)
+        vmax = self.ft_tdmatrix.max()                         # find highest frequency word (just count, NOT the real word)
+        for i in range(0, self.ft_tdmatrix.nnz):              # num of indexed items in this CSR matrix
+            for kv in self.vectorizer.vocabulary_.items():    # feature words in vocab dict{}...index=word, value=feature_index_ptr
+                if kv[1] == self.ft_tdmatrix.indices[i]:      # {value} = this index?
+                    vword = kv[0]                             # yes, get {key} (i.e. the english word)
                     break
 
             if vmax > 1:

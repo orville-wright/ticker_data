@@ -18,6 +18,8 @@ from rich import print
 from rich.markup import escape
 
 from ml_cvbow import ml_cvbow
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
 
 # logging setup
 logging.basicConfig(level=logging.INFO)
@@ -656,8 +658,6 @@ class yfnews_reader:
         cmi_debug = __name__+"::"+self.extract_article_data.__name__+".#"+str(self.yti)
         logging.info( f'%s - IN / Work on item... [ {item_idx} ]' % cmi_debug )
 
-        logging.info( f'%s - Setup ML Tokenizor/Vectorizor...' % cmi_debug )
-        vectorz = ml_cvbow(item_idx, self.args)
         
         data_row = self.ml_ingest[item_idx]
         symbol = data_row['symbol']
@@ -737,14 +737,24 @@ class yfnews_reader:
             local_news_meta = self.nsoup.find(attrs={"class": "main yf-cfn520"})        # comes above/before article
             local_stub_news = self.nsoup.find_all(attrs={"class": "article yf-l7apfj"})
             local_stub_news_p = local_news.find_all("p")
+ 
+            logging.info( f'%s - Init ML NLP Tokenizor/Vectorizer...' % cmi_debug )
+            vectorz = ml_cvbow(item_idx, self.args)
+            stop_words = set(stopwords.words('english'))
+            print ( f"### DEBUG: {stop_words}" )
 
             print ( f"============================== ML TEXT Data ==============================")
             for i in range(0, len(local_stub_news_p)):
                 print ( f"========================== Vectorizor ===========================================" )
-                word_count = len(re.findall(r'\w+', local_stub_news_p[i].text))
-                print ( f"Chunk: {i} / Tokenize [ words: {word_count} / chars {len(local_stub_news_p[i].text)} ]" )
+                ngram_count = len(re.findall(r'\w+', local_stub_news_p[i].text))
+                ngram_tkzed = word_tokenize(local_stub_news_p[i].text)
+                print ( f"Chunk: {i} / Tokenize [ n-grams: {ngram_count} / tkzd n-grams: {len(ngram_tkzed)} / alphas: {len(local_stub_news_p[i].text)} ]" )
                 #print ( f"zone: {i} {local_stub_news_p[i].text}" )
-                vectorz.corpus.append(local_stub_news_p[i].text)
+                ngram_swremv = [word for word in ngram_tkzed if word.lower() not in stopwords.words(stop_words)]
+                ngram_final = ' '.join(ngram_swremv)
+                vectorz.corpus.append(ngram_final)
+                #vectorz.corpus.append(local_stub_news_p[i].text)
+
                 vectorz.fitandtransform()
                 vectorz.view_tdmatrix()
                 vectorz.get_hfword()
