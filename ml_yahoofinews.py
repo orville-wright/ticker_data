@@ -741,7 +741,7 @@ class yfnews_reader:
 ##### M/L Gen AI NLP starts here !!!
             logging.info( f'%s - Init ML NLP Tokenizor/Vectorizer...' % cmi_debug )
             vectorz = ml_cvbow(item_idx, self.args)
-            stop_words = set([stopwords.words('english')])
+            stop_words = stopwords.words('english')
             print ( f"### DEBUG: stopwords: {len(stop_words)} \n{stop_words}" )
 
             print ( f"============================== ML TEXT Data ==============================")
