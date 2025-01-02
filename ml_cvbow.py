@@ -90,7 +90,7 @@ class ml_cvbow:
         Term_doc_Matrix must already have been FIT and TRASNFORMED.
         """
         cmi_debug = __name__+"::"+self.view_tdmatrix.__name__+".#"+str(self.yti)
-        logging.info('%s - IN' % cmi_debug )
+        logging.info('%sType - IN' % cmi_debug )
 
 	# working & decoding native scikit-learn CSR data (i.e. Compressed Sparse Row matrix data)
         #print ( f"DATA: {self.ft_tdmatrix.data}" )
@@ -113,6 +113,19 @@ class ml_cvbow:
 
         return
 
+###################################### 6 ###########################################
+# method 13
+    def is_scentence(self, p_line):
+         if p_line.strip().endswith(('.', '?', '!')):
+             return True
+         else:
+             return False
+
+    def is_paragraph(self, p_line):
+         if p_line.count('.') > 1 or p_line.count('?') > 1 or p_line.count('!') > 1:
+             return True
+         else:
+             return False
 
 ####################################### 4 ########################################
     def get_hfword(self):
@@ -127,25 +140,29 @@ class ml_cvbow:
         #print ( f"DATA: {self.ft_tdmatrix.data}" )
         #print ( f"INDICES: {self.ft_tdmatrix.indices}" )
         #print ( f"INDPTR: {self.ft_tdmatrix.indptr}" )
+
         vmax_words = []                 # list to hold English words that == the Highest Frequency count (could be multiple)
-        vmax = self.ft_tdmatrix.max()                               # find the the highest frequency count word (just count, NOT the real word)
-        if vmax > 1:                                                # At least 1 word has a frequency occurance greater than 1
-            for i in range(0, self.ft_tdmatrix.nnz):                # CYCLE thru matrix of indexed items in this CSR matrix
-                for kv in self.vectorizer.vocabulary_.items():          # SCAN feature words vocab dict{}...index=word, value=feature_index_ptr
-                    if kv[1] == self.ft_tdmatrix.indices[i]:            # is {value} = this index?
-                        vword = kv[0]           # yes, get {key} (i.e. the english word)
-                        vwidx = kv[1]          # and the word index
-                        break                   # found the english world in the vocabulary that we are looking at in the matrix
+        vmax = self.ft_tdmatrix.max()   # find the the highest frequency count word (just count, NOT the real word)
+        if vmax > 1:                    # At least 1 word has a frequency occurance greater than 1
+                for i in range(0, self.ft_tdmatrix.nnz):                # CYCLE thru matrix of indexed items in this CSR matrix
+                    for kv in self.vectorizer.vocabulary_.items():          # SCAN feature words vocab dict{}...index=word, value=feature_index_ptr
+                        if kv[1] == self.ft_tdmatrix.indices[i]:            # is {value} = this index?
+                            vword = kv[0]               # yes, get {key} (i.e. the english word)
+                            vwidx = kv[1]               # and the word index
+                            break                       # found the english world in the vocabulary that we are looking at in the matrix
 
-                if self.ft_tdmatrix.data[i] == vmax:     # is this word a highest frequency count word?
-                    vmax_words.append(vword)            # add to list
+                    if self.ft_tdmatrix.data[i] == vmax:    # is this word a highest frequency count word?
+                        vmax_words.append(vword)            # add to list
 
+        elif vmax == 1:
+            vmax_words.append("Nominal")
         else:
-            vmax_words.append("Boring:_no_High-Frequency_ngrams")
+            vmax_words.append("None")
 
+        vmax_words.append(int(vmax))
         return vmax_words        # the English word with the highest frequency count
 
-####################################### 4 ########################################
+####################################### 5 ########################################
     def reset_corpus(self, new_corpus):
         """
         reset the corpus and initialize it with something new

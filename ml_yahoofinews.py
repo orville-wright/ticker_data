@@ -20,6 +20,7 @@ from rich.markup import escape
 from ml_cvbow import ml_cvbow
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+from transformers import pipeline
 
 # logging setup
 logging.basicConfig(level=logging.INFO)
@@ -710,7 +711,7 @@ class yfnews_reader:
             cy_soup = self.yfn_jsdb[cached_state]     # get() response 
             #xhash = self.do_simple_get(url)          # for testing non JS Basic HTML get()
             #self.yfqnews_url = url                   # ""   ""
-            logging.info( f'%s - REtry cache lookup for: {cached_state}' % cmi_debug )
+            logging.info( f'%s - Retry cache lookup for: {cached_state}' % cmi_debug )
             if self.yfn_jsdb[cached_state]:
                 logging.info( f'%s - Found cache entry: {cached_state}' % cmi_debug )
                 cy_soup.html.render()
@@ -740,32 +741,50 @@ class yfnews_reader:
 
             ############################################
             ##### M/L Gen AI NLP starts here !!! #######
+            ############################################
+            #
             logging.info( f'%s - Init ML NLP Tokenizor/Vectorizer...' % cmi_debug )
             vectorz = ml_cvbow(item_idx, self.args)
             stop_words = stopwords.words('english')
+            #classifier = pipeline('sentiment-analysis')
+            classifier = pipeline(model="mrm8488/distilroberta-finetuned-financial-news-sentiment-analysis")
+            
             print ( f"====================== Gen AI ML NLP transformer : for News article [ {item_idx} ] ====================")
             for i in range(0, len(local_stub_news_p)):
                 ngram_count = len(re.findall(r'\w+', local_stub_news_p[i].text))
                 ngram_tkzed = word_tokenize(local_stub_news_p[i].text)
-                print ( f"Chunk: {i:03} / Tokenize [ n-grams: {ngram_count:03} / tkzd n-grams: {len(ngram_tkzed):03} / alphas: {len(local_stub_news_p[i].text):03} ]", end="" )
+                if vectorz.is_scentence(local_stub_news_p[i].text):
+                    chunk_type = "Scent"
+                elif vectorz.is_paragraph(local_stub_news_p[i].text):
+                    chunk_type = "Parag"
+                else:
+                    chunk_type = "Randm"
+                p_sentiment = classifier(local_stub_news_p[i].text)
+                print ( f"Chunk: {i:03} / {chunk_type} / [ n-grams: {ngram_count:03} / tokens: {len(ngram_tkzed):03} / alphas: {len(local_stub_news_p[i].text):03} ]", end="" )
                 ngram_sw_remv = [word for word in ngram_tkzed if word.lower() not in stop_words]    # remove stopwords
                 ngram_final = ' '.join(ngram_sw_remv)   # reform the scentence
                 vectorz.reset_corpus(ngram_final)
                 vectorz.fitandtransform()
                 #vectorz.view_tdmatrix()     # Debug: dump Vectorized Tranformer info
-                hfw = []    # force hfw list to be empty
-                hfw = vectorz.get_hfword()
+                if ngram_count > 0:
+                    hfw = []    # force hfw list to be empty
+                    hfw = vectorz.get_hfword()
+                else:
+                    hfw.append("Empty")
+
                 ngram_sw_remv = ""
                 ngram_final= ""
                 ngram_count = 0
                 ngram_tkzed = 0
-
-                print ( f" / HFN: {hfw}" )
+                sen_result = p_sentiment[0]
+                raw_score = sen_result['score']
+                rounded_score = np.floor(raw_score * (10 ** 7) ) / (10 ** 7)
+                print ( f" / HFN: {hfw} / Sentiment: {sen_result['label']} {(rounded_score * 100):.5f} %")
             print ( f"======================================== End: {item_idx} ===============================================")
 
         return
 
-###################################### 13 ###########################################
+###################################### 14 ###########################################
 # method 13
     def dump_ml_ingest(self):        # >>Xray DEBUG<<
         """
