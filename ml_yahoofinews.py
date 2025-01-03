@@ -204,8 +204,8 @@ class yfnews_reader:
         NOTE: get URL is assumed to have allready been set (self.yfqnews_url)
               Assumes cookies have already been set up. NO cookie update done here
         """
-        cmi_debug = __name__+"::"+self.do_simple_get.__name__+".#"+str(self.yti)
-        logging.info( f'%s - url: {url}' % cmi_debug )
+        cmi_debug = __name__+"::"+self.do_simple_get.__name__+".#"+str(self.yti)+" - ">url
+        logging.info( f'%s' % cmi_debug )
 
         with self.js_session.get(url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
             logging.info('%s - Simple HTML Request get()...' % cmi_debug )
@@ -357,6 +357,7 @@ class yfnews_reader:
         try:
             cg = 1
             news_agency ="ERROR_default_data_1"
+            logging.info( f'%s - Article Zone scanning / ml_ingest populating...' % cmi_debug )
             while True:
                 li_a_zone = next(scan_a_zone)
                 self.article_teaser = next(scan_a_zone)
@@ -496,15 +497,16 @@ class yfnews_reader:
             ip_headers = ip_urlp.path
             self.init_dummy_session(durl)
             self.update_headers(ip_headers)
-            xhash = self.do_js_get(idx)
-            #xhash = self.do_simple_get(url)             # for testing non JS Basic HTML get()
-            #self.yfqnews_url = url                      # ""   ""
+
+            #xhash = self.do_js_get(idx)
+            xhash = self.do_simple_get(durl)             # for testing non JS Basic HTML get()
+            self.yfqnews_url = durl                      # ""   ""
             logging.info( f'%s - REPEAT cache lookup for urlhash: {cached_state}' % cmi_debug )
             if self.yfn_jsdb[cached_state]:
                 logging.info( f'%s - Cached object FOUND: {cached_state}' % cmi_debug )
                 cy_soup = self.yfn_jsdb[cached_state]    # get() response 
-                dataset_2 = self.yfn_jsdata
-                #dataset_2 = self.yfn_htmldata           # for testing non JS Basic HTML get()
+                #dataset_2 = self.yfn_jsdata
+                dataset_2 = self.yfn_htmldata           # for testing non JS Basic HTML get()
                 logging.info ( f'%s - cache url:     {type(durl)}' % cmi_debug )
                 logging.info ( f'%s - cache request: {type(cy_soup)}' % cmi_debug )
                 logging.info ( f'%s - Cache dataset: {type(self.yfn_jsdata)}' % cmi_debug )
@@ -593,7 +595,12 @@ class yfnews_reader:
             author = local_news_bmart_ath.text
             pubdate = local_news_bmart_dte.text
 
-            logging.info ( f"%s - Depth: 2.1 / Caption: {local_news_bmart_cap.h1.text}" % cmi_debug )
+            # f-string cannot handle % sign in strings to expand + print
+            #  cmi_debug = __name__+"::"+self.interpret_page.__name__+".#"+str(item_idx)
+            cmi_debug = __name__+"::"+self.interpret_page.__name__+".#"+str(item_idx)+" - Depth: 2.1 / Caption: "+local_news_bmart_cap.h1.text
+            #logging.info ( f"%s - Depth: 2.1 / Caption: {local_news_bmart_cap.h1.text}" % cmi_debug )
+            logging.info ( f"%s" % cmi_debug )
+            cmi_debug = __name__+"::"+self.interpret_page.__name__+".#"+str(item_idx)
             logging.info ( f"%s - Depth: 2.1 / Author: {author} / Published: {pubdate}" % cmi_debug )
             logging.info ( f"%s - Depth: 2.1 / External link: {local_news_bmain_azone['href']}" % cmi_debug )
 
@@ -787,23 +794,25 @@ class yfnews_reader:
                 ngram_sw_remv = [word for word in ngram_tkzed if word.lower() not in stop_words]    # remove stopwords
                 ngram_final = ' '.join(ngram_sw_remv)   # reform the scentence
 
-                if int(ngram_count) > 0:
-                    vectorz.reset_corpus(ngram_final)
-                    vectorz.fitandtransform()
-                    #vectorz.view_tdmatrix()     # Debug: dump Vectorized Tranformer info
-                    hfw = []    # force hfw list to be empty
-                    hfw = vectorz.get_hfword()
-                else:
-                    hfw.append("Empty")
-
-                ngram_sw_remv = ""
-                ngram_final= ""
-                ngram_count = 0
-                ngram_tkzed = 0
-                sen_result = p_sentiment[0]
-                raw_score = sen_result['score']
-                rounded_score = np.floor(raw_score * (10 ** 7) ) / (10 ** 7)
-                print ( f" / HFN: {hfw} / Sentiment: {sen_result['label']} {(rounded_score * 100):.5f} %")
+                try:
+                    if int(ngram_count) > 0:
+                        vectorz.reset_corpus(ngram_final)
+                        vectorz.fitandtransform()
+                        #vectorz.view_tdmatrix()     # Debug: dump Vectorized Tranformer info
+                        hfw = []    # force hfw list to be empty
+                        hfw = vectorz.get_hfword()
+                    else:
+                        hfw.append("Empty")
+                    ngram_sw_remv = ""
+                    ngram_final= ""
+                    ngram_count = 0
+                    ngram_tkzed = 0
+                    sen_result = p_sentiment[0]
+                    raw_score = sen_result['score']
+                    rounded_score = np.floor(raw_score * (10 ** 7) ) / (10 ** 7)
+                    print ( f" / HFN: {hfw} / Sentiment: {sen_result['label']} {(rounded_score * 100):.5f} %")
+                except RuntimeError:
+                    print ( f"Model exception !!")
             print ( f"======================================== End: {item_idx} ===============================================")
 
         return
