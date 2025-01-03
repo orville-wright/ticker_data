@@ -698,19 +698,22 @@ class yfnews_reader:
             logging.info( f'%s - MISSING from cache / must read page' % cmi_debug )
             logging.info( f'%s - Cache URL object  : {type(durl)}' % cmi_debug )
  
-            cmi_debug = __name__+"::"+self.interpret_page.__name__+".#"+str(item_idx)+" - "+durl
+            cmi_debug = __name__+"::"+self.extract_article_data.__name__+".#"+str(item_idx)+" - "+durl
             logging.info( f'%s' % cmi_debug )     # hack fix for urls containg "%" break logging module (NO FIX
-            cmi_debug = __name__+"::"+self.interpret_page.__name__+".#"+str(item_idx)
+            cmi_debug = __name__+"::"+self.extract_article_data.__name__+".#"+str(item_idx)
  
             self.yfqnews_url = durl
             ip_urlp = urlparse(durl)
             ip_headers = ip_urlp.path
             self.init_dummy_session(durl)
             self.update_headers(ip_headers)
+
+            # TODO: test speed ofdo_simple_get() vs do_js_get()
             xhash = self.do_js_get(item_idx)
             cy_soup = self.yfn_jsdb[cached_state]     # get() response 
             #xhash = self.do_simple_get(url)          # for testing non JS Basic HTML get()
             #self.yfqnews_url = url                   # ""   ""
+
             logging.info( f'%s - Retry cache lookup for: {cached_state}' % cmi_debug )
             if self.yfn_jsdb[cached_state]:
                 logging.info( f'%s - Found cache entry: {cached_state}' % cmi_debug )
