@@ -427,7 +427,7 @@ def main():
         pass
 
 # M/L AI News REader  ###############################################################
-        #  Currently read all enws for ONE stock
+        #  Currently read all news or ONE stock
         # =====================================================================
 
     if args['newsymbol'] is not False:
@@ -441,8 +441,6 @@ def main():
             for sn_idx, sn_row in news_ai.yfn.ml_ingest.items():
                 # TESTING code only - to make testing complete quicker (only test 4 docs)
                 news_ai.nlp_summary(3, sn_idx)       # what doc num in ml_ingest to look for
-                print ( f" " )
-                news_ai.yfn.dump_ml_ingest()
                 print ( f" " )
                 news_ai.yfn.extract_article_data(sn_idx)
 

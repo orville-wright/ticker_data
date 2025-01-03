@@ -133,7 +133,7 @@ class ml_nlpreader:
                     }
 
         print ( " ")
-        print ( f"============================ NLP Candidate Summary ============================" )
+        #print ( f"============================ NLP Candidate Summary ============================" )
 
         #for sn_idx, sn_row in self.yfn.ml_ingest.items():
         sn_row = self.yfn.ml_ingest[ml_idx]
