@@ -754,7 +754,7 @@ class yfnews_reader:
             
             print ( f"====================== Gen AI ML NLP transformer : for News article [ {item_idx} ] ====================")
             for i in range(0, len(local_stub_news_p)):
-                int(ngram_count) = len(re.findall(r'\w+', local_stub_news_p[i].text))
+                ngram_count = len(re.findall(r'\w+', local_stub_news_p[i].text))
                 ngram_tkzed = word_tokenize(local_stub_news_p[i].text)
                 if vectorz.is_scentence(local_stub_news_p[i].text):
                     chunk_type = "Scent"
@@ -766,10 +766,11 @@ class yfnews_reader:
                 print ( f"Chunk: {i:03} / {chunk_type} / [ n-grams: {ngram_count:03} / tokens: {len(ngram_tkzed):03} / alphas: {len(local_stub_news_p[i].text):03} ]", end="" )
                 ngram_sw_remv = [word for word in ngram_tkzed if word.lower() not in stop_words]    # remove stopwords
                 ngram_final = ' '.join(ngram_sw_remv)   # reform the scentence
-                vectorz.reset_corpus(ngram_final)
-                vectorz.fitandtransform()
-                #vectorz.view_tdmatrix()     # Debug: dump Vectorized Tranformer info
-                if ngram_count > 0:
+
+                if int(ngram_count) > 0:
+                    vectorz.reset_corpus(ngram_final)
+                    vectorz.fitandtransform()
+                    #vectorz.view_tdmatrix()     # Debug: dump Vectorized Tranformer info
                     hfw = []    # force hfw list to be empty
                     hfw = vectorz.get_hfword()
                 else:
