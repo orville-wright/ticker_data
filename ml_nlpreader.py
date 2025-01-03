@@ -116,10 +116,8 @@ class ml_nlpreader:
 # method 3
     def nlp_summary(self, yti, ml_idx):
         """
-        NLP Support function
         **CRTIICAL: Assumes ml_ingest has already been pre-populated
-        Cycles thru each .item in in the ml_ingest{} and processes it...
-        Prints a nice sumamry of each NLP candidates in ml_digest{}
+        Reads 1 from the ml_ingest{} and processes it...
         """
 
         self.yti = yti
@@ -137,8 +135,6 @@ class ml_nlpreader:
         print ( " ")
         print ( f"============================ NLP Candidate Summary ============================" )
 
-        # WARN: We cycle completely thru the ml_ingest NLP candidate list !!
-        # Change to just do 1 candidate from ml_ingest
         #for sn_idx, sn_row in self.yfn.ml_ingest.items():
         sn_row = self.yfn.ml_ingest[ml_idx]
         if sn_row['type'] == 0:                                             # REAL news, inferred from Depth 0
@@ -155,50 +151,41 @@ class ml_nlpreader:
             p_r_xturl = urlparse(r_xturl)
             inf_type = self.mlnlp_uh.confidence_lvl(thint)     # returned var is a tupple
             #
-            print ( f"============ NLP candidate for article type: 0" )                # all type 0 are assumed to be REAL news
+            print ( f"NLP candidate article type: 0" )                # all type 0 are assumed to be REAL news
             print ( f"Origin URL:    [ {t_url.netloc} ] / {uhdescr} / {inf_type[0]} / ", end="" )
             print ( f"{locality_code.get(inf_type[1])}" )
             uhint, uhdescr = self.mlnlp_uh.uhinter(21, p_r_xturl)
             print ( f"Target URL:    [ {p_r_xturl.netloc} ] / {uhdescr} / ", end="" )
             print ( f"{locality_code.get(uhint)} [ u:{uhint} ]" )
-            print ( f"=================== =================== ===================" )
         elif sn_row['type'] == 1:                       # Micro-Ad, but could possibly be news...
             print( f"\nFake News stub micro article:  {ml_idx} / {sn_row['symbol']}" )
             t_url = urlparse(sn_row['url'])
             uhint, uhdescr = self.mlnlp_uh.uhinter(1, t_url)      # hint on ORIGIN url
             thint = (sn_row['thint'])                   # the hint we guess at while interrogating page <tags>
             logging.info ( f"%s       - Logic.#1 hint origin url: t:1 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
-
             # WARN:
-            # go deep, with everything we know about this item & extract Text for M/L NLP
+            # deep page analysis, with everything we know about this item
+            # # prepare to extract Text for M/L NLP Gen AI sentiment analysis
             # just interprets data for 1 page only
             r_uhint, r_thint, r_xturl = self.yfn.interpret_page(ml_idx, sn_row)    
             logging.info ( f"%s       - Logic.#1 hint ext url: {r_xturl}" % cmi_debug )
-
             p_r_xturl = urlparse(r_xturl)
             inf_type = self.mlnlp_uh.confidence_lvl(thint)
             # summary report...
-            print ( f"============ NLP candidate for article type: 1" )
+            print ( f"NLP candidate article type: 1" )
             print ( f"Origin URL:    [ {t_url.netloc} ] / {uhdescr} / {inf_type[0]} / ", end="" )
             print ( f"{locality_code.get(inf_type[1], 'in flux')}" )
             uhint, uhdescr = self.mlnlp_uh.uhinter(31, p_r_xturl)      # hint on TARGET url
             print ( f"Target URL:    [ {p_r_xturl.netloc} ] / {uhdescr} / ", end="" )
             print ( f"{locality_code.get(uhint, 'in flux')} [ u:{uhint} ]" )
-            print ( f"=================== =================== ===================" )
-            #
         elif sn_row['type'] == 2:                     # possibly not news? (Micro Ad)
-            print ( f"\nLogic.#2 - Video story - NOT an NLP candidate" )
+            print ( f"Video story type: 2 - NOT an NLP candidate" )
             logging.info ( f"%s - #3 skipping..." % cmi_debug )
-            print ( f"=================== =================== ===================" )
-            #
         elif sn_row['type'] == 9:                     # possibly not news? (Micro Ad)
-            print ( f"\nLogic.#9 - Article type NOT yet define - NOT an NLP candidate" )
+            print ( f"Article type NOT yet define - NOT an NLP candidate" )
             logging.info ( f"%s - #3 skipping..." % cmi_debug )
-            print ( f"=================== =================== ===================" )
-            #
         else:
-            print ( f"\nLogic.#ERR - ERROR unknown article type in ml_ingest" )
+            print ( f"ERROR unknown article type" )
             logging.info ( f"%s - #4 skipping..." % cmi_debug )
-            print ( f"=================== =================== ===================" )
 
         return

@@ -438,19 +438,13 @@ def main():
             news_ai = ml_nlpreader(1, args)
             news_ai.nlp_read_one(news_symbol, args)
             news_ai.yfn.dump_ml_ingest()
-            # TESTING code only - to make testing complete quicker (only test 4 docs)
-            news_ai.nlp_summary(3, 1)       # what doc num in ml_ingest to look for
-            news_ai.nlp_summary(3, 3)       # what doc num in ml_ingest to look for
-            news_ai.nlp_summary(3, 5)       # what doc num in ml_ingest to look for
-            news_ai.nlp_summary(3, 7)       # what doc num in ml_ingest to look for
-                                            # This is where evaluate_page() happens
-            print ( f" " )
-            news_ai.yfn.dump_ml_ingest()
-            print ( f" " )
-            news_ai.yfn.extract_article_data(1)
-            news_ai.yfn.extract_article_data(3)
-            news_ai.yfn.extract_article_data(5)
-            news_ai.yfn.extract_article_data(7)
+            for sn_idx, sn_row in news_ai.yfn.ml_ingest.items():
+                # TESTING code only - to make testing complete quicker (only test 4 docs)
+                news_ai.nlp_summary(3, sn_idx)       # what doc num in ml_ingest to look for
+                print ( f" " )
+                news_ai.yfn.dump_ml_ingest()
+                print ( f" " )
+                news_ai.yfn.extract_article_data(sn_idx)
 
 #################################################################################
 # 3 differnt methods to get a live quote ########################################
