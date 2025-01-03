@@ -223,7 +223,7 @@ class yfnews_reader:
                 print ( f"{i}" )
             print ( f"========================== {self.yti} / HTML get() session cookies ================================" )
 
-        return
+        return aurl_hash
 
 ###################################### 8 ###########################################
 # method 9
@@ -544,6 +544,8 @@ class yfnews_reader:
                     #print ( f"### DEBUG:{full_page.prettify()}" )
                     #print ( f"### DEBUG:{self.nsoup.text}" )
                     #print ( f"############################ rem news #############################" )
+                data_row.update({"viable": 1})                       # cab not extra text data from this article
+                self.ml_ingest[idx] = data_row                       # now PERMENTALY update the ml_ingest record @ index = id
                 return uhint, thint, durl
 
         # Depth 2.1 : Fake local news stub / Micro article links out to externally hosted article
@@ -603,19 +605,26 @@ class yfnews_reader:
                 # !! this is wrong - need to add new field exturl to the data_row dict
                 #data_row.update(url = ext_url_item)                 # insert new dict entry into ml_ingest via an AUGMENTED data_row
                 data_row.update({"exturl": ext_url_item})            # insert new dict entry into ml_ingest via an AUGMENTED data_row
+                data_row.update({"viable": 0})                       # cab not extra text data from this article
                 self.ml_ingest[idx] = data_row                       # now PERMENTALY update the ml_ingest record @ index = id
                 logging.info ( f"%s - Depth: 2.1 / NLP candidate is ready [ u: {uhint} h: {thint} ]" % cmi_debug )
                 return uhint, thint, ext_url_item
             elif local_stub_news.text == "Story continues":          # local articles have a [story continues...] button
                 logging.info ( f"%s - Depth: 2.1 / GOOD [story continues...] stub" % cmi_debug )
                 logging.info ( f"%s - Depth: 2.1 / confidence level / u: {uhint} h: {thint}" % cmi_debug )
+                data_row.update({"viable": 0})                       # cab not extra text data from this article
+                self.ml_ingest[idx] = data_row                       # now PERMENTALY update the ml_ingest record @ index = id
                 return uhint, thint, self.this_article_url           # REAL local news
             elif local_story.button.text == "Read full article":     # test to make 100% sure its a low quality story
                 logging.info ( f"%s - Depth: 2.1 / GOOD [Read full article] stub" % cmi_debug )
                 logging.info ( f"%s - Depth: 2.1 / confidence level / u: {uhint} h: {thint}" % cmi_debug )
+                data_row.update({"viable": 0})                       # cab not extra text data from this article
+                self.ml_ingest[idx] = data_row                       # now PERMENTALY update the ml_ingest record @ index = id
                 return uhint, thint, self.this_article_url              # Curated Report
             else:
                 logging.info ( f"%s - Depth: 2.1 / NO local page interpreter available / u: {uhint} t: {thint}" % cmi_debug )
+                data_row.update({"viable": 0})                       # cab not extra text data from this article
+                self.ml_ingest[idx] = data_row                       # now PERMENTALY update the ml_ingest record @ index = id
                 return uhint, 9.9, self.this_article_url
         
         if uhint == 2:
@@ -623,23 +632,33 @@ class yfnews_reader:
                 logging.info ( f'%s - Depth: 2.2 / BS4 processed doc length: {len(self.nsoup)}' % cmi_debug )
                 logging.info ( f"%s - Depth: 2.2 / GOOD [Video report] minimal text" % cmi_debug )
                 logging.info ( f"%s - Depth: 2.2 / confidence level / u: {uhint} h: {thint}" % cmi_debug )
+                data_row.update({"viable": 0})                       # cab not extra text data from this article
+                self.ml_ingest[idx] = data_row                       # now PERMENTALY update the ml_ingest record @ index = id
                 return uhint, thint, self.this_article_url                   # VIDEO story with Minimal text article
             else:
                 logging.info ( f"%s - Depth: 2.2 / ERROR failed to interpret [Video report] page" % cmi_debug )
                 logging.info ( f"%s - Depth: 2.2 / confidence level / u: {uhint} h: {thint}" % cmi_debug )
+                data_row.update({"viable": 0})                       # cab not extra text data from this article
+                self.ml_ingest[idx] = data_row                       # now PERMENTALY update the ml_ingest record @ index = id
                 return uhint, 9.9, self.this_article_url                   # VIDEO story with Minimal text article
 
         if uhint == 3:
             logging.info ( f"%s - Depth: 2.2 / External publication - CANT interpret remote article @ [Depth 2]" % cmi_debug )
             logging.info ( f"%s - Depth: 2.2 / confidence level / u: {uhint} h: {thint}" % cmi_debug )
+            data_row.update({"viable": 0})                       # cab not extra text data from this article
+            self.ml_ingest[idx] = data_row                       # now PERMENTALY update the ml_ingest record @ index = id
             return uhint, thint, self.this_article_url                      # Explicit remote article - can't interpret off-site article
 
         if uhint == 4:
             logging.info ( f"%s - Depth: 2.2 / POSSIBLE Research report " % cmi_debug )
             logging.info ( f"%s - Depth: 2.2 / confidence level / u: {uhint} h: {thint}" % cmi_debug )
+            data_row.update({"viable": 0})                       # cab not extra text data from this article
+            self.ml_ingest[idx] = data_row                       # now PERMENTALY update the ml_ingest record @ index = id
             return uhint, thint, self.this_article_url                      # Explicit remote article - can't see into this off-site article
 
         logging.info ( f"%s - Depth: 2.10 / ERROR NO page interpreter logic triggered" % cmi_debug )
+        data_row.update({"viable": 0})                       # cab not extra text data from this article
+        self.ml_ingest[idx] = data_row                       # now PERMENTALY update the ml_ingest record @ index = id
         return 10, 10.0, "ERROR_unknown_state!"              # error unknown state
 
 ###################################### 12 ###########################################
@@ -686,8 +705,8 @@ class yfnews_reader:
             self.yfn_jsdb[cached_state]
             cx_soup = self.yfn_jsdb[cached_state]
             logging.info( f'%s - Found cahce entry / Render data from cache...' % cmi_debug )
-            cx_soup.html.render()           # since we dont cache the raw data, we need to render the page again
-            self.yfn_jsdata = cx_soup.text  # store the rendered raw data
+            #cx_soup.html.render()           # since we dont cache the raw data, we need to render the page again
+            self.yfn_jsdata = cx_soup.text   # store the rendered raw data
             dataset_1 = self.yfn_jsdata
             logging.info( f'%s - Cached object    : {cached_state}' % cmi_debug )
             logging.info( f'%s - Cache req/get    : {type(cx_soup)}' % cmi_debug )
@@ -709,18 +728,18 @@ class yfnews_reader:
             self.update_headers(ip_headers)
 
             # TODO: test speed ofdo_simple_get() vs do_js_get()
-            xhash = self.do_js_get(item_idx)
+            #xhash = self.do_js_get(item_idx)
             cy_soup = self.yfn_jsdb[cached_state]     # get() response 
-            #xhash = self.do_simple_get(url)          # for testing non JS Basic HTML get()
+            xhash = self.do_simple_get(durl)          # for testing non JS Basic HTML get()
             #self.yfqnews_url = url                   # ""   ""
 
             logging.info( f'%s - Retry cache lookup for: {cached_state}' % cmi_debug )
             if self.yfn_jsdb[cached_state]:
                 logging.info( f'%s - Found cache entry: {cached_state}' % cmi_debug )
-                cy_soup.html.render()
+                #cy_soup.html.render()                  # disbale JS render()
                 self.yfn_jsdata = cy_soup.text
-                dataset_2 = self.yfn_jsdata
-                #dataset_2 = self.yfn_htmldata           # for testing non JS Basic HTML get()
+                #dataset_2 = self.yfn_jsdata            # Javascript engine render()...slow
+                dataset_2 = self.yfn_htmldata           # Basic HTML engine  get()
                 logging.info ( f'%s - Cache url:     {cy_soup.url}' % cmi_debug )
                 logging.info ( f'%s - Cache req/get: {type(cy_soup)}' % cmi_debug )
                 logging.info ( f'%s - Cache Dataset: {type(self.yfn_jsdata)}' % cmi_debug )
@@ -732,6 +751,7 @@ class yfnews_reader:
         logging.info( f'%s - Extract ML TEXT dataset: {durl}' % (cmi_debug) )
         if external is True:    # page is Micro stub Fake news article
             logging.info( f'%s - Skipping Micro article stub... [ {item_idx} ]' % cmi_debug )
+            return
             # Do not do deep data extraction
             # just use the CAPTION Teaser text from the YFN local url
             # we extracted that in interpret_page()

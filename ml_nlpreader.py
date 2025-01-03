@@ -149,7 +149,7 @@ class ml_nlpreader:
             
             logging.info ( f"%s       - Inferr conf: {r_xturl}" % cmi_debug )
             p_r_xturl = urlparse(r_xturl)
-            inf_type = self.mlnlp_uh.confidence_lvl(thint)     # returned var is a tupple
+            inf_type = self.mlnlp_uh.confidence_lvl(thint)     # returned var is a tupple - (descr, locality code)
             #
             print ( f"NLP candidate article type: 0" )                # all type 0 are assumed to be REAL news
             print ( f"Origin URL:    [ {t_url.netloc} ] / {uhdescr} / {inf_type[0]} / ", end="" )
@@ -157,6 +157,7 @@ class ml_nlpreader:
             uhint, uhdescr = self.mlnlp_uh.uhinter(21, p_r_xturl)
             print ( f"Target URL:    [ {p_r_xturl.netloc} ] / {uhdescr} / ", end="" )
             print ( f"{locality_code.get(uhint)} [ u:{uhint} ]" )
+            return thint    # what this artuicle actuall;y is
         elif sn_row['type'] == 1:                       # Micro-Ad, but could possibly be news...
             print( f"\nFake News stub micro article:  {ml_idx} / {sn_row['symbol']}" )
             t_url = urlparse(sn_row['url'])
@@ -178,14 +179,20 @@ class ml_nlpreader:
             uhint, uhdescr = self.mlnlp_uh.uhinter(31, p_r_xturl)      # hint on TARGET url
             print ( f"Target URL:    [ {p_r_xturl.netloc} ] / {uhdescr} / ", end="" )
             print ( f"{locality_code.get(uhint, 'in flux')} [ u:{uhint} ]" )
+            return thint
         elif sn_row['type'] == 2:                     # possibly not news? (Micro Ad)
             print ( f"Video story type: 2 - NOT an NLP candidate" )
             logging.info ( f"%s - #3 skipping..." % cmi_debug )
+            thint = (sn_row['thint'])
+            return thint
         elif sn_row['type'] == 9:                     # possibly not news? (Micro Ad)
             print ( f"Article type NOT yet define - NOT an NLP candidate" )
             logging.info ( f"%s - #3 skipping..." % cmi_debug )
+            thint = (sn_row['thint'])
+            return thint
         else:
             print ( f"ERROR unknown article type" )
             logging.info ( f"%s - #4 skipping..." % cmi_debug )
+            thint = (sn_row['thint'])
 
-        return
+        return thint
