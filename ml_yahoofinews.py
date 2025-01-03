@@ -754,7 +754,7 @@ class yfnews_reader:
             
             print ( f"====================== Gen AI ML NLP transformer : for News article [ {item_idx} ] ====================")
             for i in range(0, len(local_stub_news_p)):
-                ngram_count = len(re.findall(r'\w+', local_stub_news_p[i].text))
+                int(ngram_count) = len(re.findall(r'\w+', local_stub_news_p[i].text))
                 ngram_tkzed = word_tokenize(local_stub_news_p[i].text)
                 if vectorz.is_scentence(local_stub_news_p[i].text):
                     chunk_type = "Scent"
