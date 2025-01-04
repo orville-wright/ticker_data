@@ -69,7 +69,6 @@ class ml_sentiment:
                     data_set["sym"], \
                     data_set["article"], \
                     data_set["chunk"], \
-                    data_set["chunk"], \
                     data_set["sent"], \
                     data_set["rank"] ]
         
@@ -79,5 +78,5 @@ class ml_sentiment:
         #self.df_1_row = pd.DataFrame(self.list_data, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time' ], index=[x] )
         #self.tg_df0 = pd.concat([self.tg_df0, self.df_1_row])  
         self.row_count = x
-        
+
         return
