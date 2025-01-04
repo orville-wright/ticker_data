@@ -37,6 +37,7 @@ from ml_nlpreader import ml_nlpreader
 from y_techevents import y_techevents
 from nasdaq_wrangler import nq_wrangler
 from y_cookiemonster import y_cookiemonster
+from ml_sentiment import ml_sentiment
 
 # Globals
 work_inst = 0
@@ -436,13 +437,14 @@ def main():
             print ( " " )
             print ( f"M/L news reader for Stock [ {news_symbol} ] =========================" )
             news_ai = ml_nlpreader(1, args)
+            sent_ai = ml_sentiment()
             news_ai.nlp_read_one(news_symbol, args)
             #news_ai.yfn.dump_ml_ingest()
             for sn_idx, sn_row in news_ai.yfn.ml_ingest.items():
                 # TESTING code only - to make testing complete quicker (only test 4 docs)
                 thint = news_ai.nlp_summary(3, sn_idx)       # what doc num in ml_ingest to look for
                 if thint == 0.0:
-                    news_ai.yfn.extract_article_data(sn_idx)
+                    news_ai.yfn.extract_article_data(sn_idx, sent_ai)
 
 #################################################################################
 # 3 differnt methods to get a live quote ########################################

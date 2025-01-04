@@ -31,7 +31,6 @@ class yfnews_reader:
     """
     Read Yahoo Finance news reader, Word Vectorizer, Positive/Negative sentiment analyzer
     """
-    yfn_jsdata = None       # Page in JavaScript-HTML
 
     # global accessors
     symbol = None           # Unique company symbol
@@ -45,10 +44,9 @@ class yfnews_reader:
     yfn_jsdb = {}           # database to hold response handles from multiple js.session_get() ops
     ml_brief = []           # ML TXT matrix for Naieve Bayes Classifier pre Count Vectorizer
     ml_ingest = {}          # ML ingested NLP candidate articles
+    ml_sent = None
     ul_tag_dataset = None   # BS4 handle of the <tr> extracted data
     li_superclass = None    # all possible News articles
-    yfn_df0 = None          # DataFrame 1
-    yfn_df1 = None          # DataFrame 2
     yti = 0                 # Unique instance identifier
     cycle = 0               # class thread loop counter
     nlp_x = 0
@@ -670,7 +668,7 @@ class yfnews_reader:
 
 ###################################### 12 ###########################################
 # method 12
-    def extract_article_data(self, item_idx):
+    def extract_article_data(self, item_idx, sentiment_ai):
         """
         Depth 3:
         Only do this once the article has been evaluated and we knonw exactly where/what each article is
@@ -813,6 +811,11 @@ class yfnews_reader:
                     raw_score = sen_result['score']
                     rounded_score = np.floor(raw_score * (10 ** 7) ) / (10 ** 7)
                     print ( f" / HFN: {hfw} / Sentiment: {sen_result['label']} {(rounded_score * 100):.5f} %")
+
+                    # data sentiment data to global sentiment database
+                    sen_package = dict(sym=symbol, article=item_idx, chunk=i, sent=sen_result['label'], rank=raw_score )
+                    sentiment_ai.save_sentiment(item_idx, sen_package)      # page, data
+
                 except RuntimeError:
                     print ( f"Model exception !!")
             print ( f"Total tokens generated: {ttc}" )
