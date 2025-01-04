@@ -437,7 +437,7 @@ def main():
             print ( " " )
             print ( f"M/L news reader for Stock [ {news_symbol} ] =========================" )
             news_ai = ml_nlpreader(1, args)
-            sent_ai = ml_sentiment()
+            sent_ai = ml_sentiment(1, args)
             news_ai.nlp_read_one(news_symbol, args)
             #news_ai.yfn.dump_ml_ingest()
             for sn_idx, sn_row in news_ai.yfn.ml_ingest.items():
