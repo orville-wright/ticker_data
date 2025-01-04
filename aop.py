@@ -437,7 +437,7 @@ def main():
             print ( f"M/L news reader for Stock [ {news_symbol} ] =========================" )
             news_ai = ml_nlpreader(1, args)
             news_ai.nlp_read_one(news_symbol, args)
-            news_ai.yfn.dump_ml_ingest()
+            #news_ai.yfn.dump_ml_ingest()
             for sn_idx, sn_row in news_ai.yfn.ml_ingest.items():
                 # TESTING code only - to make testing complete quicker (only test 4 docs)
                 thint = news_ai.nlp_summary(3, sn_idx)       # what doc num in ml_ingest to look for

@@ -138,7 +138,7 @@ class ml_nlpreader:
         #for sn_idx, sn_row in self.yfn.ml_ingest.items():
         sn_row = self.yfn.ml_ingest[ml_idx]
         if sn_row['type'] == 0:                                             # REAL news, inferred from Depth 0
-            print( f"\nLocal News article:  {ml_idx} / {sn_row['symbol']}" )
+            print( f"{sn_row['symbol']} / Local News article: {ml_idx}" )
             t_url = urlparse(sn_row['url'])                                 # WARN: a rlparse() url_named_tupple (NOT the raw url)
             uhint, uhdescr = self.mlnlp_uh.uhinter(0, t_url)
             thint = (sn_row['thint'])                                       # the hint we guessed at while interrogating page <tags>
@@ -151,7 +151,7 @@ class ml_nlpreader:
             p_r_xturl = urlparse(r_xturl)
             inf_type = self.mlnlp_uh.confidence_lvl(thint)     # returned var is a tupple - (descr, locality code)
             #
-            print ( f"NLP candidate article type: 0" )                # all type 0 are assumed to be REAL news
+            print ( f"Article type:   0 / {sn_row['url']}" )                # all type 0 are assumed to be REAL news
             print ( f"Origin URL:    [ {t_url.netloc} ] / {uhdescr} / {inf_type[0]} / ", end="" )
             print ( f"{locality_code.get(inf_type[1])}" )
             uhint, uhdescr = self.mlnlp_uh.uhinter(21, p_r_xturl)
@@ -159,7 +159,7 @@ class ml_nlpreader:
             print ( f"{locality_code.get(uhint)} [ u:{uhint} ]" )
             return thint    # what this artuicle actuall;y is
         elif sn_row['type'] == 1:                       # Micro-Ad, but could possibly be news...
-            print( f"\nFake News stub micro article:  {ml_idx} / {sn_row['symbol']}" )
+            print( f"{sn_row['symbol']} / Fake News stub micro article: {ml_idx}" )
             t_url = urlparse(sn_row['url'])
             uhint, uhdescr = self.mlnlp_uh.uhinter(1, t_url)      # hint on ORIGIN url
             thint = (sn_row['thint'])                   # the hint we guess at while interrogating page <tags>

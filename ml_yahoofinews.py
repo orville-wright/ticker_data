@@ -734,7 +734,6 @@ class yfnews_reader:
             self.init_dummy_session(durl)
             self.update_headers(ip_headers)
 
-            # TODO: test speed ofdo_simple_get() vs do_js_get()
             #xhash = self.do_js_get(item_idx)
             cy_soup = self.yfn_jsdb[cached_state]     # get() response 
             xhash = self.do_simple_get(durl)          # for testing non JS Basic HTML get()
@@ -778,18 +777,21 @@ class yfnews_reader:
             stop_words = stopwords.words('english')
             #classifier = pipeline('sentiment-analysis')
             classifier = pipeline(model="mrm8488/distilroberta-finetuned-financial-news-sentiment-analysis")
-            
-            print ( f"====================== Gen AI ML NLP transformer : for News article [ {item_idx} ] ====================")
+            tokenizer_mml = classifier.tokenizer.model_max_length
+            ttc = 0
+            print ( f"==== M/L NLP transformer @ max tokens: {tokenizer_mml} : for News article [ {item_idx} ] ====================")
             for i in range(0, len(local_stub_news_p)):
                 ngram_count = len(re.findall(r'\w+', local_stub_news_p[i].text))
                 ngram_tkzed = word_tokenize(local_stub_news_p[i].text)
+                ttc += int(len(ngram_tkzed))
                 if vectorz.is_scentence(local_stub_news_p[i].text):
                     chunk_type = "Scent"
                 elif vectorz.is_paragraph(local_stub_news_p[i].text):
                     chunk_type = "Parag"
                 else:
                     chunk_type = "Randm"
-                p_sentiment = classifier(local_stub_news_p[i].text)
+                p_sentiment = classifier(local_stub_news_p[i].text, truncation=True)
+ 
                 print ( f"Chunk: {i:03} / {chunk_type} / [ n-grams: {ngram_count:03} / tokens: {len(ngram_tkzed):03} / alphas: {len(local_stub_news_p[i].text):03} ]", end="" )
                 ngram_sw_remv = [word for word in ngram_tkzed if word.lower() not in stop_words]    # remove stopwords
                 ngram_final = ' '.join(ngram_sw_remv)   # reform the scentence
@@ -813,6 +815,7 @@ class yfnews_reader:
                     print ( f" / HFN: {hfw} / Sentiment: {sen_result['label']} {(rounded_score * 100):.5f} %")
                 except RuntimeError:
                     print ( f"Model exception !!")
+            print ( f"Total tokens generated: {ttc}" )
             print ( f"======================================== End: {item_idx} ===============================================")
 
         return
