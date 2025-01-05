@@ -794,12 +794,12 @@ class yfnews_reader:
                 ngram_sw_remv = [word for word in ngram_tkzed if word.lower() not in stop_words]    # remove stopwords
                 ngram_final = ' '.join(ngram_sw_remv)   # reform the scentence
 
+                hfw = []    # force hfw list to be empty
                 try:
                     if int(ngram_count) > 0:
                         vectorz.reset_corpus(ngram_final)
                         vectorz.fitandtransform()
                         #vectorz.view_tdmatrix()     # Debug: dump Vectorized Tranformer info
-                        hfw = []    # force hfw list to be empty
                         hfw = vectorz.get_hfword()
                     else:
                         hfw.append("Empty")

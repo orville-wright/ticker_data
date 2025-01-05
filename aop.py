@@ -449,6 +449,7 @@ def main():
             pd.set_option('display.max_rows', None)
             pd.set_option('display.max_columns', None)
             #print ( f"{sent_ai.sen_df0.groupby(['Article', 'Sent'])['Rank'].mean()}" )
+            print ( f"{sent_ai.sen_df0.groupby('Sent').agg(['count'])}" )
             print ( f"{sent_ai.sen_df0.groupby('Sent')['Rank'].mean()}" )
 
 #################################################################################
