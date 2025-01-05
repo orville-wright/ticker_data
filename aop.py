@@ -446,6 +446,11 @@ def main():
                 if thint == 0.0:
                     news_ai.yfn.extract_article_data(sn_idx, sent_ai)
 
+            pd.set_option('display.max_rows', None)
+            pd.set_option('display.max_columns', None)
+            #print ( f"{sent_ai.sen_df0.groupby(['Article', 'Sent'])['Rank'].mean()}" )
+            print ( f"{sent_ai.sen_df0.groupby('Sent')['Rank'].mean()}" )
+
 #################################################################################
 # 3 differnt methods to get a live quote ########################################
 # NOTE: These 3 routines are *examples* of how to get quotes from the 3 live quote classes::

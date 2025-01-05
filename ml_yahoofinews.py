@@ -812,9 +812,8 @@ class yfnews_reader:
                     rounded_score = np.floor(raw_score * (10 ** 7) ) / (10 ** 7)
                     print ( f" / HFN: {hfw} / Sentiment: {sen_result['label']} {(rounded_score * 100):.5f} %")
 
-                    sym_clean = print (f"{symbol}")
                     # data sentiment data to global sentiment database
-                    sen_package = dict(sym=sym_clean, article=item_idx, chunk=i, sent=sen_result['label'], rank=raw_score )
+                    sen_package = dict(sym=symbol, article=item_idx, chunk=i, sent=sen_result['label'], rank=raw_score )
                     sentiment_ai.save_sentiment(item_idx, sen_package)      # page, data
 
                 except RuntimeError:

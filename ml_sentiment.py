@@ -31,7 +31,7 @@ class ml_sentiment:
     mlnlp_uh = None      # URL Hinter instance
     sen_df0 = None
     sen_df1 = None
-    row_count = 0
+    df0_row_count = 0
     yti = 0
     cycle = 0            # class thread loop counter
 
@@ -42,10 +42,7 @@ class ml_sentiment:
         self.args = global_args                            # Only set once per INIT. all methods are set globally
         self.yti = yti
         yfn = yfnews_reader(1, "IBM", global_args )        # instantiate a class of fyn with dummy info
-        self.sen_df0 = pd.DataFrame(columns=[ 'Sym', 'Art', 'Chunk', 'Sent', 'Rank'] )
         return
-
-
 
 ##################################### 1 ####################################
     def save_sentiment(self, yti, data_set):
@@ -55,28 +52,30 @@ class ml_sentiment:
         self.yti = yti
         cmi_debug = __name__+"::"+self.save_sentiment.__name__+".#"+str(self.yti)
         logging.info('%s - IN' % cmi_debug )
-        x = self.row_count      # get last row added to DF
+        x = self.df0_row_count      # get last row added to DF
         x += 1
+
+        sym = data_set["sym"]
+        art = data_set["article"]
+        chk = data_set["chunk"]
+        snt = data_set["sent"]
+        rnk = data_set["rank"]
 
         ################################ 6 ####################################
         # now construct our list for concatinating to the dataframe 
         logging.info( f"%s ============= Data prepared for DF =============" % cmi_debug )
-
         # sen_package = dict(sym=symbol, article=item_idx, chunk=i, sent=sen_result['label'], rank=raw_score )
-
-        self.sen_data = [ \
+        self.sen_data = [[ \
                     x, \
-                    data_set["sym"], \
-                    data_set["article"], \
-                    data_set["chunk"], \
-                    data_set["sent"], \
-                    data_set["rank"] ]
+                    sym, \
+                    art, \
+                    chk, \
+                    snt, \
+                    rnk ]]
         
-        print ( f"### DEBUG:: Sentiment database insert: {self.sen_data}" )
+        self.df0_row = pd.DataFrame(self.sen_data, columns=[ 'Row', 'Symbol', 'Article', 'Chunk', 'Sent', 'Rank' ], index=[x] )
+        self.sen_df0 = pd.concat([self.sen_df0, self.df0_row])
 
-        ################################ 6 ####################################
-        #self.df_1_row = pd.DataFrame(self.list_data, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time' ], index=[x] )
-        #self.tg_df0 = pd.concat([self.tg_df0, self.df_1_row])  
-        self.row_count = x
+        self.df0_row_count = x
 
         return
