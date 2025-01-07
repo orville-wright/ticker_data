@@ -770,58 +770,12 @@ class yfnews_reader:
             ##### M/L Gen AI NLP starts here !!! #######
             ############################################
             #
-            logging.info( f'%s - Init ML NLP Tokenizor/Vectorizer...' % cmi_debug )
-            vectorz = ml_cvbow(item_idx, self.args)
-            stop_words = stopwords.words('english')
-            #classifier = pipeline('sentiment-analysis')
-            classifier = pipeline(model="mrm8488/distilroberta-finetuned-financial-news-sentiment-analysis")
-            tokenizer_mml = classifier.tokenizer.model_max_length
-            ttc = 0
-            print ( f"==== M/L NLP transformer @ max tokens: {tokenizer_mml} : for News article [ {item_idx} ] ====================")
-            for i in range(0, len(local_stub_news_p)):
-                ngram_count = len(re.findall(r'\w+', local_stub_news_p[i].text))
-                ngram_tkzed = word_tokenize(local_stub_news_p[i].text)
-                ttc += int(len(ngram_tkzed))
-                if vectorz.is_scentence(local_stub_news_p[i].text):
-                    chunk_type = "Scent"
-                elif vectorz.is_paragraph(local_stub_news_p[i].text):
-                    chunk_type = "Parag"
-                else:
-                    chunk_type = "Randm"
-                p_sentiment = classifier(local_stub_news_p[i].text, truncation=True)
- 
-                print ( f"Chunk: {i:03} / {chunk_type} / [ n-grams: {ngram_count:03} / tokens: {len(ngram_tkzed):03} / alphas: {len(local_stub_news_p[i].text):03} ]", end="" )
-                ngram_sw_remv = [word for word in ngram_tkzed if word.lower() not in stop_words]    # remove stopwords
-                ngram_final = ' '.join(ngram_sw_remv)   # reform the scentence
-
-                hfw = []    # force hfw list to be empty
-                try:
-                    if int(ngram_count) > 0:
-                        vectorz.reset_corpus(ngram_final)
-                        vectorz.fitandtransform()
-                        #vectorz.view_tdmatrix()     # Debug: dump Vectorized Tranformer info
-                        hfw = vectorz.get_hfword()
-                    else:
-                        hfw.append("Empty")
-                    ngram_sw_remv = ""
-                    ngram_final= ""
-                    ngram_count = 0
-                    ngram_tkzed = 0
-                    sen_result = p_sentiment[0]
-                    raw_score = sen_result['score']
-                    rounded_score = np.floor(raw_score * (10 ** 7) ) / (10 ** 7)
-                    print ( f" / HFN: {hfw} / Sentiment: {sen_result['label']} {(rounded_score * 100):.5f} %")
-
-                    # data sentiment data to global sentiment database
-                    sen_package = dict(sym=symbol, article=item_idx, chunk=i, sent=sen_result['label'], rank=raw_score )
-                    sentiment_ai.save_sentiment(item_idx, sen_package)      # page, data
-
-                except RuntimeError:
-                    print ( f"Model exception !!")
-            print ( f"Total tokens generated: {ttc}" )
+            logging.info( f'%s - Init M/L NLP Tokenizor sentiment-analyzer pipeline...' % cmi_debug )
+            total_tokens = sentiment_ai.compute_sentiment(symbol, item_idx, local_stub_news_p)
+            print ( f"Total tokens generated: {total_tokens}" )
             print ( f"======================================== End: {item_idx} ===============================================")
 
-        return
+        return total_tokens
 
 ###################################### 14 ###########################################
 # method 13

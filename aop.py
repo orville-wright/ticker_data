@@ -440,17 +440,27 @@ def main():
             sent_ai = ml_sentiment(1, args)
             news_ai.nlp_read_one(news_symbol, args)
             #news_ai.yfn.dump_ml_ingest()
+            ttc = 0
+            ttkz = 0
             for sn_idx, sn_row in news_ai.yfn.ml_ingest.items():
                 # TESTING code only - to make testing complete quicker (only test 4 docs)
                 thint = news_ai.nlp_summary(3, sn_idx)       # what doc num in ml_ingest to look for
                 if thint == 0.0:
-                    news_ai.yfn.extract_article_data(sn_idx, sent_ai)
+                    ttc = news_ai.yfn.extract_article_data(sn_idx, sent_ai)
+                    ttkz += ttc
 
+            print (f"Total tokens generated: {ttkz}" )
             pd.set_option('display.max_rows', None)
             pd.set_option('display.max_columns', None)
+            sent_ai.sen_df1 = sent_ai.sen_df0.groupby('Sent').agg(['count'])
+            sent_ai.sen_df2 = sent_ai.sen_df0.groupby('Sent')['Rank'].mean()
+            sent_ai.sen_df1['Sentiment'] = sent_ai.sen_df2
+            sent_ai.sen_df1['Total'] = sent_ai.sen_df0.groupby('Sent').agg(['count']).sum()
             #print ( f"{sent_ai.sen_df0.groupby(['Article', 'Sent'])['Rank'].mean()}" )
             print ( f"{sent_ai.sen_df0.groupby('Sent').agg(['count'])}" )
             print ( f"{sent_ai.sen_df0.groupby('Sent')['Rank'].mean()}" )
+            print ( f"{sent_ai.sen_df1}" )
+
 
 #################################################################################
 # 3 differnt methods to get a live quote ########################################
