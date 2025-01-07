@@ -138,6 +138,7 @@ class ml_sentiment:
                 print ( f" / HFN: {hfw} / Sentiment: {sen_result['label']} {(rounded_score * 100):.5f} %")
 
                 # data sentiment data to global sentiment database
+                logging.info( f'%s - Save chunklist to DF for article [ {item_idx} ]...' % cmi_debug )
                 sen_package = dict(sym=symbol, article=item_idx, chunk=i, sent=sen_result['label'], rank=raw_score )
                 self.save_sentiment(item_idx, sen_package)      # page, data
             except RuntimeError:

@@ -445,17 +445,26 @@ def main():
             for sn_idx, sn_row in news_ai.yfn.ml_ingest.items():
                 # TESTING code only - to make testing complete quicker (only test 4 docs)
                 thint = news_ai.nlp_summary(3, sn_idx)       # what doc num in ml_ingest to look for
-                if thint == 0.0:
+                if thint == 0.0:    # only compute type 0.0 prepared and validated new articles in ML_ingest
                     ttc = news_ai.yfn.extract_article_data(sn_idx, sent_ai)
                     ttkz += ttc
+                    if sn_idx >= 3:
+                        break        # testing - only do 4 docs
 
             print (f"Total tokens generated: {ttkz}" )
             pd.set_option('display.max_rows', None)
             pd.set_option('display.max_columns', None)
+            print ( f"### DEBUG 1:\n{sent_ai.sen_df0}" )
+
             sent_ai.sen_df1 = sent_ai.sen_df0.groupby('Sent').agg(['count'])
             sent_ai.sen_df2 = sent_ai.sen_df0.groupby('Sent')['Rank'].mean()
             sent_ai.sen_df1['Sentiment'] = sent_ai.sen_df2
-            sent_ai.sen_df1['Total'] = sent_ai.sen_df0.groupby('Sent').agg(['count']).sum()
+            sent_ai.sen_df1.loc['Total'] = sent_ai.sen_df1[['Row']].sum()
+            neutral_t = sent_ai.sen_df1.loc['Total'] = sent_ai.sen_df1[['Row']].sum()
+
+            print ( f"### DEBUG 2:\n{neutral_t}" )
+
+            #sent_ai.sen_df1['Total'] = sent_ai.sen_df0.groupby('Sent').agg(['count']).sum()
             #print ( f"{sent_ai.sen_df0.groupby(['Article', 'Sent'])['Rank'].mean()}" )
             print ( f"{sent_ai.sen_df0.groupby('Sent').agg(['count'])}" )
             print ( f"{sent_ai.sen_df0.groupby('Sent')['Rank'].mean()}" )
