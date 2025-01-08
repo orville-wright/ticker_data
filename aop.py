@@ -441,15 +441,18 @@ def main():
             news_ai.nlp_read_one(news_symbol, args)
             #news_ai.yfn.dump_ml_ingest()
             ttc = 0
+            twc = 0
             ttkz = 0
+            twcz = 0
             for sn_idx, sn_row in news_ai.yfn.ml_ingest.items():
                 # TESTING code only - to make testing complete quicker (only test 4 docs)
                 thint = news_ai.nlp_summary(3, sn_idx)       # what doc num in ml_ingest to look for
                 if thint == 0.0:    # only compute type 0.0 prepared and validated new articles in ML_ingest
-                    ttc = news_ai.yfn.extract_article_data(sn_idx, sent_ai)
+                    ttc, twc = news_ai.yfn.extract_article_data(sn_idx, sent_ai)
                     ttkz += ttc
+                    twcz += twc
 
-            print (f"Total tokens generated: {ttkz}" )
+            print (f"Total tokens generated: {ttkz} / Total words read: {twcz}" )
             pd.set_option('display.max_rows', None)
             pd.set_option('display.max_columns', None)
 
@@ -458,10 +461,12 @@ def main():
             sent_ai.sen_df1['Sentiment'] = sent_ai.sen_df2
             sent_ai.sen_df1.loc['Total'] = sent_ai.sen_df1[['Row']].sum()
             
-            #neutral_t = sent_ai.sen_df1[['Row']].sum()
-            neutral_t = int(sent_ai.sen_df1.loc['Total']['Row'])
+            neutral_t = sent_ai.sen_df1.loc['Total']['Row']
             sent_ai.sen_df1['Percetage'] = sent_ai.sen_df1['Row'] / neutral_t * 100
-            # NEW CODE : int(ser.iloc[0])
+            sent_ai.sen_df1 = sent_ai.sen_df1.drop(['Symbol', 'Article', 'Chunk', 'Rank'], axis=1)
+            
+            #neutral_tt = sent_ai.sen_df1.iloc[3, 0]
+            #print ( f"### DEBUG: {neutral_tt}" )
 
             # number = int(df1.loc[:,'randomcolumn'])
             #sent_ai.sen_df1['Total'] = sent_ai.sen_df0.groupby('Sent').agg(['count']).sum()

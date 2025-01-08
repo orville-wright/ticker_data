@@ -37,7 +37,8 @@ class ml_sentiment:
     sen_df1 = None
     sen_df2 = None
     df0_row_count = 0
-    ttc = 0             # Total Toekns generated
+    ttc = 0             # Total Tokens generated in the scnetcne being analyzed
+    twc = 0             # Total Word count in this scentence being analyzed
     yti = 0
     cycle = 0            # class thread loop counter
 
@@ -102,18 +103,19 @@ class ml_sentiment:
         classifier = pipeline(task="sentiment-analysis", model="mrm8488/distilroberta-finetuned-financial-news-sentiment-analysis")
         tokenizer_mml = classifier.tokenizer.model_max_length
         self.ttc = 0
+        self.twc = 0
         print ( f"==== M/L NLP transformer @ max tokens: {tokenizer_mml} : for News article [ {item_idx} ] ====================")
         for i in range(0, len(scentxt)):
             ngram_count = len(re.findall(r'\w+', scentxt[i].text))
             ngram_tkzed = word_tokenize(scentxt[i].text)
-            self.ttc += int(len(ngram_tkzed))
+            self.ttc += int(len(ngram_tkzed))           # total vectroized tokensgenrated by tokenizer 
             if vectorz.is_scentence(scentxt[i].text):
                 chunk_type = "Scent"
             elif vectorz.is_paragraph(scentxt[i].text):
                 chunk_type = "Parag"
             else:
                 chunk_type = "Randm"
-            p_sentiment = classifier(scentxt[i].text, truncation=True)
+            p_sentiment = classifier(scentxt[i].text, truncation=True)      # WARN: truncating long scentences !!!
 
             print ( f"Chunk: {i:03} / {chunk_type} / [ n-grams: {ngram_count:03} / tokens: {len(ngram_tkzed):03} / alphas: {len(scentxt[i].text):03} ]", end="" )
             ngram_sw_remv = [word for word in ngram_tkzed if word.lower() not in stop_words]    # remove stopwords
@@ -128,10 +130,11 @@ class ml_sentiment:
                     hfw = vectorz.get_hfword()
                 else:
                     hfw.append("Empty")
+                self.twc += ngram_count    # save and count up Total Word Count
                 ngram_sw_remv = ""
                 ngram_final= ""
-                ngram_count = 0
-                ngram_tkzed = 0
+                ngram_count = 0     # words in scnentence/paragraph
+                ngram_tkzed = 0     # vectorized tokens genertaed per scentence/paragraph
                 sen_result = p_sentiment[0]
                 raw_score = sen_result['score']
                 rounded_score = np.floor(raw_score * (10 ** 7) ) / (10 ** 7)
@@ -146,4 +149,4 @@ class ml_sentiment:
             except ValueError:
                 print ( f"Empty vocabulary !!")
 
-        return self.ttc
+        return self.ttc, self.twc

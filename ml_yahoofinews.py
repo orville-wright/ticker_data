@@ -771,11 +771,11 @@ class yfnews_reader:
             ############################################
             #
             logging.info( f'%s - Init M/L NLP Tokenizor sentiment-analyzer pipeline...' % cmi_debug )
-            total_tokens = sentiment_ai.compute_sentiment(symbol, item_idx, local_stub_news_p)
+            total_tokens, total_words = sentiment_ai.compute_sentiment(symbol, item_idx, local_stub_news_p)
             print ( f"Total tokens generated: {total_tokens}" )
             print ( f"======================================== End: {item_idx} ===============================================")
 
-        return total_tokens
+        return total_tokens, total_words
 
 ###################################### 14 ###########################################
 # method 13
