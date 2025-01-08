@@ -448,28 +448,28 @@ def main():
                 if thint == 0.0:    # only compute type 0.0 prepared and validated new articles in ML_ingest
                     ttc = news_ai.yfn.extract_article_data(sn_idx, sent_ai)
                     ttkz += ttc
-                    if sn_idx >= 3:
-                        break        # testing - only do 4 docs
 
             print (f"Total tokens generated: {ttkz}" )
             pd.set_option('display.max_rows', None)
             pd.set_option('display.max_columns', None)
-            print ( f"### DEBUG 1:\n{sent_ai.sen_df0}" )
 
             sent_ai.sen_df1 = sent_ai.sen_df0.groupby('Sent').agg(['count'])
             sent_ai.sen_df2 = sent_ai.sen_df0.groupby('Sent')['Rank'].mean()
             sent_ai.sen_df1['Sentiment'] = sent_ai.sen_df2
             sent_ai.sen_df1.loc['Total'] = sent_ai.sen_df1[['Row']].sum()
-            neutral_t = sent_ai.sen_df1.loc['Total'] = sent_ai.sen_df1[['Row']].sum()
+            
+            #neutral_t = sent_ai.sen_df1[['Row']].sum()
+            neutral_t = int(sent_ai.sen_df1.loc['Total']['Row'])
+            sent_ai.sen_df1['Percetage'] = sent_ai.sen_df1['Row'] / neutral_t * 100
+            # NEW CODE : int(ser.iloc[0])
 
-            print ( f"### DEBUG 2:\n{neutral_t}" )
-
+            # number = int(df1.loc[:,'randomcolumn'])
             #sent_ai.sen_df1['Total'] = sent_ai.sen_df0.groupby('Sent').agg(['count']).sum()
             #print ( f"{sent_ai.sen_df0.groupby(['Article', 'Sent'])['Rank'].mean()}" )
-            print ( f"{sent_ai.sen_df0.groupby('Sent').agg(['count'])}" )
-            print ( f"{sent_ai.sen_df0.groupby('Sent')['Rank'].mean()}" )
+            #print ( f"{sent_ai.sen_df0.groupby('Sent').agg(['count'])}" )
+            #print ( f"{sent_ai.sen_df0.groupby('Sent')['Rank'].mean()}" )
+            #print ( f"### DEBUG 2:\n{neutral_t}" )
             print ( f"{sent_ai.sen_df1}" )
-
 
 #################################################################################
 # 3 differnt methods to get a live quote ########################################
