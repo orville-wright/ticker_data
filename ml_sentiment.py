@@ -48,7 +48,7 @@ class ml_sentiment:
 
         self.args = global_args                            # Only set once per INIT. all methods are set globally
         self.yti = yti
-        yfn = yfnews_reader(1, "IBM", global_args )        # instantiate a class of fyn with dummy info
+        #yfn = yfnews_reader(1, "IBM", global_args )        # instantiate a class of fyn with dummy info
         return
 
 ##################################### 1 ####################################
