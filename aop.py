@@ -442,8 +442,11 @@ def main():
             #news_ai.yfn.dump_ml_ingest()
             ttc = 0
             twc = 0
+            tsc = 0
             ttkz = 0
             twcz = 0
+            tscz = 0
+
             for sn_idx, sn_row in news_ai.yfn.ml_ingest.items():
                 # TESTING code only - to make testing complete quicker (only test 4 docs)
                 thint = news_ai.nlp_summary(3, sn_idx)       # what doc num in ml_ingest to look for
@@ -451,8 +454,10 @@ def main():
                     ttc, twc = news_ai.yfn.extract_article_data(sn_idx, sent_ai)
                     ttkz += ttc
                     twcz += twc
+                    tscz += tsc
 
-            print (f"Total tokens generated: {ttkz} / Total words read: {twcz}" )
+            print (f"Total tokens generated: {ttkz} - Total words read: {twcz} - Total scent/paras read {tscz}" )
+            print (f"Human read time: {(twcz / 237):.2f} mins - Total Human processing time: {(twcz / 237) + tscz + (tscz / 2):.2f} mins" )
             pd.set_option('display.max_rows', None)
             pd.set_option('display.max_columns', None)
 

@@ -764,18 +764,23 @@ class yfnews_reader:
             local_news = self.nsoup.find(attrs={"class": "body yf-tsvcyu"})             # full news article - locally hosted
             local_news_meta = self.nsoup.find(attrs={"class": "main yf-cfn520"})        # comes above/before article
             local_stub_news = self.nsoup.find_all(attrs={"class": "article yf-l7apfj"})
-            local_stub_news_p = local_news.find_all("p")
+            local_stub_news_p = local_news.find_all("p")    # BS4 all <p> zones (not just 1)
 
-            ############################################
-            ##### M/L Gen AI NLP starts here !!! #######
-            ############################################
+            ####################################################################
+            ##### M/L Gen AI NLP starts here !!!                         #######
+            ##### Heavy CPU utilization / local LLM Model & no GPU       #######
+            ####################################################################
             #
             logging.info( f'%s - Init M/L NLP Tokenizor sentiment-analyzer pipeline...' % cmi_debug )
-            total_tokens, total_words = sentiment_ai.compute_sentiment(symbol, item_idx, local_stub_news_p)
+            total_tokens, total_words, total_scent = sentiment_ai.compute_sentiment(symbol, item_idx, local_stub_news_p)
             print ( f"Total tokens generated: {total_tokens}" )
+            #
+            # create emtries in the Neo4j Graph database
+            # - check if KG has existing node entry for this symbol+news_article
+            # if not... create one
             print ( f"======================================== End: {item_idx} ===============================================")
 
-        return total_tokens, total_words
+        return total_tokens, total_words, total_scent
 
 ###################################### 14 ###########################################
 # method 13

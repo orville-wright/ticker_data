@@ -91,6 +91,7 @@ class ml_sentiment:
     def compute_sentiment(self, symbol, item_idx, scentxt):
         """
         Tokenize and compute scentcen chunk sentiment
+        scentxtx = BS4 all <p> zones that look/feel like scentence/paragraph text
         """
         self.yti = item_idx
         cmi_debug = __name__+"::"+self.compute_sentiment.__name__+".#"+str(self.yti)
@@ -105,7 +106,7 @@ class ml_sentiment:
         self.ttc = 0
         self.twc = 0
         print ( f"==== M/L NLP transformer @ max tokens: {tokenizer_mml} : for News article [ {item_idx} ] ====================")
-        for i in range(0, len(scentxt)):
+        for i in range(0, len(scentxt)):    # cycle through all scentenses/paragraphs sent to us
             ngram_count = len(re.findall(r'\w+', scentxt[i].text))
             ngram_tkzed = word_tokenize(scentxt[i].text)
             self.ttc += int(len(ngram_tkzed))           # total vectroized tokensgenrated by tokenizer 
@@ -149,4 +150,4 @@ class ml_sentiment:
             except ValueError:
                 print ( f"Empty vocabulary !!")
 
-        return self.ttc, self.twc
+        return self.ttc, self.twc, i

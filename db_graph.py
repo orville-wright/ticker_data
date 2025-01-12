@@ -82,11 +82,11 @@ class db_graph:
         """
         Create a Graph NODE
         Assumes driver has been successfully created and saved to self.driver
+        node_data_package = dict of data we want created in GraphDB
         """
         with self.driver.session(database="neo4j", default_access_mode=neo4j.WRITE_ACCESS) as session:
             tx = session.begin_transaction()
-            # or just use a `with` context instead of try/finally
-            node_id = session.execute_write(create_sym_node_tx, name)
+            node_id = session.execute_write(self.create_sym_node_tx, a)
 
     def create_sym_node_tx(tx, name):
         query = ("CREATE (a:Person {name: $name, id: randomUUID()}) "
