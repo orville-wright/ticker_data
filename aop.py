@@ -451,7 +451,7 @@ def main():
                 # TESTING code only - to make testing complete quicker (only test 4 docs)
                 thint = news_ai.nlp_summary(3, sn_idx)       # what doc num in ml_ingest to look for
                 if thint == 0.0:    # only compute type 0.0 prepared and validated new articles in ML_ingest
-                    ttc, twc = news_ai.yfn.extract_article_data(sn_idx, sent_ai)
+                    ttc, twc, tsc = news_ai.yfn.extract_article_data(sn_idx, sent_ai)
                     ttkz += ttc
                     twcz += twc
                     tscz += tsc
