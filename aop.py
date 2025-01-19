@@ -38,6 +38,7 @@ from y_techevents import y_techevents
 from nasdaq_wrangler import nq_wrangler
 from y_cookiemonster import y_cookiemonster
 from ml_sentiment import ml_sentiment
+from db_graph import db_graph
 
 # Globals
 work_inst = 0
@@ -427,9 +428,9 @@ def main():
     else:
         pass
 
-# M/L AI News REader  ###############################################################
-        #  Currently read all news or ONE stock
-        # =====================================================================
+# ##### M/L AI News Reader  #########################################################
+# ##### Currently read all news or ONE stock
+# ###################################################################################
 
     if args['newsymbol'] is not False:
             cmi_debug = __name__+"::_args_newsymbol.#1"
@@ -439,6 +440,10 @@ def main():
             news_ai = ml_nlpreader(1, args)
             sent_ai = ml_sentiment(1, args)
             news_ai.nlp_read_one(news_symbol, args)
+            kgraphdb = db_graph(1, args)
+            kgraphdb.con_aopkgdb(1)
+            kg_node_id = kgraphdb.create_sym_node(news_symbol)
+
             #news_ai.yfn.dump_ml_ingest()
             ttc = 0
             twc = 0
@@ -480,6 +485,13 @@ def main():
             #print ( f"{sent_ai.sen_df0.groupby('Sent')['Rank'].mean()}" )
             #print ( f"### DEBUG 2:\n{neutral_t}" )
             print ( f"{sent_ai.sen_df1}" )
+            print ( f"Created Neo4j KG node_id: {kg_node_id}" )
+
+            res = kgraphdb.dump_symbols(1)
+            #print ( f"{res}" )
+            
+            kgraphdb.close_aopkgdb(1, kgraphdb.driver)
+
 
 #################################################################################
 # 3 differnt methods to get a live quote ########################################
