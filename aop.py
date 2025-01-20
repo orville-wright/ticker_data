@@ -442,6 +442,7 @@ def main():
             news_ai.nlp_read_one(news_symbol, args)
             kgraphdb = db_graph(1, args)
             kgraphdb.con_aopkgdb(1)
+            exists = kgraphdb.check_node_exists(1, news_symbol)
             kg_node_id = kgraphdb.create_sym_node(news_symbol)
 
             #news_ai.yfn.dump_ml_ingest()
@@ -486,10 +487,13 @@ def main():
             #print ( f"### DEBUG 2:\n{neutral_t}" )
             print ( f"{sent_ai.sen_df1}" )
             print ( f"Created Neo4j KG node_id: {kg_node_id}" )
-
+            print ( f"#################################################################" )
+            print ( f"##### DEBUG: {exists['Predicate']}" )
+            print ( f"#################################################################" )
+            
             res = kgraphdb.dump_symbols(1)
             #print ( f"{res}" )
-            
+
             kgraphdb.close_aopkgdb(1, kgraphdb.driver)
 
 
