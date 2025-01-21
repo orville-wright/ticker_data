@@ -153,13 +153,11 @@ class db_graph:
         symbol = ticker_symbol.upper()
         cmi_debug = __name__+"::"+self.check_node_exists.__name__+".#"+str(self.yti)
         logging.info( f'%s - Check KG db for existing Symbol [ {symbol} ]' % cmi_debug )
+
         with self.driver.session(database="neo4j") as session:
-            query = ("MATCH (s:Symbol) RETURN s.symbol AS symbol, exists()")
- 
-        """
-        query = ("OPTIONAL MATCH (s:Symbol {symbol: $symbol}) "
-                    "RETURN s.id IS NOT NULL AS Predicate")
-        """
-        result = session.run(query, symbol=symbol)     # Result object
-        
-        return result
+            query = ("MATCH (s:Symbol {symbol: $symbol}) "
+                     "RETURN s.id IS NOT NULL AS present")
+
+            result = session.run(query, symbol=symbol)     # Result object
+            record = result.single()
+            return record

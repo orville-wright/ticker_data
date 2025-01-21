@@ -442,8 +442,15 @@ def main():
             news_ai.nlp_read_one(news_symbol, args)
             kgraphdb = db_graph(1, args)
             kgraphdb.con_aopkgdb(1)
-            exists = kgraphdb.check_node_exists(1, news_symbol)
-            kg_node_id = kgraphdb.create_sym_node(news_symbol)
+            try:
+                found_sym = kgraphdb.check_node_exists(1, news_symbol)
+                if found_sym['present'] is True:    # True = symbol already exists
+                    created = False
+                    pass    # do nothing is Ticker Symbol exists
+            except TypeError:
+                print ( f"##### DEBUG: Type: {type(found_sym)}")
+                kg_node_id = kgraphdb.create_sym_node(news_symbol)
+                created = True
 
             #news_ai.yfn.dump_ml_ingest()
             ttc = 0
@@ -485,17 +492,15 @@ def main():
             #print ( f"{sent_ai.sen_df0.groupby('Sent').agg(['count'])}" )
             #print ( f"{sent_ai.sen_df0.groupby('Sent')['Rank'].mean()}" )
             #print ( f"### DEBUG 2:\n{neutral_t}" )
+
             print ( f"{sent_ai.sen_df1}" )
-            print ( f"Created Neo4j KG node_id: {kg_node_id}" )
-            print ( f"#################################################################" )
-            print ( f"##### DEBUG: {exists['Predicate']}" )
-            print ( f"#################################################################" )
+            if created is True:    # True = symbol already exists
+                print ( f"Created new KG node_id: {kg_node_id}" )
+            else:
+                print ( f"Symbol allready exist - New node NOT created !" )
             
             res = kgraphdb.dump_symbols(1)
-            #print ( f"{res}" )
-
             kgraphdb.close_aopkgdb(1, kgraphdb.driver)
-
 
 #################################################################################
 # 3 differnt methods to get a live quote ########################################
