@@ -448,11 +448,10 @@ def main():
                     created = False
                     pass    # do nothing is Ticker Symbol exists
             except TypeError:
-                print ( f"##### DEBUG: Type: {type(found_sym)}")
+                # Type:class 'NoneType' is discovered here...
                 kg_node_id = kgraphdb.create_sym_node(news_symbol)
                 created = True
 
-            #news_ai.yfn.dump_ml_ingest()
             ttc = 0
             twc = 0
             tsc = 0
