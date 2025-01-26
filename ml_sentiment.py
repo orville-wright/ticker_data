@@ -62,6 +62,7 @@ class ml_sentiment:
         x = self.df0_row_count      # get last row added to DF
         x += 1
 
+        # need to add the url hash in here, otherwise I cant do useful analysis
         sym = data_set["sym"]
         art = data_set["article"]
         chk = data_set["chunk"]
