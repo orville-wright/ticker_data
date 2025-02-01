@@ -561,9 +561,21 @@ class yfnews_reader:
             local_news_bmart_divs = local_news_bmart.find_all("div")
 
             local_news_meta_desc = self.nsoup.find("meta", attrs={"name": "description"})
-            local_news_bmart_cap = local_news_bmart.find("div", attrs={"class": "caas-title-wrapper"})
-            local_news_bmart_ath = local_news_bmart.find("div", attrs={"class": "caas-attr-item-author"})
-            local_news_bmart_dte = local_news_bmart.find("div", attrs={"class": "caas-attr-time-style"})
+
+            #local_news_bmart_cap = local_news_bmart.find("div", attrs={"class": "caas-title-wrapper"})
+            local_news_bmart_cap = local_news_bmart.find("div", attrs={"class": "cover-title yf-1rjrr1"})
+            caption_pct_cl = re.sub(r'[\%]', "PCT", local_news_bmart_cap.text)  # cant have % in text. Problematic !!
+            logging.info ( f'%s - COVER CAPTION: {caption_pct_cl}' % cmi_debug )
+
+            #local_news_bmart_ath = local_news_bmart.find("div", attrs={"class": "caas-attr-item-author"})
+            #local_news_bmart_dte = local_news_bmart.find("div", attrs={"class": "caas-attr-time-style"})
+
+            local_news_bmart_ath = local_news_bmart.find("div", attrs={"class": "byline-attr-author yf-1k5w6kz"})
+            logging.info ( f'%s - AUTHOR: {local_news_bmart_ath.text}' % cmi_debug )
+
+            local_news_bmart_dte = local_news_bmart.find("time", attrs={"class": "byline-attr-meta-time"})
+            logging.info ( f'%s - PUB TIME: {local_news_bmart_dte.text}' % cmi_debug )
+
             local_news_bmain_azone = local_news_bmain.find("a")
 
             """
@@ -595,7 +607,7 @@ class yfnews_reader:
 
             # f-string cannot handle % sign in strings to expand + print
             #  cmi_debug = __name__+"::"+self.interpret_page.__name__+".#"+str(item_idx)
-            cmi_debug = __name__+"::"+self.interpret_page.__name__+".#"+str(item_idx)+" - Depth: 2.1 / Caption: "+local_news_bmart_cap.h1.text
+            cmi_debug = __name__+"::"+self.interpret_page.__name__+".#"+str(item_idx)+" - Depth: 2.1 / Caption: "+caption_pct_cl
             #logging.info ( f"%s - Depth: 2.1 / Caption: {local_news_bmart_cap.h1.text}" % cmi_debug )
             logging.info ( f"%s" % cmi_debug )
             cmi_debug = __name__+"::"+self.interpret_page.__name__+".#"+str(item_idx)
@@ -782,8 +794,8 @@ class yfnews_reader:
 
         return total_tokens, total_words, total_scent
 
-###################################### 14 ###########################################
-# method 13
+###################################### 13 ###########################################
+# method 14
     def dump_ml_ingest(self):        # >>Xray DEBUG<<
         """
         Dump the contents of ml_ingest{}, which holds the NLP candidates

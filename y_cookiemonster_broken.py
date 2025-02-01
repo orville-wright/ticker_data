@@ -263,3 +263,25 @@ class cookie_monster:
         logging.info('%s - close url handle' % cmi_debug )
         r.close()
         return
+
+
+function reverse_word(string word)
+    reversed = ""
+    for letter in word:
+            reversed = letter + reversed
+    return reversed
+
+function check_all_palindromes(array arr)
+        reversed1 = reverse_word(word1)
+        reversed2 = reverse_word(word2)
+        reversed3 = reverse_word(word3)
+
+        if arr[0] does not equal reversed1:
+                return false
+
+        if arr[1] does not equal reversed2:
+                return false
+
+        if arr[2] does not equal reversed3:
+                return false
+        return true
