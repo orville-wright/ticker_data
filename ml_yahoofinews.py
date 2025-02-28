@@ -391,6 +391,7 @@ class yfnews_reader:
                         if uhint == 2: thint = 4.0      # video (currently / FOR NOW, assume all videos are locally hosted on finanice.yahoo.com
                         if uhint == 3: thint = 1.1      # shoudl never trigger here - see abive... <Pure-Abs url>
                         if uhint == 4: thint = 7.0      # research report / FOR NOW, assume all research reports are locally hosted on finanice.yahoo.com
+                        if uhint == 5: thint = 6.0      # Bulk Yahoo Premium Service add                      
                         pure_url = 0                    # locally hosted entity
                         ml_atype = uhint                    # Real news
                         inf_type = self.yfn_uh.confidence_lvl(thint)                # return var is tuple
@@ -662,9 +663,9 @@ class yfnews_reader:
         if uhint == 3:
             logging.info ( f"%s - Depth: 2.2 / External publication - CANT interpret remote article @ [Depth 2]" % cmi_debug )
             logging.info ( f"%s - Depth: 2.2 / confidence level / u: {uhint} h: {thint}" % cmi_debug )
-            data_row.update({"viable": 0})                       # cab not extra text data from this article
+            data_row.update({"viable": 0})                       # cab no extra text data from this article
             self.ml_ingest[idx] = data_row                       # now PERMENTALY update the ml_ingest record @ index = id
-            return uhint, thint, self.this_article_url                      # Explicit remote article - can't interpret off-site article
+            return uhint, thint, self.this_article_url           # Explicit remote article - can't interpret off-site article
 
         if uhint == 4:
             logging.info ( f"%s - Depth: 2.2 / POSSIBLE Research report " % cmi_debug )

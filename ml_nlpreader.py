@@ -144,12 +144,12 @@ class ml_nlpreader:
             thint = (sn_row['thint'])                                       # the hint we guessed at while interrogating page <tags>
             logging.info ( f"%s       - Logic.#0 Hints for url: [ t:0 / u:{uhint} / h: {thint} ] / {uhdescr}" % cmi_debug )
 
-            # WARNING : This is a deep analysis on the page
+            # WARNING : Do deep analysis on the page
             r_uhint, r_thint, r_xturl = self.yfn.interpret_page(ml_idx, sn_row)    # go deep, with everything we knonw about this item
             
             logging.info ( f"%s       - Inferr conf: {r_xturl}" % cmi_debug )
             p_r_xturl = urlparse(r_xturl)
-            inf_type = self.mlnlp_uh.confidence_lvl(thint)     # returned var is a tupple - (descr, locality code)
+            inf_type = self.mlnlp_uh.confidence_lvl(thint)                  # returned var is a tupple - (descr, locality code)
             #
             print ( f"Article type:   0 / {sn_row['url']}" )                # all type 0 are assumed to be REAL news
             print ( f"Origin URL:    [ {t_url.netloc} ] / {uhdescr} / {inf_type[0]} / ", end="" )
@@ -158,41 +158,58 @@ class ml_nlpreader:
             print ( f"Target URL:    [ {p_r_xturl.netloc} ] / {uhdescr} / ", end="" )
             print ( f"{locality_code.get(uhint)} [ u:{uhint} ]" )
             return thint    # what this artuicle actuall;y is
-        elif sn_row['type'] == 1:                       # Micro-Ad, but could possibly be news...
-            print( f"{sn_row['symbol']} / Fake News stub micro article: {ml_idx}" )
+
+        # Micro-Ad, but could possibly be news...
+        elif sn_row['type'] == 1:
+            print ( f"Article: {ml_idx} - Fake News stub micro article - NOT an NLP candidate" )
+            print ( f"URL:     {sn_row['url']}" )
             t_url = urlparse(sn_row['url'])
             uhint, uhdescr = self.mlnlp_uh.uhinter(1, t_url)      # hint on ORIGIN url
             thint = (sn_row['thint'])                   # the hint we guess at while interrogating page <tags>
             logging.info ( f"%s       - Logic.#1 hint origin url: t:1 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
-            # WARN:
-            # deep page analysis, with everything we know about this item
-            # # prepare to extract Text for M/L NLP Gen AI sentiment analysis
-            # just interprets data for 1 page only
+
+            # WARN: Do deep page analysis, with everything we know about this item
             r_uhint, r_thint, r_xturl = self.yfn.interpret_page(ml_idx, sn_row)    
             logging.info ( f"%s       - Logic.#1 hint ext url: {r_xturl}" % cmi_debug )
             p_r_xturl = urlparse(r_xturl)
             inf_type = self.mlnlp_uh.confidence_lvl(thint)
+
             # summary report...
-            print ( f"NLP candidate article type: 1" )
-            print ( f"Origin URL:    [ {t_url.netloc} ] / {uhdescr} / {inf_type[0]} / ", end="" )
+            print ( f"Origin:  [ {t_url.netloc} ] / {uhdescr} / {inf_type[0]} / ", end="" )
             print ( f"{locality_code.get(inf_type[1], 'in flux')}" )
             uhint, uhdescr = self.mlnlp_uh.uhinter(31, p_r_xturl)      # hint on TARGET url
-            print ( f"Target URL:    [ {p_r_xturl.netloc} ] / {uhdescr} / ", end="" )
+            print ( f"Hints:   {uhdescr} / ", end="" )
             print ( f"{locality_code.get(uhint, 'in flux')} [ u:{uhint} ]" )
             return thint
-        elif sn_row['type'] == 2:                     # possibly not news? (Micro Ad)
-            print ( f"Video story type: 2 - NOT an NLP candidate" )
-            logging.info ( f"%s - #3 skipping..." % cmi_debug )
+        
+        # Video story. Prob no real news text
+        elif sn_row['type'] == 2:
+            print ( f"Article: {ml_idx} - Video story type: 2 - NOT an NLP candidate" )
+            print ( f"URL:     {sn_row['url']}" )
+            logging.info ( f"%s - #2 skipping video story..." % cmi_debug )
+            thint = (sn_row['thint'])
+            inf_type = self.mlnlp_uh.confidence_lvl(thint)
+
+            t_url = urlparse(sn_row['url'])
+            print ( f"Origin:  [ {t_url.netloc} ] / {inf_type[0]} / ", end="" )
+            print ( f"{locality_code.get(inf_type[1], 'in flux')}" )
+            return thint
+        
+        elif sn_row['type'] == 5:                     # possibly not news? (Micro Ad)
+            print ( f"Article: {ml_idx} - Yahoo Premium add: 5 - NOT an NLP candidate" )
+            logging.info ( f"%s - skipping..." % cmi_debug )
             thint = (sn_row['thint'])
             return thint
+        
         elif sn_row['type'] == 9:                     # possibly not news? (Micro Ad)
-            print ( f"Article type NOT yet define - NOT an NLP candidate" )
-            logging.info ( f"%s - #3 skipping..." % cmi_debug )
+            print ( f"Article: {ml_idx} - Type 9 - NOT yet defined - NOT an NLP candidate" )
+            logging.info ( f"%s - skipping..." % cmi_debug )
             thint = (sn_row['thint'])
             return thint
+        
         else:
-            print ( f"ERROR unknown article type" )
-            logging.info ( f"%s - #4 skipping..." % cmi_debug )
+            print ( f"Article: {ml_idx} - ERROR unknown article type" )
+            logging.info ( f"%s - #? skipping..." % cmi_debug )
             thint = (sn_row['thint'])
 
         return thint

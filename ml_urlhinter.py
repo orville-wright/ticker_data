@@ -56,6 +56,7 @@ class url_hinter:
                     'video': ('Video story', 2),
                     'rabs': ('External publication', 3),
                     'research': ('Research report', 4),
+                    'about': ('Premium news', 5),
                     'udef': ('Not yet defined', 9),
                     'err': ('Error mangled url', 10),
                     'bad': ('ERROR_unknown_state', 99)
@@ -87,11 +88,11 @@ class url_hinter:
             logging.info ( f"%s  - Logic +4 Recvd encoded url" % cmi_debug )
             if input_url.netloc == "finance.yahoo.com":        # scheme='https', netloc='finance.yahoo.com', path='/m/49c60293...
                 urlp_attr = input_url.path.split('/', 2)                        # work on path=object ONLY
+                logging.info ( f"%s  - Logic +4 extracted url hint [1]: [{urlp_attr[1]}]" % cmi_debug )
                 uhint = uhint_code.get(urlp_attr[1])                            # retrieve uhint code/descr tuple
-                logging.info ( f"%s  - Logic +5 Decoded url: [{input_url.netloc}] / Type: [{urlp_attr[1]}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
+                logging.info ( f"%s  - Logic +4 Decoded url: [{input_url.netloc}] / Type: [{urlp_attr[1]}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
                 return uhint[1], uhint[0]    # u code / description
             else:
-                #a_url = urlparse(input_url)
                 uhint = uhint_code.get('rabs')            # get our encodings for absolute URL
                 logging.info ( f"%s - Logic +6 / Decoded url: [{input_url.netloc}] / u:{uhint[1]} / {uhint[0]}" % cmi_debug )
                 error_state = uhint_code.get('rabs')
