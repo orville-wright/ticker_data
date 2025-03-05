@@ -184,15 +184,14 @@ class ml_nlpreader:
         
         # Video story. Prob no real news text
         elif sn_row['type'] == 2:
-            print ( f"Article: {ml_idx} - Video story type: 2 - NOT an NLP candidate" )
-            print ( f"URL:     {sn_row['url']}" )
-            logging.info ( f"%s - #2 skipping video story..." % cmi_debug )
+            t_url = urlparse(sn_row['url'])
             thint = (sn_row['thint'])
             inf_type = self.mlnlp_uh.confidence_lvl(thint)
-
-            t_url = urlparse(sn_row['url'])
+            print ( f"Article: {ml_idx} - {inf_type[0]}: 2 - NOT an NLP candidate" )
+            print ( f"URL:     {sn_row['url']}" )
             print ( f"Origin:  [ {t_url.netloc} ] / {inf_type[0]} / ", end="" )
             print ( f"{locality_code.get(inf_type[1], 'in flux')}" )
+            logging.info ( f"%s - skipping..." % cmi_debug )
             return thint
         
         elif sn_row['type'] == 5:                     # possibly not news, Yahoo Premium subscription add
