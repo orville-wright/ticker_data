@@ -375,6 +375,7 @@ class yfnews_reader:
                         if uhint == 2: thint = 4.0      # video (currently / FOR NOW, assume all videos are locally hosted on finanice.yahoo.com
                         if uhint == 3: thint = 1.1      # shoudl never trigger here - see abive... <Pure-Abs url>
                         if uhint == 4: thint = 7.0      # research report / FOR NOW, assume all research reports are locally hosted on finanice.yahoo.com
+                        if uhint == 5: thint = 6.0      # Bulk Yahoo Premium Service add
                         inf_type = self.yfn_uh.confidence_lvl(thint)  # my private look-up / returns a tuple
                         self.url_netloc = self.a_urlp.netloc      # get FQDN netloc
                         ml_atype = uhint
@@ -399,7 +400,7 @@ class yfnews_reader:
                         break       # ...need 1 more level of analysis analysis to get headline & teaser text
 
                 print ( f"New article:      {symbol} / [ {cg} ] / Depth 1" )
-                print ( f"News item:        {self.cycle}: {inf_type[0]} / Origin confidence: [ t:{ml_atype} u:{uhint} h:{thint} ]" )
+                print ( f"News item:        {inf_type[0]} / Origin confidence: [ t:{ml_atype} u:{uhint} h:{thint} ]" )
                 print ( f"News agency:      {news_agency}" )
                 print ( f"News origin:      {self.url_netloc}" )
                 print ( f"Article URL:      {self.article_url}" )
