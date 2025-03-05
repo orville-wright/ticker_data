@@ -195,8 +195,10 @@ class ml_nlpreader:
             print ( f"{locality_code.get(inf_type[1], 'in flux')}" )
             return thint
         
-        elif sn_row['type'] == 5:                     # possibly not news? (Micro Ad)
-            print ( f"Article: {ml_idx} - Yahoo Premium add: 5 - NOT an NLP candidate" )
+        elif sn_row['type'] == 5:                     # possibly not news, Yahoo Premium subscription add
+            thint = (sn_row['thint'])
+            inf_type = self.mlnlp_uh.confidence_lvl(thint)
+            print ( f"Article: {ml_idx} - {inf_type[0]}: 5 - NOT an NLP candidate" )
             logging.info ( f"%s - skipping..." % cmi_debug )
             thint = (sn_row['thint'])
             return thint
