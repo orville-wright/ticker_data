@@ -129,19 +129,6 @@ class db_graph:
             rec_done = result.consume()       # ResultSummary objects
             return rec_done
 
-                #print ( f"I: {i}")
-                #print ( f"Type I: {type(i)}" )
-                #print ( f"Type one_rec: {type(one_record)}" )
-                #print ( f"one_rec: {one_record}")
-                #print ( f"Symbol found: {one_record[0]['s']['symbol']}")
-                #print ( f"Type I[s]: {type(i['s'])}" )              
-                #print ( f"{one_record[0].get('symbol')}")
-                #print ( f"{one_record[0:3]}")
-                #print ( f"{items}")
-                #for rec in one_record[0]:
-                #print ( f"{rec.keys()}")
-
-
 ##################################### 5 #####################################
     def check_node_exists(self, yti, ticker_symbol):
         """
