@@ -119,7 +119,7 @@ class db_graph:
             result = session.run(query)     # Result object
             scount = 1
             buffer = result.fetch(500)      # pull 500 enteries into the buffer
-            print ( f"Results BUFFER has [ {len(buffer)} ] elements")
+            print ( f"Results BUFFER has [ {len(buffer)} ] elements\n")
 
             for i in buffer:                # working on: neo4j._data.Record 
                 print ( f"ITEM: {scount} : \t SYMBOL found: {i['s']._properties['symbol']} \t ID: {i['s']._properties['id']}" )

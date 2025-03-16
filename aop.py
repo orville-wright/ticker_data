@@ -470,18 +470,19 @@ def main():
                     twcz += twc
                     tscz += tsc
 
-            print (f" ==================================== Stats ====================================" )
+            print (f"\n\n==================================== Stats ====================================" )
             print (f"Total tokens generated: {ttkz} - Total words read: {twcz} - Total scent/paras read {tscz}" )
             print (f"Human read time: {(twcz / 237):.2f} mins - Total Human processing time: {(twcz / 237) + tscz + (tscz / 2):.2f} mins" )
             pd.set_option('display.max_rows', None)
             pd.set_option('display.max_columns', None)
-            print (f" ==================================== Stats ====================================" )
-            
+            print (f" ==================================== Stats ====================================\n\n" )
+
             sent_ai.sen_df1 = sent_ai.sen_df0.groupby('Sent').agg(['count'])
             sent_ai.sen_df2 = sent_ai.sen_df0.groupby('Sent')['Rank'].mean()
             sent_ai.sen_df1['Sentiment'] = sent_ai.sen_df2
             sent_ai.sen_df1.loc['Total'] = sent_ai.sen_df1[['Row']].sum()
-            
+            print (f"\n\n")
+
             neutral_t = sent_ai.sen_df1.loc['Total']['Row']
             sent_ai.sen_df1['Percetage'] = sent_ai.sen_df1['Row'] / neutral_t * 100
             sent_ai.sen_df1 = sent_ai.sen_df1.drop(['Symbol', 'Article', 'Chunk', 'Rank'], axis=1)
@@ -496,6 +497,7 @@ def main():
             #print ( f"{sent_ai.sen_df0.groupby('Sent')['Rank'].mean()}" )
             #print ( f"### DEBUG 2:\n{neutral_t}" )
 
+            # KGdb stats
             print ( f"{sent_ai.sen_df1}" )
             if created is True:    # True = symbol already exists
                 print ( f"Created new KG node_id: {kg_node_id}" )
