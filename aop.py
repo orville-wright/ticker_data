@@ -478,8 +478,8 @@ def main():
             pd.set_option('display.max_columns', None)
             print (f" ==================================== Stats ====================================\n" )
 
-            news_ai.dump_ml_ingest()
-            
+            news_ai.yfn.dump_ml_ingest()
+
             sent_ai.sen_df1 = sent_ai.sen_df0.groupby('Sent').agg(['count'])
             sent_ai.sen_df2 = sent_ai.sen_df0.groupby('Sent')['Rank'].mean()
             sent_ai.sen_df1['Sentiment'] = sent_ai.sen_df2
