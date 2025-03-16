@@ -440,8 +440,10 @@ def main():
             news_ai = ml_nlpreader(1, args)
             sent_ai = ml_sentiment(1, args)
             news_ai.nlp_read_one(news_symbol, args)
-            kgraphdb = db_graph(1, args)
-            kgraphdb.con_aopkgdb(1)
+            kgraphdb = db_graph(1, args)    # inst a class 
+            kgraphdb.con_aopkgdb(1)         # connect to neo4j db
+
+            # check to see if this ticker stmbol exists in KGdb
             try:
                 found_sym = kgraphdb.check_node_exists(1, news_symbol)
                 if found_sym['present'] is True:    # True = symbol already exists
@@ -468,11 +470,13 @@ def main():
                     twcz += twc
                     tscz += tsc
 
+            print (f" ==================================== Stats ====================================" )
             print (f"Total tokens generated: {ttkz} - Total words read: {twcz} - Total scent/paras read {tscz}" )
             print (f"Human read time: {(twcz / 237):.2f} mins - Total Human processing time: {(twcz / 237) + tscz + (tscz / 2):.2f} mins" )
             pd.set_option('display.max_rows', None)
             pd.set_option('display.max_columns', None)
-
+            print (f" ==================================== Stats ====================================" )
+            
             sent_ai.sen_df1 = sent_ai.sen_df0.groupby('Sent').agg(['count'])
             sent_ai.sen_df2 = sent_ai.sen_df0.groupby('Sent')['Rank'].mean()
             sent_ai.sen_df1['Sentiment'] = sent_ai.sen_df2
