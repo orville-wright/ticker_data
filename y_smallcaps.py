@@ -1,6 +1,4 @@
-#!/usr/bin/python3
-#import urllib
-#import urllib.request
+#!/home/orville/venv/devel/bin/python3
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd

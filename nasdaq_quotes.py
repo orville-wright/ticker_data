@@ -1,8 +1,6 @@
-#! /home/orville/venv/devel/bin/python3
+#!/home/orville/venv/devel/bin/python3
 from requests_html import HTMLSession
 from bs4 import BeautifulSoup
-import pandas as pd
-import numpy as np
 import logging
 import argparse
 import json

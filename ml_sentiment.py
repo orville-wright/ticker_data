@@ -1,22 +1,12 @@
 #!/home/orville/venv/devel/bin/python3
-import requests
-from requests import Request, Session
 from requests_html import HTMLSession
-from bs4 import BeautifulSoup
-from urllib.parse import urlparse
-from datetime import datetime, date
-import hashlib
 import pandas as pd
 import numpy as np
 import re
 import logging
 import argparse
-import time
 from rich import print
 
-from ml_yahoofinews import yfnews_reader
-from ml_urlhinter import url_hinter
-from y_topgainers import y_topgainers
 from ml_cvbow import ml_cvbow
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize

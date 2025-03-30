@@ -1,24 +1,14 @@
-#!/usr/bin/python3
-import urllib
+#!/home/orville/venv/devel/bin/python3
 import urllib.request
-from bs4 import BeautifulSoup
 import pandas as pd
-import numpy as np
-import re
 import logging
 import argparse
-import time
-import threading
 
 # logging setup
 logging.basicConfig(level=logging.INFO)
 
 # my private classes & methods
-from nasdaq_uvoljs import un_volumes
 from nasdaq_quotes import nquote
-from bigcharts_md import bc_quote
-from marketwatch_md import mw_quote
-from y_techevents import y_techevents
 from nasdaq_wrangler import nq_wrangler
 
 #####################################################

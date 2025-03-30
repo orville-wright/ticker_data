@@ -1,10 +1,9 @@
-#!/usr/bin/python3
+#!/home/orville/venv/devel/bin/python3
 import re
 import logging
 import pandas as pd
 import argparse
 import time
-import json
 import numpy as np
 
 from bigcharts_md import bc_quote

@@ -11,10 +11,6 @@ import time
 from rich import print
 from rich.markup import escape
 
-from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
-from transformers import pipeline
-
 # logging setup
 logging.basicConfig(level=logging.INFO)
 

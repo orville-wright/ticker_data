@@ -1,16 +1,7 @@
-#!/usr/bin/python3
-import urllib
-import urllib.request
+#!/home/orville/venv/devel/bin/python3
 from bs4 import BeautifulSoup
-import pandas as pd
-import numpy as np
-import re
 import logging
 import argparse
-import time
-import threading
-import types
-import inspect
 
 # ML capabilities
 from sklearn.feature_extraction.text import CountVectorizer

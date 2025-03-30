@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/home/orville/venv/devel/bin/python3
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -7,7 +7,6 @@ import re
 import logging
 import argparse
 import time
-import threading
 from rich import print
 
 # logging setup

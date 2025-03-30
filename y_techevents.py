@@ -1,14 +1,10 @@
-#!/usr/bin/python3
+#!/home/orville/venv/devel/bin/python3
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
-import numpy as np
-import re
 import logging
 import argparse
 import time
-import threading
-import json
 
 # logging setup
 logging.basicConfig(level=logging.INFO)
