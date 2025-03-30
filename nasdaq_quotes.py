@@ -1,17 +1,11 @@
-#!/usr/bin/python3
-import requests
-from requests import Request, Session
+#! /home/orville/venv/devel/bin/python3
 from requests_html import HTMLSession
 from bs4 import BeautifulSoup
 import pandas as pd
 import numpy as np
-import re
 import logging
 import argparse
-import time
 import json
-
-from bigcharts_md import bc_quote
 
 # logging setup
 logging.basicConfig(level=logging.INFO)
