@@ -1,10 +1,7 @@
-#!/usr/bin/python3
+#!/home/orville/venv/devel/bin/python3
 from urllib.parse import urlparse
-import re
 import logging
 import argparse
-import time
-import json
 
 # logging setup
 logging.basicConfig(level=logging.INFO)

@@ -1,22 +1,12 @@
-#! /home/orville/venv/devel/bin/python3
-
-import urllib
+#!/home/orville/venv/devel/bin/python3
 import urllib.request
-from bs4 import BeautifulSoup
 import pandas as pd
-import numpy as np
-import re
 import logging
 import argparse
 import time
 import threading
-import random
 from urllib.parse import urlparse
 from rich import print
-
-# ML capabilities
-from sklearn.feature_extraction.text import CountVectorizer
-from nltk.corpus import stopwords
 
 # logging setup
 logging.basicConfig(level=logging.INFO)
@@ -28,10 +18,7 @@ from y_smallcaps import smallcap_screen
 from nasdaq_uvoljs import un_volumes
 from nasdaq_quotes import nquote
 from shallow_logic import combo_logic
-from ml_cvbow import ml_cvbow
 from bigcharts_md import bc_quote
-from marketwatch_md import mw_quote
-from ml_yahoofinews import yfnews_reader
 from ml_urlhinter import url_hinter
 from ml_nlpreader import ml_nlpreader
 from y_techevents import y_techevents

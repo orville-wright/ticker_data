@@ -1,7 +1,5 @@
-#!/usr/bin/python3
-
+#!/home/orville/venv/devel/bin/python3
 from bs4 import BeautifulSoup
-import requests
 import urllib
 import re
 import logging

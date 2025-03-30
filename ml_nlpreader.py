@@ -1,17 +1,9 @@
-#! /home/orville/venv/devel/bin/python3
-import requests
-from requests import Request, Session
+#!/home/orville/venv/devel/bin/python3
 from requests_html import HTMLSession
-from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from datetime import datetime, date
-import hashlib
-import pandas as pd
-import numpy as np
-import re
 import logging
 import argparse
-import time
 from rich import print
 
 from ml_yahoofinews import yfnews_reader

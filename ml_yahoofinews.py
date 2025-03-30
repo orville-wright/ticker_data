@@ -1,23 +1,16 @@
-#!/usr/bin/python3
-import requests
-from requests import Request, Session
+#!/home/orville/venv/devel/bin/python3
 from requests_html import HTMLSession
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from datetime import datetime, date
 import hashlib
-import pandas as pd
-import numpy as np
 import re
 import logging
 import argparse
 import time
-import threading
-import json
 from rich import print
 from rich.markup import escape
 
-from ml_cvbow import ml_cvbow
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from transformers import pipeline
@@ -517,7 +510,8 @@ class yfnews_reader:
 
         
         logging.info( f'%s - set BS4 data zones for Article: [ {idx} ]' % cmi_debug )
-        local_news = self.nsoup.find(attrs={"class": "body yf-tsvcyu"})   # full news article - locally hosted
+        local_news = self.nsoup.find(attrs={"class": "body yf-3qln1o"})   # full news article - locally hosted
+        #local_news = self.nsoup.find(attrs={"class": "body yf-tsvcyu"})   # full news article - locally hosted
         local_news_meta = self.nsoup.find(attrs={"class": "main yf-cfn520"})   # comes above/before article
         local_stub_news = self.nsoup.find_all(attrs={"class": "article yf-l7apfj"})
         local_story = self.nsoup.find(attrs={"class": "body yf-tsvcyu"})  # Op-Ed article - locally hosted
@@ -534,9 +528,19 @@ class yfnews_reader:
                 
                 author_zone = local_news_meta.find("div", attrs={"class": "byline-attr-author yf-1k5w6kz"} )                    
                 pubdate_zone = local_news_meta.find("div", attrs={"class": "byline-attr-time-style"} )
-                author = author_zone.string
+                try:
+                    author = author_zone.a.string
+                except AttributeError:
+                    logging.info ( f"%s - Depth: 2.0 / Author zone error:  No <A> zone - trying basic..." % cmi_debug )
+                    try:
+                        author = author_zone.string
+                    except AttributeError:
+                        logging.info ( f"%s - Depth: 2.0 / Author zone error:  No <A> zone - trying basic..." % cmi_debug )
+                        author = "ERROR_author_zone"
+
                 pubdate = pubdate_zone.time.string
-                logging.info ( f"%s - Depth: 2.0 / Author: {author} / Published: {pubdate}" % cmi_debug )
+
+                print( f"Publish INFO:  [ Author: {author} / Published: {pubdate} ]" )
                 if local_news.find_all("p" ) is not None:
                 #if article_zone is not None:
                     #article = article_zone
@@ -775,9 +779,11 @@ class yfnews_reader:
             # we extracted that in interpret_page()
         else:
             logging.info( f'%s - set BS4 data zones for article: [ {item_idx} ]' % cmi_debug )
-            local_news = self.nsoup.find(attrs={"class": "body yf-tsvcyu"})             # full news article - locally hosted
+            #local_news = self.nsoup.find(attrs={"class": "body yf-tsvcyu"})             # full news article - locally hosted
+            local_news = self.nsoup.find(attrs={"class": "body yf-3qln1o"})             # full news article - locally hosted
             local_news_meta = self.nsoup.find(attrs={"class": "main yf-cfn520"})        # comes above/before article
-            local_stub_news = self.nsoup.find_all(attrs={"class": "article yf-l7apfj"})
+            # local_stub_news = self.nsoup.find_all(attrs={"class": "article yf-l7apfj"})
+            local_stub_news = self.nsoup.find_all(attrs={"class": "body yf-3qln1o"})   # full news article - locally hosted
             local_stub_news_p = local_news.find_all("p")    # BS4 all <p> zones (not just 1)
 
             ####################################################################

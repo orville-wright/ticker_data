@@ -1,4 +1,4 @@
-#! /home/orville/venv/devel/bin/python3
+#!/home/orville/venv/devel/bin/python3
 import requests
 from requests import Request, Session
 from requests_html import HTMLSession
