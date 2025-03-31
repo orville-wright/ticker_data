@@ -103,13 +103,157 @@ class smallcap_screen:
         logging.info('%s - IN' % cmi_debug )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         logging.info('%s - Create clean NULL DataFrame' % cmi_debug )
-        self.dg1_df0 = pd.DataFrame()            # new df, but is NULLed
+        self.tg_df0 = pd.DataFrame()             # new df, but is NULLed
         x = 0
         self.rows_extr = int( len(self.tag_tbody.find_all('tr')) )
+        self.rows_tr_rows = int( len(self.tr_rows) )
 
+        for datarow in self.tr_rows:
+
+            #"""
+            # >>>DEBUG<< for whedatarow.stripped_stringsn yahoo.com changes data model...
+            y = 1
+            print ( f"===================== Debug =========================" )
+            print ( f"Data {y}: {datarow}" )
+            for i in datarow.find_all("td"):
+                print ( f"===================================================" )
+                if i.canvas is not None:
+                    print ( f"Data {y}: Found Canvas, skipping..." )
+                else:
+                    print ( f"Data {y}: {i.text}" )
+                    print ( f"Data : {next(i.stripped_strings)}" )
+                #logging.info( f'%s - Data: {debug_data.strings}' % cmi_debug )
+                y += 1
+            print ( f"===================== Debug =========================" )
+            # >>>DEBUG<< for when yahoo.com changes data model...
+            #"""
+
+            # Data Extractor Generator
+            def extr_gen(): 
+                for i in datarow.find_all("td"):
+                    if i.canvas is not None:
+                        yield ( f"canvas" )
+                    else:
+                        yield ( f"{next(i.stripped_strings)}" )
+
+            ################################ 1 ####################################
+            extr_strs = extr_gen()
+            junk0 = next(extr_strs)              # 0 : junk field (not used)
+            co_sym = next(extr_strs)             # 1 : ticker symbol info / e.g "NWAU"
+            co_name = next(extr_strs)            # 2 : company name / e.g "Consumer Automotive Finance, Inc."
+            mini_chart = next(extr_strs)         # 3 : embeded mini GFX chart
+            price = next(extr_strs)              # 3 : price (Intraday) / e.g "0.0031"
+            logging.info( f"{cmi_debug} : Company Symbol : {co_sym}" )
+            logging.info( f"{cmi_debug} : Company name :   {co_name}" )
+
+            ################################ 2 ####################################
+
+            change_sign = next(extr_strs)        # 4 : test for dedicated column for +/- indicator
+            logging.info( f"{cmi_debug} : {co_sym} : Check $ CHANGE dedicated [+-] field..." )
+            if change_sign == "+" or change_sign == "-":    # 4 : is $ change sign [+/-] a dedciated field
+                change_val = next(extr_strs)     # 4 : Yes, advance iterator to next field (ignore dedciated sign field)
+            else:
+                change_val = change_sign         # 4 : get $ change, but its possibly +/- signed
+                #if (re.search(r'\+', change_val)) or (re.search(r'\-', change_val)) is True:
+                if (re.search('\+', change_val)) or (re.search('\-', change_val)) is not None:
+                    logging.info( f"{cmi_debug} : $ CHANGE: {change_val} [+-], stripping..." )
+                    change_cl = re.sub(r'[\+\-]', "", change_val)       # remove +/- sign
+                    logging.info( f"{cmi_debug} : $ CHANGE cleaned to: {change_cl}" )
+                else:
+                    logging.info( f"{cmi_debug} : {change_val} : $ CHANGE is NOT signed [+-]" )
+                    change_cl = re.sub(r'[\,]', "", change_val)       # remove
+                    logging.info( f"{cmi_debug} : $ CHANGE: {change_cl}" )
+
+            pct_sign = next(extr_strs)              # 5 : test for dedicated column for +/- indicator
+            logging.info( f"{cmi_debug} : {co_sym} : Check % CHANGE dedicated [+-] field..." )
+            if pct_sign == "+" or pct_sign == "-":  # 5 : is %_change sign [+/-] a dedciated field
+                pct_val = next(extr_strs)           # 5 : advance iterator to next field (ignore dedciated sign field)
+            else:
+                pct_val = pct_sign                  # 5 get % change, but its possibly +/- signed
+                if (re.search(r'\+', pct_val)) or (re.search(r'\-', pct_val)) is not None:
+                    logging.info( f"{cmi_debug} : % CHANGE {pct_val} [+-], stripping..." )
+                    pct_cl = re.sub(r'[\+\-\%]', "", pct_val)       # remove +/-/% signs
+                    logging.info( f"{cmi_debug} : % CHANGE cleaned to: {pct_cl}" )
+                else:
+                    logging.info( f"{cmi_debug} : {pct_val} : % CHANGE is NOT signed [+-]" )
+                    change_cl = re.sub(r'[\,\%]', "", pct_val)       # remove
+                    logging.info( f"{cmi_debug} : % CHANGE: {pct_val}" )
+ 
+            ################################ 3 ####################################
+            vol = next(extr_strs)            # 6 : volume with scale indicator/ e.g "70.250k"
+            avg_vol = next(extr_strs)        # 7 : Avg. vol over 3 months) / e.g "61,447"
+            mktcap = next(extr_strs)         # 8 : Market cap with scale indicator / e.g "15.753B"
+            ############################### 4 ####################################
+            # now wrangle the data...
+            co_sym_lj = f"{co_sym:<6}"                                   # left justify TXT in DF & convert to raw string
+            co_name_lj = np.array2string(np.char.ljust(co_name, 60) )    # left justify TXT in DF & convert to raw string
+            co_name_lj = (re.sub(r'[\'\"]', '', co_name_lj) )             # remove " ' and strip leading/trailing spaces     
+            price_cl = (re.sub(r'\,', '', price))                         # remove ,
+            price_clean = float(price_cl)
+            change_clean = float(change_val)
+
+            if pct_val == "N/A":
+                pct_val = float(0.0)                               # Bad data. FOund a filed with N/A instead of read num
+            else:
+                pct_cl = re.sub(r'[\%\+\-,]', "", pct_val )
+                pct_clean = float(pct_cl)
+
+            ################################ 5 ####################################
+            mktcap = (re.sub(r'[N\/A]', '0', mktcap))               # handle N/A
+            TRILLIONS = re.search('T', mktcap)
+            BILLIONS = re.search('B', mktcap)
+            MILLIONS = re.search('M', mktcap)
+
+            if TRILLIONS:
+                mktcap_clean = float(re.sub('T', '', mktcap))
+                mb = "LT"
+                logging.info( f'%s : #{x} : {co_sym_lj} Mkt Cap: TRILLIONS : T' % cmi_debug )
+
+            if BILLIONS:
+                mktcap_clean = float(re.sub('B', '', mktcap))
+                mb = "LB"
+                logging.info( f'%s : #{x} : {co_sym_lj} Mkt cap: BILLIONS : B' % cmi_debug )
+
+            if MILLIONS:
+                mktcap_clean = float(re.sub('M', '', mktcap))
+                mb = "LM"
+                logging.info( f'%s : #{x} : {co_sym_lj} Mkt cap: MILLIONS : M' % cmi_debug )
+
+            if not TRILLIONS and not BILLIONS and not MILLIONS:
+                mktcap_clean = 0    # error condition - possible bad data
+                mb = "LZ"           # Zillions
+                logging.info( f'%s : #{x} : {co_sym_lj} bad mktcap data N/A : Z' % cmi_debug )
+                # handle bad data in mktcap html page field
+ 
+            ################################ 6 ####################################
+            # now construct our list for concatinating to the dataframe 
+            logging.info( f"%s ============= Data prepared for DF =============" % cmi_debug )
+
+            self.list_data = [[ \
+                       x, \
+                       re.sub(r'\'', '', co_sym_lj), \
+                       co_name_lj, \
+                       price_clean, \
+                       change_clean, \
+                       pct_clean, \
+                       mktcap_clean, \
+                       mb, \
+                       time_now ]]
+            ################################ 6 ####################################
+            # convert our list into a 1 row dataframe
+            self.df_1_row = pd.DataFrame(self.list_data, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time' ], index=[x] )
+            self.dg1_df0 = pd.concat([self.dg1_df0, self.df_1_row])
+            x+=1
+
+        logging.info('%s - populated new DF0 dataset' % cmi_debug )
+        return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
+                        # sucess = lobal class accessor (y_topgainers.*_df0) populated & updated
+
+        #========== OLD code = 0 ==============
+        """
         for j in self.tag_tbody.find_all('tr'):
 
-            """
+
             # >>>DEBUG<< for when yahoo.com changes data model...
             y = 1
             for i in j.find_all('td'):
@@ -118,26 +262,31 @@ class smallcap_screen:
                 y += 1
             print ( f"==============================================" )
             # >>>DEBUG<< for when yahoo.com changes data model...
-            """
+
 
             ################################ 1 ####################################
-
+            
             extr_strs = j.strings
-            co_sym = next(extr_strs)             # 1 : ticker symbol info / e.g "NWAU"
-            co_name = next(extr_strs)            # 2 : company name / e.g "Consumer Automotive Finance, Inc."
-            price = next(extr_strs)              # 3 : price (Intraday) / e.g "0.0031"
+            junk0 = next(j.strings)            # 0 : junk field (not used)
+            junk1 = next(j.strings)            # 0 : junk field (not used)
 
-            change_sign = next(extr_strs)        # 4 : test for dedicated column for +/- indicator
+            co_sym = next(extr_strs)             # 1 : ticker symbol info / e.g "NWAU"
+            logging.info( f"{cmi_debug} : Symbol : {co_sym}" )
+            co_name = next(extr_strs)            # 2 : company name / e.g "Consumer Automotive Finance, Inc."
+            logging.info( f"{cmi_debug} : Co Name : {co_name}" )
+            price = next(extr_strs)              # 3 : price (Intraday) / e.g "0.0031"
+            price = re.sub(r'[\,]', "", price)   # remove , seperator            change_sign = next(extr_strs)        # 4 : test for dedicated column for +/- indicator
+            logging.info( f"{cmi_debug} : Price : {price}" )
+            
+
+
             logging.info( f"{cmi_debug} : {co_sym} : Check dedicated [+-] field for $ CHANGE" )
             if change_sign == "+" or change_sign == "-":    # 4 : is $ change sign [+/-] a dedciated field
                 change_val = next(extr_strs)                # 4 : Yes, advance iterator to next field (ignore dedciated sign field)
             else:
                 change_val = change_sign                    # 4 : get $ change, but its possibly +/- signed
-                if (re.search(r'\+', change_val)) or  (re.search(r'\-', change_val)) is True:
-                    logging.info( f"{cmi_debug} : {change_val} : $ CHANGE is signed [+-], stripping..." )
-                    change_cl = re.sub(r'[\+\-]', "", change_val)       # remove +/- sign
-                    logging.info( f"%s : $ CHANGE +/- cleaned : {change_cl}" % cmi_debug )
-                else:
+
+   else:
                     logging.info( f"{cmi_debug} : {change_val} : $ CHANGE is NOT signed [+-]" )
                     change_cl = re.sub(r'[\,]', "", change_val)       # remove
                     logging.info( f"%s : $ CHANGE , cleaned : {change_cl}" % cmi_debug )
@@ -147,7 +296,7 @@ class smallcap_screen:
             if pct_sign == "+" or pct_sign == "-":  # 5 : is %_change sign [+/-] a dedciated field
                 pct_val = next(extr_strs)           # 5 : advance iterator to next field (ignore dedciated sign field)
             else:
-                pct_val = pct_sign                  # 5 get % change, but its possibly +/- signed
+                            pct_val = pct_sign                  # 5 get % change, but its possibly +/- signed
                 if (re.search(r'\+', pct_val)) or  (re.search(r'\-', pct_val)) is True:
                     logging.info( f"{cmi_debug} : {pct_val} : % CHANGE is signed [+-], stripping..." )
                     pct_cl = re.sub(r'[\+\-]', "", pct_val)       # remove +/- signs
@@ -206,31 +355,7 @@ class smallcap_screen:
                 logging.info( f'%s : #{x} : {co_sym_lj} bad mktcap data N/A : SZ' % cmi_debug )
                 # handle bad data in mktcap html page field
 
-            ################################ 5 ####################################
-            # now construct our list for concatinating to the dataframe 
-            logging.info( f"%s ============= Data prepared for DF =============" % cmi_debug )
-
-            self.list_data = [[ \
-                       x, \
-                       re.sub(r'\'', '', co_sym_lj), \
-                       co_name_lj, \
-                       price_clean, \
-                       change_clean, \
-                       pct_clean, \
-                       mktcap_clean, \
-                       mb, \
-                       time_now ]]
-
-            ################################ 6 ####################################
-            # convert our list into a 1 row dataframe
-            self.df_1_row = pd.DataFrame(self.list_data, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time' ], index=[x] )
-            self.dg1_df0 = pd.concat([self.dg1_df0, self.df_1_row])
-            x+=1
-
-        logging.info('%s - populated new DF0 dataset' % cmi_debug )
-        return x        # number of rows inserted into DataFrame (0 = some kind of #FAIL)
-                        # sucess = lobal class accessor (y_topgainers.*_df0) populated & updated
-
+        """
 # ##############################################################################
 # method #3
 # Hacking function - keep me arround for a while
