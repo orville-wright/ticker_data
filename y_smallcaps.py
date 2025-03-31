@@ -103,38 +103,47 @@ class smallcap_screen:
         logging.info('%s - IN' % cmi_debug )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         logging.info('%s - Create clean NULL DataFrame' % cmi_debug )
-        self.tg_df0 = pd.DataFrame()             # new df, but is NULLed
+        self.dg1_df0 = pd.DataFrame()             # new df, but is NULLed
         x = 0
         self.rows_extr = int( len(self.tag_tbody.find_all('tr')) )
         self.rows_tr_rows = int( len(self.tr_rows) )
 
         for datarow in self.tr_rows:
 
-            #"""
+            """
             # >>>DEBUG<< for whedatarow.stripped_stringsn yahoo.com changes data model...
             y = 1
             print ( f"===================== Debug =========================" )
-            print ( f"Data {y}: {datarow}" )
+            #print ( f"Data {y}: {datarow}" )
             for i in datarow.find_all("td"):
                 print ( f"===================================================" )
                 if i.canvas is not None:
                     print ( f"Data {y}: Found Canvas, skipping..." )
+                elif y == 2:
+                    sym_split = i.text.split()
+                    print ( f"Data {y}.txt: {sym_split[1]}" )
+                    #print ( f"Data {y}.gs1: {next(i.stripped_strings)}" )
                 else:
-                    print ( f"Data {y}: {i.text}" )
-                    print ( f"Data : {next(i.stripped_strings)}" )
+                    print ( f"Data {y}.txt: {i.text}" )
+                    print ( f"Data {y}.gs1: {next(i.stripped_strings)}" )
                 #logging.info( f'%s - Data: {debug_data.strings}' % cmi_debug )
                 y += 1
             print ( f"===================== Debug =========================" )
             # >>>DEBUG<< for when yahoo.com changes data model...
-            #"""
+            """
 
             # Data Extractor Generator
-            def extr_gen(): 
+            def extr_gen():
+                gy = 1 
                 for i in datarow.find_all("td"):
                     if i.canvas is not None:
                         yield ( f"canvas" )
+                    elif gy == 2:
+                        sym_split = i.text.split()
+                        yield ( f"{sym_split[-1]}" )
                     else:
                         yield ( f"{next(i.stripped_strings)}" )
+                    gy += 1
 
             ################################ 1 ####################################
             extr_strs = extr_gen()
@@ -155,7 +164,7 @@ class smallcap_screen:
             else:
                 change_val = change_sign         # 4 : get $ change, but its possibly +/- signed
                 #if (re.search(r'\+', change_val)) or (re.search(r'\-', change_val)) is True:
-                if (re.search('\+', change_val)) or (re.search('\-', change_val)) is not None:
+                if (re.search(r'\+', change_val)) or (re.search(r'\-', change_val)) is not None:
                     logging.info( f"{cmi_debug} : $ CHANGE: {change_val} [+-], stripping..." )
                     change_cl = re.sub(r'[\+\-]', "", change_val)       # remove +/- sign
                     logging.info( f"{cmi_debug} : $ CHANGE cleaned to: {change_cl}" )
@@ -239,8 +248,8 @@ class smallcap_screen:
                        mktcap_clean, \
                        mb, \
                        time_now ]]
+            
             ################################ 6 ####################################
-            # convert our list into a 1 row dataframe
             self.df_1_row = pd.DataFrame(self.list_data, columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time' ], index=[x] )
             self.dg1_df0 = pd.concat([self.dg1_df0, self.df_1_row])
             x+=1
