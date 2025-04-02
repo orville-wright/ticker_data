@@ -184,7 +184,9 @@ def main():
  
         #small_cap_dataset.get_data(1)
         #small_cap_dataset.ext_req = scap_reader.get_js_data('finance.yahoo.com/screener/predefined/small_cap_gainers/')
-        small_cap_dataset.ext_req = scap_reader.get_js_data('finance.yahoo.com/research-hub/screener/small_cap_gainers/?guccounter=1&guce_referrer=aHR0cHM6Ly9sb2dpbi55YWhvby5jb20v&guce_referrer_sig=AQAAAI3vp_nhrREFAZEd8hz2PmJEWD7VaT_BSBndiFDRmuxRoEdN6B1ueh0ElsNdB6qSP0A-d1sAs_P0_lteTp51lkefa5U4qBxlDDl5HILBDRTJQ9XuGlBvQ-CzUUPSkSF3vyMhxlQnuAaSsrUSJpAZiHIJTy4YcbWJTYz7YRtOm2sH')
+        #small_cap_dataset.ext_req = scap_reader.get_js_data('finance.yahoo.com/research-hub/screener/small_cap_gainers/?guccounter=1&guce_referrer=aHR0cHM6Ly9sb2dpbi55YWhvby5jb20v&guce_referrer_sig=AQAAAI3vp_nhrREFAZEd8hz2PmJEWD7VaT_BSBndiFDRmuxRoEdN6B1ueh0ElsNdB6qSP0A-d1sAs_P0_lteTp51lkefa5U4qBxlDDl5HILBDRTJQ9XuGlBvQ-CzUUPSkSF3vyMhxlQnuAaSsrUSJpAZiHIJTy4YcbWJTYz7YRtOm2sH')
+        small_cap_dataset.ext_req = scap_reader.get_js_data('finance.yahoo.com/research-hub/screener/small_cap_gainers/')
+
         small_cap_dataset.ext_get_data(1)
         
         x = small_cap_dataset.build_df0()         # build full dataframe
