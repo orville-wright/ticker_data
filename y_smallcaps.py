@@ -215,22 +215,22 @@ class smallcap_screen:
 
             if TRILLIONS:
                 mktcap_clean = float(re.sub('T', '', mktcap))
-                mb = "LT"
+                mb = "ST"
                 logging.info( f'%s : #{x} : {co_sym_lj} Mkt Cap: TRILLIONS : T' % cmi_debug )
 
             if BILLIONS:
                 mktcap_clean = float(re.sub('B', '', mktcap))
-                mb = "LB"
+                mb = "SB"
                 logging.info( f'%s : #{x} : {co_sym_lj} Mkt cap: BILLIONS : B' % cmi_debug )
 
             if MILLIONS:
                 mktcap_clean = float(re.sub('M', '', mktcap))
-                mb = "LM"
+                mb = "SM"
                 logging.info( f'%s : #{x} : {co_sym_lj} Mkt cap: MILLIONS : M' % cmi_debug )
 
             if not TRILLIONS and not BILLIONS and not MILLIONS:
                 mktcap_clean = 0    # error condition - possible bad data
-                mb = "LZ"           # Zillions
+                mb = "SZ"           # Zillions
                 logging.info( f'%s : #{x} : {co_sym_lj} bad mktcap data N/A : Z' % cmi_debug )
                 # handle bad data in mktcap html page field
  
