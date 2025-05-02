@@ -236,7 +236,7 @@ class yfnews_reader:
             cx_soup = self.yfn_jsdb[hash_state]
             self.nsoup = BeautifulSoup(cx_soup.text, "html.parser")   # !!!! this was soup = but I have no idea where "soup" gets set
             logging.info( f'%s - set BS4 data objects' % cmi_debug )
-            self.ul_tag_dataset = self.nsoup.find(attrs={"class": "container yf-1ce4p3e"} )        # produces : list iterator
+            self.ul_tag_dataset = self.nsoup.find(attrs={"class": "mainContent yf-tnbau3"} )        # produces : list iterator
             print (f"#################################################################" )
             print (f"{self.ul_tag_dataset}" )
             print (f"#################################################################" )
