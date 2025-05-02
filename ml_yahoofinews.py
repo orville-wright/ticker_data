@@ -237,7 +237,10 @@ class yfnews_reader:
             self.nsoup = BeautifulSoup(cx_soup.text, "html.parser")   # !!!! this was soup = but I have no idea where "soup" gets set
             logging.info( f'%s - set BS4 data objects' % cmi_debug )
             self.ul_tag_dataset = self.nsoup.find(attrs={"class": "container yf-1ce4p3e"} )        # produces : list iterator
-            self.li_superclass = self.ul_tag_dataset.find_all(attrs={"stream-item story-item yf-1usaaz9"} )
+            print (f"#################################################################" )
+            print (f"{self.ul_tag_dataset}" )
+            print (f"#################################################################" )
+            self.li_superclass = self.ul_tag_dataset.find_all(attrs={"stream-item story-item yf-1drgw51"} )
         except KeyError as error:
             logging.info( f'%s - MISSING in cache: Must read JS page' % cmi_debug )
             logging.info( f'%s - Force read news url: {self.yfqnews_url}' % cmi_debug )
