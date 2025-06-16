@@ -66,3 +66,6 @@ python ml_sentiment.py
 - **API Keys**: Alpaca integration requires API credentials
 - **Real-time Data**: Most extractors work with live market data during trading hours
 - **Cookie Management**: Yahoo Finance modules use `y_cookiemonster.py` for session management
+
+## Recent Updates
+- Add neo4j backend server to the stock pricing system

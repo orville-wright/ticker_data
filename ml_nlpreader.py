@@ -143,7 +143,7 @@ class ml_nlpreader:
             p_r_xturl = urlparse(r_xturl)
             inf_type = self.mlnlp_uh.confidence_lvl(thint)                  # returned var is a tupple - (descr, locality code)
             #
-            print ( f"Article type:   0 / {sn_row['url']}" )                # all type 0 are assumed to be REAL news
+            print ( f"Article type:  [ 0 / {sn_row['url']} ]" )                # all type 0 are assumed to be REAL news
             print ( f"Origin URL:    [ {t_url.netloc} ] / {uhdescr} / {inf_type[0]} / ", end="" )
             print ( f"{locality_code.get(inf_type[1])}" )
             uhint, uhdescr = self.mlnlp_uh.uhinter(21, p_r_xturl)
