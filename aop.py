@@ -5,6 +5,7 @@ import logging
 import argparse
 import time
 import threading
+import re
 from urllib.parse import urlparse
 from rich import print
 
