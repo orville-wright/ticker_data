@@ -96,7 +96,9 @@ class ml_sentiment:
         tokenizer_mml = classifier.tokenizer.model_max_length
         self.ttc = 0
         self.twc = 0
-        print ( f"==== M/L NLP transformer @ max tokens: {tokenizer_mml} : for News article [ {item_idx} ] ====================")
+        if self.args['bool_verbose'] is True:        # Logging level
+            print ( f"Transformer max tokens preset: {tokenizer_mml} : for News article [ {item_idx} ]" )
+
         for i in range(0, len(scentxt)):    # cycle through all scentenses/paragraphs sent to us
             ngram_count = len(re.findall(r'\w+', scentxt[i].text))
             ngram_tkzed = word_tokenize(scentxt[i].text)
@@ -109,7 +111,9 @@ class ml_sentiment:
                 chunk_type = "Randm"
             p_sentiment = classifier(scentxt[i].text, truncation=True)      # WARN: truncating long scentences !!!
 
-            print ( f"Chunk: {i:03} / {chunk_type} / [ n-grams: {ngram_count:03} / tokens: {len(ngram_tkzed):03} / alphas: {len(scentxt[i].text):03} ]", end="" )
+            if self.args['bool_verbose'] is True:        # Logging level
+                print ( f"Chunk: {i:03} / {chunk_type} / [ n-grams: {ngram_count:03} / tokens: {len(ngram_tkzed):03} / alphas: {len(scentxt[i].text):03} ]", end="" )
+
             ngram_sw_remv = [word for word in ngram_tkzed if word.lower() not in stop_words]    # remove stopwords
             ngram_final = ' '.join(ngram_sw_remv)   # reform the scentence
 
@@ -130,7 +134,8 @@ class ml_sentiment:
                 sen_result = p_sentiment[0]
                 raw_score = sen_result['score']
                 rounded_score = np.floor(raw_score * (10 ** 7) ) / (10 ** 7)
-                print ( f" / HFN: {hfw} / Sentiment: {sen_result['label']} {(rounded_score * 100):.5f} %")
+                if self.args['bool_verbose'] is True:        # Logging level
+                    print ( f" / HFN: {hfw} / Sentiment: {sen_result['label']} {(rounded_score * 100):.5f} %")
 
                 # data sentiment data to global sentiment database
                 logging.info( f'%s - Save chunklist to DF for article [ {item_idx} ]...' % cmi_debug )
