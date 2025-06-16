@@ -236,11 +236,24 @@ class yfnews_reader:
             cx_soup = self.yfn_jsdb[hash_state]
             self.nsoup = BeautifulSoup(cx_soup.text, "html.parser")   # !!!! this was soup = but I have no idea where "soup" gets set
             logging.info( f'%s - set BS4 data objects' % cmi_debug )
-            self.ul_tag_dataset = self.nsoup.find(attrs={"class": "mainContent yf-tnbau3"} )        # produces : list iterator
-            print (f"#################################################################" )
-            print (f"{self.ul_tag_dataset}" )
-            print (f"#################################################################" )
-            self.li_superclass = self.ul_tag_dataset.find_all(attrs={"stream-item story-item yf-1drgw51"} )
+            
+            #cul class: stream-items yf-1drgw5l
+            #self.ul_tag_dataset = self.nsoup.ul.find(attrs={"class": "mainContent yf-tnbau3"} )        # produces : list iterator
+            self.ul_tag_dataset = self.nsoup.find_all(attrs={"class": "container yf-1ce4p3e"} )        # produces : list iterator
+            # self.ul_tag_dataset.div.div.div.div.ul.find_all()  # find the first article in the list}
+            #print (f"{self.ul_tag_dataset[0]}" )
+            #print (f"############################# 1 ####################################" )
+            xxx = self.ul_tag_dataset[0]
+            self.li_superclass = xxx.find_all('li')
+            #print ( f"### DEBUG: {self.li_superclass}" )
+            #print ( f"########################### 2 ######################################" )
+# li class="stream-item story-item yf-1drgw5l
+            #print (f"{xxx[0]}")
+            # (attrs={"class": "stream-item story-item yf-1drgw51"}) }" )
+            #print (f"{xxxx[0]}")
+            # stream-item story-item yf-1drgw5l
+            #print (f"#################################################################" )
+            #self.li_superclass = self.ul_tag_dataset.li.find(attrs={"class": "stream-item story-item yf-1drgw51"})
         except KeyError as error:
             logging.info( f'%s - MISSING in cache: Must read JS page' % cmi_debug )
             logging.info( f'%s - Force read news url: {self.yfqnews_url}' % cmi_debug )
@@ -250,12 +263,17 @@ class yfnews_reader:
             logging.info( f'%s - set BS4 data objects' % cmi_debug )
 
             self.ul_tag_dataset = self.nsoup.find(attrs={"class": "container yf-1ce4p3e"} )        # produces : list iterator
-            print ( f"#################################################################" )
-            print ( f"### DEBUG: {self.ul_tag_dataset}" )
-            self.li_superclass = self.ul_tag_dataset.find_all(attrs={"stream-item story-item yf-1usaaz9"} )
-
-        logging.info( f'%s - Depth: 0 / Found News containers: {len(self.ul_tag_dataset)}' % cmi_debug )
-        logging.info( f'%s - Depth: 0 / Found Sub cotainers:   {len(list(self.ul_tag_dataset.children))} / Tags: {len(list(self.ul_tag_dataset.descendants))}' % cmi_debug )
+            #print ( f"########################### 3 ######################################" )
+            #print ( f"### DEBUG: {self.ul_tag_dataset[0]}" )
+            #print ( f"########################### 4 ######################################" )
+            #self.li_superclass = self.ul_tag_dataset.find_all(attrs={"stream-item story-item yf-1usaaz9"} )
+            xxx = self.ul_tag_dataset[0]
+            self.li_superclass = xxx.find_all('li')
+            #self.li_superclass = self.ul_tag_dataset[0].find_all('li')
+            #print ( f"### DEBUG: {self.li_superclass[0]}" )
+  
+        logging.info( f'%s - Depth: 0 / Found News containers: {len(self.ul_tag_dataset[0])}' % cmi_debug )
+        logging.info( f'%s - Depth: 0 / Found Sub cotainers:   {len(list(self.ul_tag_dataset[0].children))} / Tags: {len(list(self.ul_tag_dataset[0].descendants))}' % cmi_debug )
         logging.info( f'%s - Depth: 0 / Found News Articles:   {len(self.li_superclass)}' % cmi_debug)
  
         # >>Xray DEBUG<<
@@ -302,9 +320,9 @@ class yfnews_reader:
         logging.info('%s - IN \n' % cmi_debug )
         time_now = time.strftime("%H:%M:%S", time.localtime() )
         symbol = symbol.upper()
-        li_superclass_all = self.ul_tag_dataset.find_all(attrs={"class": "js-stream-content Pos(r)"} )
-        mini_headline_all = self.ul_tag_dataset.div.find_all(attrs={'class': 'C(#959595)'})
-        li_subset_all = self.ul_tag_dataset.find_all('li')
+        li_superclass_all = self.ul_tag_dataset[0].find_all(attrs={"class": "js-stream-content Pos(r)"} )
+        mini_headline_all = self.ul_tag_dataset[0].div.find_all(attrs={'class': 'C(#959595)'})
+        li_subset_all = self.ul_tag_dataset[0].find_all('li')
 
         h3_counter = a_counter = 0
         x = 1
@@ -509,9 +527,10 @@ class yfnews_reader:
 
         
         logging.info( f'%s - set BS4 data zones for Article: [ {idx} ]' % cmi_debug )
-        local_news = self.nsoup.find(attrs={"class": "body yf-3qln1o"})   # full news article - locally hosted
+        local_news = self.nsoup.find(attrs={"class": "body yf-1ir6o1g"})   # full news article - locally hosted
         #local_news = self.nsoup.find(attrs={"class": "body yf-tsvcyu"})   # full news article - locally hosted
-        local_news_meta = self.nsoup.find(attrs={"class": "main yf-cfn520"})   # comes above/before article
+        # local_news_meta = self.nsoup.find(attrs={"class": "main yf-cfn520"})   # comes above/before article
+        local_news_meta = self.nsoup.find(attrs={"class": "byline yf-1k5w6kz"})   # comes above/before article
         local_stub_news = self.nsoup.find_all(attrs={"class": "article yf-l7apfj"})
         local_story = self.nsoup.find(attrs={"class": "body yf-tsvcyu"})  # Op-Ed article - locally hosted
         local_video = self.nsoup.find(attrs={"class": "body yf-tsvcyu"})  # Video story (minimal supporting text) stub - locally hosted
@@ -568,7 +587,8 @@ class yfnews_reader:
             local_news_meta_desc = self.nsoup.find("meta", attrs={"name": "description"})
 
             #local_news_bmart_cap = local_news_bmart.find("div", attrs={"class": "caas-title-wrapper"})
-            local_news_bmart_cap = local_news_bmart.find("div", attrs={"class": "cover-title yf-1rjrr1"})
+            local_news_bmart_cap = local_news_bmart.find("h1", attrs={"class": "cover-title yf-1rjrr1"})
+            #local_news_bmart_cap = local_news_bmart.find("div", attrs={"class": "atoms-wrapper"})
             caption_pct_cl = re.sub(r'[\%]', "PCT", local_news_bmart_cap.text)  # cant have % in text. Problematic !!
             logging.info ( f'%s - COVER CAPTION: {caption_pct_cl}' % cmi_debug )
 
@@ -779,7 +799,7 @@ class yfnews_reader:
         else:
             logging.info( f'%s - set BS4 data zones for article: [ {item_idx} ]' % cmi_debug )
             #local_news = self.nsoup.find(attrs={"class": "body yf-tsvcyu"})             # full news article - locally hosted
-            local_news = self.nsoup.find(attrs={"class": "body yf-3qln1o"})             # full news article - locally hosted
+            local_news = self.nsoup.find(attrs={"class": "body yf-1ir6o1g"})             # full news article - locally hosted
             local_news_meta = self.nsoup.find(attrs={"class": "main yf-cfn520"})        # comes above/before article
             # local_stub_news = self.nsoup.find_all(attrs={"class": "article yf-l7apfj"})
             local_stub_news = self.nsoup.find_all(attrs={"class": "body yf-3qln1o"})   # full news article - locally hosted
