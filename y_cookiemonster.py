@@ -100,10 +100,9 @@ class y_cookiemonster:
         #with js_session.get( test_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as js_resp0:
         # with js_session.get( 'https://www.javatester.org/javascript.html', stream=True, timeout=5 ) as self.js_resp0
         with js_session.get( js_url ) as self.js_resp0:
+            logging.info( f"%s - JS_session.get() sucessful: {js_url}" % cmi_debug )
         
-            logging.info( f"%s - JS_session.get() sucessful !" % cmi_debug )
-        
-        logging.info( f"%s - html.render()... diasbled" % cmi_debug )
+        logging.info( f"%s - js.render()... diasbled" % cmi_debug )
         #self.js_resp0.html.render()
         # this needs to be a setting that can be controlled from the caller.
         # it correnlty times-out with pypuppeteer timeout failure
@@ -112,7 +111,7 @@ class y_cookiemonster:
         # logging.info( f"%s - html.render() DONE !" % cmi_debug )
 
         hot_cookies = requests.utils.dict_from_cookiejar(self.js_resp0.cookies)
-        logging.info( f"%s - Swap in JS reps0 cookies into js_session yahoo_headers" % cmi_debug )
+        logging.info( f"%s - Swap {len(self.js_resp0.cookies)} JS cookies into yahoo_headers" % cmi_debug )
         js_session.cookies.update(self.yahoo_headers)
         #logging.info( f"%s - Dump JS cookie JAR\n {json.dumps(hot_cookies)}" % cmi_debug )
 

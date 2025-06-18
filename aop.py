@@ -461,30 +461,30 @@ def main():
                     twcz += twc
                     tscz += tsc
 
-            print (f"\n\n==================================== Stats ====================================" )
+            print (f"\n\n========================= Scentement Stats ====================================" )
             print (f"Total tokens generated: {ttkz} - Total words read: {twcz} - Total scent/paras read {tscz}" )
             print (f"Human read time: {(twcz / 237):.2f} mins - Total Human processing time: {(twcz / 237) + tscz + (tscz / 2):.2f} mins" )
             pd.set_option('display.max_rows', None)
             pd.set_option('display.max_columns', None)
             print (f" ==================================== Stats ====================================\n" )
 
-            news_ai.yfn.dump_ml_ingest()
-
-            print (f"{sent_ai.sen_df0}")
-
-            sent_ai.sen_df1 = sent_ai.sen_df0.groupby('Sent').agg(['count'])
-            sent_ai.sen_df2 = sent_ai.sen_df0.groupby('Sent')['Rank'].mean()
-            sent_ai.sen_df1['Sentiment'] = sent_ai.sen_df2
-            sent_ai.sen_df1.loc['Total'] = sent_ai.sen_df1[['Row']].sum()
-            print (f"\n")
+            if args['bool_verbose'] is True:        # Logging level
+                news_ai.yfn.dump_ml_ingest()
+                print (f"{sent_ai.sen_df0}")
+            else:
+                sent_ai.sen_df1 = sent_ai.sen_df0.groupby('Sent').agg(['count'])
+                sent_ai.sen_df2 = sent_ai.sen_df0.groupby('Sent')['Rank'].mean()
+                sent_ai.sen_df1['Sentiment'] = sent_ai.sen_df2
+                sent_ai.sen_df1.loc['Total'] = sent_ai.sen_df1[['Row']].sum()
+                print (f"\n")
 
             neutral_t = sent_ai.sen_df1.loc['Total']['Row']
             sent_ai.sen_df1['Percetage'] = sent_ai.sen_df1['Row'] / neutral_t * 100
             sent_ai.sen_df1 = sent_ai.sen_df1.drop(['Symbol', 'Article', 'Chunk', 'Rank'], axis=1)
+            print ( f"{sent_ai.sen_df1}" )
             
             #neutral_tt = sent_ai.sen_df1.iloc[3, 0]
             #print ( f"### DEBUG: {neutral_tt}" )
-
             # number = int(df1.loc[:,'randomcolumn'])
             #sent_ai.sen_df1['Total'] = sent_ai.sen_df0.groupby('Sent').agg(['count']).sum()
             #print ( f"{sent_ai.sen_df0.groupby(['Article', 'Sent'])['Rank'].mean()}" )
@@ -493,14 +493,14 @@ def main():
             #print ( f"### DEBUG 2:\n{neutral_t}" )
 
             # KGdb stats
-            print ( f"{sent_ai.sen_df1}" )
-            if created is True:    # True = symbol already exists
-                print ( f"Created new KG node_id: {kg_node_id}" )
-            else:
-                print ( f"Symbol allready exist - New node NOT created !" )
-            
-            res = kgraphdb.dump_symbols(1)
-            kgraphdb.close_aopkgdb(1, kgraphdb.driver)
+            if args['bool_verbose'] is True:
+                print (f" ")
+                if created is True:    # True = symbol already exists
+                    print ( f"Created new KG node_id: {kg_node_id}" )
+                else:
+                    print ( f"Symbol allready exist - New node NOT created !" )
+                res = kgraphdb.dump_symbols(1)
+                kgraphdb.close_aopkgdb(1, kgraphdb.driver)
 
 #################################################################################
 # 3 differnt methods to get a live quote ########################################

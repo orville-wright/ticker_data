@@ -1,5 +1,6 @@
 #!/home/orville/venv/devel/bin/python3
 from requests_html import HTMLSession
+import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from datetime import datetime, date
@@ -23,8 +24,8 @@ class yfnews_reader:
 
     # global accessors
     symbol = None           # Unique company symbol
-    yfqnews_url = None      # the URL that is being worked on
-    js_session = None       # main requests session
+    yfqnews_url = None      # SET by form_endpoint - the URL that is being worked on
+    js_session = None       # SET by this class during __init__ - main requests session
     js_resp0 = None         # HTML session get() - response handle
     js_resp2 = None         # JAVAScript session get() - response handle
     yfn_all_data = None     # JSON dataset contains ALL data
@@ -39,6 +40,8 @@ class yfnews_reader:
     yti = 0                 # Unique instance identifier
     cycle = 0               # class thread loop counter
     nlp_x = 0
+    get_counter = 0         # count of get() requests
+    ext_req = ""
     nsoup = None            # BS4 shared handle between UP & DOWN (1 URL, 2 embeded data sets in HTML doc)
     args = []               # class dict to hold global args being passed in from main() methods
     yfn_uh = None           # global url hinter class
@@ -46,42 +49,83 @@ class yfnews_reader:
     a_urlp = None
     article_url = "https://www.defaul_instance_url.com"
     this_article_url = "https://www.default_interpret_page_url.com"
+    dummy_url = "https://finance.yahoo.com/screener/predefined/day_losers"
 
-                            # yahoo.com header/cookie hack 
     yahoo_headers = { \
-                    'authority': 'yahoo.com', \
-                    'path': '/v1/finance/trending/US?lang=en-US&region=US&count=5&corsDomain=finance.yahoo.com', \
-                    'origin': 'https://finance.yahoo.com', \
-                    'referer': 'https://finance.yahoo.com/', \
-                    'sec-ch-ua': '"Chromium";v="92", " Not A;Brand";v="99", "Google Chrome";v="92"', \
-                    'sec-ch-ua-mobile': '"?0"', \
-                    'sec-fetch-mode': 'cors', \
-                    'sec-fetch-site': 'cross-site', \
-                    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36'
-                    }
-
+                        'authority': 'finance.yahoo.com', \
+                        'path': '/screener/predefined/day_gainers/', \
+                        'referer': 'https://finance.yahoo.com/screener/', \
+                        'sec-ch-ua': '"Google Chrome";v="123", "Not:A-Brand";v="8", "Chromium";v="123"', \
+                        'sec-ch-ua-mobile': '"?0"', \
+                        'sec-fetch-mode': 'navigate', \
+                        'sec-fetch-user': '"?1', \
+                        'sec-fetch-site': 'same-origin', \
+                        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36' }
+    
     def __init__(self, yti, symbol, global_args):
         self.yti = yti
-        cmi_debug = __name__+"::"+self.__init__.__name__+".#"+str(self.yti)
+        cmi_debug = __name__+"::"+self.__init__.__name__
         logging.info( f'%s - Instantiate.#{yti}' % cmi_debug )
         # init empty DataFrame with preset colum names
         self.args = global_args
         self.symbol = symbol
         self.nlp_x = 0
         self.cycle = 1
-        self.js_session = HTMLSession()                        # init JAVAScript processor early
-        self.js_session.cookies.update(self.yahoo_headers)     # load cookie/header hack data set into session
-        self.a_urlp = urlparse('https://www.dummyurl.com')
-        self.url_netloc = self.a_urlp.netloc
+        #self.js_session = HTMLSession()                        # init JAVAScript processor early
+        #self.js_session.cookies.update(self.yahoo_headers)     # load cookie/header hack data set into session
+        #self.a_urlp = urlparse('https://www.dummyurl.com')
+        #self.url_netloc = self.a_urlp.netloc
         return
 
-##################################### 1 ############################################
-# method 1
-    def share_hinter(self, hinst):
-        cmi_debug = __name__+"::"+self.share_hinter.__name__+".#"+str(self.yti)
-        logging.info( f'%s - IN {type(hinst)}' % cmi_debug )
-        self.yfn_uh = hinst
+###################################### 6 ###########################################
+# method 6
+    def init_dummy_session(self):
+        self.dummy_resp0 = requests.get(self.dummy_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
+        hot_cookies = requests.utils.dict_from_cookiejar(self.dummy_resp0.cookies)
+        #self.js_session.cookies.update({'A1': self.js_resp0.cookies['A1']} )    # yahoo cookie hack
         return
+
+    def init_live_session(self, id_url):
+        self.live_resp0 = requests.get(id_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
+        return
+ 
+        """        
+        #import requests
+        #self.js_resp0 = self.js_session.get(id_url, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=15)
+        js_url = "https://" + id_url
+
+        logging.info( f"%s - Javascript engine setup..." % cmi_debug )
+        logging.info( f"%s - URL: {js_url}" % cmi_debug )
+        logging.info( f"%s - Init JS_session HTMLsession() setup" % cmi_debug )
+        
+        js_session = HTMLSession()  # Create a new session
+        
+        with js_session.get( js_url ) as self.js_resp0:
+            logging.info( f'%s - extract cookie: {js_url}' % cmi_debug )
+            self.js_resp2 = self.js_resp0  # Set js_resp2 to the same response as js_resp0 for now
+            logging.info( f"%s - JS_session.get() sucessful: {js_url}" % cmi_debug )
+
+        logging.info( f"%s - js.render()... diasbled" % cmi_debug )
+
+        hot_cookies = requests.utils.dict_from_cookiejar(self.js_resp0.cookies)
+        logging.info( f"%s - Swap {len(hot_cookies)} cookies into LOCAL yahoo_headers" % cmi_debug )
+        
+        if self.args['bool_xray'] is True:
+            print (f"############## DEBUG 1 : before ######### #########")
+            for cookie_name, cookie_value in hot_cookies.items():
+                print ( f"Cookie: {cookie_name} - {cookie_value}" )
+
+        js_session.cookies.update(self.yahoo_headers)
+        
+        # Extract cookies for potential use
+        hot_cookies = requests.utils.dict_from_cookiejar(self.js_session.cookies)
+        if self.args['bool_xray'] is True:
+            print (f"############## ######## DEBUG 2 ######### #########")
+            for cookie_name, cookie_value in hot_cookies.items():
+                print ( f"Cookie: {cookie_name} - {cookie_value}" )
+
+        return
+        """
 
 ##################################### 3 ############################################
 # method 3
@@ -104,18 +148,9 @@ class yfnews_reader:
 
         return
 
-###################################### 4 ###########################################
-# method 4
-    def update_cookies(self):
-        # assumes that the requests session has already been established
-        cmi_debug = __name__+"::"+self.update_cookies.__name__+".#"+str(self.yti)
-        logging.info('%s - REDO the cookie extract & update  ' % cmi_debug )
-        self.js_session.cookies.update({'B': self.js_resp0.cookies['B']} )    # yahoo cookie hack
-        return
-
 ###################################### 5 ###########################################
 # method 5
-    def form_url_endpoint(self, symbol):
+    def form_endpoint(self, symbol):
         """
         This is the explicit NEWS URL that is used for the request get()
         NOTE: assumes that path header/cookie has been set first
@@ -127,61 +162,126 @@ class yfnews_reader:
         Symbol research reports - https://finance.yahoo.com/quote/IBM/reports?p=IBM
         """
 
-        cmi_debug = __name__+"::"+self.form_url_endpoint.__name__+".#"+str(self.yti)
-        logging.info( f"%s - form URL endpoint for: {symbol}" % cmi_debug )
-        self.yfqnews_url = 'https://finance.yahoo.com' + self.path    # use global accessor (so all paths are consistent)
-        logging.info( f"%s - API endpoint URL: {self.yfqnews_url}" % cmi_debug )
-        self.yfqnews_url = self.yfqnews_url
+        cmi_debug = __name__+"::"+self.form_endpoint.__name__+".#"+str(self.yti)
+        logging.info( f"%s  - form URL endpoint for: {symbol}" % cmi_debug )
+        self.yfqnews_url = 'https://finance.yahoo.com/quote/' + symbol + '/news/'    # use global accessor (so all paths are consistent)
+        logging.info( f"%s  - API endpoint URL: {self.yfqnews_url}" % cmi_debug )
+        #self.yfqnews_url = self.yfqnews_url
+        # NOTE | WARN: Class global attribute. Used inMANY places once its self set, so be careful
         return
 
-###################################### 6 ###########################################
-# method 6
-    def init_dummy_session(self, id_url):
-        cmi_debug = __name__+"::"+self.init_dummy_session.__name__+".#"+str(self.yti)
-        """
-        NOTE: we ping 'https://www.finance.yahoo.com'
-              No need for a API specific url, as this should be the FIRST get for this url. Goal is to find & extract secret cookies
-        Overwrites js_resp0 - initial session handle, *NOT* the main data session handle (js_resp2)
-        """
+##################################### 1 ############################################
+# method 1
+    def share_hinter(self, hinst):
+        cmi_debug = __name__+"::"+self.share_hinter.__name__+".#"+str(self.yti)
+        logging.info( f'%s - IN {type(hinst)}' % cmi_debug )
+        self.yfn_uh = hinst
+        return
 
-        with self.js_session.get(id_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
-            logging.info('%s - extract & update GOOD cookie  ' % cmi_debug )
-            # self.js_session.cookies.update({'B': self.js_resp0.cookies['B']} )    # yahoo cookie hack
-            # if the get() succeds, the response handle is automatically saved in Class Global accessor -> self.js_resp0
+###################################### 4 ###########################################
+# method 4
+    def update_cookies(self):
+        # assumes that the requests session has already been established
+        cmi_debug = __name__+"::"+self.update_cookies.__name__+".#"+str(self.yti)
+        logging.info('%s - REDO the cookie extract & update  ' % cmi_debug )
+        self.js_session.cookies.update({'A1': self.js_resp0.cookies['A1']} )    # yahoo cookie hack
         return
 
 ###################################### 7 ###########################################
 # method 8
+    def ext_do_js_get(self, idx_x):
+        cmi_debug = __name__+"::"+self.ext_do_js_get.__name__+".#"+str(self.yti)+"."+str(idx_x)
+        
+        # URL validation
+        if not self.yfqnews_url or not isinstance(self.yfqnews_url, str):
+            logging.error(f'{cmi_debug} - Invalid URL: {self.yfqnews_url}')
+            return None
+            
+        logging.info( f'ml_yahoofinews::ext_do_js_get.#{self.yti}.{idx_x}    - URL: %s', self.yfqnews_url )
+
+        # Add delay to avoid rate limiting  
+        time.sleep(1)
+        r = self.ext_req
+        r.html.render(timeout=20)
+        
+        logging.info( f'%s    - JS rendered for Idx: [ {idx_x} ]' % cmi_debug )
+        self.yfn_jsdata = r.html.html           # store Full JAVAScript response TEXT page
+        auh = hashlib.sha256(self.yfqnews_url.encode())     # hash the url
+        aurl_hash = auh.hexdigest()
+        self.yfn_jsdb[aurl_hash] = r            # create CACHE entry in jsdb, response, not full page TEXT data !!
+        logging.info( f'%s    - CREATED cache entry: [ {aurl_hash} ]' % cmi_debug )
+
+        #print (f"r.html.html: {escape(r.html.html)}...")  # Print first 100 characters of the HTML content for debugging
+        
+        return aurl_hash
+        
+    '''
     def do_js_get(self, idx_x):
         """
-        Use JAVAScript engine to process page
+        Use JAVAScript engine to process a page
+        idx_x = index num of the page that has allready been opened, cached & avail in self.yfqnews_url
+        idx_x in NOT used in this method, but is used elsewhere to track the page that is being processed
         Assumes cookies have already been set up. NO cookie update done here
+        yfqnews_url is SET by form_endpoint() method
         ALLWAYS create a CACHE entry in js cache DB
         Return hash of url that was read
         """
         cmi_debug = __name__+"::"+self.do_js_get.__name__+".#"+str(self.yti)+"."+str(idx_x)
-        logging.info( f'ml_yahoofinews::do_js_get.#{self.yti}.#{idx_x}   - URL: %s', self.yfqnews_url )
+        
+        # URL validation
+        if not self.yfqnews_url or not isinstance(self.yfqnews_url, str):
+            logging.error(f'{cmi_debug} - Invalid URL: {self.yfqnews_url}')
+            return None
+            
+        logging.info( f'ml_yahoofinews::ext_do_js_get.#{self.yti}.{idx_x}    - URL: %s', self.yfqnews_url )
+        logging.info('%s - IN' % cmi_debug )
+        logging.info('%s - ext request pre-processed by cookiemonster...' % cmi_debug )
+        
+        # Add delay to avoid rate limiting  
+        time.sleep(1)
+        
+        # f'{news_url}'
+        # self.yfqnews_url
+        try:
+            with self.js_session.get(f'{self.yfqnews_url}', stream=True, headers=self.yahoo_headers, timeout=15 ) as self.js_resp2:
+            #with requests.get('https://finance.yahoo.com', stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp2:
+                logging.info( f'%s    - JS engine rendering / CYCLE: {self.get_counter}' % cmi_debug )
+                # Check if request was successful
+                if self.js_resp2.status_code != 200:
+                    logging.error(f'{cmi_debug}   - {self.js_resp2.status_code}: JS fetch FAILED')
+                    aurl_hash = self.do_simple_get(self.yfqnews_url)
+                    if self.js_resp0.status_code != 200:
+                        logging.error(f'{cmi_debug}   - {self.js_resp0.status_code}: Total fetch FAILURE')
+                        self.get_counter += 1
+                    return None
+                
+                self.get_counter += 1
+                self.js_resp2.html.render(timeout=20)
+                # on scussess, raw HTML (non-JS) response is saved in Class Global accessor -> self.js_resp2
+                # TODO: should do some get(yfqnews_url) failure testing here
 
-        with self.js_session.get(self.yfqnews_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp2:
-            logging.info('%s    - Javascript engine processing...' % cmi_debug )
-            # on scussess, raw HTML (non-JS) response is saved in Class Global accessor -> self.js_resp2
-            self.js_resp2.html.render()
-            # TODO: should do some get() failure testing here
-            logging.info( f'%s    - JS rendered! - store JS dataset [ {idx_x} ]' % cmi_debug )
-            self.yfn_jsdata = self.js_resp2.text                # store Full JAVAScript dataset TEXT page
-            auh = hashlib.sha256(self.yfqnews_url.encode())     # hash the url
-            aurl_hash = auh.hexdigest()
-            logging.info( f'%s    - CREATED cache entry: [ {aurl_hash} ]' % cmi_debug )
-            self.yfn_jsdb[aurl_hash] = self.js_resp2            # create CACHE entry in jsdb !! just response, not full page TEXT data !!
+                logging.info( f'%s    - JS rendered for Idx: [ {idx_x} ]' % cmi_debug )
+                self.yfn_jsdata = self.js_resp2.html.html           # store Full JAVAScript response TEXT page
+                auh = hashlib.sha256(self.yfqnews_url.encode())     # hash the url
+                aurl_hash = auh.hexdigest()
+                self.yfn_jsdb[aurl_hash] = self.js_resp2            # create CACHE entry in jsdb, response, not full page TEXT data !!
+                logging.info( f'%s    - CREATED cache entry: [ {aurl_hash} ]' % cmi_debug )
+                
+        except Exception as e:
+            logging.error(f'{cmi_debug} - Request failed: {str(e)}')
+            return None
   
         # Xray DEBUG
         if self.args['bool_xray'] is True:
-            print ( f"========================== {self.yti} / JS get() session cookies ================================" )
+            print ( f"========================== #{self.yti}.{idx_x} / JS get() session cookies ================================" )
             for i in self.js_session.cookies.items():
                 print ( f"{i}" )
-            print ( f"========================== {self.yti} / JS get() session cookies ================================" )
+            print ( f"========================== #{self.yti}.{idx_x} / JS get() Raw Page Text : START  ================================" )
+            print ( f"{escape(self.yfn_jsdata)}" )  # print the full HTML page text
+            print ( f"========================== #{self.yti}.{idx_x} / JS get() Raw Page Text : END ================================" )
 
         return aurl_hash
+    '''
 
 ###################################### 7 ###########################################
 # Possibly DEPRICATED - Delete me ?
@@ -189,36 +289,48 @@ class yfnews_reader:
         """
         get simple raw HTML data structure (data not processed by JAVAScript engine)
         NOTE: get URL is assumed to have allready been set (self.yfqnews_url)
-              Assumes cookies have already been set up. NO cookie update done here
+              Copies exact pattern from working y_topgainers.py file
         """
-        cmi_debug = __name__+"::"+self.do_simple_get.__name__+".#"+str(self.yti)+" - ">url
-        logging.info( f'%s' % cmi_debug )
+        cmi_debug = __name__+"::"+self.do_simple_get.__name__+".#"+str(self.yti)
+        logging.info( f'%s  - CYCLE: {self.get_counter}' % cmi_debug )
 
-        with self.js_session.get(url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp0:
-            logging.info('%s - Simple HTML Request get()...' % cmi_debug )
-            logging.info( f'%s - Store basic HTML dataset' % cmi_debug )
-            self.yfn_htmldata = self.js_resp0.text
-            auh = hashlib.sha256(url.encode())     # hash the url
-            aurl_hash = auh.hexdigest()
-            logging.info( f'%s - CREATE cache entry: [ {aurl_hash} ]' % cmi_debug )
-            self.yfn_jsdb[aurl_hash] = self.js_resp0            # create CACHE entry in jsdb !!response, not full page TEXT data !!
+        # Copy EXACT pattern from y_topgainers.py line 52 that works
+        import requests
+        
+        logging.info('%s  - Using y_topgainers pattern...' % cmi_debug )
+        # This exact pattern works in y_topgainers.py - note cookies=self.yahoo_headers
+        self.js_resp0 = requests.get('https://finance.yahoo.com/markets/stocks/most-active/', stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=15)
+        
+        logging.info('%s  - Simple HTML Request get()...' % cmi_debug )
+        if self.js_resp0.status_code != 200:
+            logging.error(f'{cmi_debug} - HTTP {self.js_resp0.status_code}: HTML fetch FAILED')
+            return None
+        
+        self.get_counter += 1         
+        logging.info( f'%s  - Store basic HTML dataset' % cmi_debug )
+        self.yfn_htmldata = self.js_resp0.text
+        auh = hashlib.sha256(url.encode())     # hash the url
+        aurl_hash = auh.hexdigest()
+        logging.info( f'%s  - CREATE cache entry: [ {aurl_hash} ]' % cmi_debug )
+        self.yfn_jsdb[aurl_hash] = self.js_resp0            # create CACHE entry in jsdb !!response, not full page TEXT data !!
 
         # Xray DEBUG
         if self.args['bool_xray'] is True:
             print ( f"========================== {self.yti} / HTML get() session cookies ================================" )
             for i in self.js_session.cookies.items():
                 print ( f"{i}" )
-            print ( f"========================== {self.yti} / HTML get() session cookies ================================" )
-
+            print ( f"========================== {self.yti} / HTML get() Raw Page text ================================" )
+            print ( f"{self.js_resp0.text}" )  # print the full HTML page text
+            
         return aurl_hash
 
 ###################################### 8 ###########################################
 # method 9
     def scan_news_feed(self, symbol, depth, scan_type, bs4_obj_idx, hash_state):
         """
+        Symbol : Stock symbol NEWS FEED for articles (e.g. https://finance.yahoo.com/quote/OTLY/news?p=OTLY )
         Depth 0 : Surface scan of all news articles in the news section for a stock ticker
         Scan_type:  0 = html | 1 = Javascript render engine
-        Scan a stock symbol NEWS FEED for articles (e.g. https://finance.yahoo.com/quote/OTLY/news?p=OTLY )
         Share class accessors of where the New Articles live i.e. the <li> section
         """
         cmi_debug = __name__+"::"+self.scan_news_feed.__name__+".#"+str(self.yti)
@@ -226,29 +338,26 @@ class yfnews_reader:
         symbol = symbol.upper()
         depth = int(depth)
         
-        logging.info( f'%s - Scan news for: {symbol} / {self.yfqnews_url}' % cmi_debug )
-        logging.info( f"%s - URL Hinter state: {type(self.yfn_uh)} " % cmi_debug )
+        logging.info( f'%s - Scan news: {symbol} @ {self.yfqnews_url}' % cmi_debug )
+        logging.info( f"%s - URL Hinter cycle: {self.yfn_uh.hcycle} " % cmi_debug )
         if scan_type == 0:    # Simple HTML BS4 scraper
             logging.info( f'%s - Check urlhash cache state: {hash_state}' % cmi_debug )
         try:
-            self.yfn_jsdb[hash_state]
+            self.yfn_jsdb[hash_state]       # check if the URL hash is in the cache
             logging.info( f'%s - URL EXISTS in cache: {hash_state}' % cmi_debug )
             cx_soup = self.yfn_jsdb[hash_state]
-            self.nsoup = BeautifulSoup(cx_soup.text, "html.parser")   # !!!! this was soup = but I have no idea where "soup" gets set
+            self.nsoup = BeautifulSoup(cx_soup.html.html, "html.parser")   # !!!! this was soup = but I have no idea where "soup" gets set
             logging.info( f'%s - set BS4 data objects' % cmi_debug )
             
-            #cul class: stream-items yf-1drgw5l
-            #self.ul_tag_dataset = self.nsoup.ul.find(attrs={"class": "mainContent yf-tnbau3"} )        # produces : list iterator
-            self.ul_tag_dataset = self.nsoup.find_all(attrs={"class": "container yf-1ce4p3e"} )        # produces : list iterator
+            # Major area that gets BROKEN by Yahoo Finance changes
+            self.ul_tag_dataset = self.nsoup.find_all("section", class_="yf-1ce4p3e")        # produces : list iterator
             # self.ul_tag_dataset.div.div.div.div.ul.find_all()  # find the first article in the list}
-            #print (f"{self.ul_tag_dataset[0]}" )
-            #print (f"############################# 1 ####################################" )
-            xxx = self.ul_tag_dataset[0]
-            self.li_superclass = xxx.find_all('li')
-            #print ( f"### DEBUG: {self.li_superclass}" )
-            #print ( f"########################### 2 ######################################" )
-# li class="stream-item story-item yf-1drgw5l
-            #print (f"{xxx[0]}")
+
+            container_node = self.ul_tag_dataset[0]
+            self.li_superclass = container_node.find_all('li')
+
+            # li class="stream-item story-item yf-1drgw5l
+            # print (f"{xxx[0]}")
             # (attrs={"class": "stream-item story-item yf-1drgw51"}) }" )
             #print (f"{xxxx[0]}")
             # stream-item story-item yf-1drgw5l
@@ -505,7 +614,7 @@ class yfnews_reader:
             self.yfqnews_url = durl
             ip_urlp = urlparse(durl)
             ip_headers = ip_urlp.path
-            self.init_dummy_session(durl)
+            self.init_live_session(durl)
             self.update_headers(ip_headers)
 
             #xhash = self.do_js_get(idx)

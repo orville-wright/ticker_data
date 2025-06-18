@@ -16,12 +16,12 @@ logging.basicConfig(level=logging.INFO)
 class y_topgainers:
     """Class to extract Top Gainer data set from finance.yahoo.com"""
     # global accessors
-    tg_df0 = ""          # DataFrame - Full list of top gainers
-    tg_df1 = ""          # DataFrame - Ephemerial list of top 10 gainers. Allways overwritten
-    tg_df2 = ""          # DataFrame - Top 10 ever 10 secs for 60 secs
-    all_tag_tr = ""      # BS4 handle of the <tr> extracted data
+    tg_df0 = None        # DataFrame - Full list of top gainers
+    tg_df1 = None        # DataFrame - Ephemerial list of top 10 gainers. Allways overwritten
+    tg_df2 = None        # DataFrame - Top 10 ever 10 secs for 60 secs
+    all_tag_tr = None    # BS4 handle of the <tr> extracted data
     rows_extr = 0        # number of rows of data extracted
-    ext_req = ""         # request was handled by y_cookiemonster
+    ext_req = None       # request was handled by y_cookiemonster
     yti = 0
     cycle = 0            # class thread loop counter
 
@@ -31,11 +31,10 @@ class y_topgainers:
                         'authority': 'finance.yahoo.com', \
                         'path': '/markets/stocks/most-active/', \
                         'referer': 'https://finance.yahoo.com/markets/', \
-                        'sec-ch-ua': '"Google Chrome";v="123", "Not:A-Brand";v="8", "Chromium";v="123"', \
+                        'sec-ch-ua': '"Google Chrome";v="123", "Not:A-Brand";v="99", "Chromium";v="123"', \
                         'sec-ch-ua-mobile': '"?0"', \
-                        'sec-fetch-mode': 'navigate', \
-                        'sec-fetch-user': '"?1', \
-                        'sec-fetch-site': 'same-origin', \
+                        'sec-fetch-mode': 'cors', \
+                        'sec-fetch-site': 'cross-site', \
                         'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36' }
 
     def __init__(self, yti):

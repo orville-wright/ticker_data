@@ -21,7 +21,6 @@ class ml_sentiment:
 
     # global accessors
     args = []            # class dict to hold global args being passed in from main() methods
-    yfn = None           # Yahoo Finance News reader instance
     mlnlp_uh = None      # URL Hinter instance
     sen_df0 = None
     sen_df1 = None
@@ -34,11 +33,10 @@ class ml_sentiment:
 
     def __init__(self, yti, global_args):
         cmi_debug = __name__+"::"+self.__init__.__name__
-        logging.info( f'%s - Instantiate.#{yti}' % cmi_debug )
+        logging.info( f'%s   - Instantiate.#{yti}' % cmi_debug )
 
         self.args = global_args                            # Only set once per INIT. all methods are set globally
         self.yti = yti
-        #yfn = yfnews_reader(1, "IBM", global_args )        # instantiate a class of fyn with dummy info
         return
 
 ##################################### 1 ####################################
@@ -47,8 +45,8 @@ class ml_sentiment:
         Save key ML sentiment info to global sentimennt Dataframe
         """
         self.yti = yti
-        cmi_debug = __name__+"::"+self.save_sentiment.__name__+".#"+str(self.yti)
-        logging.info('%s - IN' % cmi_debug )
+        cmi_debug = __name__+"::"+self.save_sentiment.__name__
+        logging.info( f"%s - IN.#{yti}" % cmi_debug )
         x = self.df0_row_count      # get last row added to DF
         x += 1
 
