@@ -20,7 +20,7 @@ class ml_nlpreader:
     # global accessors
     args = []               # class dict to hold global args being passed in from main() methods
     ml_yfn_dataset = None   # Yahoo Finance News reader instance
-    mlnlp_uh = None         # URL Hinter instance
+    yfn_uh = None           # URL Hinter instance for the YFN reader
     yti = 0
     cycle = 0               # class thread loop counter
 
@@ -103,10 +103,14 @@ class ml_nlpreader:
         
         #self.yfn.update_headers(hpath)
         #self.yfn.update_cookies()
-        self.ml_yfn_dataset = ml_yfn_dataset            # set global access to the YFN News reader instance
-        hash_state = ml_yfn_dataset.ext_do_js_get(0)    # get() & process the page JS data
-        ml_yfn_dataset.yfn_uh = url_hinter(1, self.args)             # create instance of urh hinter
-       
+        self.ml_yfn_dataset = ml_yfn_dataset                # set global access to the YFN News reader instance
+        hash_state = ml_yfn_dataset.ext_do_js_get(0)        # get() & process the page JS data
+        
+        logging.info( f"%s - globalize url_hinter: [ 1 ]" % cmi_debug )
+        self.yfn_uh = url_hinter(1, self.args)              # create instance of urh hinter
+        ml_yfn_dataset.yfn_uh = self.yfn_uh                 # share the url hinter with the YFN reader instance
+        
+               
         # args: symbol | Depth | html/JS | data_page_index | page cache hash_id
         ml_yfn_dataset.scan_news_feed(news_symbol, 0, 1, 0, hash_state)   
         ml_yfn_dataset.eval_news_feed_stories(news_symbol) # ml_ingest{} get built here
@@ -139,11 +143,10 @@ class ml_nlpreader:
 
         #for sn_idx, sn_row in self.yfn.ml_ingest.items():
         sn_row = self.ml_yfn_dataset.ml_ingest[ml_idx]
-        yd = self.ml_yfn_dataset.yfn_uh
         if sn_row['type'] == 0:                                             # REAL news, inferred from Depth 0
             print( f"{sn_row['symbol']} / Local News article: {ml_idx}" )
             t_url = urlparse(sn_row['url'])                                 # WARN: a rlparse() url_named_tupple (NOT the raw url)
-            uhint, uhdescr = yd.uhinter(0, t_url)
+            uhint, uhdescr = self.yfn_uh.uhinter(0, t_url)
             thint = (sn_row['thint'])                                       # the hint we guessed at while interrogating page <tags>
             logging.info ( f"%s       - Logic.#0 Hints for url: [ t:0 / u:{uhint} / h: {thint} ] / {uhdescr}" % cmi_debug )
 
@@ -152,12 +155,12 @@ class ml_nlpreader:
             
             logging.info ( f"%s       - Inferr conf: {r_xturl}" % cmi_debug )
             p_r_xturl = urlparse(r_xturl)
-            inf_type = yd.confidence_lvl(thint)                  # returned var is a tupple - (descr, locality code)
+            inf_type = self.uhinter.confidence_lvl(thint)                  # returned var is a tupple - (descr, locality code)
             #
             print ( f"Article type:  [ 0 / {sn_row['url']} ]" )                # all type 0 are assumed to be REAL news
             print ( f"Origin URL:    [ {t_url.netloc} ] / {uhdescr} / {inf_type[0]} / ", end="" )
             print ( f"{locality_code.get(inf_type[1])}" )
-            uhint, uhdescr = yd.uhinter(21, p_r_xturl)
+            uhint, uhdescr = self.uhinter(21, p_r_xturl)
             print ( f"Target URL:    [ {p_r_xturl.netloc} ] / {uhdescr} / ", end="" )
             print ( f"{locality_code.get(uhint)} [ u:{uhint} ]" )
             return thint    # what this artuicle actuall;y is
@@ -167,7 +170,7 @@ class ml_nlpreader:
             print ( f"Article: {ml_idx} - Fake News stub micro article - NOT an NLP candidate" )
             print ( f"URL:     {sn_row['url']}" )
             t_url = urlparse(sn_row['url'])
-            uhint, uhdescr = yd.uhinter(1, t_url)      # hint on ORIGIN url
+            uhint, uhdescr = self.uhinter(1, t_url)      # hint on ORIGIN url
             thint = (sn_row['thint'])                   # the hint we guess at while interrogating page <tags>
             logging.info ( f"%s       - Logic.#1 hint origin url: t:1 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
 
@@ -175,12 +178,12 @@ class ml_nlpreader:
             r_uhint, r_thint, r_xturl = self.yfn.interpret_page(ml_idx, sn_row)    
             logging.info ( f"%s       - Logic.#1 hint ext url: {r_xturl}" % cmi_debug )
             p_r_xturl = urlparse(r_xturl)
-            inf_type = yd.confidence_lvl(thint)
+            inf_type = self.uhinter.confidence_lvl(thint)
 
             # summary report...
             print ( f"Origin:  [ {t_url.netloc} ] / {uhdescr} / {inf_type[0]} / ", end="" )
             print ( f"{locality_code.get(inf_type[1], 'in flux')}" )
-            uhint, uhdescr = yd.uhinter(31, p_r_xturl)      # hint on TARGET url
+            uhint, uhdescr = self.uhinter(31, p_r_xturl)      # hint on TARGET url
             print ( f"Hints:   {uhdescr} / ", end="" )
             print ( f"{locality_code.get(uhint, 'in flux')} [ u:{uhint} ]" )
             return thint
@@ -189,7 +192,7 @@ class ml_nlpreader:
         elif sn_row['type'] == 2:
             t_url = urlparse(sn_row['url'])
             thint = (sn_row['thint'])
-            inf_type = yd.confidence_lvl(thint)
+            inf_type = self.uhinter.confidence_lvl(thint)
             print ( f"Article: {ml_idx} - {inf_type[0]}: 2 - NOT an NLP candidate" )
             print ( f"URL:     {sn_row['url']}" )
             print ( f"Origin:  [ {t_url.netloc} ] / {inf_type[0]} / ", end="" )
@@ -199,7 +202,7 @@ class ml_nlpreader:
         
         elif sn_row['type'] == 5:                     # possibly not news, Yahoo Premium subscription add
             thint = (sn_row['thint'])
-            inf_type = yd.confidence_lvl(thint)
+            inf_type = self.uhinter.confidence_lvl(thint)
             print ( f"Article: {ml_idx} - {inf_type[0]}: 5 - NOT an NLP candidate" )
             logging.info ( f"%s - skipping..." % cmi_debug )
             thint = (sn_row['thint'])

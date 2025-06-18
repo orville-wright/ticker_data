@@ -41,7 +41,7 @@ class yfnews_reader:
     cycle = 0               # class thread loop counter
     nlp_x = 0
     get_counter = 0         # count of get() requests
-    ext_req = ""
+    ext_req = ""            # HTMLSession request handle
     nsoup = None            # BS4 shared handle between UP & DOWN (1 URL, 2 embeded data sets in HTML doc)
     args = []               # class dict to hold global args being passed in from main() methods
     yfn_uh = None           # global url hinter class
@@ -133,17 +133,18 @@ class yfnews_reader:
         cmi_debug = __name__+"::"+self.update_headers.__name__+".#"+str(self.yti)
 
         # HACK! to help logging() bug to handle URLs with % in string
-        logging.info('%s  - set cookies/headers PATH object' % cmi_debug )
+        logging.info('%s  - set cookiemonster cookies/headers PATH object' % cmi_debug )
         cmi_debug = __name__+"::"+self.update_headers.__name__+".#"+str(self.yti)+"  - "+these_headers
         logging.info('%s' % cmi_debug )
 
         self.path = these_headers
-        self.js_session.cookies.update({'path': self.path} )
+        #self.js_session.cookies.update({'path': self.path} )
+        self.ext_req.cookies.update({'path': self.path} )
         cmi_debug = __name__+"::"+self.update_headers.__name__+".#"+str(self.yti)
 
         if self.args['bool_xray'] is True:
             print ( f"=========================== {self.yti} / session cookies ===========================" )
-            for i in self.js_session.cookies.items():
+            for i in self.ext_req.cookies.items():
                 print ( f"{i}" )
 
         return
@@ -202,10 +203,11 @@ class yfnews_reader:
         # Add delay to avoid rate limiting  
         time.sleep(1)
         r = self.ext_req
-        r.html.render(timeout=20)
+        r.html.render(timeout=15)
         
         logging.info( f'%s    - JS rendered for Idx: [ {idx_x} ]' % cmi_debug )
         self.yfn_jsdata = r.html.html           # store Full JAVAScript response TEXT page
+        self.yfn_htmldata = r.html.html
         auh = hashlib.sha256(self.yfqnews_url.encode())     # hash the url
         aurl_hash = auh.hexdigest()
         self.yfn_jsdb[aurl_hash] = r            # create CACHE entry in jsdb, response, not full page TEXT data !!
@@ -617,23 +619,31 @@ class yfnews_reader:
             self.init_live_session(durl)
             self.update_headers(ip_headers)
 
-            #xhash = self.do_js_get(idx)
-            xhash = self.do_simple_get(durl)             # for testing non JS Basic HTML get()
+            xhash = self.ext_do_js_get(idx)
+            #xhash = self.do_simple_get(durl)             # for testing non JS Basic HTML get()
             self.yfqnews_url = durl                      # ""   ""
             logging.info( f'%s - REPEAT cache lookup for urlhash: {cached_state}' % cmi_debug )
-            if self.yfn_jsdb[cached_state]:
+            logging.info( f'%s - AFTER creating: {xhash}' % cmi_debug )
+            # print (f"####### Dump Cache #####\n{self.yfn_jsdb.keys()}")
+            
+            try:
+                self.yfn_jsdb[cached_state]
                 logging.info( f'%s - Cached object FOUND: {cached_state}' % cmi_debug )
                 cy_soup = self.yfn_jsdb[cached_state]    # get() response 
-                #dataset_2 = self.yfn_jsdata
-                dataset_2 = self.yfn_htmldata           # for testing non JS Basic HTML get()
+
+                dataset_2 = self.yfn_jsdata
+                #dataset_2 = self.yfn_htmldata           # for testing non JS Basic HTML get()
                 logging.info ( f'%s - cache url:     {type(durl)}' % cmi_debug )
                 logging.info ( f'%s - cache request: {type(cy_soup)}' % cmi_debug )
                 logging.info ( f'%s - Cache dataset: {type(self.yfn_jsdata)}' % cmi_debug )
                 self.nsoup = BeautifulSoup(escape(dataset_2), "html.parser")
-            else:
+            except KeyError:
+                logging.info( f'%s - MISSING from cache / must read page' % cmi_debug )
+                logging.info( f'%s - Cache URL object  : {type(durl)}' % cmi_debug )
                 logging.info( f'%s - FAILED to read JS doc and set BS4 obejcts' % cmi_debug )
                 return 10, 10.0, "ERROR_unknown_state!"
 
+        print (f"#### #### #### DUMP nsoup: #### #### ####\n {self.nsoup.prettify()}" )  # DEBUG: dump the full soup object
         
         logging.info( f'%s - set BS4 data zones for Article: [ {idx} ]' % cmi_debug )
         local_news = self.nsoup.find(attrs={"class": "body yf-1ir6o1g"})   # full news article - locally hosted

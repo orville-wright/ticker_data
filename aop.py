@@ -429,7 +429,7 @@ def main():
             print ( f"M/L news reader for Stock [ {news_symbol} ] =========================" )
             news_ai = ml_nlpreader(1, args)
             sent_ai = ml_sentiment(1, args)
-            news_ai.nlp_read_one(news_symbol, args)
+            news_ai.nlp_read_one(news_symbol, args)     # includes scan_news_feed() & eval_news_feed_stories()
             kgraphdb = db_graph(1, args)    # inst a class 
             kgraphdb.con_aopkgdb(1)         # connect to neo4j db
 
