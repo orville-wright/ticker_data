@@ -85,10 +85,20 @@ class yfnews_reader:
         #self.js_session.cookies.update({'A1': self.js_resp0.cookies['A1']} )    # yahoo cookie hack
         return
 
+###################################### 6 ###########################################
+
     def init_live_session(self, id_url):
+        '''
+        A key objetcive acheived here is populating the existing yahoo_headers with live cookies
+        from the live session. This is done by the requests.get() method
+        But, we dont need the response object, so we dont store it
+        Thats allready been captured at stored in: self.ext_req object
+        '''
         self.live_resp0 = requests.get(id_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
         return
- 
+
+###################################### 6 ###########################################
+        # DELETE ME Junk
         """        
         #import requests
         #self.js_resp0 = self.js_session.get(id_url, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=15)
@@ -129,19 +139,16 @@ class yfnews_reader:
 
 ##################################### 3 ############################################
 # method 3
-    def update_headers(self, these_headers):
+    def update_headers(self, ch):
         cmi_debug = __name__+"::"+self.update_headers.__name__+".#"+str(self.yti)
 
-        # HACK! to help logging() bug to handle URLs with % in string
-        logging.info('%s  - set cookiemonster cookies/headers PATH object' % cmi_debug )
-        cmi_debug = __name__+"::"+self.update_headers.__name__+".#"+str(self.yti)+"  - "+these_headers
+        # HACK to help logging() bug to handle URLs with % in string
+        logging.info(f"%s  - set cookies/headers: [ {ch} ]" % cmi_debug )
+        cmi_debug = __name__+"::"+self.update_headers.__name__+".#"+str(self.yti)+"  - "+ch
         logging.info('%s' % cmi_debug )
-
-        self.path = these_headers
-        #self.js_session.cookies.update({'path': self.path} )
+        self.path = ch
         self.ext_req.cookies.update({'path': self.path} )
-        cmi_debug = __name__+"::"+self.update_headers.__name__+".#"+str(self.yti)
-
+ 
         if self.args['bool_xray'] is True:
             print ( f"=========================== {self.yti} / session cookies ===========================" )
             for i in self.ext_req.cookies.items():
@@ -168,7 +175,7 @@ class yfnews_reader:
         self.yfqnews_url = 'https://finance.yahoo.com/quote/' + symbol + '/news/'    # use global accessor (so all paths are consistent)
         logging.info( f"%s  - API endpoint URL: {self.yfqnews_url}" % cmi_debug )
         #self.yfqnews_url = self.yfqnews_url
-        # NOTE | WARN: Class global attribute. Used inMANY places once its self set, so be careful
+        # NOTE | WARN: Class global attribute. Used in MANY places once its self set, so be careful
         return
 
 ##################################### 1 ############################################
@@ -198,92 +205,23 @@ class yfnews_reader:
             logging.error(f'{cmi_debug} - Invalid URL: {self.yfqnews_url}')
             return None
             
-        logging.info( f'ml_yahoofinews::ext_do_js_get.#{self.yti}.{idx_x}    - URL: %s', self.yfqnews_url )
+        logging.info( f'ml_yahoofinews::ext_do_js_get.#{self.yti}.{idx_x} - %s', self.yfqnews_url )
 
         # Add delay to avoid rate limiting  
         time.sleep(1)
         r = self.ext_req
-        r.html.render(timeout=15)
+        r.html.render(timeout=10)
         
-        logging.info( f'%s    - JS rendered for Idx: [ {idx_x} ]' % cmi_debug )
-        self.yfn_jsdata = r.html.html           # store Full JAVAScript response TEXT page
-        self.yfn_htmldata = r.html.html
+        logging.info( f'%s - JS rendered for Idx: [ {idx_x} ]' % cmi_debug )
+        self.yfn_jsdata = r.html.text           # store Full JAVAScript response TEXT page
+        self.yfn_htmldata = r.html.text
         auh = hashlib.sha256(self.yfqnews_url.encode())     # hash the url
         aurl_hash = auh.hexdigest()
         self.yfn_jsdb[aurl_hash] = r            # create CACHE entry in jsdb, response, not full page TEXT data !!
-        logging.info( f'%s    - CREATED cache entry: [ {aurl_hash} ]' % cmi_debug )
+        logging.info( f'%s - CREATED cache entry: [ {aurl_hash} ]' % cmi_debug )
 
-        #print (f"r.html.html: {escape(r.html.html)}...")  # Print first 100 characters of the HTML content for debugging
-        
+        #print (f"r.html.html: {escape(r.html.html)}...")  # Print first 100 characters of the HTML content for debugging 
         return aurl_hash
-        
-    '''
-    def do_js_get(self, idx_x):
-        """
-        Use JAVAScript engine to process a page
-        idx_x = index num of the page that has allready been opened, cached & avail in self.yfqnews_url
-        idx_x in NOT used in this method, but is used elsewhere to track the page that is being processed
-        Assumes cookies have already been set up. NO cookie update done here
-        yfqnews_url is SET by form_endpoint() method
-        ALLWAYS create a CACHE entry in js cache DB
-        Return hash of url that was read
-        """
-        cmi_debug = __name__+"::"+self.do_js_get.__name__+".#"+str(self.yti)+"."+str(idx_x)
-        
-        # URL validation
-        if not self.yfqnews_url or not isinstance(self.yfqnews_url, str):
-            logging.error(f'{cmi_debug} - Invalid URL: {self.yfqnews_url}')
-            return None
-            
-        logging.info( f'ml_yahoofinews::ext_do_js_get.#{self.yti}.{idx_x}    - URL: %s', self.yfqnews_url )
-        logging.info('%s - IN' % cmi_debug )
-        logging.info('%s - ext request pre-processed by cookiemonster...' % cmi_debug )
-        
-        # Add delay to avoid rate limiting  
-        time.sleep(1)
-        
-        # f'{news_url}'
-        # self.yfqnews_url
-        try:
-            with self.js_session.get(f'{self.yfqnews_url}', stream=True, headers=self.yahoo_headers, timeout=15 ) as self.js_resp2:
-            #with requests.get('https://finance.yahoo.com', stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 ) as self.js_resp2:
-                logging.info( f'%s    - JS engine rendering / CYCLE: {self.get_counter}' % cmi_debug )
-                # Check if request was successful
-                if self.js_resp2.status_code != 200:
-                    logging.error(f'{cmi_debug}   - {self.js_resp2.status_code}: JS fetch FAILED')
-                    aurl_hash = self.do_simple_get(self.yfqnews_url)
-                    if self.js_resp0.status_code != 200:
-                        logging.error(f'{cmi_debug}   - {self.js_resp0.status_code}: Total fetch FAILURE')
-                        self.get_counter += 1
-                    return None
-                
-                self.get_counter += 1
-                self.js_resp2.html.render(timeout=20)
-                # on scussess, raw HTML (non-JS) response is saved in Class Global accessor -> self.js_resp2
-                # TODO: should do some get(yfqnews_url) failure testing here
-
-                logging.info( f'%s    - JS rendered for Idx: [ {idx_x} ]' % cmi_debug )
-                self.yfn_jsdata = self.js_resp2.html.html           # store Full JAVAScript response TEXT page
-                auh = hashlib.sha256(self.yfqnews_url.encode())     # hash the url
-                aurl_hash = auh.hexdigest()
-                self.yfn_jsdb[aurl_hash] = self.js_resp2            # create CACHE entry in jsdb, response, not full page TEXT data !!
-                logging.info( f'%s    - CREATED cache entry: [ {aurl_hash} ]' % cmi_debug )
-                
-        except Exception as e:
-            logging.error(f'{cmi_debug} - Request failed: {str(e)}')
-            return None
-  
-        # Xray DEBUG
-        if self.args['bool_xray'] is True:
-            print ( f"========================== #{self.yti}.{idx_x} / JS get() session cookies ================================" )
-            for i in self.js_session.cookies.items():
-                print ( f"{i}" )
-            print ( f"========================== #{self.yti}.{idx_x} / JS get() Raw Page Text : START  ================================" )
-            print ( f"{escape(self.yfn_jsdata)}" )  # print the full HTML page text
-            print ( f"========================== #{self.yti}.{idx_x} / JS get() Raw Page Text : END ================================" )
-
-        return aurl_hash
-    '''
 
 ###################################### 7 ###########################################
 # Possibly DEPRICATED - Delete me ?
@@ -296,34 +234,36 @@ class yfnews_reader:
         cmi_debug = __name__+"::"+self.do_simple_get.__name__+".#"+str(self.yti)
         logging.info( f'%s  - CYCLE: {self.get_counter}' % cmi_debug )
 
-        # Copy EXACT pattern from y_topgainers.py line 52 that works
-        import requests
-        
-        logging.info('%s  - Using y_topgainers pattern...' % cmi_debug )
-        # This exact pattern works in y_topgainers.py - note cookies=self.yahoo_headers
-        self.js_resp0 = requests.get('https://finance.yahoo.com/markets/stocks/most-active/', stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=15)
-        
-        logging.info('%s  - Simple HTML Request get()...' % cmi_debug )
-        if self.js_resp0.status_code != 200:
-            logging.error(f'{cmi_debug} - HTTP {self.js_resp0.status_code}: HTML fetch FAILED')
-            return None
-        
-        self.get_counter += 1         
+        js_session = HTMLSession()                  # Create a new session        
+        with js_session.get(url) as self.js_resp0:  # must do a get() - NO setting cookeis/headers)
+            logging.info(f'%s  - Simple HTML Request get()...' % cmi_debug )
+            logging.info( f"%s - JS_session.get() sucessful: {url}" % cmi_debug )
+            if self.js_resp0.status_code != 200:
+                    logging.error(f'{cmi_debug} - HTTP {self.js_resp0.status_code}: HTML fetch FAILED')
+                    return None
+            
+        self.get_counter += 1
+        logging.info( f"%s  - js.render()... diasbled" % cmi_debug )
         logging.info( f'%s  - Store basic HTML dataset' % cmi_debug )
+        self.js_resp2 = self.js_resp0               # Set js_resp2 to the same response as js_resp0 for now
+        hot_cookies = requests.utils.dict_from_cookiejar(self.js_resp0.cookies)
+        logging.info( f"%s - Swap {len(hot_cookies)} cookies into LOCAL yahoo_headers" % cmi_debug )
+
         self.yfn_htmldata = self.js_resp0.text
-        auh = hashlib.sha256(url.encode())     # hash the url
+        auh = hashlib.sha256(url.encode())          # hash the url
         aurl_hash = auh.hexdigest()
         logging.info( f'%s  - CREATE cache entry: [ {aurl_hash} ]' % cmi_debug )
-        self.yfn_jsdb[aurl_hash] = self.js_resp0            # create CACHE entry in jsdb !!response, not full page TEXT data !!
+        self.yfn_jsdb[aurl_hash] = self.js_resp0    # create CACHE entry in jsdb !!response, not full page TEXT data !!
 
         # Xray DEBUG
         if self.args['bool_xray'] is True:
             print ( f"========================== {self.yti} / HTML get() session cookies ================================" )
-            for i in self.js_session.cookies.items():
+            logging.info( f'%s  - resp0 type: {type(self.js_resp0)}' % cmi_debug )
+            for i in self.js_resp0.cookies.items():
                 print ( f"{i}" )
             print ( f"========================== {self.yti} / HTML get() Raw Page text ================================" )
-            print ( f"{self.js_resp0.text}" )  # print the full HTML page text
-            
+            print ( f"{escape(self.js_resp0.text)}" )  # print the full HTML page text
+
         return aurl_hash
 
 ###################################### 8 ###########################################
@@ -394,19 +334,24 @@ class yfnews_reader:
             print ( f"=============== <li> zone : {x} children+descendants ====================" )
             for child in self.li_superclass:
                 if child.name is not None:
-                    print ( f"Zone: {x}: {child.h3.text} / (potential News article)" )
-                    y += 1
-                    """
-                    for element in child.descendants:
-                        print ( f"{y}: {element.name} ", end="" )
+                    try:
+                        print ( f"Item: {y}: {child.h3.text} / (potential News article)" )
                         y += 1
-                    """
-                    print ( f"==================== End <li> zone : {x} =========================" )
-                    x += 1
+                    except AttributeError as error:
+                        print ( f"Item: {y}: No h3.TEXT Found" )
+                        y += 1
+                        """
+                        for element in child.descendants:
+                            print ( f"{y}: {element.name} ", end="" )
+                            y += 1
+                            """
+                        x += 1
+                        print ( f"==================== End <li> zone : {x} =========================" )
                 else:
-                    print ( f"Zone: {x}: Empty no article data" )
+                    print ( f"Item: {y}: Empty no article data" )
                     print ( f"\n==================== End <li> zone : {x} =========================" )
- 
+                    x += 1
+    
         return
 
 ###################################### 9 ###########################################
@@ -570,11 +515,7 @@ class yfnews_reader:
         5. other
         """
 
-        # data elements extracted & computed
-        # Authour, Date posted, Time posted, Age of article
-        #cmi_debug = __name__+"::interpret_page.#"+str(self.yti)
         cmi_debug = __name__+"::"+self.interpret_page.__name__+".#"+str(item_idx)
-        #logging.info('%s - IN' % cmi_debug )
         right_now = date.today()
         idx = item_idx
         #data_row = data_row
@@ -591,59 +532,52 @@ class yfnews_reader:
         logging.info( f'%s - urlhash cache lookup: {cached_state}' % cmi_debug )
         cmi_debug = __name__+"::"+self.interpret_page.__name__+".#"+str(item_idx)+" - "+durl
         logging.info( f'%s' % cmi_debug )     # hack fix for urls containg "%" break logging module (NO FIX
-        #logging.info( f'ml_yahoofinews::interpret_page: - %s' % durl )     # urls containg "%" break logging module (NO FIX)
         cmi_debug = __name__+"::"+self.interpret_page.__name__+".#"+str(item_idx)
 
-        logging.info( f'%s - CHECKING cache... {cached_state}' % cmi_debug )
         try:
             self.yfn_jsdb[cached_state]
             cx_soup = self.yfn_jsdb[cached_state]
             logging.info( f'%s - Cached object FOUND: {cached_state}' % cmi_debug )
-            dataset_1 = self.yfn_jsdata     # processed data from request.get() response
+            dataset_1 = self.yfn_jsdata     # 1
             self.nsoup = BeautifulSoup(escape(dataset_1), "html.parser")
             logging.info( f'%s - Cache BS4 object:   {type(cx_soup)}' % cmi_debug )
             logging.info( f'%s - Dataset object    : {type(dataset_1)}' % cmi_debug )
             logging.info( f'%s - Cache URL object  : {type(durl)}' % cmi_debug )
         except KeyError:
-            logging.info( f'%s - MISSING from cache / must read page' % cmi_debug )
-            logging.info( f'%s - Cache URL object  : {type(durl)}' % cmi_debug )
- 
-            cmi_debug = __name__+"::"+self.interpret_page.__name__+".#"+str(item_idx)+" - "+durl
-            logging.info( f'%s' % cmi_debug )     # hack fix for urls containg "%" break logging module (NO FIX
-            #logging.info( f'ml_yahoofinews::interpret_page: - %s' % durl )     # urls containg "%" break logging module (NO FIX)
-            cmi_debug = __name__+"::"+self.interpret_page.__name__+".#"+str(item_idx)
- 
+            logging.info( f'%s - Not in Cache / must read page' % cmi_debug )
+            logging.info( f'%s - Cache type : {type(durl)}' % cmi_debug )
+            logging.info( f'%s - Cache URL : {durl}' % cmi_debug )
+            
+            # Must read the page, since its not in the cache
             self.yfqnews_url = durl
             ip_urlp = urlparse(durl)
-            ip_headers = ip_urlp.path
-            self.init_live_session(durl)
-            self.update_headers(ip_headers)
+            ip_headers = ip_urlp.path           # remove https:// from url
+            self.init_live_session(durl)        # WARN: not sure this does much. Suspect cookie refresh
+            self.update_headers(ip_headers)     # update coooike object - path: ip_headers
 
-            xhash = self.ext_do_js_get(idx)
-            #xhash = self.do_simple_get(durl)             # for testing non JS Basic HTML get()
-            self.yfqnews_url = durl                      # ""   ""
-            logging.info( f'%s - REPEAT cache lookup for urlhash: {cached_state}' % cmi_debug )
-            logging.info( f'%s - AFTER creating: {xhash}' % cmi_debug )
+            #xhash = self.ext_do_js_get(idx)     # JS Render mode : loads data into self.yfn_jsdata
+            xhash = self.do_simple_get(durl)     # basic HTML mode: for testing non JS Basic HTML get()
+            self.yfqnews_url = durl
+            logging.info( f'%s - REPEAT cache lookup: {cached_state}' % cmi_debug )
             # print (f"####### Dump Cache #####\n{self.yfn_jsdb.keys()}")
             
             try:
                 self.yfn_jsdb[cached_state]
-                logging.info( f'%s - Cached object FOUND: {cached_state}' % cmi_debug )
+                logging.info( f'%s - Cached  object  FOUND: {cached_state}' % cmi_debug )
+                logging.info( f'%s - Hash from forced READ: {xhash}' % cmi_debug )
                 cy_soup = self.yfn_jsdb[cached_state]    # get() response 
 
-                dataset_2 = self.yfn_jsdata
-                #dataset_2 = self.yfn_htmldata           # for testing non JS Basic HTML get()
+                #dataset_2 = self.yfn_jsdata
+                dataset_2 = self.yfn_htmldata           # for testing non JS Basic HTML get()
                 logging.info ( f'%s - cache url:     {type(durl)}' % cmi_debug )
                 logging.info ( f'%s - cache request: {type(cy_soup)}' % cmi_debug )
                 logging.info ( f'%s - Cache dataset: {type(self.yfn_jsdata)}' % cmi_debug )
                 self.nsoup = BeautifulSoup(escape(dataset_2), "html.parser")
             except KeyError:
-                logging.info( f'%s - MISSING from cache / must read page' % cmi_debug )
+                logging.info( f'%s - CORRUPT cache state' % cmi_debug )
                 logging.info( f'%s - Cache URL object  : {type(durl)}' % cmi_debug )
-                logging.info( f'%s - FAILED to read JS doc and set BS4 obejcts' % cmi_debug )
+                logging.info( f'%s - FAILED to read JS page and set BS4 obejcts' % cmi_debug )
                 return 10, 10.0, "ERROR_unknown_state!"
-
-        print (f"#### #### #### DUMP nsoup: #### #### ####\n {self.nsoup.prettify()}" )  # DEBUG: dump the full soup object
         
         logging.info( f'%s - set BS4 data zones for Article: [ {idx} ]' % cmi_debug )
         local_news = self.nsoup.find(attrs={"class": "body yf-1ir6o1g"})   # full news article - locally hosted
