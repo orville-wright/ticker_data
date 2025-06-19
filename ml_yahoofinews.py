@@ -71,21 +71,16 @@ class yfnews_reader:
         self.symbol = symbol
         self.nlp_x = 0
         self.cycle = 1
-        #self.js_session = HTMLSession()                        # init JAVAScript processor early
-        #self.js_session.cookies.update(self.yahoo_headers)     # load cookie/header hack data set into session
-        #self.a_urlp = urlparse('https://www.dummyurl.com')
-        #self.url_netloc = self.a_urlp.netloc
         return
 
-###################################### 6 ###########################################
+###################################### 1 ###########################################
 # method 6
     def init_dummy_session(self):
         self.dummy_resp0 = requests.get(self.dummy_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
-        hot_cookies = requests.utils.dict_from_cookiejar(self.dummy_resp0.cookies)
-        #self.js_session.cookies.update({'A1': self.js_resp0.cookies['A1']} )    # yahoo cookie hack
+        #hot_cookies = requests.utils.dict_from_cookiejar(self.dummy_resp0.cookies)
         return
 
-###################################### 6 ###########################################
+###################################### 2 ###########################################
 
     def init_live_session(self, id_url):
         '''
@@ -97,48 +92,8 @@ class yfnews_reader:
         self.live_resp0 = requests.get(id_url, stream=True, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=5 )
         return
 
-###################################### 6 ###########################################
-        # DELETE ME Junk
-        """        
-        #import requests
-        #self.js_resp0 = self.js_session.get(id_url, headers=self.yahoo_headers, cookies=self.yahoo_headers, timeout=15)
-        js_url = "https://" + id_url
-
-        logging.info( f"%s - Javascript engine setup..." % cmi_debug )
-        logging.info( f"%s - URL: {js_url}" % cmi_debug )
-        logging.info( f"%s - Init JS_session HTMLsession() setup" % cmi_debug )
-        
-        js_session = HTMLSession()  # Create a new session
-        
-        with js_session.get( js_url ) as self.js_resp0:
-            logging.info( f'%s - extract cookie: {js_url}' % cmi_debug )
-            self.js_resp2 = self.js_resp0  # Set js_resp2 to the same response as js_resp0 for now
-            logging.info( f"%s - JS_session.get() sucessful: {js_url}" % cmi_debug )
-
-        logging.info( f"%s - js.render()... diasbled" % cmi_debug )
-
-        hot_cookies = requests.utils.dict_from_cookiejar(self.js_resp0.cookies)
-        logging.info( f"%s - Swap {len(hot_cookies)} cookies into LOCAL yahoo_headers" % cmi_debug )
-        
-        if self.args['bool_xray'] is True:
-            print (f"############## DEBUG 1 : before ######### #########")
-            for cookie_name, cookie_value in hot_cookies.items():
-                print ( f"Cookie: {cookie_name} - {cookie_value}" )
-
-        js_session.cookies.update(self.yahoo_headers)
-        
-        # Extract cookies for potential use
-        hot_cookies = requests.utils.dict_from_cookiejar(self.js_session.cookies)
-        if self.args['bool_xray'] is True:
-            print (f"############## ######## DEBUG 2 ######### #########")
-            for cookie_name, cookie_value in hot_cookies.items():
-                print ( f"Cookie: {cookie_name} - {cookie_value}" )
-
-        return
-        """
-
 ##################################### 3 ############################################
-# method 3
+
     def update_headers(self, ch):
         cmi_debug = __name__+"::"+self.update_headers.__name__+".#"+str(self.yti)
 
@@ -156,8 +111,8 @@ class yfnews_reader:
 
         return
 
-###################################### 5 ###########################################
-# method 5
+###################################### 4 ###########################################
+
     def form_endpoint(self, symbol):
         """
         This is the explicit NEWS URL that is used for the request get()
@@ -174,20 +129,19 @@ class yfnews_reader:
         logging.info( f"%s  - form URL endpoint for: {symbol}" % cmi_debug )
         self.yfqnews_url = 'https://finance.yahoo.com/quote/' + symbol + '/news/'    # use global accessor (so all paths are consistent)
         logging.info( f"%s  - API endpoint URL: {self.yfqnews_url}" % cmi_debug )
-        #self.yfqnews_url = self.yfqnews_url
         # NOTE | WARN: Class global attribute. Used in MANY places once its self set, so be careful
         return
 
-##################################### 1 ############################################
-# method 1
+##################################### 5 ############################################
+
     def share_hinter(self, hinst):
         cmi_debug = __name__+"::"+self.share_hinter.__name__+".#"+str(self.yti)
         logging.info( f'%s - IN {type(hinst)}' % cmi_debug )
         self.yfn_uh = hinst
         return
 
-###################################### 4 ###########################################
-# method 4
+###################################### 6 ###########################################
+
     def update_cookies(self):
         # assumes that the requests session has already been established
         cmi_debug = __name__+"::"+self.update_cookies.__name__+".#"+str(self.yti)
@@ -196,7 +150,7 @@ class yfnews_reader:
         return
 
 ###################################### 7 ###########################################
-# method 8
+
     def ext_do_js_get(self, idx_x):
         cmi_debug = __name__+"::"+self.ext_do_js_get.__name__+".#"+str(self.yti)+"."+str(idx_x)
         
@@ -206,9 +160,6 @@ class yfnews_reader:
             return None
             
         logging.info( f'ml_yahoofinews::ext_do_js_get.#{self.yti}.{idx_x} - %s', self.yfqnews_url )
-
-        # Add delay to avoid rate limiting  
-        time.sleep(1)
         r = self.ext_req
         r.html.render(timeout=10)
         
@@ -223,8 +174,8 @@ class yfnews_reader:
         #print (f"r.html.html: {escape(r.html.html)}...")  # Print first 100 characters of the HTML content for debugging 
         return aurl_hash
 
-###################################### 7 ###########################################
-# Possibly DEPRICATED - Delete me ?
+###################################### 8 ###########################################
+
     def do_simple_get(self, url):
         """
         get simple raw HTML data structure (data not processed by JAVAScript engine)
@@ -266,8 +217,8 @@ class yfnews_reader:
 
         return aurl_hash
 
-###################################### 8 ###########################################
-# method 9
+###################################### 9 ###########################################
+
     def scan_news_feed(self, symbol, depth, scan_type, bs4_obj_idx, hash_state):
         """
         Symbol : Stock symbol NEWS FEED for articles (e.g. https://finance.yahoo.com/quote/OTLY/news?p=OTLY )
@@ -298,13 +249,6 @@ class yfnews_reader:
             container_node = self.ul_tag_dataset[0]
             self.li_superclass = container_node.find_all('li')
 
-            # li class="stream-item story-item yf-1drgw5l
-            # print (f"{xxx[0]}")
-            # (attrs={"class": "stream-item story-item yf-1drgw51"}) }" )
-            #print (f"{xxxx[0]}")
-            # stream-item story-item yf-1drgw5l
-            #print (f"#################################################################" )
-            #self.li_superclass = self.ul_tag_dataset.li.find(attrs={"class": "stream-item story-item yf-1drgw51"})
         except KeyError as error:
             logging.info( f'%s - MISSING in cache: Must read JS page' % cmi_debug )
             logging.info( f'%s - Force read news url: {self.yfqnews_url}' % cmi_debug )
@@ -320,8 +264,7 @@ class yfnews_reader:
             #self.li_superclass = self.ul_tag_dataset.find_all(attrs={"stream-item story-item yf-1usaaz9"} )
             xxx = self.ul_tag_dataset[0]
             self.li_superclass = xxx.find_all('li')
-            #self.li_superclass = self.ul_tag_dataset[0].find_all('li')
-            #print ( f"### DEBUG: {self.li_superclass[0]}" )
+
   
         logging.info( f'%s - Depth: 0 / Found News containers: {len(self.ul_tag_dataset[0])}' % cmi_debug )
         logging.info( f'%s - Depth: 0 / Found Sub cotainers:   {len(list(self.ul_tag_dataset[0].children))} / Tags: {len(list(self.ul_tag_dataset[0].descendants))}' % cmi_debug )
@@ -354,8 +297,8 @@ class yfnews_reader:
     
         return
 
-###################################### 9 ###########################################
-# method 10
+###################################### 10 ###########################################
+
     def eval_news_feed_stories(self, symbol):
         """
         Depth 1 - scanning news feed stories and some metatdata (depth 1)
@@ -389,10 +332,6 @@ class yfnews_reader:
         thint = 99.9                                         # saftey preset
         self.article_teaser ="ERROR_default_data_0"
         ml_atype = 0
-
-        ##hacking 
-        # # soup.find_all("a", attrs={"class": "sister"})
-        # ('a[href]')
 
         ## GENERATOR: Scan & find critical tags
         def atag_gen():                         #  extract <h3>, agency, author, publish date
@@ -664,9 +603,7 @@ class yfnews_reader:
             print ( f"### DEBUG - Date:     {local_news_bmart_dte.text}" )
             print ( f"### DEBUG - Ext link: {local_news_bmain_azone['href']}" )
             print ( f"### DEBUG - Article:  {local_news_bmain_azone.text}" )
-            """
-            
-            """
+
             for i in range(0, len(local_news_bmart_divs)):
                 try:
                     print ( f"zone: {i}: {local_news_bmart_divs[i]['class']}")
@@ -757,7 +694,7 @@ class yfnews_reader:
         return 10, 10.0, "ERROR_unknown_state!"              # error unknown state
 
 ###################################### 12 ###########################################
-# method 12
+
     def extract_article_data(self, item_idx, sentiment_ai):
         """
         Depth 3:
@@ -875,7 +812,7 @@ class yfnews_reader:
         return total_tokens, total_words, total_scent
 
 ###################################### 13 ###########################################
-# method 14
+
     def dump_ml_ingest(self):        # >>Xray DEBUG<<
         """
         Dump the contents of ml_ingest{}, which holds the NLP candidates
