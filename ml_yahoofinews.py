@@ -7,6 +7,8 @@ from datetime import datetime, date
 import hashlib
 import re
 import logging
+import pandas as pd
+import numpy as np
 import argparse
 import time
 from rich import print
@@ -61,7 +63,7 @@ class yfnews_reader:
                         'sec-fetch-user': '"?1', \
                         'sec-fetch-site': 'same-origin', \
                         'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36' }
-    
+
     def __init__(self, yti, symbol, global_args):
         self.yti = yti
         cmi_debug = __name__+"::"+self.__init__.__name__
@@ -71,6 +73,8 @@ class yfnews_reader:
         self.symbol = symbol
         self.nlp_x = 0
         self.cycle = 1
+        self.sent_df0 = pd.DataFrame(columns=[ 'Row', 'Symbol', 'Co_name', 'Cur_price', 'Prc_change', 'Pct_change', 'Mkt_cap', 'M_B', 'Time'] )
+        
         return
 
 ###################################### 1 ###########################################
@@ -212,8 +216,6 @@ class yfnews_reader:
             logging.info( f'%s  - resp0 type: {type(self.js_resp0)}' % cmi_debug )
             for i in self.js_resp0.cookies.items():
                 print ( f"{i}" )
-            print ( f"========================== {self.yti} / HTML get() Raw Page text ================================" )
-            print ( f"{escape(self.js_resp0.text)}" )  # print the full HTML page text
 
         return aurl_hash
 
@@ -280,14 +282,12 @@ class yfnews_reader:
                     try:
                         print ( f"Item: {y}: {child.h3.text} / (potential News article)" )
                         y += 1
-                    except AttributeError as error:
-                        print ( f"Item: {y}: No h3.TEXT Found" )
-                        y += 1
                         """
                         for element in child.descendants:
                             print ( f"{y}: {element.name} ", end="" )
                             y += 1
                             """
+                    except AttributeError as error:
                         x += 1
                         print ( f"==================== End <li> zone : {x} =========================" )
                 else:
