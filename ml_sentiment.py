@@ -132,10 +132,9 @@ class ml_sentiment:
                 sen_result = p_sentiment[0]
                 raw_score = sen_result['score']
                 rounded_score = np.floor(raw_score * (10 ** 7) ) / (10 ** 7)
-                if self.args['bool_verbose'] is True:        # Logging level
-                    print ( f" / HFN: {hfw} / Sentiment: {sen_result['label']} {(rounded_score * 100):.5f} %")
+                #if self.args['bool_verbose'] is True:        # Logging level
+                print ( f" / HFN: {hfw} / Sentiment: {sen_result['label']} {(rounded_score * 100):.5f} %")
 
-                # data sentiment data to global sentiment database
                 logging.info( f'%s - Save chunklist to DF for article [ {item_idx} ]...' % cmi_debug )
                 sen_package = dict(sym=symbol, article=item_idx, chunk=i, sent=sen_result['label'], rank=raw_score )
                 self.save_sentiment(item_idx, sen_package)      # page, data

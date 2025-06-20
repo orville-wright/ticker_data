@@ -468,6 +468,9 @@ def main():
             pd.set_option('display.max_columns', None)
             print (f" ==================================== Stats ====================================\n" )
 
+            sent_ai.sen_df2 = sent_ai.sen_df0.groupby('Article').agg(['count'])
+            print ( f"{sent_ai.sen_df2}" )
+            
             if args['bool_verbose'] is True:        # Logging level
                 news_ai.yfn.dump_ml_ingest()
                 print (f"{sent_ai.sen_df0}")
