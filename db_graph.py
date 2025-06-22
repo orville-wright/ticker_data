@@ -2,6 +2,8 @@
 from requests_html import HTMLSession
 import logging
 import argparse
+import dotenv
+import os
 from rich import print
 
 from neo4j import GraphDatabase, RoutingControl
@@ -15,8 +17,8 @@ class db_graph:
     """
 
     # global accessors
-    URI = "neo4j://localhost:7687"
-    AUTH = ("neo4j", "Am3li@++")
+    URI = None
+    AUTH = None
     args = []            # class dict to hold global args being passed in from main() methods
     driver = None        # driver instance
     yfn = None           # Yahoo Finance News reader instance
@@ -30,6 +32,19 @@ class db_graph:
 
         self.args = global_args                            # Only set once per INIT. all methods are set globally
         self.yti = yti
+
+        # Load environment variables from .env file
+        load_status = dotenv.load_dotenv()
+        if load_status is False:
+            raise RuntimeError('Environment variables not loaded.')
+        else:
+            # Retrieve Neo4j Aura credentials from environment variables
+            self.URI = os.getenv("NEO4J_URI")
+            USERNAME = os.getenv("NEO4J_USERNAME")
+            PASSWORD = os.getenv("NEO4J_PASSWORD")
+            self.AUTH = (USERNAME, PASSWORD)
+
+
         return
 
 ##################################### 1 ####################################
