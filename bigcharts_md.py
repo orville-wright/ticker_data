@@ -1,4 +1,4 @@
-#!/home/orville/venv/devel/bin/python3
+#! python3
 from bs4 import BeautifulSoup
 import urllib
 import re

@@ -1,4 +1,4 @@
-#!/home/orville/venv/devel/bin/python3
+#! python3
 from requests_html import HTMLSession
 import pandas as pd
 import numpy as np

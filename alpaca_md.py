@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#! python3
 
 import requests
 import alpaca_trade_api as tradeapi

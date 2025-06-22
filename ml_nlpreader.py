@@ -1,4 +1,4 @@
-#!/home/orville/venv/devel/bin/python3
+#! python3
 from requests_html import HTMLSession
 from urllib.parse import urlparse
 from datetime import datetime, date

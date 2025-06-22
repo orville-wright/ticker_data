@@ -1,4 +1,4 @@
-#!/home/orville/venv/devel/bin/python3
+#! python3
 import re
 import logging
 import pandas as pd

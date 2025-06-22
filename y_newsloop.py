@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#! python3
 from requests import Request, Session
 from requests_html import HTMLSession
 from urllib.parse import urlparse

@@ -1,4 +1,4 @@
-#!/home/orville/venv/devel/bin/python3
+#! python3
 import urllib.request
 import pandas as pd
 import logging
