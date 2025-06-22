@@ -142,7 +142,7 @@ class ml_nlpreader:
         #print ( f"============================ NLP Candidate Summary ============================" )
 
         #for sn_idx, sn_row in self.yfn.ml_ingest.items():
-        sn_row = self.ml_yfn_dataset.ml_ingest[ml_idx]
+        sn_row = self.ml_yfn_dataset.ml_ingest[ml_idx]          # select the row from the ml_ingest{} dict
         if sn_row['type'] == 0:                                             # REAL news, inferred from Depth 0
             print( f"{sn_row['symbol']} / Local News article: {ml_idx}" )
             t_url = urlparse(sn_row['url'])                                 # WARN: a rlparse() url_named_tupple (NOT the raw url)
@@ -150,7 +150,7 @@ class ml_nlpreader:
             thint = (sn_row['thint'])                                       # the hint we guessed at while interrogating page <tags>
             logging.info ( f"%s       - Logic.#0 Hints for url: [ t:0 / u:{uhint} / h: {thint} ] / {uhdescr}" % cmi_debug )
 
-            # WARNING : Do deep analysis on the page
+            # WARNING : Do deep M/L AI analysis on the page - lots of compute
             r_uhint, r_thint, r_xturl = self.ml_yfn_dataset.interpret_page(ml_idx, sn_row)    # go deep, with everything we knonw about this item
             
             logging.info ( f"%s       - Inferr conf: {r_xturl}" % cmi_debug )
@@ -174,7 +174,7 @@ class ml_nlpreader:
             thint = (sn_row['thint'])                   # the hint we guess at while interrogating page <tags>
             logging.info ( f"%s       - Logic.#1 hint origin url: t:1 / u:{uhint} / h: {thint} {uhdescr}" % cmi_debug )
 
-            # WARN: Do deep page analysis, with everything we know about this item
+            # WARN: Do deep M/L AI page analysis, with everything we know about this item
             r_uhint, r_thint, r_xturl = self.ml_yfn_dataset.interpret_page(ml_idx, sn_row)    
             logging.info ( f"%s       - Logic.#1 hint ext url: {r_xturl}" % cmi_debug )
             p_r_xturl = urlparse(r_xturl)

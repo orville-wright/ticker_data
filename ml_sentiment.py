@@ -26,6 +26,10 @@ class ml_sentiment:
     sen_df1 = None
     sen_df2 = None
     df0_row_count = 0
+    active_urlhash = None  # Current URL hash being processed
+    sen_data = []       # Data to be added to the DataFrame
+    art_buffer = []     # Buffer to hold article text for processing
+    sentiment_count = { 'positive': 0, 'negative': 0, 'neutral': 0 }  # Sentiment counts for this article
     ttc = 0             # Total Tokens generated in the scnetcne being analyzed
     twc = 0             # Total Word count in this scentence being analyzed
     yti = 0
@@ -53,9 +57,10 @@ class ml_sentiment:
         # need to add the url hash in here, otherwise I cant do useful analysis
         sym = data_set["sym"]
         art = data_set["article"]
+        urlhash = data_set["urlhash"]
         chk = data_set["chunk"]
-        snt = data_set["sent"]
         rnk = data_set["rank"]
+        snt = data_set["sent"]
 
         ################################ 6 ####################################
         # now construct our list for concatinating to the dataframe 
@@ -65,11 +70,12 @@ class ml_sentiment:
                     x, \
                     sym, \
                     art, \
+                    urlhash, \
                     chk, \
-                    snt, \
-                    rnk ]]
+                    rnk, \
+                    snt ]]
         
-        self.df0_row = pd.DataFrame(self.sen_data, columns=[ 'Row', 'Symbol', 'Article', 'Chunk', 'Sent', 'Rank' ], index=[x] )
+        self.df0_row = pd.DataFrame(self.sen_data, columns=[ 'Row', 'Symbol', 'art', 'urlhash', 'chk', 'rnk', 'snt' ], index=[x] )
         self.sen_df0 = pd.concat([self.sen_df0, self.df0_row])
 
         self.df0_row_count = x
@@ -77,7 +83,7 @@ class ml_sentiment:
         return
 
 ##################################### 2 ####################################
-    def compute_sentiment(self, symbol, item_idx, scentxt):
+    def compute_sentiment(self, symbol, item_idx, scentxt, urlhash):
         """
         Tokenize and compute scentcen chunk sentiment
         scentxtx = BS4 all <p> zones that look/feel like scentence/paragraph text
@@ -94,6 +100,11 @@ class ml_sentiment:
         tokenizer_mml = classifier.tokenizer.model_max_length
         self.ttc = 0
         self.twc = 0
+        self.sentiment_count["positive"] = 0
+        self.sentiment_count["negative"] = 0
+        self.sentiment_count["neutral"] = 0
+        self.active_urlhash = urlhash
+        
         if self.args['bool_verbose'] is True:        # Logging level
             print ( f"Transformer max tokens preset: {tokenizer_mml} : for News article [ {item_idx} ]" )
 
@@ -132,12 +143,14 @@ class ml_sentiment:
                 sen_result = p_sentiment[0]
                 raw_score = sen_result['score']
                 rounded_score = np.floor(raw_score * (10 ** 7) ) / (10 ** 7)
-                #if self.args['bool_verbose'] is True:        # Logging level
-                print ( f" / HFN: {hfw} / Sentiment: {sen_result['label']} {(rounded_score * 100):.5f} %")
+                
+                if self.args['bool_verbose'] is True:        # Logging level
+                    print ( f" / HFN: {hfw} / Sentiment: {sen_result['label']} {(rounded_score * 100):.5f} %")
 
                 logging.info( f'%s - Save chunklist to DF for article [ {item_idx} ]...' % cmi_debug )
-                sen_package = dict(sym=symbol, article=item_idx, chunk=i, sent=sen_result['label'], rank=raw_score )
+                sen_package = dict(sym=symbol, urlhash=urlhash, article=item_idx, chunk=i, sent=sen_result['label'], rank=raw_score )
                 self.save_sentiment(item_idx, sen_package)      # page, data
+                self.sentiment_count[sen_result['label']] += 1  # count sentiment type
             except RuntimeError:
                 print ( f"Model exception !!")
             except ValueError:

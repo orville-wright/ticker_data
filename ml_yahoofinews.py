@@ -99,12 +99,11 @@ class yfnews_reader:
 ##################################### 3 ############################################
 
     def update_headers(self, ch):
-        cmi_debug = __name__+"::"+self.update_headers.__name__+".#"+str(self.yti)
 
-        # HACK to help logging() bug to handle URLs with % in string
-        logging.info(f"%s  - set cookies/headers: [ {ch} ]" % cmi_debug )
+        # HACK to help logging() f-string bug to handle strings with %
         cmi_debug = __name__+"::"+self.update_headers.__name__+".#"+str(self.yti)+"  - "+ch
         logging.info('%s' % cmi_debug )
+        cmi_debug = __name__+"::"+self.update_headers.__name__+".#"+str(self.yti)
         self.path = ch
         self.ext_req.cookies.update({'path': self.path} )
  
@@ -114,7 +113,7 @@ class yfnews_reader:
                 print ( f"{i}" )
 
         return
-
+            
 ###################################### 4 ###########################################
 
     def form_endpoint(self, symbol):
@@ -192,11 +191,16 @@ class yfnews_reader:
         js_session = HTMLSession()                  # Create a new session        
         with js_session.get(url) as self.js_resp0:  # must do a get() - NO setting cookeis/headers)
             logging.info(f'%s  - Simple HTML Request get()...' % cmi_debug )
-            logging.info( f"%s - JS_session.get() sucessful: {url}" % cmi_debug )
+
+        # HACK to help logging() f-string bug to handle strings with %
+            cmi_debug = __name__+"::"+self.do_simple_get.__name__+".#"+str(self.yti)+"  - JS get() success: "+url
+            logging.info('%s' % cmi_debug )
+            #logging.info( f"%s - JS_session.get() sucessful: {url}" % cmi_debug )
+            cmi_debug = __name__+"::"+self.do_simple_get.__name__+".#"+str(self.yti)    # reset cmi_debug
             if self.js_resp0.status_code != 200:
                     logging.error(f'{cmi_debug} - HTTP {self.js_resp0.status_code}: HTML fetch FAILED')
                     return None
-            
+
         self.get_counter += 1
         logging.info( f"%s  - js.render()... diasbled" % cmi_debug )
         logging.info( f'%s  - Store basic HTML dataset' % cmi_debug )
@@ -427,7 +431,8 @@ class yfnews_reader:
                     "type" : ml_atype,
                     "thint" : thint,
                     "uhint" : uhint,
-                    "url" : self.a_urlp.scheme+"://"+self.a_urlp.netloc+self.a_urlp.path
+                    "url" : self.a_urlp.scheme+"://"+self.a_urlp.netloc+self.a_urlp.path,
+                    "teaser" : self.article_teaser
                 }
                 logging.info( f'%s - Add to ML Ingest DB: [ {cg} ]' % (cmi_debug) )
                 self.ml_ingest.update({self.nlp_x : nd})
@@ -485,7 +490,12 @@ class yfnews_reader:
         except KeyError:
             logging.info( f'%s - Not in Cache / must read page' % cmi_debug )
             logging.info( f'%s - Cache type : {type(durl)}' % cmi_debug )
-            logging.info( f'%s - Cache URL : {durl}' % cmi_debug )
+
+            # HACK to help logging() f-string bug to handle strings with %
+            cmi_debug = __name__+"::"+self.interpret_page.__name__+".#"+str(item_idx)+" - "+durl
+            logging.info( f'%s' % cmi_debug )     # hack fix for urls containg "%" break logging module (NO FIX
+            cmi_debug = __name__+"::"+self.interpret_page.__name__+".#"+str(item_idx)
+            #logging.info( f'%s - Cache URL : {escape(durl)}' % cmi_debug )
             
             # Must read the page, since its not in the cache
             self.yfqnews_url = durl
@@ -800,10 +810,11 @@ class yfnews_reader:
             ##### Heavy CPU utilization / local LLM Model & no GPU       #######
             ####################################################################
             #
+            hs = cached_state    # the URL hash (passing it to sentiment_ai for us in DF)
             logging.info( f'%s - Init M/L NLP Tokenizor sentiment-analyzer pipeline...' % cmi_debug )
-            total_tokens, total_words, total_scent = sentiment_ai.compute_sentiment(symbol, item_idx, local_stub_news_p)
-            print ( f"Total tokens generated: {total_tokens}" )
-            #
+            total_tokens, total_words, total_scent = sentiment_ai.compute_sentiment(symbol, item_idx, local_stub_news_p, hs)
+            print ( f"Total tokens generated: {total_tokens} / Neutral: {sentiment_ai.sentiment_count['neutral']} / Postive: {sentiment_ai.sentiment_count['positive']} / Negative: {sentiment_ai.sentiment_count['negative']}")
+
             # create emtries in the Neo4j Graph database
             # - check if KG has existing node entry for this symbol+news_article
             # if not... create one

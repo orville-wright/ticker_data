@@ -452,7 +452,7 @@ def main():
             twcz = 0    # Cumulative : Total words read
             tscz = 0    # Cumulative : Total scentences / Paragraphs read
 
-            for sn_idx, sn_row in news_ai.yfn.ml_ingest.items():
+            for sn_idx, sn_row in news_ai.yfn.ml_ingest.items():    # all pages extrated in ml_ingest
                 # TESTING code only - to make testing complete quicker (only test 4 docs)
                 thint = news_ai.nlp_summary(3, sn_idx)       # what News article TYPE in ml_ingest to look for
                 if thint == 0.0:    # only compute type 0.0 prepared and validated new articles in ML_ingest
@@ -460,6 +460,10 @@ def main():
                     ttkz += ttc
                     twcz += twc
                     tscz += tsc
+                    this_urlhash = sent_ai.active_urlhash
+                    pd.set_option('display.max_rows', None)
+                    pd.set_option('max_colwidth', 30)
+                    print ( f"{sent_ai.sen_df0.loc[sent_ai.sen_df0['urlhash'] == this_urlhash].groupby('snt')['rnk'].mean()}" )
 
             print (f"\n\n========================= Scentement Stats ====================================" )
             print (f"Total tokens generated: {ttkz} - Total words read: {twcz} - Total scent/paras read {tscz}" )
@@ -468,22 +472,24 @@ def main():
             pd.set_option('display.max_columns', None)
             print (f" ==================================== Stats ====================================\n" )
 
-            sent_ai.sen_df2 = sent_ai.sen_df0.groupby('Article').agg(['count'])
-            print ( f"{sent_ai.sen_df2}" )
+            # DEBUG
+            #pd.set_option('display.max_rows', None)
+            #pd.set_option('max_colwidth', 30)
+            #print ( f"{sent_ai.sen_df0}" )
             
             if args['bool_verbose'] is True:        # Logging level
                 news_ai.yfn.dump_ml_ingest()
                 print (f"{sent_ai.sen_df0}")
             else:
-                sent_ai.sen_df1 = sent_ai.sen_df0.groupby('Sent').agg(['count'])
-                sent_ai.sen_df2 = sent_ai.sen_df0.groupby('Sent')['Rank'].mean()
+                sent_ai.sen_df1 = sent_ai.sen_df0.groupby('snt').agg(['count'])
+                sent_ai.sen_df2 = sent_ai.sen_df0.groupby('snt')['rnk'].mean()
                 sent_ai.sen_df1['Sentiment'] = sent_ai.sen_df2
                 sent_ai.sen_df1.loc['Total'] = sent_ai.sen_df1[['Row']].sum()
                 print (f"\n")
 
             neutral_t = sent_ai.sen_df1.loc['Total']['Row']
             sent_ai.sen_df1['Percetage'] = sent_ai.sen_df1['Row'] / neutral_t * 100
-            sent_ai.sen_df1 = sent_ai.sen_df1.drop(['Symbol', 'Article', 'Chunk', 'Rank'], axis=1)
+            sent_ai.sen_df1 = sent_ai.sen_df1.drop(['Symbol', 'art', 'chk', 'rnk'], axis=1)
             print ( f"{sent_ai.sen_df1}" )
             
             #neutral_tt = sent_ai.sen_df1.iloc[3, 0]
