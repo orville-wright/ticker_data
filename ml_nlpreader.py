@@ -123,7 +123,7 @@ class ml_nlpreader:
     def nlp_summary(self, yti, ml_idx):
         """
         **CRTIICAL: Assumes ml_ingest has already been pre-populated
-        Reads 1 from the ml_ingest{} and processes it...
+        Reads 1 item from the ml_ingest{} and processes it...
         """
 
         self.yti = yti
@@ -139,20 +139,18 @@ class ml_nlpreader:
                     }
 
         print ( " ")
-        #print ( f"============================ NLP Candidate Summary ============================" )
 
-        #for sn_idx, sn_row in self.yfn.ml_ingest.items():
         sn_row = self.ml_yfn_dataset.ml_ingest[ml_idx]          # select the row from the ml_ingest{} dict
-        if sn_row['type'] == 0:                                             # REAL news, inferred from Depth 0
-            print( f"{sn_row['symbol']} / Local News article: {ml_idx}" )
+        if sn_row['type'] == 0:                                 # REAL valid news article, inferred from Depth 0
+            print( f"{sn_row['symbol']} / Valid News article: {ml_idx}" )
             t_url = urlparse(sn_row['url'])                                 # WARN: a rlparse() url_named_tupple (NOT the raw url)
             uhint, uhdescr = self.yfn_uh.uhinter(0, t_url)
             thint = (sn_row['thint'])                                       # the hint we guessed at while interrogating page <tags>
             logging.info ( f"%s       - Logic.#0 Hints for url: [ t:0 / u:{uhint} / h: {thint} ] / {uhdescr}" % cmi_debug )
 
-            # WARNING : Do deep M/L AI analysis on the page - lots of compute
+            # WARNING : Do deep M/L AI analysis on the page
+            # Heavy compute
             r_uhint, r_thint, r_xturl = self.ml_yfn_dataset.interpret_page(ml_idx, sn_row)    # go deep, with everything we knonw about this item
-            
             logging.info ( f"%s       - Inferr conf: {r_xturl}" % cmi_debug )
             p_r_xturl = urlparse(r_xturl)
             inf_type = self.yfn_uh.confidence_lvl(thint)                  # returned var is a tupple - (descr, locality code)
@@ -165,10 +163,9 @@ class ml_nlpreader:
             print ( f"{locality_code.get(uhint)} [ u:{uhint} ]" )
             return thint    # what this artuicle actuall;y is
 
-        # Micro-Ad, but could possibly be news...
+        # Fake New Micro-Ad, but could possibly be news...
         elif sn_row['type'] == 1:
-            print ( f"Article: {ml_idx} - Fake News stub micro article - NOT an NLP candidate" )
-            print ( f"URL:     {sn_row['url']}" )
+            print( f"{sn_row['symbol']} / Fake News article - Micro-add: {ml_idx} - AI will not eval sentiment" )
             t_url = urlparse(sn_row['url'])
             uhint, uhdescr = self.yfn_uh.uhinter(1, t_url)      # hint on ORIGIN url
             thint = (sn_row['thint'])                   # the hint we guess at while interrogating page <tags>
@@ -181,15 +178,18 @@ class ml_nlpreader:
             inf_type = self.yfn_uh.confidence_lvl(thint)
 
             # summary report...
+            print ( f"Article type:  [ 1 / {sn_row['url']} ]" )                # all type 0 are assumed to be REAL news
             print ( f"Origin:  [ {t_url.netloc} ] / {uhdescr} / {inf_type[0]} / ", end="" )
             print ( f"{locality_code.get(inf_type[1], 'in flux')}" )
             uhint, uhdescr = self.yfn_uh.uhinter(31, p_r_xturl)      # hint on TARGET url
             print ( f"Hints:   {uhdescr} / ", end="" )
             print ( f"{locality_code.get(uhint, 'in flux')} [ u:{uhint} ]" )
+            logging.info ( f"%s - skipping..." % cmi_debug )
             return thint
         
         # Video story. Prob no real news text
         elif sn_row['type'] == 2:
+            print( f"{sn_row['symbol']} / Video article - Not readable: {ml_idx} - AI will not eval sentiment" )
             t_url = urlparse(sn_row['url'])
             thint = (sn_row['thint'])
             inf_type = self.yfn_uh.confidence_lvl(thint)

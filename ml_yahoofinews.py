@@ -448,15 +448,11 @@ class yfnews_reader:
     def interpret_page(self, item_idx, data_row):
         """
         Depth 2 Page interpreter
-        Look INSIDE each page and translate it. Test for known pages types (e.g. good news articles etc)
-        Return some info that allows us to definatively know what we're looking at and how/where to NLP read the text of the artcile.
-        NOTE: In the NEWs feed, 99% of news article url's are FAKE internal stubs, that point to themself or an external remote site/page.
-        The stub/page can have miltple personas, so this translater is where the mahic happens...
-        1. A mini-stub, snippet of the article, "Continue" button links to a exteranly hosted article @ a partner site
-        2. An artcile @ finanice.yahoo.com, shows a smippet of articel, "Continue" button opens full article on yahoo.com
-        3. A fake add page on yahoo.com
-        4. A fake add # a partner site
-        5. other
+        Interrogate this news page and translate HTML zomes/tags using Beautiful Soup
+        Test for known news page types (e.g. good news articles, fake news, video news etc)
+        Return info that allows us to definatively know what we're looking at and how/where to AI NLP read the text of the news artcile.
+        NOTE: Complex analysis of URLs becasue they point to many different types of pages in differnt locations. 
+        The stub/page can have miltple personas, so this translater is where the magic happens...
         """
 
         cmi_debug = __name__+"::"+self.interpret_page.__name__+".#"+str(item_idx)
