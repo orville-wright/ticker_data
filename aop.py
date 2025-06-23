@@ -481,13 +481,26 @@ def main():
                 news_ai.yfn.dump_ml_ingest()
                 print (f"{sent_ai.sen_df0}")
             else:
-                sent_ai.sen_df1 = sent_ai.sen_df0.groupby('snt').agg(['count'])
-                sent_ai.sen_df2 = sent_ai.sen_df0.groupby('snt')['rnk'].mean()
-                sent_ai.sen_df1['Sentiment'] = sent_ai.sen_df2
-                sent_ai.sen_df1.loc['Total'] = sent_ai.sen_df1[['Row']].sum()
+                #sent_ai.sen_df1 = sent_ai.sen_df0.groupby('snt').agg(['count'])
+                #sent_ai.sen_df1 = sent_ai.sen_df0.groupby('snt')['Row'].count()
+                #sent_ai.sen_df2 = sent_ai.sen_df0.groupby('snt')['rnk'].mean()
+
+                print ( f"### DEBUG new DF ####" )
+                grouped_data = sent_ai.sen_df0.groupby('art').size().reset_index(name='Articles')
+                print ( f"{grouped_data}" )
+                #sent_ai.sen_df2['Sentiment'] = sent_ai.sen_df0.groupby('snt')['rnk'].mean()
+
+                ## DEBUG
+                #print ( f"### DEBUG groupby: snt + Row.count() ####" )
+                #print ( f"{sent_ai.sen_df1}" )
+                #print ( f"{sent_ai.sen_df2}" )
+                #`print ( f"### DEBUG ####" )
+                        
+                #sent_ai.sen_df1['Sentiment'] = sent_ai.sen_df2          # add a new column ro df1 (mean of grouped sentiment)
+                #sent_ai.sen_df1.loc['Total'] = sent_ai.sen_df1[['Row']].sum()
                 print (f"\n")
 
-            neutral_t = sent_ai.sen_df1.loc['Total']['Row']
+            neutral_t = sent_ai.sen_df1.loc['Total']['rnk']
             sent_ai.sen_df1['Percetage'] = sent_ai.sen_df1['Row'] / neutral_t * 100
             sent_ai.sen_df1 = sent_ai.sen_df1.drop(['Symbol', 'art', 'chk', 'rnk'], axis=1)
             print ( f"{sent_ai.sen_df1}" )
