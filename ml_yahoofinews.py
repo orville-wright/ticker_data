@@ -818,9 +818,9 @@ class yfnews_reader:
             self.sen_data = [[ \
                         item_idx, \
                         hs, \
-                        sentiment_ai.sentiment_count.setdefault('positive', float(0)), \
-                        sentiment_ai.sentiment_count.setdefault('neutral', float(0)), \
-                        sentiment_ai.sentiment_count.setdefault('negative', float(0)) ]]
+                        sentiment_ai.sentiment_count['positive'], \
+                        sentiment_ai.sentiment_count['neutral'], \
+                        sentiment_ai.sentiment_count['negative'] ]]
 
             sen_df_row = pd.DataFrame(self.sen_data, columns=[ 'art', 'urlhash', 'positive', 'neutral', 'negative'] )
             self.sen_stats_df = pd.concat([self.sen_stats_df, sen_df_row])

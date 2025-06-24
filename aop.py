@@ -423,6 +423,7 @@ def main():
 # ###################################################################################
 
     if args['newsymbol'] is not False:
+            sx = 1
             cmi_debug = __name__+"::_args_newsymbol.#1"
             news_symbol = str(args['newsymbol'])       # symbol provided on CMDLine
             print ( " " )
@@ -455,8 +456,8 @@ def main():
             #################################################################
             # MAIN control loop for AI M'L NLP reading & Sentimnent analysis
             #################################################################
-            aggmean_sent_df = pd.DataFrame()  # reset DataFrame for each article
             for sn_idx, sn_row in news_ai.yfn.ml_ingest.items():    # all pages extrated in ml_ingest
+                aggmean_sent_df = pd.DataFrame()  # reset DataFrame for each article
                 # TESTING code only - to make testing complete quicker (only test 4 docs)
                 thint = news_ai.nlp_summary(3, sn_idx)       # TESTING: News article TYPE in ml_ingest to look for
                 # TESTING: Long term, this will be a list of all the articles
@@ -472,28 +473,31 @@ def main():
                     #sdf = sent_ai.sen_df0.loc[sent_ai.sen_df0['urlhash'] == this_urlhash].groupby('snt')['rnk'].mean()
                     #print ( f"{sdf}")    # hack to not print annoying index 'dtype' dataframe footer
                     
-                    print ( f"### DEBUG: Article Dataframe ####" )
+                    #print ( f"### DEBUG: Article Dataframe 1 ####" )
                     print ( f"{news_ai.yfn.sen_stats_df}" )
                     
-                    #aggregate_mean = sent_ai.sen_df0.loc[sent_ai.sen_df0['urlhash'] == this_urlhash].groupby('snt')['rnk'].mean()  # fill NaN with 0.0
+                    #print ( f"### DEBUG: Article Dataframe 2 ####" )
+                    aggregate_mean = sent_ai.sen_df0.loc[sent_ai.sen_df0['urlhash'] == this_urlhash].groupby('snt')['rnk'].mean()    # fill NaN with 0.0
                     #aggregate_mean.info()
-                    #print ( f"### DEBUG: Article Dataframe ####" )
                     #print ( f"{aggregate_mean.shape} " )
-                    #print ( f"### DEBUG: Article Dataframe ####" )
                     #print ( f"{aggregate_mean}" )
                     #print ( f"{sent_ai.sen_df0.loc[sent_ai.sen_df0['urlhash'] == this_urlhash].groupby('snt')['rnk'].mean()}" )
+                    px = aggregate_mean.loc['positive']
+                    nx = aggregate_mean.loc['negative']
+                    zx = aggregate_mean.loc['neutral']
 
+                    #print ( f"\n\n### DEBUG: Article Dataframe 3 ####" )
                     data_payload = [[ \
-                        sn_idx, \
-                        this_urlhash, \
-                        news_ai.yfn.sen_stats_df.loc[0, 'positive'], \
-                        news_ai.yfn.sen_stats_df.loc[0, 'negative'], \
-                        news_ai.yfn.sen_stats_df.loc[0, 'neutral'], \
-                        ]]
-                    
-                    sent_df_row = pd.DataFrame(data_payload, columns=['art', 'urlhash', 'pos_sent', 'neg_sent', 'neutral_sent'], index=[sn_idx])
+                            sn_idx, \
+                            this_urlhash, \
+                            px, \
+                            nx, \
+                            zx ]]
+
+                    sent_df_row = pd.DataFrame(data_payload, columns=['art', 'urlhash', 'pos_sent', 'neg_sent', 'neu_sent'] )
                     aggmean_sent_df = pd.concat([aggmean_sent_df, sent_df_row])
-                    print ( f"{aggmean_sent_df}")
+                    
+                    print ( f"{aggmean_sent_df}" )
 
             print (f"\n\n========================= Scentement Stats ====================================" )
             print (f"Total tokens generated: {ttkz} - Total words read: {twcz} - Total scent/paras read {tscz}" )
@@ -513,19 +517,10 @@ def main():
                 print (f"{sent_ai.sen_df0}")
             else:
                 sent_ai.sen_df1 = sent_ai.sen_df0.groupby('snt').agg(['count'])
-                #sent_ai.sen_df1 = sent_ai.sen_df0.loc[sent_ai.sen_df0['urlhash'] == this_urlhash].groupby('snt').agg(['rnk']).mean()
-                #print ( f"{sent_ai.sen_df0.loc[sent_ai.sen_df0['urlhash'] == this_urlhash].groupby('snt')['rnk'].mean()}" )
 
-                #sent_ai.sen_df1 = sent_ai.sen_df0.groupby('snt')['Row'].count()
-                #sent_ai.sen_df2 = sent_ai.sen_df0.groupby('snt')['rnk'].mean()
-
-                #print ( f"### DEBUG new DF 1.0 ####" )
-                #print ( f"{sent_ai.sen_df0}" )
-                #print ( f"{grouped_data}" )
                 print ( f"### DEBUG new DF 1.1 ####" )
                 print ( f"{sent_ai.sen_df1}" )
-                #print ( f"### DEBUG new DF 1.2 ####" )
-                #print ( f"{news_ai.yfn.sen_stats_df}" )
+
                 print ( f"### DEBUG new DF 1.3 ####" )
                 grouped_data = sent_ai.sen_df0.groupby('art').size().reset_index(name='Chunks')
                 final_sent_df = pd.merge(grouped_data, news_ai.yfn.sen_stats_df, on='art', how='outer')
@@ -533,32 +528,13 @@ def main():
 
                 #final_sent_df = sent_ai.sen_df1.merge(news_ai.yfn.sen_stats_df, left_index=True, right_index=True, how='outer')
                 #final_sent_df = pd.concat([sent_ai.sen_df1, news_ai.yfn.sen_stats_df], axis=1)
-                #print ( f"{sent_ai.sen_df0.loc[sent_ai.sen_df0['urlhash'] == this_urlhash].groupby('snt')['rnk'].mean()}" )                
-                #sent_ai.sen_df2['Sentiment'] = sent_ai.sen_df0.groupby('snt')['rnk'].mean()
 
-                ## DEBUG
-                #print ( f"### DEBUG groupby: snt + Row.count() ####" )
-                #print ( f"{sent_ai.sen_df1}" )
-                #print ( f"{sent_ai.sen_df2}" )
-                #`print ( f"### DEBUG ####" )
-                        
-                #sent_ai.sen_df1['Sentiment'] = sent_ai.sen_df2          # add a new column ro df1 (mean of grouped sentiment)
-                #sent_ai.sen_df1.loc['Total'] = sent_ai.sen_df1[['Row']].sum()
                 print (f"\n")
 
             neutral_t = sent_ai.sen_df1.loc['Total']['rnk']
             sent_ai.sen_df1['Percetage'] = sent_ai.sen_df1['Row'] / neutral_t * 100
             sent_ai.sen_df1 = sent_ai.sen_df1.drop(['Symbol', 'art', 'chk', 'rnk'], axis=1)
             print ( f"{sent_ai.sen_df1}" )
-            
-            #neutral_tt = sent_ai.sen_df1.iloc[3, 0]
-            #print ( f"### DEBUG: {neutral_tt}" )
-            # number = int(df1.loc[:,'randomcolumn'])
-            #sent_ai.sen_df1['Total'] = sent_ai.sen_df0.groupby('Sent').agg(['count']).sum()
-            #print ( f"{sent_ai.sen_df0.groupby(['Article', 'Sent'])['Rank'].mean()}" )
-            #print ( f"{sent_ai.sen_df0.groupby('Sent').agg(['count'])}" )
-            #print ( f"{sent_ai.sen_df0.groupby('Sent')['Rank'].mean()}" )
-            #print ( f"### DEBUG 2:\n{neutral_t}" )
 
             # KGdb stats
             if args['bool_verbose'] is True:
