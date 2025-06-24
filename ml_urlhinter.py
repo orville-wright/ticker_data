@@ -50,6 +50,7 @@ class url_hinter:
         uhint_code = {
                     'news': ('Local News', 0),
                     'm': ('Fake local micro news', 1),
+                    'live': ('Fake local micro news', 1),
                     'video': ('Video story', 2),
                     'rabs': ('External publication', 3),
                     'research': ('Research report', 4),

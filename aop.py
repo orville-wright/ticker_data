@@ -482,9 +482,27 @@ def main():
                     #print ( f"{aggregate_mean.shape} " )
                     #print ( f"{aggregate_mean}" )
                     #print ( f"{sent_ai.sen_df0.loc[sent_ai.sen_df0['urlhash'] == this_urlhash].groupby('snt')['rnk'].mean()}" )
-                    px = aggregate_mean.loc['positive']
-                    nx = aggregate_mean.loc['negative']
-                    zx = aggregate_mean.loc['neutral']
+                    
+                    # The aggregate_mean DF keys are only set if the sentiment analysis computes matching  sentimentfor the article.
+                    # If the article has no sentiment, then the keys are not set in the DF.
+                    # so we need to check if the keys exists, and create then as 0.0 for the fnal DataFrame math to work
+                    try:
+                        px = aggregate_mean.loc['positive']
+                    except KeyError:
+                        logging.info( f'%s - Create missing sentiment DF key / Set to: 0.0' % cmi_debug )
+                        aggregate_mean.loc['positive'] = 0.0
+
+                    try:
+                        nx = aggregate_mean.loc['negative']
+                    except KeyError:
+                        aggregate_mean.loc['negative'] = 0.0
+                        logging.info( f'%s - Create missing sentiment DF key / Set to: 0.0' % cmi_debug )
+
+                    try:
+                        zx = aggregate_mean.loc['neutral']
+                    except KeyError:
+                        logging.info( f'%s - Create missing sentiment DF key / Set to: 0.0' % cmi_debug )
+                        aggregate_mean.loc['neutral'] = 0.0
 
                     #print ( f"\n\n### DEBUG: Article Dataframe 3 ####" )
                     data_payload = [[ \
