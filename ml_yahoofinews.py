@@ -44,6 +44,7 @@ class yfnews_reader:
     nlp_x = 0
     get_counter = 0         # count of get() requests
     ext_req = ""            # HTMLSession request handle
+    sen_stats_df = None     # Aggregated sentiment stats for this 1 article
     nsoup = None            # BS4 shared handle between UP & DOWN (1 URL, 2 embeded data sets in HTML doc)
     args = []               # class dict to hold global args being passed in from main() methods
     yfn_uh = None           # global url hinter class
@@ -809,8 +810,21 @@ class yfnews_reader:
             hs = cached_state    # the URL hash (passing it to sentiment_ai for us in DF)
             logging.info( f'%s - Init M/L NLP Tokenizor sentiment-analyzer pipeline...' % cmi_debug )
             total_tokens, total_words, total_scent = sentiment_ai.compute_sentiment(symbol, item_idx, local_stub_news_p, hs)
+
             print ( f"Total tokens generated: {total_tokens} / Neutral: {sentiment_ai.sentiment_count['neutral']} / Postive: {sentiment_ai.sentiment_count['positive']} / Negative: {sentiment_ai.sentiment_count['negative']}")
 
+            # set up a dataframe to hold the aggregated sentiment for this article in columns.
+            # This is helpful for merging the info with other dataframes later on
+            self.sen_data = [[ \
+                        item_idx, \
+                        hs, \
+                        sentiment_ai.sentiment_count.setdefault('positive', float(0)), \
+                        sentiment_ai.sentiment_count.setdefault('neutral', float(0)), \
+                        sentiment_ai.sentiment_count.setdefault('negative', float(0)) ]]
+
+            sen_df_row = pd.DataFrame(self.sen_data, columns=[ 'art', 'urlhash', 'positive', 'neutral', 'negative'] )
+            self.sen_stats_df = pd.concat([self.sen_stats_df, sen_df_row])
+            
             # create emtries in the Neo4j Graph database
             # - check if KG has existing node entry for this symbol+news_article
             # if not... create one

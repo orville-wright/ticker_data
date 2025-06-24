@@ -22,7 +22,7 @@ class ml_sentiment:
     # global accessors
     args = []            # class dict to hold global args being passed in from main() methods
     mlnlp_uh = None      # URL Hinter instance
-    sen_df0 = None
+    sen_df0 = None       # holdsentiment for this artile ONLY (gets overwritten each time per article)
     sen_df1 = None
     sen_df2 = None
     df0_row_count = 0
@@ -47,6 +47,7 @@ class ml_sentiment:
     def save_sentiment(self, yti, data_set):
         """
         Save key ML sentiment info to global sentimennt Dataframe
+        data_set = a dict
         """
         self.yti = yti
         cmi_debug = __name__+"::"+self.save_sentiment.__name__
