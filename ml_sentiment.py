@@ -158,3 +158,110 @@ class ml_sentiment:
                 print ( f"Empty vocabulary !!")
 
         return self.ttc, self.twc, i
+
+##################################### 3 ####################################
+    def compute_precise_sentiment(self, df_final, positive_c, negative_c, positive_t, negative_t, neutral_t, sentiment_categories):
+        """
+        Compute precise sentiment analysis based on aggregated data from df_final
+        
+        Parameters:
+        - df_final: DataFrame containing aggregated sentiment data
+        - positive_c: Total count of positive sentiment instances
+        - negative_c: Total count of negative sentiment instances  
+        - positive_t: Mean positive sentiment score
+        - negative_t: Mean negative sentiment score
+        - neutral_t: Mean neutral sentiment score
+        - sentiment_categories: Dictionary mapping sentiment ranges to category descriptions
+        
+        Returns:
+        - Dictionary containing precise sentiment metrics
+        """
+        cmi_debug = __name__+"::"+self.compute_precise_sentiment.__name__
+        logging.info( f'%s - Computing precise sentiment analysis' % cmi_debug )
+        
+        # Step 1: Determine overall gross sentiment
+        if positive_c > negative_c:
+            gross_sentiment = "positive"
+            posneg_ratio_pos = positive_c / negative_c if negative_c > 0 else positive_c
+            posneg_ratio_neg = 0
+        elif negative_c > positive_c:
+            gross_sentiment = "negative" 
+            posneg_ratio_pos = 0
+            posneg_ratio_neg = negative_c / positive_c if positive_c > 0 else negative_c
+        else:
+            gross_sentiment = "neutral"
+            posneg_ratio_pos = 1.0
+            posneg_ratio_neg = 1.0
+            
+        # Step 2: Make the ratios bigger by factor of 100
+        posneg_pos_big = posneg_ratio_pos * 100 if posneg_ratio_pos > 0 else 0
+        posneg_neg_big = posneg_ratio_neg * 100 if posneg_ratio_neg > 0 else 0
+        
+        # Step 3: Compute percentage of information that is positive/negative
+        total_sentiment = positive_c + negative_c
+        if total_sentiment > 0:
+            if gross_sentiment == "positive":
+                data_pos_pct = (positive_c / total_sentiment) * 100
+                data_neg_pct = (negative_c / total_sentiment) * 100
+            else:
+                data_pos_pct = (positive_c / total_sentiment) * 100  
+                data_neg_pct = (negative_c / total_sentiment) * 100
+        else:
+            data_pos_pct = 0
+            data_neg_pct = 0
+            
+        # Step 4: Compute precise sentiment scores
+        if gross_sentiment == "positive":
+            precise_sent_pos = (posneg_pos_big - (positive_t * 100)) * neutral_t if neutral_t > 0 else posneg_pos_big - (positive_t * 100)
+            precise_sent_neg = (posneg_pos_big - (negative_t * 100)) * neutral_t if neutral_t > 0 else posneg_pos_big - (negative_t * 100)
+        elif gross_sentiment == "negative":
+            precise_sent_pos = ((positive_t * 100) - posneg_neg_big) * neutral_t if neutral_t > 0 else (positive_t * 100) - posneg_neg_big
+            precise_sent_neg = ((negative_t * 100) - posneg_neg_big) * neutral_t if neutral_t > 0 else (negative_t * 100) - posneg_neg_big
+        else:  # neutral
+            precise_sent_pos = 0
+            precise_sent_neg = 0
+            
+        # Round to integers
+        precise_sent_pos = round(precise_sent_pos)
+        precise_sent_neg = round(precise_sent_neg)
+        
+        # Step 5: Find matching sentiment categories
+        def find_closest_category(score, categories):
+            """Find the closest matching category for a given score"""
+            if not categories:
+                return "Unknown"
+                
+            # Find the key with minimum distance to our score
+            closest_key = min(categories.keys(), key=lambda x: abs(x - score))
+            return categories[closest_key][0]  # Return the description string
+            
+        sentcat_pos = find_closest_category(precise_sent_pos, sentiment_categories)
+        sentcat_neg = find_closest_category(precise_sent_neg, sentiment_categories)
+        
+        # Create results dictionary
+        results = {
+            'gross_sentiment': gross_sentiment,
+            'data_pos_pct': data_pos_pct,
+            'data_neg_pct': data_neg_pct,
+            'precise_sent_pos': precise_sent_pos,
+            'precise_sent_neg': precise_sent_neg,
+            'sentcat_pos': sentcat_pos,
+            'sentcat_neg': sentcat_neg,
+            'posneg_ratio_pos': posneg_ratio_pos,
+            'posneg_ratio_neg': posneg_ratio_neg
+        }
+        
+        # Step 6: Print the precise sentiment metrics
+        print("\n================= Precise Sentiment Analysis =========================")
+        print(f"Overall gross sentiment: {gross_sentiment.upper()}")
+        print(f"")
+        print(f"Positive Information: {data_pos_pct:.2f}%")
+        print(f"  - Precise sentiment score: {precise_sent_pos}")
+        print(f"  - Categorical description: {sentcat_pos}")
+        print(f"")
+        print(f"Negative Information: {data_neg_pct:.2f}%") 
+        print(f"  - Precise sentiment score: {precise_sent_neg}")
+        print(f"  - Categorical description: {sentcat_neg}")
+        print(f"=====================================================================")
+        
+        return results

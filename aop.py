@@ -574,7 +574,7 @@ def main():
 
 
             sentiment_categories = {
-                200: (['Bullishly positive', 100]),
+                200: (['Bullish positive', 100]),
                 100: (['Very Positive', 75]),
                 50: (['Positive', 50]),
                 25: (['Trending positive', 25]),
@@ -582,9 +582,16 @@ def main():
                 -25: (['Trending negative', 25]),
                 -50: (['Negative', 50]),
                 -100: (['Very Negative', 75]),
-                -200: (['Bearishly negative', 100])
+                -200: (['Bearish negative', 100])
                 }
             
+            # INSTRUCTION 100
+            # the new precise sentiment" score metrics will be printined here...
+            precise_results = sent_ai.compute_precise_sentiment(
+                df_final, positive_c, negative_c, positive_t, negative_t, neutral_t, sentiment_categories
+            )
+
+    
             # KGdb stats
             if args['bool_verbose'] is True:
                 print (f" ")
