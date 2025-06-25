@@ -426,6 +426,7 @@ def main():
             sx = 1
             cmi_debug = __name__+"::_args_newsymbol.#1"
             news_symbol = str(args['newsymbol'])       # symbol provided on CMDLine
+            final_sent_df = pd.DataFrame()    # reset DataFrame for each article
             print ( " " )
             print ( f"M/L news reader for Stock [ {news_symbol} ] =========================" )
             news_ai = ml_nlpreader(1, args)
@@ -470,38 +471,28 @@ def main():
                     this_urlhash = sent_ai.active_urlhash
                     pd.set_option('display.max_rows', None)
                     pd.set_option('max_colwidth', 30)
-                    #sdf = sent_ai.sen_df0.loc[sent_ai.sen_df0['urlhash'] == this_urlhash].groupby('snt')['rnk'].mean()
-                    #print ( f"{sdf}")    # hack to not print annoying index 'dtype' dataframe footer
-                    
-                    #print ( f"### DEBUG: Article Dataframe 1 ####" )
-                    print ( f"{news_ai.yfn.sen_stats_df}" )
-                    
-                    #print ( f"### DEBUG: Article Dataframe 2 ####" )
                     aggregate_mean = sent_ai.sen_df0.loc[sent_ai.sen_df0['urlhash'] == this_urlhash].groupby('snt')['rnk'].mean()    # fill NaN with 0.0
-                    #aggregate_mean.info()
-                    #print ( f"{aggregate_mean.shape} " )
-                    #print ( f"{aggregate_mean}" )
-                    #print ( f"{sent_ai.sen_df0.loc[sent_ai.sen_df0['urlhash'] == this_urlhash].groupby('snt')['rnk'].mean()}" )
-                    
-                    # The aggregate_mean DF keys are only set if the sentiment analysis computes matching  sentimentfor the article.
-                    # If the article has no sentiment, then the keys are not set in the DF.
-                    # so we need to check if the keys exists, and create then as 0.0 for the fnal DataFrame math to work
+                   
+                    # aggregate_mean DF keys are only set if the sentiment analysis computes a pos/net/neu sentimentfor the article.
+                    # If the article has no matching sentiment, thekeys are not set in the DF.
+                    # Check if the keys exists, and create a default = 0.0 if not
+                    nx, px, zx = 0.0, 0.0, 0.0
                     try:
                         px = aggregate_mean.loc['positive']
                     except KeyError:
-                        logging.info( f'%s - Create missing sentiment DF key / Set to: 0.0' % cmi_debug )
+                        logging.info( f'%s - Positive sentiment DF key missing / Create + Set: 0.0' % cmi_debug )
                         aggregate_mean.loc['positive'] = 0.0
 
                     try:
                         nx = aggregate_mean.loc['negative']
                     except KeyError:
                         aggregate_mean.loc['negative'] = 0.0
-                        logging.info( f'%s - Create missing sentiment DF key / Set to: 0.0' % cmi_debug )
+                        logging.info( f'%s - Negative sentiment DF key missing / Create + Set: 0.0' % cmi_debug )
 
                     try:
                         zx = aggregate_mean.loc['neutral']
                     except KeyError:
-                        logging.info( f'%s - Create missing sentiment DF key / Set to: 0.0' % cmi_debug )
+                        logging.info( f'%s - Neutral sentiment DF key missing / Create + Set: 0.0' % cmi_debug )
                         aggregate_mean.loc['neutral'] = 0.0
 
                     #print ( f"\n\n### DEBUG: Article Dataframe 3 ####" )
@@ -512,48 +503,88 @@ def main():
                             nx, \
                             zx ]]
 
-                    sent_df_row = pd.DataFrame(data_payload, columns=['art', 'urlhash', 'pos_sent', 'neg_sent', 'neu_sent'] )
+                    # build the Sentiment DF that shows interesting computed sentiment for each article
+                    sent_df_row = pd.DataFrame(data_payload, columns=['art', 'urlhash', 'psnt', 'nsnt', 'zsnt'] )
                     aggmean_sent_df = pd.concat([aggmean_sent_df, sent_df_row])
-                    
-                    print ( f"{aggmean_sent_df}" )
+                    merge_row = pd.merge(news_ai.yfn.sen_stats_df, aggmean_sent_df, on=['art', 'urlhash'])
+                    final_sent_df = pd.concat([final_sent_df, merge_row], ignore_index=True)
 
-            print (f"\n\n========================= Scentement Stats ====================================" )
+            ################################################################
+            # END of article processing loop
+            ################################################################
+            # We're not done cyclihng through all articles and computing sentiment for each one.
+            # Now we can display final stats and results
+            print (f"\n\n============================= Scentement Stats ====================================" )
             print (f"Total tokens generated: {ttkz} - Total words read: {twcz} - Total scent/paras read {tscz}" )
             print (f"Human read time: {(twcz / 237):.2f} mins - Total Human processing time: {(twcz / 237) + tscz + (tscz / 2):.2f} mins" )
             pd.set_option('display.max_rows', None)
             pd.set_option('display.max_columns', None)
-            print (f" ==================================== Stats ====================================\n" )
+            print (f"================================= Article Stats =======================================\n" )
 
             # DEBUG
-            # sen_df0 = [ 'Row', 'Symbol', 'art', 'urlhash', 'chk', 'rnk', 'snt' ], index=[col:0] )
-            #pd.set_option('display.max_rows', None)
-            #pd.set_option('max_colwidth', 30)
-            #print ( f"{sent_ai.sen_df0}" )
-            
             if args['bool_verbose'] is True:        # Logging level
                 news_ai.yfn.dump_ml_ingest()
                 print (f"{sent_ai.sen_df0}")
-            else:
-                sent_ai.sen_df1 = sent_ai.sen_df0.groupby('snt').agg(['count'])
+ 
+            sent_ai.sen_df1 = sent_ai.sen_df0.groupby('snt').agg(['count'])
+            pd.set_option("expand_frame_repr", False)
+            aggregation_functions = { \
+                'art': 'nunique', \
+                'urlhash': 'nunique', \
+                'positive': 'sum', \
+                'neutral': 'sum', \
+                'negative': 'sum', \
+                'psnt': 'mean', \
+                'nsnt': 'mean', \
+                'zsnt': 'mean'
+                }
 
-                print ( f"### DEBUG new DF 1.1 ####" )
-                print ( f"{sent_ai.sen_df1}" )
+            # Calculate the totals row
+            totals_row = final_sent_df.agg(aggregation_functions)
+            # Set new DF index to 'Totals'
+            totals_df = pd.DataFrame(totals_row).T
+            totals_df.index = ['Totals']
+            # Convert 'art' column to object type in original DF to allow string 'Totals'
+            final_sent_df['art'] = final_sent_df['art'].astype(object)
+            # Set 'art' for the totals row to 'Total' and 'urlhash' to an empty string
+            #totals_df['art'] = 'Totals'
+            totals_df['urlhash'] = '' # Or np.nan if preferred for a numerical representation
+            # Concatenate the original DataFrame with the totals row
+            df_final = pd.concat([final_sent_df, totals_df])
+            print ( f"{df_final}")
+            print (f"\n")
 
-                print ( f"### DEBUG new DF 1.3 ####" )
-                grouped_data = sent_ai.sen_df0.groupby('art').size().reset_index(name='Chunks')
-                final_sent_df = pd.merge(grouped_data, news_ai.yfn.sen_stats_df, on='art', how='outer')
-                print ( f"{final_sent_df}")
+            positive_t = df_final.iloc[-1]['psnt']
+            negative_t = df_final.iloc[-1]['nsnt']
+            neutral_t = df_final.iloc[-1]['zsnt']
+            positive_c = df_final.iloc[-1]['positive']
+            negative_c = df_final.iloc[-1]['negative']
+            neutral_c = df_final.iloc[-1]['neutral']
 
-                #final_sent_df = sent_ai.sen_df1.merge(news_ai.yfn.sen_stats_df, left_index=True, right_index=True, how='outer')
-                #final_sent_df = pd.concat([sent_ai.sen_df1, news_ai.yfn.sen_stats_df], axis=1)
+            if positive_c > negative_c:
+                sent_computed = (positive_c / negative_c) * 100
+                sentiment = "Positive"
 
-                print (f"\n")
+            #sent_ai.sen_df1['Percetage'] = sent_ai.sen_df1['Row'] / neutral_t * 100
+            #sent_ai.sen_df1 = sent_ai.sen_df1.drop(['Symbol', 'art', 'chk', 'rnk'], axis=1)
+            print ( f"================= Final Sentiment Analysis for {news_symbol} =========================" )
+            print ( f"Sentiment confidence scores" )
+            print ( f"Positive: {(positive_t * 100):.2f}% / Negative: {(negative_t * 100):.2f}% / Neutral: {(neutral_t * 100):.2f}% " )
+            print ( f"=============================================================================" )
 
-            neutral_t = sent_ai.sen_df1.loc['Total']['rnk']
-            sent_ai.sen_df1['Percetage'] = sent_ai.sen_df1['Row'] / neutral_t * 100
-            sent_ai.sen_df1 = sent_ai.sen_df1.drop(['Symbol', 'art', 'chk', 'rnk'], axis=1)
-            print ( f"{sent_ai.sen_df1}" )
 
+            sentiment_categories = {
+                200: (['Bullishly positive', 100]),
+                100: (['Very Positive', 75]),
+                50: (['Positive', 50]),
+                25: (['Trending positive', 25]),
+                0: (['Neutral', 0]),
+                -25: (['Trending negative', 25]),
+                -50: (['Negative', 50]),
+                -100: (['Very Negative', 75]),
+                -200: (['Bearishly negative', 100])
+                }
+            
             # KGdb stats
             if args['bool_verbose'] is True:
                 print (f" ")
