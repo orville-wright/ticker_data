@@ -567,10 +567,9 @@ def main():
 
             #sent_ai.sen_df1['Percetage'] = sent_ai.sen_df1['Row'] / neutral_t * 100
             #sent_ai.sen_df1 = sent_ai.sen_df1.drop(['Symbol', 'art', 'chk', 'rnk'], axis=1)
-            print ( f"================= Final Sentiment Analysis for {news_symbol} =========================" )
+            print ( f"================= Final Sentiment Analysis for: {news_symbol.upper()} =========================" )
             print ( f"Sentiment confidence scores" )
             print ( f"Positive: {(positive_t * 100):.2f}% / Negative: {(negative_t * 100):.2f}% / Neutral: {(neutral_t * 100):.2f}% " )
-            print ( f"=============================================================================" )
 
 
             sentiment_categories = {
@@ -585,8 +584,6 @@ def main():
                 -200: (['Bearish negative', 100])
                 }
             
-            # INSTRUCTION 100
-            # the new precise sentiment" score metrics will be printined here...
             precise_results = sent_ai.compute_precise_sentiment(
                 df_final, positive_c, negative_c, positive_t, negative_t, neutral_t, sentiment_categories
             )

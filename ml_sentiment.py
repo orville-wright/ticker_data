@@ -178,7 +178,7 @@ class ml_sentiment:
         """
         cmi_debug = __name__+"::"+self.compute_precise_sentiment.__name__
         logging.info( f'%s - Computing precise sentiment analysis' % cmi_debug )
-        
+
         # Step 1: Determine overall gross sentiment
         if positive_c > negative_c:
             gross_sentiment = "positive"
@@ -232,11 +232,25 @@ class ml_sentiment:
             """Find the closest matching category for a given score"""
             if not categories:
                 return "Unknown"
-                
+
+            '''
+            sentiment_categories = {
+                 200: (['Bullish positive', 200]),
+                 100: (['Very Positive', 100]),
+                 50: (['Positive', 50]),
+                 25: (['Trending positive', 25]),
+                 0: (['Neutral', 0]),
+                 -25: (['Trending negative', -25]),
+                 -50: (['Negative', -50]),
+                 -100: (['Very Negative', -100]),
+                 -200: (['Bearish negative', -200])
+                 }
+            '''
+      
             # Find the key with minimum distance to our score
             closest_key = min(categories.keys(), key=lambda x: abs(x - score))
             return categories[closest_key][0]  # Return the description string
-            
+
         sentcat_pos = find_closest_category(precise_sent_pos, sentiment_categories)
         sentcat_neg = find_closest_category(precise_sent_neg, sentiment_categories)
         
@@ -254,14 +268,9 @@ class ml_sentiment:
         }
         
         # Step 6: Print the precise sentiment metrics
-        print(f"Overall sentiment: {gross_sentiment.upper()}")
-        print(f"Articles Positivity: {data_pos_pct:.2f}%")
-        print(f"- Sentiment score:   {precise_sent_pos}")
-        print(f"- Categorical sent:  {sentcat_pos}")
-        print(f"")
-        print(f"Articles Negativity: {data_neg_pct:.2f}%") 
-        print(f"- Sentiment score:   {precise_sent_neg}")
-        print(f"- Categorical sent:  {sentcat_neg}")
-        print(f"=====================================================================")
+        print ( f"============================ {gross_sentiment.upper()} ===========================" )
+        print ( f"Overall: {data_pos_pct:.2f}% {sentcat_pos} - Conf score: {precise_sent_pos}" ) 
+        print ( f"Overall: {data_neg_pct:.2f}% {sentcat_neg} - Conf score: {precise_sent_neg}" ) 
+        print(f"======================================================================================")
         
         return results
