@@ -212,8 +212,10 @@ class ml_sentiment:
             
         # Step 4: Compute precise sentiment scores
         if gross_sentiment == "positive":
-            precise_sent_pos = (posneg_pos_big - (positive_t * 100)) * neutral_t if neutral_t > 0 else posneg_pos_big - (positive_t * 100)
-            precise_sent_neg = (posneg_pos_big - (negative_t * 100)) * neutral_t if neutral_t > 0 else posneg_pos_big - (negative_t * 100)
+            #precise_sent_pos = (posneg_pos_big - (positive_t * 100)) * neutral_t if neutral_t > 0 else posneg_pos_big - (positive_t * 100)
+            #precise_sent_neg = (posneg_neg_big - (negative_t * 100)) * neutral_t if neutral_t > 0 else posneg_pos_big - (negative_t * 100)
+            precise_sent_pos = (posneg_pos_big - (positive_t * 100)) * neutral_t
+            precise_sent_neg = (posneg_neg_big - (negative_t * 100)) * neutral_t
         elif gross_sentiment == "negative":
             precise_sent_pos = ((positive_t * 100) - posneg_neg_big) * neutral_t if neutral_t > 0 else (positive_t * 100) - posneg_neg_big
             precise_sent_neg = ((negative_t * 100) - posneg_neg_big) * neutral_t if neutral_t > 0 else (negative_t * 100) - posneg_neg_big
@@ -252,16 +254,14 @@ class ml_sentiment:
         }
         
         # Step 6: Print the precise sentiment metrics
-        print("\n================= Precise Sentiment Analysis =========================")
-        print(f"Overall gross sentiment: {gross_sentiment.upper()}")
+        print(f"Overall sentiment: {gross_sentiment.upper()}")
+        print(f"Articles Positivity: {data_pos_pct:.2f}%")
+        print(f"- Sentiment score:   {precise_sent_pos}")
+        print(f"- Categorical sent:  {sentcat_pos}")
         print(f"")
-        print(f"Positive Information: {data_pos_pct:.2f}%")
-        print(f"  - Precise sentiment score: {precise_sent_pos}")
-        print(f"  - Categorical description: {sentcat_pos}")
-        print(f"")
-        print(f"Negative Information: {data_neg_pct:.2f}%") 
-        print(f"  - Precise sentiment score: {precise_sent_neg}")
-        print(f"  - Categorical description: {sentcat_neg}")
+        print(f"Articles Negativity: {data_neg_pct:.2f}%") 
+        print(f"- Sentiment score:   {precise_sent_neg}")
+        print(f"- Categorical sent:  {sentcat_neg}")
         print(f"=====================================================================")
         
         return results
