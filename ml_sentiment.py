@@ -23,8 +23,9 @@ class ml_sentiment:
     args = []            # class dict to hold global args being passed in from main() methods
     mlnlp_uh = None      # URL Hinter instance
     sen_df0 = None       # sentiment for this artile ONLY (gets overwritten each time per article)
-    sen_df1 = None
-    sen_df2 = None
+    sen_df1 = None       # uNUSED
+    sen_df2 = None       # ? unknown
+    sen_df3 = None       # A long lasting DF to collect all sentiment data
     df0_row_count = 0
     active_urlhash = None  # Current URL hash being processed
     sen_data = []       # Data to be added to the DataFrame
@@ -34,7 +35,21 @@ class ml_sentiment:
     twc = 0             # Total Word count in this scentence being analyzed
     yti = 0
     cycle = 0            # class thread loop counter
-
+    
+    # Techcnial analysys dict defines sentiment score to description mapping
+    s_categories = {
+            200: (['Bullish positive', 200]),
+            100: (['Very Positive', 100]),
+            50: (['Positive', 50]),
+            25: (['Trending positive', 25]),
+            0: (['Neutral', 0]),
+            -25: (['Trending negative', -25]),
+            -50: (['Negative', -50]),
+            -100: (['Very Negative', -100]),
+            -200: (['Bearish negative', -200])
+            }
+        
+    ######################## init ##########################################
     def __init__(self, yti, global_args):
         cmi_debug = __name__+"::"+self.__init__.__name__
         logging.info( f'%s   - Instantiate.#{yti}' % cmi_debug )
@@ -160,12 +175,13 @@ class ml_sentiment:
         return self.ttc, self.twc, i
 
 ##################################### 3 ####################################
-    def compute_precise_sentiment(self, df_final, positive_c, negative_c, positive_t, negative_t, neutral_t, sentiment_categories):
+    def compute_precise_sentiment(self, symbol, df_final, positive_c, negative_c, positive_t, negative_t, neutral_t):
         """
         Compute precise sentiment analysis based on aggregated data from df_final
         
         Parameters:
-        - df_final: DataFrame containing aggregated sentiment data
+        - symbol: Stock symbol for which sentiment is being computed
+        - df_final: DF DataFrame containing aggregated all articles sentiment data (optional not used here)
         - positive_c: Total count of positive sentiment instances
         - negative_c: Total count of negative sentiment instances  
         - positive_t: Mean positive sentiment score
@@ -229,32 +245,18 @@ class ml_sentiment:
         precise_sent_pos = round(precise_sent_pos)
         precise_sent_neg = round(precise_sent_neg)
         
-        # Step 5: Find matching sentiment categories
+        # Step 5
+        # HELPER function
+        # - find the closest matching category for a given Category score       
         def find_closest_category(score, categories):
             """Find the closest matching category for a given score"""
             if not categories:
                 return "Unknown"
-
-            '''
-            sentiment_categories = {
-                 200: (['Bullish positive', 200]),
-                 100: (['Very Positive', 100]),
-                 50: (['Positive', 50]),
-                 25: (['Trending positive', 25]),
-                 0: (['Neutral', 0]),
-                 -25: (['Trending negative', -25]),
-                 -50: (['Negative', -50]),
-                 -100: (['Very Negative', -100]),
-                 -200: (['Bearish negative', -200])
-                 }
-            '''
-      
-            # Find the key with minimum distance to our score
             closest_key = min(categories.keys(), key=lambda x: abs(x - score))
             return categories[closest_key][0]  # Return the description string
 
-        sentcat_pos = find_closest_category(precise_sent_pos, sentiment_categories)
-        sentcat_neg = find_closest_category(precise_sent_neg, sentiment_categories)
+        sentcat_pos = find_closest_category(precise_sent_pos, self.s_categories)
+        sentcat_neg = find_closest_category(precise_sent_neg, self.s_categories)
         
         # Create results dictionary
         results = {
@@ -266,15 +268,38 @@ class ml_sentiment:
             'sentcat_pos': sentcat_pos,
             'sentcat_neg': sentcat_neg,
             'posneg_ratio_pos': posneg_ratio_pos,
-            'posneg_ratio_neg': posneg_ratio_neg
+            'posneg_ratio_neg': posneg_ratio_neg,
+            'posneg_intensity_ratio': posneg_ratio
         }
         
         if round(posneg_ratio,1) <= 1.5:
             gross_sentiment = "NEUTRAL"
         # Step 6: Print the precise sentiment metrics
-        print ( f"Overlal: {gross_sentiment.upper()} / Pos-Neg ratio: ({round(posneg_ratio,1)} : 1)" )
-        print ( f"Overall: {data_pos_pct:.2f}% {sentcat_pos} - Conf score: {precise_sent_pos}" ) 
-        print ( f"Overall: {data_neg_pct:.2f}% {sentcat_neg} - Conf score: {precise_sent_neg}" ) 
+        print( f"Overlal: {gross_sentiment.upper()} / Intensity: ({round(posneg_ratio,1)} : 1)" )
+        print( f"Overall: {data_pos_pct:.2f}% {sentcat_pos} @ Confidence: {(positive_t * 100):.2f}% / Cat score: {precise_sent_pos}" ) 
+        print( f"Overall: {data_neg_pct:.2f}% {sentcat_neg} @ Confidence: {(negative_t * 100):.2f}% / Cat score: {precise_sent_neg}" ) 
         print(f"=============================================================================")
+
+        sym = symbol
+        pos_pct = f"{data_pos_pct:.2f}"
+        neg_pct = f"{data_neg_pct:.2f}"
+
+        self.s_data = [[ \
+            sym, \
+            gross_sentiment, \
+            round(posneg_ratio,1), \
+            pos_pct, \
+            sentcat_pos, \
+            precise_sent_pos, \
+            neg_pct, \
+            sentcat_neg, \
+            precise_sent_neg, \
+            positive_t, \
+            negative_t, \
+            neutral_t ]]
         
+        self.df0_row = pd.DataFrame(self.s_data, columns=[ 'Symbol', 'Sentiment', 'Ratio', 'P_pct', 'P_cat', 'P_score', 'N_pct', 'N_cat', 'N_score', 'P_mean', 'N_mean', 'Z_mean' ] )
+        self.sen_df3 = pd.concat([self.sen_df3, self.df0_row])
+        logging.info( f'%s - Global Sentiment DF updated...' % cmi_debug )        
+
         return results

@@ -425,27 +425,15 @@ def main():
     if args['newsymbol'] is not False:
             sx = 1
             cmi_debug = __name__+"::_args_newsymbol.#1"
-            news_symbol = str(args['newsymbol'])       # symbol provided on CMDLine
-            final_sent_df = pd.DataFrame()    # reset DataFrame for each article
+            news_symbol = str(args['newsymbol'])        # symbol provided on CMDLine
+            final_sent_df = pd.DataFrame()              # reset DataFrame for each article
             print ( " " )
             print ( f"M/L news reader for Stock [ {news_symbol} ] =========================" )
             news_ai = ml_nlpreader(1, args)
             sent_ai = ml_sentiment(1, args)
             news_ai.nlp_read_one(news_symbol, args)     # includes scan_news_feed() & eval_news_feed_stories()
-            kgraphdb = db_graph(1, args)    # inst a class 
-            kgraphdb.con_aopkgdb(1)         # connect to neo4j db
-
-            # check to see if this ticker stmbol exists in KGdb as a Graph node
-            # if not, create it
-            try:
-                found_sym = kgraphdb.check_node_exists(1, news_symbol)
-                if found_sym['present'] is True:    # True = symbol already exists
-                    created = False
-                    pass    # do nothing is Ticker Symbol exists
-            except TypeError:
-                # Type:class 'NoneType' is discovered here...
-                kg_node_id = kgraphdb.create_sym_node(news_symbol)
-                created = True
+            kgraphdb = db_graph(1, args)                # inst a class 
+            kgraphdb.con_aopkgdb(1)                     # connect to neo4j db
 
             ttc = 0     # article specific stats : total tokens
             twc = 0     # article specific stats : total words
@@ -454,9 +442,9 @@ def main():
             twcz = 0    # Cumulative : Total words read
             tscz = 0    # Cumulative : Total scentences / Paragraphs read
 
-            #################################################################
-            # MAIN control loop for AI M'L NLP reading & Sentimnent analysis
-            #################################################################
+    # ################################################################
+    # MAIN control loop for AI M/L NLP reading & Sentimnent analysis
+    # ################################################################
             for sn_idx, sn_row in news_ai.yfn.ml_ingest.items():    # all pages extrated in ml_ingest
                 aggmean_sent_df = pd.DataFrame()  # reset DataFrame for each article
                 # TESTING code only - to make testing complete quicker (only test 4 docs)
@@ -512,9 +500,9 @@ def main():
             ################################################################
             # END of article processing loop
             ################################################################
-            # We're not done cyclihng through all articles and computing sentiment for each one.
+            # We're not done cycling through all articles and computing sentiment for each one.
             # Now we can display final stats and results
-            print (f"\n\n============================= Scentement Stats ====================================" )
+            print (f"\n\n============================ Scentement Stats =========================================" )
             print (f"Total tokens generated: {ttkz} - Total words read: {twcz} - Total scent/paras read {tscz}" )
             print (f"Human read time: {(twcz / 237):.2f} mins - Total Human processing time: {(twcz / 237) + tscz + (tscz / 2):.2f} mins" )
             pd.set_option('display.max_rows', None)
@@ -526,7 +514,7 @@ def main():
                 news_ai.yfn.dump_ml_ingest()
                 print (f"{sent_ai.sen_df0}")
  
-            sent_ai.sen_df1 = sent_ai.sen_df0.groupby('snt').agg(['count'])
+            #sent_ai.sen_df1 = sent_ai.sen_df0.groupby('snt').agg(['count'])
             pd.set_option("expand_frame_repr", False)
             aggregation_functions = { \
                 'art': 'nunique', \
@@ -541,15 +529,10 @@ def main():
 
             # Calculate the totals row
             totals_row = final_sent_df.agg(aggregation_functions)
-            # Set new DF index to 'Totals'
             totals_df = pd.DataFrame(totals_row).T
             totals_df.index = ['Totals']
-            # Convert 'art' column to object type in original DF to allow string 'Totals'
             final_sent_df['art'] = final_sent_df['art'].astype(object)
-            # Set 'art' for the totals row to 'Total' and 'urlhash' to an empty string
-            #totals_df['art'] = 'Totals'
-            totals_df['urlhash'] = '' # Or np.nan if preferred for a numerical representation
-            # Concatenate the original DataFrame with the totals row
+            totals_df['urlhash'] = ''       # Or np.nan if preferred for a numerical representation
             df_final = pd.concat([final_sent_df, totals_df])
             print ( f"{df_final}")
             print (f"\n")
@@ -561,35 +544,25 @@ def main():
             negative_c = df_final.iloc[-1]['negative']
             neutral_c = df_final.iloc[-1]['neutral']
 
-            if positive_c > negative_c:
-                sent_computed = (positive_c / negative_c) * 100
-                sentiment = "Positive"
-
-            #sent_ai.sen_df1['Percetage'] = sent_ai.sen_df1['Row'] / neutral_t * 100
-            #sent_ai.sen_df1 = sent_ai.sen_df1.drop(['Symbol', 'art', 'chk', 'rnk'], axis=1)
-            print ( f"================= Final Sentiment Analysis for: {news_symbol.upper()} =========================" )
-            print ( f"Sentiment confidence scores" )
-            print ( f"Positive: {(positive_t * 100):.2f}% / Negative: {(negative_t * 100):.2f}% / Neutral: {(neutral_t * 100):.2f}% " )
-
-
-            sentiment_categories = {
-                200: (['Bullish positive', 100]),
-                100: (['Very Positive', 75]),
-                50: (['Positive', 50]),
-                25: (['Trending positive', 25]),
-                0: (['Neutral', 0]),
-                -25: (['Trending negative', 25]),
-                -50: (['Negative', 50]),
-                -100: (['Very Negative', 75]),
-                -200: (['Bearish negative', 100])
-                }
-            
+            print ( f"================= Final Sentiment Analysis for: {news_symbol.upper()} =========================" )       
             precise_results = sent_ai.compute_precise_sentiment(
-                df_final, positive_c, negative_c, positive_t, negative_t, neutral_t, sentiment_categories
+                news_symbol.upper(), df_final, positive_c, negative_c, positive_t, negative_t, neutral_t
             )
-
-    
+            print (f"{sent_ai.sen_df3}")
+            
+            #################################################################
+            # Neo4j DATBASE FUNCTIONS
             # KGdb stats
+            try:
+                found_sym = kgraphdb.check_node_exists(1, news_symbol)
+                if found_sym['present'] is True:    # True = symbol already exists
+                    created = False
+                    pass    # do nothing is Ticker Symbol exists
+            except TypeError:
+                # Type:class 'NoneType' is discovered here...
+                kg_node_id = kgraphdb.create_sym_node(news_symbol)
+                created = True
+                
             if args['bool_verbose'] is True:
                 print (f" ")
                 if created is True:    # True = symbol already exists
