@@ -561,6 +561,14 @@ def main():
             except TypeError:
                 # Type:class 'NoneType' is discovered here...
                 kg_node_id = kgraphdb.create_sym_node(news_symbol)
+                # cyce though evey row in df_final DF
+                # create a neo4j node for each article thats associated with this symbol
+                for idx, row in df_final.iterrows():
+                    # create a node for each article
+                    kgraphdb.create_article_node(
+                        news_symbol, row['art'], row['urlhash'], row['psnt'], row['nsnt'], row['zsnt']
+                    )
+
                 created = True
                 
             if args['bool_verbose'] is True:
