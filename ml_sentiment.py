@@ -184,10 +184,12 @@ class ml_sentiment:
             gross_sentiment = "positive"
             posneg_ratio_pos = positive_c / negative_c if negative_c > 0 else positive_c
             posneg_ratio_neg = 0
+            posneg_ratio = posneg_ratio_pos
         elif negative_c > positive_c:
             gross_sentiment = "negative" 
             posneg_ratio_pos = 0
             posneg_ratio_neg = negative_c / positive_c if positive_c > 0 else negative_c
+            posneg_ratio = posneg_ratio_neg
         else:
             gross_sentiment = "neutral"
             posneg_ratio_pos = 1.0
@@ -268,7 +270,7 @@ class ml_sentiment:
         }
         
         # Step 6: Print the precise sentiment metrics
-        print ( f"============================ {gross_sentiment.upper()} ===========================" )
+        print ( f"==================== {gross_sentiment.upper()} {round(posneg_ratio,1)}:1 ===========================" )
         print ( f"Overall: {data_pos_pct:.2f}% {sentcat_pos} - Conf score: {precise_sent_pos}" ) 
         print ( f"Overall: {data_neg_pct:.2f}% {sentcat_neg} - Conf score: {precise_sent_neg}" ) 
         print(f"======================================================================================")
