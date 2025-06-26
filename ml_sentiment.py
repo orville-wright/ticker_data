@@ -269,10 +269,12 @@ class ml_sentiment:
             'posneg_ratio_neg': posneg_ratio_neg
         }
         
+        if round(posneg_ratio,1) <= 1.5:
+            gross_sentiment = "NEUTRAL"
         # Step 6: Print the precise sentiment metrics
-        print ( f"==================== {gross_sentiment.upper()} {round(posneg_ratio,1)}:1 ===========================" )
+        print ( f"Overlal: {gross_sentiment.upper()} / Pos-Neg ratio: ({round(posneg_ratio,1)} : 1)" )
         print ( f"Overall: {data_pos_pct:.2f}% {sentcat_pos} - Conf score: {precise_sent_pos}" ) 
         print ( f"Overall: {data_neg_pct:.2f}% {sentcat_neg} - Conf score: {precise_sent_neg}" ) 
-        print(f"======================================================================================")
+        print(f"=============================================================================")
         
         return results
