@@ -4,6 +4,7 @@ import logging
 import argparse
 import dotenv
 import os
+import pandas as pd
 from rich import print
 
 from neo4j import GraphDatabase, RoutingControl
@@ -77,20 +78,57 @@ class db_graph:
 
 ##################################### 3 ####################################
 
-    def create_sym_node(self, ticker_symbol):
+    def create_sym_node(self, ticker_symbol, sentiment_df=None):
         """
-        Create a Graph NODE
+        Create a Symbol Graph NODE with enhanced sentiment data
         Assumes driver has been successfully created and saved to self.driver
-        node_data_package = dict of data we want created in GraphDB
+        sentiment_df = sent_ai.sen_df3 dataframe with sentiment analysis data
         """
         symbol = ticker_symbol.upper()
         cmi_debug = __name__+"::"+self.create_sym_node.__name__+".#"+str(self.yti)
-        logging.info( f'%s - Creating graph node for ticker symbol: [ {ticker_symbol} ]...' % cmi_debug )
+        logging.info( f'%s - Creating enhanced graph node for ticker symbol: [ {ticker_symbol} ]...' % cmi_debug )
 
         with self.driver.session(database="neo4j") as session:
-            query = ("CREATE (s:Symbol {symbol: $symbol, id: randomUUID()}) "
-                     "RETURN s.id AS node_id")
-            result = session.run(query, symbol=symbol)
+            if sentiment_df is not None and not sentiment_df.empty:
+                # Extract sentiment data from first row
+                row = sentiment_df.iloc[0]
+                query = (
+                    "CREATE (s:Symbol {"
+                    "symbol: $symbol, "
+                    "id: randomUUID(), "
+                    "sentiment: $sentiment, "
+                    "ratio: $ratio, "
+                    "p_pct: $p_pct, "
+                    "p_cat: $p_cat, "
+                    "p_score: $p_score, "
+                    "n_pct: $n_pct, "
+                    "n_cat: $n_cat, "
+                    "n_score: $n_score, "
+                    "p_mean: $p_mean, "
+                    "n_mean: $n_mean, "
+                    "z_mean: $z_mean"
+                    "}) RETURN s.id AS node_id"
+                )
+                result = session.run(query, 
+                    symbol=symbol,
+                    sentiment=row['Sentiment'],
+                    ratio=float(row['Ratio']),
+                    p_pct=float(row['P_pct']),
+                    p_cat=row['P_cat'],
+                    p_score=int(row['P_score']),
+                    n_pct=float(row['N_pct']),
+                    n_cat=row['N_cat'],
+                    n_score=int(row['N_score']),
+                    p_mean=float(row['P_mean']),
+                    n_mean=float(row['N_mean']),
+                    z_mean=float(row['Z_mean'])
+                )
+            else:
+                # Fallback to basic symbol node if no sentiment data
+                query = ("CREATE (s:Symbol {symbol: $symbol, id: randomUUID()}) "
+                         "RETURN s.id AS node_id")
+                result = session.run(query, symbol=symbol)
+            
             record = result.single()
             return record["node_id"]
 
@@ -146,3 +184,107 @@ class db_graph:
             result = session.run(query, symbol=symbol)     # Result object
             record = result.single()
             return record
+
+##################################### 6 ####################################
+
+    def create_article_nodes(self, df_final):
+        """
+        Create Article Graph NODEs from df_final dataframe
+        Assumes driver has been successfully created and saved to self.driver
+        df_final = dataframe containing article sentiment data
+        """
+        cmi_debug = __name__+"::"+self.create_article_nodes.__name__+".#"+str(self.yti)
+        logging.info( f'%s - Creating article nodes from df_final dataframe...' % cmi_debug )
+
+        created_nodes = []
+        
+        with self.driver.session(database="neo4j") as session:
+            for idx, row in df_final.iterrows():
+                # Skip the totals row
+                if row['art'] == 'Totals' or pd.isna(row['urlhash']) or row['urlhash'] == '':
+                    continue
+                    
+                query = (
+                    "CREATE (a:Article {"
+                    "urlhash: $urlhash, "
+                    "id: randomUUID(), "
+                    "art: $art, "
+                    "positive: $positive, "
+                    "neutral: $neutral, "
+                    "negative: $negative, "
+                    "psnt: $psnt, "
+                    "nsnt: $nsnt, "
+                    "zsnt: $zsnt"
+                    "}) RETURN a.id AS node_id"
+                )
+                
+                result = session.run(query,
+                    urlhash=str(row['urlhash']),
+                    art=int(row['art']),
+                    positive=float(row['positive']),
+                    neutral=float(row['neutral']),
+                    negative=float(row['negative']),
+                    psnt=float(row['psnt']),
+                    nsnt=float(row['nsnt']),
+                    zsnt=float(row['zsnt'])
+                )
+                
+                record = result.single()
+                created_nodes.append((record["node_id"], str(row['urlhash'])))
+                logging.info( f'%s - Created article node: {record["node_id"]} for urlhash: {row["urlhash"]}' % cmi_debug )
+        
+        return created_nodes
+
+##################################### 7 ####################################
+
+    def create_symbol_article_relationships(self, ticker_symbol, df_final, agency="Unknown", author="Unknown", published="Unknown", article_teaser="Unknown"):
+        """
+        Create HAS_ARTICLE relationships between Symbol and Article nodes
+        ticker_symbol = the stock symbol
+        df_final = dataframe containing article data
+        Relationship properties: agency, author, published, article_teaser can be provided
+        """
+        symbol = ticker_symbol.upper()
+        cmi_debug = __name__+"::"+self.create_symbol_article_relationships.__name__+".#"+str(self.yti)
+        logging.info( f'%s - Creating HAS_ARTICLE relationships for symbol: [ {symbol} ]...' % cmi_debug )
+
+        created_relationships = []
+        
+        with self.driver.session(database="neo4j") as session:
+            for idx, row in df_final.iterrows():
+                # Skip the totals row
+                if row['art'] == 'Totals' or pd.isna(row['urlhash']) or row['urlhash'] == '':
+                    continue
+                
+                query = (
+                    "MATCH (s:Symbol {symbol: $symbol}) "
+                    "MATCH (a:Article {urlhash: $urlhash}) "
+                    "CREATE (s)-[r:HAS_ARTICLE {"
+                    "locality: $locality, "
+                    "news_agency: $news_agency, "
+                    "author: $author, "
+                    "published: $published, "
+                    "article_teaser: $article_teaser, "
+                    "urlhash: $urlhash"
+                    "}]->(a) "
+                    "RETURN r"
+                )
+                
+                result = session.run(query,
+                    symbol=symbol,
+                    urlhash=str(row['urlhash']),
+                    locality="Local",
+                    news_agency=agency,
+                    author=author,
+                    published=published,
+                    article_teaser=article_teaser
+                )
+                
+                record = result.single()
+                if record:
+                    created_relationships.append(str(row['urlhash']))
+                    logging.info( f'%s - Created HAS_ARTICLE relationship for urlhash: {row["urlhash"]}' % cmi_debug )
+                else:
+                    logging.warning( f'%s - Failed to create relationship for urlhash: {row["urlhash"]}' % cmi_debug )
+        
+        return created_relationships

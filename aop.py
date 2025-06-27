@@ -560,15 +560,11 @@ def main():
                     pass    # do nothing is Ticker Symbol exists
             except TypeError:
                 # Type:class 'NoneType' is discovered here...
-                kg_node_id = kgraphdb.create_sym_node(news_symbol)
-                # cyce though evey row in df_final DF
-                # create a neo4j node for each article thats associated with this symbol
-                for idx, row in df_final.iterrows():
-                    # create a node for each article
-                    kgraphdb.create_article_node(
-                        news_symbol, row['art'], row['urlhash'], row['psnt'], row['nsnt'], row['zsnt']
-                    )
-
+                kg_node_id = create_sym_node(self, ticker_symbol, sentiment_df=sent_ai.sen_df3)
+                #kg_node_id = kgraphdb.create_sym_node(news_symbol)
+                # create a neo4j nodes Relationships, Properties and Types for each article thats associated with this symbol
+                create_article_nodes(self, df_final)
+                create_symbol_article_relationships(self, ticker_symbol, df_final,agency="Unknown", author="Unknown", published="Unknown", article_teaser="Unknown")
                 created = True
                 
             if args['bool_verbose'] is True:
