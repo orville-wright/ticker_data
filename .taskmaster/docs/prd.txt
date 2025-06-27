@@ -1,0 +1,16 @@
+# Overview
+This is a test PRD for the ticker_data project. It aims to create a simple tool to fetch and display stock ticker data.
+
+# Core Features
+- Fetch ticker data from a public API.
+- Display the data in a simple table.
+- Allow users to refresh the data.
+
+# Technical Architecture
+- The application will be a simple web page.
+- It will use JavaScript to fetch and display the data.
+- No complex backend is required for the MVP.
+
+# Development Roadmap
+- MVP: A single page that fetches and displays data for a fixed set of tickers.
+- Future: Allow users to input tickers, add charts, and save preferences.
