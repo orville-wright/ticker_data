@@ -1,4 +1,7 @@
-User stories are specifically designed for an AI coding system—rather than a human—the stories are highly structured, unambiguous, and include the necessary technical context for automation. 
+
+This doccuemnt defines how User stories must be designed and described for an AI coding assistant to utilize (like CLaude Code or Roo).
+AI Code Asistant User stories are writted or AI Code Asistants to consume and are very detailed focused rather than conversationally focused for humans to read the stories.
+AI Code Asistants User stories are highly structured, unambiguous, and include the necessary technical context to support AI asistants during coding genertaion automation.
 
 For AI-driven software development, User story templates explicitly specify:
 
