@@ -112,7 +112,7 @@ class ml_sentiment:
         vectorz = ml_cvbow(item_idx, self.args)
         stop_words = stopwords.words('english')
         #classifier = pipeline('sentiment-analysis')
-        classifier = pipeline(task="sentiment-analysis", model="mrm8488/distilroberta-finetuned-financial-news-sentiment-analysis")
+        classifier = pipeline(task="sentiment-analysis", model="mrm8488/distilroberta-finetuned-financial-news-sentiment-analysis", device="cpu")
         tokenizer_mml = classifier.tokenizer.model_max_length
         self.ttc = 0
         self.twc = 0
