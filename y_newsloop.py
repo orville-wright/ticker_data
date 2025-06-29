@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 import logging
 import argparse
 import time
-from datetime import datetime, dateg
+from datetime import datetime, date
 import hashlib
 import json
 
