@@ -563,7 +563,7 @@ def main():
                 kg_node_id = kgraphdb.create_sym_node(news_symbol, sentiment_df=sent_ai.sen_df3)
                 #kg_node_id = kgraphdb.create_sym_node(news_symbol)
                 # create a neo4j nodes Relationships, Properties and Types for each article thats associated with this symbol
-                kgraphdb.create_article_nodes(df_final)
+                kgraphdb.create_article_nodes(df_final, news_symbol)
                 kgraphdb.create_symbol_article_relationships(news_symbol, df_final,agency="Unknown", author="Unknown", published="Unknown", article_teaser="Unknown")
                 created = True
                 

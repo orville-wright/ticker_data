@@ -187,7 +187,7 @@ class db_graph:
 
 ##################################### 6 ####################################
 
-    def create_article_nodes(self, df_final):
+    def create_article_nodes(self, df_final, symbol):
         """
         Create Article Graph NODEs from df_final dataframe
         Assumes driver has been successfully created and saved to self.driver
@@ -195,9 +195,9 @@ class db_graph:
         """
         cmi_debug = __name__+"::"+self.create_article_nodes.__name__+".#"+str(self.yti)
         logging.info( f'%s - Creating article nodes from df_final dataframe...' % cmi_debug )
+        symbol = symbol.upper()
 
         created_nodes = []
-        
         with self.driver.session(database="neo4j") as session:
             for idx, row in df_final.iterrows():
                 # Skip the totals row
@@ -208,6 +208,7 @@ class db_graph:
                     "CREATE (a:Article {"
                     "urlhash: $urlhash, "
                     "id: randomUUID(), "
+                    "usedby: $symbol, "
                     "art: $art, "
                     "positive: $positive, "
                     "neutral: $neutral, "
