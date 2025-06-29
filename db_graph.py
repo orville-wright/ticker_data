@@ -189,14 +189,15 @@ class db_graph:
 
     def create_article_nodes(self, df_final, symbol):
         """
-        Create Article Graph NODEs from df_final dataframe
+        Create Article Graph NODEs from df_final dataframe using APOC for dynamic labels
         Assumes driver has been successfully created and saved to self.driver
         df_final = dataframe containing article sentiment data
+        Creates nodes with static "Article" label and dynamic label based on urlhash
         """
         cmi_debug = __name__+"::"+self.create_article_nodes.__name__+".#"+str(self.yti)
-        logging.info( f'%s - Creating article nodes from df_final dataframe...' % cmi_debug )
+        logging.info( f'%s - Creating synamic article nodes from DF...' % cmi_debug )
         symbol = symbol.upper()
-        print (f"### ### DEBUG 1: Creating article for Symbol {symbol}")
+
         created_nodes = []
         with self.driver.session(database="neo4j") as session:
             for idx, row in df_final.iterrows():
@@ -204,12 +205,14 @@ class db_graph:
                 if row['art'] == 'Totals' or pd.isna(row['urlhash']) or row['urlhash'] == '':
                     continue
                 
-                print (f"### ### DEBUG 1: Build Cypher for Symbol {symbol}")    
+                # Use APOC to create node with dynamic labels
+                # Prefix urlhash with 'Hash_' to make it a valid Neo4j label
+                dynamic_label = f"Hash_{str(row['urlhash'])}"
                 query = (
-                    "CREATE (a:Article {"
+                    "CALL apoc.create.node([$static_label, $dynamic_label], {"
                     "urlhash: $urlhash, "
                     "id: randomUUID(), "
-                    "usedby: $symbol, "
+                    "usedby: $usedby, "
                     "art: $art, "
                     "positive: $positive, "
                     "neutral: $neutral, "
@@ -217,12 +220,15 @@ class db_graph:
                     "psnt: $psnt, "
                     "nsnt: $nsnt, "
                     "zsnt: $zsnt"
-                    "}) RETURN a.id AS node_id"
+                    "}) YIELD node RETURN node.id AS node_id"
                 )
                 
                 result = session.run(query,
+                    static_label="Article",
+                    dynamic_label=dynamic_label,
                     urlhash=str(row['urlhash']),
                     art=int(row['art']),
+                    usedby=symbol,
                     positive=float(row['positive']),
                     neutral=float(row['neutral']),
                     negative=float(row['negative']),
@@ -233,13 +239,13 @@ class db_graph:
                 
                 record = result.single()
                 created_nodes.append((record["node_id"], str(row['urlhash'])))
-                logging.info( f'%s - Created article node: {record["node_id"]} for urlhash: {row["urlhash"]}' % cmi_debug )
+                logging.info( f'%s - Created article node with labels [Article, {dynamic_label}]: {record["node_id"]} for urlhash: {row["urlhash"]}' % cmi_debug )
         
-        return created_nodes
+        return created_nodes     # Returns a list of tuples (node_id, urlhash) for created nodes
 
 ##################################### 7 ####################################
 
-    def create_symbol_article_relationships(self, ticker_symbol, df_final, agency="Unknown", author="Unknown", published="Unknown", article_teaser="Unknown"):
+    def create_sym_art_rels(self, ticker_symbol, df_final, agency="Unknown", author="Unknown", published="Unknown", article_teaser="Unknown"):
         """
         Create HAS_ARTICLE relationships between Symbol and Article nodes
         ticker_symbol = the stock symbol
@@ -247,7 +253,7 @@ class db_graph:
         Relationship properties: agency, author, published, article_teaser can be provided
         """
         symbol = ticker_symbol.upper()
-        cmi_debug = __name__+"::"+self.create_symbol_article_relationships.__name__+".#"+str(self.yti)
+        cmi_debug = __name__+"::"+self.create_sym_art_rels.__name__+".#"+str(self.yti)
         logging.info( f'%s - Creating HAS_ARTICLE relationships for symbol: [ {symbol} ]...' % cmi_debug )
 
         created_relationships = []
@@ -258,11 +264,15 @@ class db_graph:
                 if row['art'] == 'Totals' or pd.isna(row['urlhash']) or row['urlhash'] == '':
                     continue
                 
+                # Prefix urlhash with 'Hash_' to match the dynamic label from create_article_nodes
+                dynamic_label = f"Hash_{str(row['urlhash'])}"
                 query = (
                     "MATCH (s:Symbol {symbol: $symbol}) "
-                    "MATCH (a:Article {urlhash: $urlhash}) "
+                    f"MATCH (a:{dynamic_label} {{urlhash: $urlhash}}) "
                     "CREATE (s)-[r:HAS_ARTICLE {"
+                    "art: $art, "
                     "locality: $locality, "
+                    "syndicatedby: $syndicatedby, "
                     "news_agency: $news_agency, "
                     "author: $author, "
                     "published: $published, "
@@ -275,7 +285,9 @@ class db_graph:
                 result = session.run(query,
                     symbol=symbol,
                     urlhash=str(row['urlhash']),
+                    art=int(row['art']),
                     locality="Local",
+                    syndicatedby=(ticker_symbol.upper()),
                     news_agency=agency,
                     author=author,
                     published=published,
@@ -287,6 +299,6 @@ class db_graph:
                     created_relationships.append(str(row['urlhash']))
                     logging.info( f'%s - Created HAS_ARTICLE relationship for urlhash: {row["urlhash"]}' % cmi_debug )
                 else:
-                    logging.warning( f'%s - Failed to create relationship for urlhash: {row["urlhash"]}' % cmi_debug )
+                    logging.warning( f'%s - REL Ccreate FAIL urlhash: {row["urlhash"]}' % cmi_debug )
         
         return created_relationships

@@ -507,7 +507,7 @@ def main():
             print (f"Human read time: {(twcz / 237):.2f} mins - Total Human processing time: {(twcz / 237) + tscz + (tscz / 2):.2f} mins" )
             pd.set_option('display.max_rows', None)
             pd.set_option('display.max_columns', None)
-            print (f"================================= Article Stats =======================================\n" )
+            print (f"=============================== Article Stats: {news_symbol.upper()} =====================================\n" )
 
             # DEBUG
             if args['bool_verbose'] is True:        # Logging level
@@ -556,6 +556,10 @@ def main():
             try:
                 found_sym = kgraphdb.check_node_exists(1, news_symbol)
                 if found_sym['present'] is True:    # True = symbol already exists
+                    # FIX: add unknonw elments later (need to gather them from elsewhere first)
+                    # Article must be created first, then related to their parent symbol node
+                    kgraphdb.create_article_nodes(df_final, news_symbol)
+                    kgraphdb.create_sym_art_rels(news_symbol, df_final, agency="Unknown", author="Unknown", published="Unknown", article_teaser="Unknown")
                     created = False
                     pass    # do nothing is Ticker Symbol exists
             except TypeError:
@@ -564,7 +568,7 @@ def main():
                 #kg_node_id = kgraphdb.create_sym_node(news_symbol)
                 # create a neo4j nodes Relationships, Properties and Types for each article thats associated with this symbol
                 kgraphdb.create_article_nodes(df_final, news_symbol)
-                kgraphdb.create_symbol_article_relationships(news_symbol, df_final,agency="Unknown", author="Unknown", published="Unknown", article_teaser="Unknown")
+                kgraphdb.create_sym_art_rels(news_symbol, df_final,agency="Unknown", author="Unknown", published="Unknown", article_teaser="Unknown")
                 created = True
                 
             if args['bool_verbose'] is True:
