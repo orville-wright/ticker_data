@@ -46,12 +46,14 @@ def main():
     SB_URL = '{}'.format(DATA_BASE_URL)
 
     SB_URL = '{}stocks/bars?'.format(SB_URL)
-    SB_URL = '{}&start=2025-01-01T09%3A30%3A00-04%3A00'.format(SB_URL)
-    SB_URL = '{}&end=2025-02-28T09%3A30%3A00-04%3A00'.format(SB_URL)
-    SB_URL = '{}&limit=100&adjustment=raw&feed=sip&sort=asc'.format(SB_URL)
+    #SB_URL = '{}&start=2025-06-26T09%3A30%3A00-04%3A00'.format(SB_URL)
+    SB_URL = '{}&start=2025-06-26T09:30:00-04:00'.format(SB_URL)
+    SB_URL = '{}&end=2025-06-27T09:30:00-04:00'.format(SB_URL)
+    SB_URL = '{}&limit=100'.format(SB_URL)
+    SB_URL = '{}&adjustment=raw&feed=sip&sort=asc'.format(SB_URL)
 
     SB_URL = '{}&symbols=IBM'.format(SB_URL)
-    SB_URL = '{}&timeframe=1Day'.format(SB_URL)
+    SB_URL = '{}&timeframe=1Min'.format(SB_URL)
     POS_URL = '{}positions'.format(BASE_URL)
     
     headers = {"accept": "application/json"}
@@ -77,7 +79,8 @@ def main():
     response = requests.get(SB_URL, headers=headers )
     data = json.loads(response.text)
     data = response.json()
-    print(f"{json.dumps(data, indent=2)} ")
+    #print(f"{json.dumps(data, indent=2)} ")
+    print(f"{data}" )
 
     ################# Style 2 ############################'
 
