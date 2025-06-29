@@ -196,14 +196,15 @@ class db_graph:
         cmi_debug = __name__+"::"+self.create_article_nodes.__name__+".#"+str(self.yti)
         logging.info( f'%s - Creating article nodes from df_final dataframe...' % cmi_debug )
         symbol = symbol.upper()
-
+        print (f"### ### DEBUG 1: Creating article for Symbol {symbol}")
         created_nodes = []
         with self.driver.session(database="neo4j") as session:
             for idx, row in df_final.iterrows():
                 # Skip the totals row
                 if row['art'] == 'Totals' or pd.isna(row['urlhash']) or row['urlhash'] == '':
                     continue
-                    
+                
+                print (f"### ### DEBUG 1: Build Cypher for Symbol {symbol}")    
                 query = (
                     "CREATE (a:Article {"
                     "urlhash: $urlhash, "
