@@ -1,4 +1,4 @@
-#! python3
+#!/usr/bin/env python3
 import urllib.request
 import pandas as pd
 import logging

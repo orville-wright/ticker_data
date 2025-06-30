@@ -140,7 +140,7 @@ class y_topgainers:
             else:
                 change_val = change_sign         # 4 : get $ change, but its possibly +/- signed
                 #if (re.search(r'\+', change_val)) or (re.search(r'\-', change_val)) is True:
-                if (re.search('\+', change_val)) or (re.search('\-', change_val)) is not None:
+                if (re.search(r'\+', change_val)) or (re.search(r'\-', change_val)) is not None:
                     logging.info( f"{cmi_debug} : $ CHANGE: {change_val} [+-], stripping..." )
                     change_cl = re.sub(r'[\+\-]', "", change_val)       # remove +/- sign
                     logging.info( f"{cmi_debug} : $ CHANGE cleaned to: {change_cl}" )
