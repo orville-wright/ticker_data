@@ -556,7 +556,7 @@ def main():
             try:
                 found_sym = kgraphdb.check_node_exists(1, news_symbol)
                 if found_sym['present'] is True:    # True = symbol already exists
-                    # FIX: add unknonw elments later (need to gather them from elsewhere first)
+                    # FIX: add unknown elments later (need to gather them from elsewhere first)
                     # Article must be created first, then related to their parent symbol node
                     kgraphdb.create_article_nodes(df_final, news_symbol)
                     kgraphdb.create_sym_art_rels(news_symbol, df_final, agency="Unknown", author="Unknown", published="Unknown", article_teaser="Unknown")
@@ -569,6 +569,7 @@ def main():
                 # create a neo4j nodes Relationships, Properties and Types for each article thats associated with this symbol
                 kgraphdb.create_article_nodes(df_final, news_symbol)
                 kgraphdb.create_sym_art_rels(news_symbol, df_final,agency="Unknown", author="Unknown", published="Unknown", article_teaser="Unknown")
+                kgraphdb.news_agency()
                 created = True
                 
             if args['bool_verbose'] is True:
