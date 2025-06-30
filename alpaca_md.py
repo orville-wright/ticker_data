@@ -46,7 +46,6 @@ def main():
     SB_URL = '{}'.format(DATA_BASE_URL)
 
     SB_URL = '{}stocks/bars?'.format(SB_URL)
-    #SB_URL = '{}&start=2025-06-26T09%3A30%3A00-04%3A00'.format(SB_URL)
     SB_URL = '{}&start=2025-06-26T09:30:00-04:00'.format(SB_URL)
     SB_URL = '{}&end=2025-06-27T09:30:00-04:00'.format(SB_URL)
     SB_URL = '{}&limit=100'.format(SB_URL)
