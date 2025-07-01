@@ -1,20 +1,21 @@
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 import pytest
-from unittest.mock import patch, MagicMock, call
-from requests.exceptions import Timeout
+from unittest.mock import patch, MagicMock, ANY
+from requests.exceptions import HTTPError, RequestException
 
-# This import will fail initially, which is expected in TDD
 from data_ingestion.twitter_client import TwitterClient
 
 class TestTwitterClient:
     """
-    Test suite for the TwitterClient class, following the London School of TDD.
+    Test suite for the optimized TwitterClient class.
     """
 
     BEARER_TOKEN = "test_bearer_token"
-    BASE_URL = "https://api.twitter.com/2/tweets/search/recent"
     TICKER = "AAPL"
     QUERY = f"#{TICKER} lang:en -is:retweet"
-    
+
     SUCCESS_PAYLOAD = {
         "data": [
             {"id": "123", "text": f"Great news for ${TICKER}!"},
@@ -29,135 +30,198 @@ class TestTwitterClient:
     }
 
     @pytest.fixture
-    def client(self):
-        """Provides a TwitterClient instance for testing."""
-        return TwitterClient(bearer_token=self.BEARER_TOKEN)
+    def mock_session(self):
+        """Fixture to mock requests.Session."""
+        with patch('data_ingestion.twitter_client.requests.Session') as MockSession:
+            yield MockSession.return_value
 
-    # Test Case ID: TC1_INIT_SUCCESS
-    def test_constructor_assigns_properties_correctly(self):
-        """
-        Verifies that the constructor correctly assigns the bearer_token
-        and sets the default base_url.
-        """
-        client = TwitterClient(bearer_token=self.BEARER_TOKEN)
-        assert client.bearer_token == self.BEARER_TOKEN
-        assert client.base_url == self.BASE_URL
+    @pytest.fixture
+    def mock_retry(self):
+        """Fixture to mock urllib3.util.retry.Retry."""
+        with patch('data_ingestion.twitter_client.Retry') as MockRetry:
+            yield MockRetry
 
-    # Test Case ID: TC2_INIT_INVALID_TOKEN
+    @pytest.fixture
+    def mock_adapter(self):
+        """Fixture to mock requests.adapters.HTTPAdapter."""
+        with patch('data_ingestion.twitter_client.HTTPAdapter') as MockAdapter:
+            yield MockAdapter
+
+    @patch('data_ingestion.twitter_client.requests.Session')
+    def test_constructor_configures_retry_mechanism(self, MockSession, mock_retry, mock_adapter):
+        """
+        Verifies that the constructor correctly configures and mounts the HTTPAdapter
+        with the specified retry strategy.
+        """
+        mock_session_instance = MockSession.return_value
+        client = TwitterClient(
+            bearer_token=self.BEARER_TOKEN,
+            max_retries=5,
+            backoff_factor=2.0
+        )
+
+        # Verify Retry class was instantiated with correct parameters
+        mock_retry.assert_called_once_with(
+            total=5,
+            status_forcelist=[429, 500, 502, 503, 504],
+            backoff_factor=2.0,
+            allowed_methods=["HEAD", "GET", "OPTIONS"]
+        )
+
+        # Verify HTTPAdapter was instantiated with the retry strategy
+        mock_adapter.assert_called_once_with(max_retries=mock_retry.return_value)
+
+        # Verify the adapter was mounted to the session for both http and https
+        assert mock_session_instance.mount.call_count == 2
+        mock_session_instance.mount.assert_any_call("https://", mock_adapter.return_value)
+        mock_session_instance.mount.assert_any_call("http://", mock_adapter.return_value)
+
     @pytest.mark.parametrize("invalid_token", [None, "", 123])
     def test_constructor_with_invalid_token_raises_value_error(self, invalid_token):
         """
         Ensures the constructor raises a ValueError if the bearer_token is invalid.
         """
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="Bearer token cannot be null or empty."):
             TwitterClient(bearer_token=invalid_token)
 
-    # Test Case ID: TC3_SEARCH_SUCCESS
-    @patch('data_ingestion.twitter_client.requests.get')
-    @patch('data_ingestion.twitter_client.logging')
-    def test_search_tweets_success(self, mock_logging, mock_get, client):
+    @pytest.mark.parametrize("invalid_ticker", ["TOOLONGTICKER", "B@DCHARS", ""])
+    def test_search_tweets_with_invalid_ticker_raises_value_error(self, invalid_ticker):
         """
-        Verifies that the method returns a list of tweet dictionaries on a 200 OK response.
+        Ensures search_tweets raises a ValueError for invalid ticker formats.
+        """
+        client = TwitterClient(bearer_token=self.BEARER_TOKEN)
+        with pytest.raises(ValueError, match="Invalid ticker format."):
+            client.search_tweets(invalid_ticker)
+
+    @patch('data_ingestion.twitter_client.logging')
+    def test_search_tweets_success(self, mock_logging, mock_session):
+        """
+        Verifies the method returns a list of tweets on a 200 OK response.
         """
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.json.return_value = self.SUCCESS_PAYLOAD
-        mock_get.return_value = mock_response
+        mock_response.raise_for_status.return_value = None
+        mock_session.get.return_value = mock_response
 
-        tweets = client.search_tweets(self.TICKER)
+        client = TwitterClient(bearer_token=self.BEARER_TOKEN)
+        # We need to manually set the session here because the fixture replaces it after init
+        client.session = mock_session
+        tweets = client.search_tweets(self.TICKER, max_tweets=2)
 
         assert tweets == self.SUCCESS_PAYLOAD["data"]
-        assert len(tweets) == 2
-        mock_get.assert_called_once_with(
-            client.base_url,
-            headers={"Authorization": f"Bearer {self.BEARER_TOKEN}"},
-            params={'query': self.QUERY, 'tweet.fields': 'created_at,public_metrics,lang'}
+        mock_session.get.assert_called_once_with(
+            client.BASE_URL,
+            params={'query': self.QUERY, 'tweet.fields': client.DEFAULT_TWEET_FIELDS, 'max_results': 2},
+            timeout=10
         )
-        mock_logging.info.assert_called_with(f"Successfully fetched {self.SUCCESS_PAYLOAD['meta']['result_count']} tweets for ticker ${self.TICKER}.")
+        mock_logging.info.assert_called_with(f"Successfully fetched 2 tweets for ticker {self.TICKER}.")
 
-    # Test Case ID: TC4_SEARCH_RATE_LIMIT
-    @patch('data_ingestion.twitter_client.time.sleep')
-    @patch('data_ingestion.twitter_client.requests.get')
     @patch('data_ingestion.twitter_client.logging')
-    def test_search_tweets_rate_limit_with_backoff(self, mock_logging, mock_get, mock_sleep, client):
+    def test_search_tweets_handles_http_error_after_retries(self, mock_logging, mock_session):
         """
-        Verifies that the method handles a 429 error by retrying with exponential backoff.
-        """
-        mock_response_429 = MagicMock()
-        mock_response_429.status_code = 429
-
-        mock_response_200 = MagicMock()
-        mock_response_200.status_code = 200
-        mock_response_200.json.return_value = self.SUCCESS_PAYLOAD
-        
-        mock_get.side_effect = [mock_response_429, mock_response_200]
-
-        tweets = client.search_tweets(self.TICKER)
-
-        assert mock_get.call_count == 2
-        mock_sleep.assert_called_once_with(1)
-        mock_logging.warning.assert_called_with(f"Rate limit exceeded for ticker ${self.TICKER}. Retrying in 1 seconds...")
-        assert tweets == self.SUCCESS_PAYLOAD["data"]
-
-    # Test Case ID: TC5_SEARCH_RETRY_FAILURE
-    @patch('data_ingestion.twitter_client.time.sleep')
-    @patch('data_ingestion.twitter_client.requests.get')
-    @patch('data_ingestion.twitter_client.logging')
-    def test_search_tweets_failure_after_all_retries(self, mock_logging, mock_get, mock_sleep, client):
-        """
-        Verifies that the method returns an empty list after exhausting all retry attempts.
-        """
-        mock_response_429 = MagicMock()
-        mock_response_429.status_code = 429
-        mock_get.return_value = mock_response_429
-
-        # Assuming MAX_RETRIES = 3
-        expected_sleeps = [call(1), call(2)]
-
-        tweets = client.search_tweets(self.TICKER)
-
-        assert mock_get.call_count == 3
-        mock_sleep.assert_has_calls(expected_sleeps)
-        mock_logging.error.assert_called_with(f"Failed to fetch tweets for ticker ${self.TICKER} after 3 retries.")
-        assert tweets == []
-
-    # Test Case ID: TC6_SEARCH_HTTP_ERROR
-    @patch('data_ingestion.twitter_client.requests.get')
-    @patch('data_ingestion.twitter_client.logging')
-    def test_search_tweets_handles_other_http_error(self, mock_logging, mock_get, client):
-        """
-        Verifies that a non-429 HTTP error is handled gracefully without retrying.
+        Verifies a non-retryable 4xx error is handled gracefully and logged correctly
+        after the retry mechanism is exhausted.
         """
         mock_response = MagicMock()
         mock_response.status_code = 400
         mock_response.json.return_value = self.ERROR_PAYLOAD_400
-        mock_get.return_value = mock_response
-
+        http_error = HTTPError(response=mock_response)
+        mock_session.get.side_effect = http_error
+        
+        client = TwitterClient(bearer_token=self.BEARER_TOKEN)
+        client.session = mock_session
         tweets = client.search_tweets(self.TICKER)
 
-        mock_get.assert_called_once()
+        mock_session.get.assert_called_once()
         mock_logging.error.assert_called_with(
-            f"HTTP error 400 for ticker ${self.TICKER}: {self.ERROR_PAYLOAD_400}"
+            "HTTP error 400 for ticker AAPL after retries. Title: Invalid Request, Detail: Invalid 'query' parameter"
         )
         assert tweets == []
 
-    # Test Case ID: TC7_SEARCH_NETWORK_ERROR
-    @patch('data_ingestion.twitter_client.time.sleep')
-    @patch('data_ingestion.twitter_client.requests.get')
     @patch('data_ingestion.twitter_client.logging')
-    def test_search_tweets_handles_network_exception(self, mock_logging, mock_get, mock_sleep, client):
+    def test_search_tweets_handles_network_exception_after_retries(self, mock_logging, mock_session):
         """
-        Verifies that a network exception is handled with a retry.
+        Verifies that a network exception is handled gracefully after all retries fail.
         """
-        mock_response_200 = MagicMock()
-        mock_response_200.status_code = 200
-        mock_response_200.json.return_value = self.SUCCESS_PAYLOAD
+        request_exception = RequestException("Connection timed out")
+        mock_session.get.side_effect = request_exception
 
-        mock_get.side_effect = [Timeout("Connection timed out"), mock_response_200]
-
+        client = TwitterClient(bearer_token=self.BEARER_TOKEN)
+        client.session = mock_session
         tweets = client.search_tweets(self.TICKER)
 
-        assert mock_get.call_count == 2
-        mock_sleep.assert_called_once_with(1)
-        mock_logging.error.assert_called_with(f"Network error for ticker ${self.TICKER}: Connection timed out. Retrying in 1 seconds...")
-        assert tweets == self.SUCCESS_PAYLOAD["data"]
+        mock_session.get.assert_called_once()
+        mock_logging.error.assert_called_with(
+            f"Failed to fetch tweets for ticker {self.TICKER} after retries. Error: {request_exception}"
+        )
+        assert tweets == []
+    @patch('data_ingestion.twitter_client.logging')
+    def test_search_tweets_with_pagination(self, mock_logging, mock_session):
+        """
+        Verifies that the client correctly handles paginated responses.
+        """
+        # First response with a next_token
+        response1_payload = {
+            "data": [{"id": "1", "text": "Tweet 1"}],
+            "meta": {"result_count": 1, "next_token": "token123"}
+        }
+        mock_response1 = MagicMock()
+        mock_response1.status_code = 200
+        mock_response1.json.return_value = response1_payload
+        mock_response1.raise_for_status.return_value = None
+
+        # Second response without a next_token
+        response2_payload = {
+            "data": [{"id": "2", "text": "Tweet 2"}],
+            "meta": {"result_count": 1}
+        }
+        mock_response2 = MagicMock()
+        mock_response2.status_code = 200
+        mock_response2.json.return_value = response2_payload
+        mock_response2.raise_for_status.return_value = None
+
+        mock_session.get.side_effect = [mock_response1, mock_response2]
+
+        client = TwitterClient(bearer_token=self.BEARER_TOKEN)
+        client.session = mock_session
+        tweets = client.search_tweets(self.TICKER)
+
+        assert mock_session.get.call_count == 2
+        assert tweets == response1_payload["data"] + response2_payload["data"]
+        
+        # Check params for the second call
+        second_call_args, second_call_kwargs = mock_session.get.call_args_list[1]
+        assert second_call_kwargs['params']['pagination_token'] == 'token123'
+        
+        mock_logging.info.assert_any_call(f"Successfully fetched 1 tweets for ticker {self.TICKER}.")
+        mock_logging.info.assert_any_call(f"Paginating... fetching next page for ticker {self.TICKER} with token token123.")
+
+
+    @patch('data_ingestion.twitter_client.logging')
+    def test_search_tweets_respects_max_tweets(self, mock_logging, mock_session):
+        """
+        Ensures search_tweets stops fetching when max_tweets is reached.
+        """
+        response_payload = {
+            "data": [
+                {"id": "1", "text": "Tweet 1"},
+                {"id": "2", "text": "Tweet 2"},
+                {"id": "3", "text": "Tweet 3"},
+            ],
+            "meta": {"result_count": 3, "next_token": "token123"}
+        }
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = response_payload
+        mock_response.raise_for_status.return_value = None
+        mock_session.get.return_value = mock_response
+
+        client = TwitterClient(bearer_token=self.BEARER_TOKEN)
+        client.session = mock_session
+        tweets = client.search_tweets(self.TICKER, max_tweets=2)
+
+        mock_session.get.assert_called_once()
+        assert len(tweets) == 2
+        assert tweets == response_payload["data"][:2]
+        mock_logging.info.assert_called_with(f"Successfully fetched 2 tweets for ticker {self.TICKER}.")
